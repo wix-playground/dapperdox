@@ -1,0 +1,24 @@
+[: range $name, $property := .Properties :]
+  <tr>
+    <td>
+      [: if $property.FQNS :]
+      <span class="object">[: join $property.FQNS "." :]</span>.
+      [: end :]
+      [: $property.ID :]
+    </td>
+    <td>[: index $property.Type 0 :]</td>
+    <td>
+      [: safehtml $property.Description :]
+      [: if $property.Enum :]
+      <p>Possible values are:</p>
+      <ul class="list-bullet">
+        [: range $property.Enum :]
+        <li><code>[: . :]</code></li>
+        [: end :]
+      </ul>
+      [: end :]
+    </td>
+    <td>[: if not $property.Required :]Optional[: end :]</td>
+  </tr>
+  [: template "themes/companieshouse-gov-uk/fragments/docs/properties" $property :]
+[: end :]

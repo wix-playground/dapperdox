@@ -1,0 +1,6 @@
+swaggerly
+=========
+
+```bash
+build . && ./swaggerly
+```

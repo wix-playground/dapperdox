@@ -1,0 +1,24 @@
+<table class="display-table">
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>HTTP Request</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    [: range .API.Methods :]
+    <tr>
+      <td>
+        <a id="[: .ID :]" href="/docs/[: $.API.ID :]/[: .ID :]">[: .Method :]</a>
+      </td>
+      <td>
+        <pre>[: uc .Method :]&nbsp;[: .Path :]</pre></td>
+      </td>
+      <td class="hyphenate Hyphenator600hide">
+        [: .Name :]
+      </td>
+    </tr>
+    [: end :]
+  </tbody>
+</table>

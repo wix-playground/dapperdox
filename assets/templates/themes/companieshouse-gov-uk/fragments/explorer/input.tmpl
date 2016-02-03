@@ -1,0 +1,30 @@
+[:define "explorer_input":]
+    [: if .Param.Enum :]
+        <select id="[: .Param.Name :]" data-type="[: .Section :]" name="[: .Param.Name :]"
+            [: if .Param.Required :]
+                required="true">
+            [: else :]
+                ><option value=""></option>
+            [: end :]
+            [: range $name, $key := .Param.Enum :]<option value="[: $key :]">[: $name :]</option>[: end :]
+        </select> 
+    [: else :]
+        [: if eq .Param.Type "boolean" :]
+            <select id="[: .Param.Name :]" data-type="[: .Section :]" name="[: .Param.Name :]"
+                [: if .Param.Required :]
+                    required="true">
+                [: else :]
+                    ><option value=""></option>
+                [: end :]
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select> 
+        [: else :]
+            <input id="[: .Param.Name :]" type="text" data-type="[: .Section :]" name="[: .Param.Name :]" value="" 
+                [: if .Param.Required :] 
+                placeholder="Required" required="required"
+                [: end :]
+                />
+        [: end :]
+    [: end :]
+[: end :]
