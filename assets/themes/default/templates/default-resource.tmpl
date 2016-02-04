@@ -1,0 +1,37 @@
+<h1 class="page-header">[: .Title :]</h1>
+
+[: template "fragments/docs/header" .Resource.Title :]
+
+<h2 class="sub-header">Methods</h2>
+
+<ul class="">
+  [: range .Resource.Methods :]
+    <li><a href="/docs/[: .API.ID :]/[: .ID :]">[: .Method :]</a> - [: .Name :]</li>
+  [: end :]
+</ul>
+
+<h2 class="sub-header">Resource</h2>
+
+<pre><code>[: .Resource.Schema :]</code></pre>
+
+<h2 class="sub-header">Example</h2>
+
+<pre><code>[: .Resource.Example :]</code></pre>
+
+<h2 class="sub-header">Properties</h2>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Additional</th>
+      </tr>
+    </thead>
+    <tbody>
+      [: template "fragments/docs/properties" .Resource :]
+    </tbody>
+  </table>
+</div>

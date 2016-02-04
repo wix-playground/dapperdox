@@ -1,0 +1,69 @@
+<h1 class="page-header">[: .Title :]</h1>
+
+[: template "fragments/docs/header" .Method.Name :]
+
+<p>[: .Method.Description :]</p>
+
+<h2 class="sub-header">Request</h2>
+
+<pre>[: uc .Method.Method :] [: .API.URL :][: .Method.Path :]</pre>
+
+[: if .Method.PathParams :]
+  <h2 class="sub-header">Path parameters</h2>
+  [: template "fragments/docs/params" .Method.PathParams :]
+[: end :]
+
+[: if .Method.QueryParams :]
+  <h2 class="sub-header">Query parameters</h2>
+  [: template "fragments/docs/params" .Method.QueryParams :]
+[: end :]
+
+[: if .Method.HeaderParams :]
+  <h2 class="sub-header">Request headers</h2>
+  [: template "fragments/docs/params" .Method.HeaderParams :]
+[: end :]
+
+[: if .Method.FormParams :]
+  <h2 class="sub-header">Form parameters</h2>
+  [: template "fragments/docs/params" .Method.FormParams :]
+[: end :]
+
+[: if .Method.BodyParam :]
+  <h2 class="sub-header">Request body</h2>
+  <p>TODO: ...</p>
+[: end :]
+
+<h2 class="sub-header">Response</h2>
+
+<p>
+  The following HTTP status codes may be returned, optionally with a response resource.
+</p>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+      <th>Status&nbsp;code</th>
+      <th>Description</th>
+      <th>Resource</th>
+      </tr>
+    </thead>
+    <tbody>
+      [: range $status, $response := .Method.Responses :]
+    <tr>
+      <td class="type">[: $status :]</td>
+      <td class="hyphenate Hyphenator616hide">[: $response.Description :]</td>
+      <td class="resource">[: if $response.Schema :]<a href="/docs/[: $.API.ID :]/[: $.Method.ID :]/[: $response.Schema.ID :]">[: $response.Schema.Title :]</a>[: end :]</td>
+    </tr>
+    [: end :]
+    [: if .Method.DefaultResponse :]
+    <tr>
+      <td class="type">default</td>
+      <td class="hyphenate Hyphenator616hide">[: .Method.DefaultResponse.Description :]</td>
+      <td class="resource">[: if .Method.DefaultResponse.Schema :]<a href="/docs/[: .API.ID :]/[: .Method.ID :]/[: .Method.DefaultResponse.Schema.ID :]">[: .Method.DefaultResponse.Schema.Title :]</a>[: end :]</td>
+    </tr>
+    [: end :]
+  </tbody>
+</table>
+
+[: template "fragments/explorer" . :]
