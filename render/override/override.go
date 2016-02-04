@@ -57,7 +57,7 @@ func Compile(dir string, prefix string) {
 
 		newname := prefix + "/" + rel
 
-		fmt.Printf("Import file '%s'\n", newname)
+		fmt.Printf("Import file as '%s'\n", newname)
 
 		if _, ok := _bindata[newname]; !ok {
 			_bindata[newname] = buf

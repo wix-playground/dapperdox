@@ -26,12 +26,20 @@ func New() *render.Render {
 
 	cfg, _ := config.Get()
 
+	// XXX Order of directory inporting is IMPORTANT XXX
 	if len(cfg.AssetsDir) != 0 {
+		//override.Compile(cfg.AssetsDir+"/templates", "assets/templates")
+		//override.Compile(cfg.AssetsDir+"/static", "assets/static")
+
 		override.Compile(cfg.AssetsDir+"/templates", "assets/templates")
 		override.Compile(cfg.AssetsDir+"/static", "assets/static")
+		override.Compile(cfg.AssetsDir+"/themes/"+cfg.Theme, "assets")
 	}
 	// TODO Use go generate to compile-in assets bindata, and then arrange for
 	// some assets to be overridden by local?
+	// TODO only import the theme specified instead of all installed themes that will not be used!
+
+	override.Compile(cfg.DefaultAssetsDir+"/themes/"+cfg.Theme, "assets")
 	override.Compile(cfg.DefaultAssetsDir+"/templates", "assets/templates")
 	override.Compile(cfg.DefaultAssetsDir+"/static", "assets/static")
 
@@ -40,7 +48,7 @@ func New() *render.Render {
 		AssetNames: override.AssetNames,
 		Directory:  "assets/templates",
 		Delims:     render.Delims{Left: "[:", Right: ":]"},
-		Layout:     "themes/" + cfg.Theme + "/layout",
+		Layout:     "layout",
 		Funcs: []template.FuncMap{template.FuncMap{
 			"map":      htmlform.Map,
 			"ext":      htmlform.Extend,

@@ -1,7 +1,6 @@
 package static
 
 import (
-	"fmt"
 	"mime"
 	"net/http"
 	"strings"

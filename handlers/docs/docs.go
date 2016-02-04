@@ -33,7 +33,7 @@ func Register(r *pat.Router) {
 // APIHandler is a http.Handler for rendering API docs
 func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
-		tmpl := "themes/companieshouse-gov-uk/templates/default-api"
+		tmpl := "default-api"
 		customTmpl := "docs/" + api.ID
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
@@ -47,7 +47,7 @@ func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
 // MethodHandler is a http.Handler for rendering API method docs
 func MethodHandler(api spec.API, method spec.Method) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
-		tmpl := "themes/companieshouse-gov-uk/templates/default-method"
+		tmpl := "default-method"
 		customTmpl := "docs/" + api.ID + "/" + method.ID
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
@@ -64,7 +64,7 @@ func ResourceHandler(api spec.API, method spec.Method, resource *spec.Resource) 
 		logger.Printf(nil, "Render resource "+resource.ID)
 		logger.Printf(nil, "Render method.ID "+method.ID)
 		logger.Printf(nil, "Render api.ID   "+api.ID)
-		tmpl := "themes/companieshouse-gov-uk/templates/default-resource"
+		tmpl := "default-resource"
 
 		customTmpl := "docs/" + api.ID + "/" + method.ID + "/" + resource.ID // FIXME resources should be globally unique
 		if render.TemplateLookup(customTmpl) != nil {
