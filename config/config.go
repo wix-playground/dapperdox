@@ -15,6 +15,7 @@ type config struct {
 	DefaultAssetsDir string      `env:"DEFAULT_ASSETS_DIR" flag:"default-assets-dir" flagDesc:"Default assets."`
 	SwaggerDir       string      `env:"SWAGGER_DIR" flag:"swagger-dir" flagDesc:"Swagger directory"`
 	Theme            string      `env:"THEME" flag:"theme" flagDesc:"Theme to render documentation"`
+	ThemesDir        string      `env:"THEMES_DIR" flag:"themes-dir" flagDesc:"Directory containing installed themes"`
 	LogLevel         string      `env:"LOGLEVEL" flag:"log-level" flagDesc:"Log level"`
 	CDNURL           string      `env:"CDN_URL" flag:"cdn-url" flagDesc:"CDN URL"`
 	SiteURL          string      `env:"SITE_URL" flag:"site-url" flagDesc:"Public URL of the documentation service"`

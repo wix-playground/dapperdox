@@ -35,7 +35,15 @@ func AssetNames() []string {
 func Compile(dir string, prefix string) {
 
 	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if info == nil || info.IsDir() {
+		if info == nil {
+			return nil
+		}
+		if info.IsDir() {
+			// Skip hidden directories TODO this should be applied to files also.
+			_, node := filepath.Split(path)
+			if node[0] == '.' {
+				return filepath.SkipDir
+			}
 			return nil
 		}
 

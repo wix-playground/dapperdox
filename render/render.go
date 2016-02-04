@@ -39,6 +39,9 @@ func New() *render.Render {
 	// some assets to be overridden by local?
 	// TODO only import the theme specified instead of all installed themes that will not be used!
 
+	if len(cfg.ThemesDir) != 0 {
+		override.Compile(cfg.ThemesDir+"/"+cfg.Theme, "assets")
+	}
 	override.Compile(cfg.DefaultAssetsDir+"/themes/"+cfg.Theme, "assets")
 	override.Compile(cfg.DefaultAssetsDir+"/templates", "assets/templates")
 	override.Compile(cfg.DefaultAssetsDir+"/static", "assets/static")
