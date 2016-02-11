@@ -65,7 +65,8 @@ func Compile(dir string, prefix string) {
 
 		newname := prefix + "/" + rel
 
-		fmt.Printf("Import file as '%s'\n", newname)
+		// FIXME Make log trace
+		//fmt.Printf("Import file as '%s'\n", newname)
 
 		if _, ok := _bindata[newname]; !ok {
 			_bindata[newname] = buf

@@ -4,6 +4,11 @@
 
 <p>[: .Method.Description :]</p>
 
+<h2 class="sub-header">Available Versions</h2>
+[: range $version, $method := .API.Versions :]
+[: $version :]</br>
+[: end :]
+
 <h2 class="sub-header">Request</h2>
 
 <pre>[: uc .Method.Method :] [: .API.URL :][: .Method.Path :]</pre>
@@ -53,7 +58,8 @@
     <tr>
       <td class="type">[: $status :]</td>
       <td class="hyphenate Hyphenator616hide">[: $response.Description :]</td>
-      <td class="resource">[: if $response.Schema :]<a href="/docs/[: $.API.ID :]/[: $.Method.ID :]/[: $response.Schema.ID :]">[: $response.Schema.Title :]</a>[: end :]</td>
+      <td class="resource">[: if $response.Schema :]<a href="/docs/[: $.API.ID :]/[: $.Method.ID :]/[: $response.Schema.ID :]">[: $response.Schema.Title :]</a>[: end :]
+      </td>
     </tr>
     [: end :]
     [: if .Method.DefaultResponse :]

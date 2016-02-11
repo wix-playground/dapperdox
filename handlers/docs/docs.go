@@ -59,6 +59,7 @@ func MethodHandler(api spec.API, method spec.Method) func(w http.ResponseWriter,
 
 // ------------------------------------------------------------------------------------------------------------
 // ResourceHandler is a http.Handler for rendering API resource docs
+// TODO Versioning!
 func ResourceHandler(api spec.API, method spec.Method, resource *spec.Resource) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		logger.Printf(nil, "Render resource "+resource.ID)
