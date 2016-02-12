@@ -9,7 +9,7 @@ import (
 
 	//"github.com/companieshouse/swaggerly/logger"
 	"github.com/companieshouse/go-swagger/spec"
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 )
@@ -19,6 +19,7 @@ type APISet []API
 
 // APIs represents the parsed APIs
 var APIs APISet
+var SecurityDefinitions map[string]SecurityScheme
 
 // GetByName returns an API by name
 func (a APISet) GetByName(name string) *API {
@@ -55,6 +56,29 @@ type Version struct {
 	Methods []Method
 }
 
+type OAuth2Scheme struct {
+	OAuth2Flow       string
+	AuthorizationUrl string
+	TokenUrl         string
+	Scopes           map[string]string
+}
+
+type SecurityScheme struct {
+	IsApiKey      bool
+	IsBasic       bool
+	IsOAuth2      bool
+	Type          string
+	Description   string
+	ParamName     string
+	ParamLocation string
+	OAuth2Scheme
+}
+
+type Security struct {
+	Scheme *SecurityScheme
+	Scopes map[string]string
+}
+
 // Method represents an API method
 type Method struct {
 	ID              string
@@ -70,6 +94,7 @@ type Method struct {
 	Responses       map[int]Response
 	DefaultResponse *Response
 	Resources       []*Resource
+	Security        map[string]Security
 	API             *API
 }
 
@@ -87,7 +112,6 @@ type Parameter struct {
 type Response struct {
 	Description string
 	Schema      *Resource
-	//DefaultVersion string
 }
 
 // Resource represents an API resource
@@ -116,6 +140,8 @@ func Load(host string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	getSecurityDefinitions(swaggerdoc.Spec())
 
 	// Use the top level TAGS to order the API resources/endpoints
 	for _, tag := range swaggerdoc.Spec().Tags {
@@ -168,6 +194,43 @@ func getMethod(tag spec.Tag, api *API, methods *[]Method, o *spec.Operation, pat
 			method := processMethod(api, o, path, methodname)
 			*methods = append(*methods, *method)
 		}
+	}
+}
+
+func getSecurityDefinitions(spec *spec.Swagger) {
+
+	if SecurityDefinitions == nil {
+		SecurityDefinitions = make(map[string]SecurityScheme)
+	}
+
+	for n, d := range spec.SecurityDefinitions {
+		stype := d.Type
+
+		def := &SecurityScheme{
+			Description:   d.Description,
+			Type:          stype,  // basic, apiKey or oauth2
+			ParamName:     d.Name, // name of header to be used if ParamLocation is 'header'
+			ParamLocation: d.In,   // Either query or header
+		}
+
+		if stype == "apiKey" {
+			def.IsApiKey = true
+		}
+		if stype == "basic" {
+			def.IsBasic = true
+		}
+		if stype == "oauth2" {
+			def.IsOAuth2 = true
+			def.OAuth2Flow = d.Flow                   // implicit, password (explicit) application or accessCode
+			def.AuthorizationUrl = d.AuthorizationURL // Only for implicit or accesscode flow
+			def.TokenUrl = d.TokenURL                 // Only for implicit, accesscode or password flow
+			def.Scopes = make(map[string]string)
+			for s, n := range d.Scopes {
+				def.Scopes[s] = n
+			}
+		}
+
+		SecurityDefinitions[n] = *def
 	}
 }
 
@@ -243,8 +306,36 @@ func processMethod(api *API, o *spec.Operation, path, methodname string) *Method
 
 	for _, r := range resources {
 		method.Resources = append(method.Resources, r)
-		//api.Resources = append(api.Resources, r)
 	}
+
+	// Lookup security reference against SecurityDefinitions
+	// TODO FIXME If no Security given from operation, then the global defaults are appled. CHECK THIS IS TRUE!
+
+	method.Security = make(map[string]Security)
+
+	for _, sec := range o.Security {
+		for n, scopes := range sec {
+			// Lookup security name in definitions
+			if scheme, ok := SecurityDefinitions[n]; ok {
+
+				// Add security to method
+				method.Security[n] = Security{
+					Scheme: &scheme,
+					Scopes: make(map[string]string),
+				}
+
+				// Populate method specific scopes by cross referencing SecurityDefinitions
+				for _, scope := range scopes {
+					if scope_desc, ok := scheme.Scopes[scope]; ok {
+						method.Security[n].Scopes[scope] = scope_desc
+					}
+				}
+			}
+		}
+	}
+
+	//fmt.Printf("DUMPING Method Security\n")
+	//spew.Dump(method.Security)
 
 	return method
 }
