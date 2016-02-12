@@ -2,7 +2,6 @@ package specs
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -23,32 +22,34 @@ func Register(r *pat.Router) {
 		render.HTML(w, http.StatusNotFound, "error", render.DefaultVars(req, map[string]interface{}{"error": "Page not found"}))
 	})
 
-	base := "swagger/"
-	root := base
-
 	cfg, err := config.Get()
 	if err != nil {
-		log.Fatalf("error configuring app: %s", err)
+		logger.Errorf(nil, "error configuring app: %s", err)
 	}
+
+	base, err := filepath.Abs(cfg.SwaggerDir)
+	if err != nil {
+		logger.Errorf(nil, "Error forming swagger path: %s", err)
+	}
+	root := base
 
 	specMap = make(map[string][]byte)
 
 	err = filepath.Walk(root, func(path string, _ os.FileInfo, _ error) error {
-		logger.Printf(nil, "--"+path)
+		logger.Tracef(nil, "-- %s", path)
 
 		ext := filepath.Ext(path)
 
 		switch ext {
 		case ".json":
-			logger.Printf(nil, "** "+path)
-
 			// Strip base path and file extension
-			route := "/" + strings.TrimPrefix(path, base)
+			route := strings.TrimPrefix(path, base)
 
-			logger.Printf(nil, ">> "+route)
-			logger.Printf(nil, "== "+path)
+			logger.Tracef(nil, "Path: %s", path)
+			logger.Tracef(nil, "Uri : %s", route)
 
 			specMap[route], _ = ioutil.ReadFile(path)
+
 			// Replace anything matching RewriteURL with SiteURL
 			specMap[route] = []byte(strings.Replace(string(specMap[route]), cfg.RewriteURL, cfg.SiteURL, -1))
 
@@ -62,7 +63,7 @@ func Register(r *pat.Router) {
 }
 
 func serveSpec(w http.ResponseWriter, resource string) {
-	logger.Printf(nil, "Serve file "+resource)
+	logger.Tracef(nil, "Serve file "+resource)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-control", "public, max-age=259200")
 	w.WriteHeader(200)
