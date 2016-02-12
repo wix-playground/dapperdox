@@ -46,16 +46,21 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
+	var sg sync.WaitGroup
+	sg.Add(1)
 
 	go func() {
 		logger.Traceln(nil, "Listen for and server swagger spec requests for start up")
 		wg.Add(1)
+		sg.Done()
 		http.Serve(listener, chain)
 		logger.Traceln(nil, "Finished service swagger specs for start up")
 		wg.Done()
 	}()
 
-	// Register the spec routes
+	sg.Wait()
+
+	// Register the spec routes (Listener and server must be up and running by now)
 	specs.Register(router)
 
 	// Now the spec routes have been registered, we're safe to import and parse the swagger (via the registered spec routes)
