@@ -4,7 +4,7 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"runtime"
+	"sync"
 	"time"
 
 	"github.com/companieshouse/swaggerly/config"
@@ -42,9 +42,18 @@ func main() {
 	logger.Infof(nil, "listening on %s", cfg.BindAddr)
 	listener, err := net.Listen("tcp", cfg.BindAddr)
 	if err != nil {
-		log.Fatalf("error listening on %s: %s", cfg.BindAddr, err)
+		logger.Errorf(nil, "error listening on %s: %s", cfg.BindAddr, err)
 	}
-	go http.Serve(listener, chain)
+
+	var wg sync.WaitGroup
+
+	go func() {
+		logger.Traceln(nil, "Listen for and server swagger spec requests for start up")
+		wg.Add(1)
+		http.Serve(listener, chain)
+		logger.Traceln(nil, "Finished service swagger specs for start up")
+		wg.Done()
+	}()
 
 	// Register the spec routes
 	specs.Register(router)
@@ -57,10 +66,15 @@ func main() {
 	static.Register(router) // TODO - Static content should be capable of being CDN hosted
 	home.Register(router)
 
-	logger.Infof(nil, "Read to serve")
-	for {
-		runtime.Gosched()
+	listener.Close()
+	wg.Wait()
+
+	logger.Infof(nil, "Listen and server on %s", cfg.BindAddr)
+	listener, err = net.Listen("tcp", cfg.BindAddr)
+	if err != nil {
+		logger.Errorf(nil, "error listening on %s: %s", cfg.BindAddr, err)
 	}
+	http.Serve(listener, chain)
 }
 
 func withCsrf(h http.Handler) http.Handler {
