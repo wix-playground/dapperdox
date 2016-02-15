@@ -5,14 +5,14 @@
     <div class="pull-right">
       <div class="btn-group">
         <button class="nopadding btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Version 1.0 <span class="caret"></span>
+          Version 2.0 <span class="caret" />
         </button>
         <ul class="dropdown-menu pull-right">
           [: range $version, $method := .API.Versions :]
-          <li><a href="#">[: $version :]</a></li>
+          <li><a href="?v=[: $version :]">[: $version :]</a></li>
           [: end :]
           <li role="separator" class="divider"></li>
-          <li><a href="#">Current version 1.0</a></li>
+          <li><a href="#current">Latest version 2.0</a></li>
         </ul>
       </div>
     </div>

@@ -45,10 +45,9 @@ func (a APISet) GetByID(id string) *API {
 type API struct {
 	ID       string
 	Name     string
-	Versions map[string][]Method
-	Methods  []Method
-	//Resources []*Resource
-	URL *url.URL
+	Versions map[string][]Method // All versions
+	Methods  []Method            // The latest version
+	URL      *url.URL
 }
 
 type Version struct {

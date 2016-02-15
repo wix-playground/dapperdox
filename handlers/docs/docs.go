@@ -52,7 +52,12 @@ func MethodHandler(api spec.API, method spec.Method) func(w http.ResponseWriter,
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
 		}
-		logger.Printf(nil, "-- template: "+tmpl)
+
+		version := req.FormValue("v") // Get the resource version
+		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
+		if version != nil {
+		}
+
 		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": method.Name, "API": api, "Method": method}))
 	}
 }
