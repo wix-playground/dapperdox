@@ -1,13 +1,6 @@
-<h1 class="page-header">[: .Title :]</h1>
-
-[: template "fragments/docs/header" .Method.Name :]
+[: template "fragments/docs/version_header" (map "API" .API "Title" .Title )  :]
 
 <p>[: .Method.Description :]</p>
-
-<h2 class="sub-header">Available Versions</h2>
-[: range $version, $method := .API.Versions :]
-[: $version :]</br>
-[: end :]
 
 <h2 class="sub-header">Request</h2>
 

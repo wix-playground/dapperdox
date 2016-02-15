@@ -1,0 +1,21 @@
+<!-- Required .API and .Title parameters -->
+<div class="page-header">
+  <h1 class="pull-left nomargin">[: .Title :]</h1>
+  [: if .API.Versions :]
+    <div class="pull-right">
+      <div class="btn-group">
+        <button class="nopadding btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Version 1.0 <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu pull-right">
+          [: range $version, $method := .API.Versions :]
+          <li><a href="#">[: $version :]</a></li>
+          [: end :]
+          <li role="separator" class="divider"></li>
+          <li><a href="#">Current version 1.0</a></li>
+        </ul>
+      </div>
+    </div>
+  [: end :]
+  <div class="clearfix"></div>
+</div>

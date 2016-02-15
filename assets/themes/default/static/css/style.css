@@ -135,3 +135,14 @@ td.resource {
 td span.object {
     color: #6f777b;
 }
+
+/* Allows button to be on same row as heading */
+.btn-group{
+    position: relative;
+    top: 0px;
+}
+
+.nomargin {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
