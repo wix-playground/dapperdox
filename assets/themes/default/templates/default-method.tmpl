@@ -38,32 +38,13 @@
   <p>TODO: ...</p>
 [: end :]
 
-
 [: if .Method.Security :]
-<h2 class="sub-header">Authentication</h2>
-
-[: range $name, $security := .Method.Security :]
-    [: if $security.Scheme.IsApiKey :]
-        <p>API Key</p>
-        [: end :]
-        
-        [: if $security.Scheme.IsOAuth2 :]
-        <p>OAuth2</p>
-        [: end :]
-        
-        [: if $security.Scheme.IsBasic :]
-        <p>BASIC auth</p>
-        [: end :]
-    [: end :]
-
+  <h2 class="sub-header">Authorisation</h2>
+  [: template "fragments/docs/authorisation" .Method.Security :]
 [: end :]
 
-
 <h2 class="sub-header">Response</h2>
-
-<p>
-  The following HTTP status codes may be returned, optionally with a response resource.
-</p>
+<p>The following HTTP status codes may be returned, optionally with a response resource.</p>
 
 <div class="table-responsive">
   <table class="table table-striped">
