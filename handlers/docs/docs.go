@@ -30,6 +30,19 @@ func Register(r *pat.Router) {
 }
 
 // ------------------------------------------------------------------------------------------------------------
+
+func getVersionMethod(api spec.API, version string) *[]spec.Method {
+
+	var methods []spec.Method
+	var ok bool
+
+	if methods, ok = api.Versions[version]; !ok {
+		methods = api.Methods
+	}
+	return &methods
+}
+
+// ------------------------------------------------------------------------------------------------------------
 // APIHandler is a http.Handler for rendering API docs
 func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -38,8 +51,13 @@ func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
 		}
-		logger.Printf(nil, "-- template: "+tmpl)
-		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": api.Name, "API": api}))
+
+		version := req.FormValue("v") // Get the resource version
+		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
+
+		methods := getVersionMethod(api, version)
+
+		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": api.Name, "API": api, "Methods": methods}))
 	}
 }
 
@@ -55,8 +73,8 @@ func MethodHandler(api spec.API, method spec.Method) func(w http.ResponseWriter,
 
 		version := req.FormValue("v") // Get the resource version
 		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
-		if version != nil {
-		}
+
+		//methods := getVersionMethod(api, version)
 
 		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": method.Name, "API": api, "Method": method}))
 	}
@@ -77,6 +95,7 @@ func ResourceHandler(api spec.API, method spec.Method, resource *spec.Resource) 
 			tmpl = customTmpl
 		}
 		logger.Printf(nil, "-- template: "+tmpl)
+
 		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": resource.Title, "API": api, "Resource": resource}))
 	}
 }

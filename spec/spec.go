@@ -42,11 +42,12 @@ func (a APISet) GetByID(id string) *API {
 }
 
 // API represents an API
+// XXX Versisons will only contain other (not the current) version if the x-version (singular) extension is implemented XXX
 type API struct {
 	ID       string
 	Name     string
-	Versions map[string][]Method // All versions
-	Methods  []Method            // The latest version
+	Versions map[string][]Method // All versions, keyed by version string.
+	Methods  []Method            // The current version
 	URL      *url.URL
 }
 
@@ -152,8 +153,8 @@ func Load(host string) {
 
 		// Match up on tags:
 		for p, o := range swaggerdoc.AllPaths() {
-			getMethods(tag, &api, &api.Methods, o, p)
-			getVersions(tag, &api, o.Versions, p)
+			getMethods(tag, &api, &api.Methods, o, p) // Current version
+			getVersions(tag, &api, o.Versions, p)     // All versions
 		}
 
 		APIs = append(APIs, api)
@@ -167,6 +168,7 @@ func getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path
 	api.Versions = make(map[string][]Method)
 
 	for v, pi := range versions {
+		fmt.Printf("Process version %s\n", v)
 		var method []Method
 		getMethods(tag, api, &method, pi, path)
 		api.Versions[v] = method
