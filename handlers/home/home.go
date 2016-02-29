@@ -17,5 +17,5 @@ func Register(r *pat.Router) {
 // Handler is a http.Handler for the home page
 func Handler(w http.ResponseWriter, req *http.Request) {
 	logger.Printf(nil, "Render HTML for index page")
-	render.HTML(w, http.StatusOK, "index", render.DefaultVars(req, render.Vars{"Title": "Companies House API"}))
+	render.HTML(w, http.StatusOK, "index", render.DefaultVars(req, render.Vars{"Title": "API documentation"}))
 }

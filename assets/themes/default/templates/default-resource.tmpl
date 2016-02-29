@@ -1,10 +1,10 @@
-[: template "fragments/docs/version_header" (map "API" .API "Title" .Resource.Title )  :]
+[: template "fragments/docs/version_header" . :]
 
 <h2 class="sub-header">Methods</h2>
 
 <ul class="">
   [: range .Resource.Methods :]
-    <li><a href="/docs/[: .API.ID :]/[: .ID :]">[: .Method :]</a> - [: .Name :]</li>
+    <li><a href="/docs/[: .API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method :]</a> - [: .Name :]</li>
   [: end :]
 </ul>
 

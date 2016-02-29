@@ -44,11 +44,12 @@ func (a APISet) GetByID(id string) *API {
 // API represents an API
 // XXX Versisons will only contain other (not the current) version if the x-version (singular) extension is implemented XXX
 type API struct {
-	ID       string
-	Name     string
-	Versions map[string][]Method // All versions, keyed by version string.
-	Methods  []Method            // The current version
-	URL      *url.URL
+	ID             string
+	Name           string
+	Versions       map[string][]Method // All versions, keyed by version string.
+	Methods        []Method            // The current version
+	URL            *url.URL
+	CurrentVersion string
 }
 
 type Version struct {
@@ -152,7 +153,14 @@ func Load(host string) {
 		}
 
 		// Match up on tags:
+		var ok bool
+		var ver interface{}
 		for p, o := range swaggerdoc.AllPaths() {
+			if ver, ok = o.Extensions["x-version"]; !ok {
+				ver = "latest"
+			}
+			api.CurrentVersion = ver.(string)
+
 			getMethods(tag, &api, &api.Methods, o, p) // Current version
 			getVersions(tag, &api, o.Versions, p)     // All versions
 		}
