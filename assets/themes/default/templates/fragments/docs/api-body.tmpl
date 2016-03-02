@@ -11,7 +11,7 @@
     [: range .Methods :]
     <tr>
       <td>
-        <a id="[: .ID :]" href="/docs/[: $.API.ID :]/[: .ID :]">[: .Method :]</a>
+        <a id="[: .ID :]" href="/docs/[: $.API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method :]</a>
       </td>
       <td>
         <pre>[: uc .Method :]&nbsp;[: .Path :]</pre></td>

@@ -1,35 +1,31 @@
 <div class="col-sm-3 col-md-2 sidebar">
     <ul class="nav nav-sidebar">
         [: range $api := .APIs :]
-          <li class="service">
-              <a class="service_link" href="/docs/[: $api.ID :]">[: $api.Name :]</a>
-
-              <ul class="">
+          <li>
+              <a href="/docs/[: $api.ID :]" class="nav-toggle" data-toggle="collapse" data-target="#sub[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
+              <ul class="nav" id="sub[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
                   [: range $method := .Methods :]
-                  <li class="method">
-                      <a class="sub_link" href="/docs/[: $api.ID :]/[: $method.ID :]">[: $method.Name :]</a>
-                      <li class="content-divider">
-                          Resources
-                          <ul class="">
-                              [: range $resource := $method.Resources :]
-                              <li>
-                                  <a class="sub_link" href="/docs/[: $api.ID :]/[: $method.ID :]/[: $resource.ID :]">[: $resource.Title :]</a>
-                              </li>
-                              [: end :]
-                          </ul>
-                      </li>
-                      <li class="content-divider">
-                          Swagger
-                          <ul class="">
-                              <li>
-                                  <a class="sub_link" href="/spec/swagger.json">Download</a>
-                              </li>
-                          </ul>
-                      </li>
-                  </li>
+                  <li><a href="/docs/[: $api.ID :]/[: $method.ID :]">[: $method.Method :]</a></li>
                   [: end :]
+                  <!-- Resources for the entire API -->
+<!-- This might not be valid, and far better if the resources are accessed from within the method page,
+     just in case there is a collision.
+     Alternatively, list the resources at the method level (they're in the tree...) but that looks really messy. Make it expandable? 
+                  <li>Resources
+                      <ul class="nav">
+                          [: range $name, $resource := $api.Resources :]
+                          <li><a href="/docs/[: $api.ID :]/resource/[: $name :]">[: $resource.Title :]</a></li>
+                          [: end :]
+                      </ul>
+                  </li>
+-->
+                  <li>Swagger
+                      <ul class="nav">
+                          <li><a class="sub_link" href="/spec/swagger.json">Download</a></li>
+                      </ul>
+                  </li>
               </ul>
           </li>
         [: end :]
-    </ol>
+    </ul>
 </div>

@@ -42,14 +42,14 @@ func (a APISet) GetByID(id string) *API {
 }
 
 // API represents an API
-// XXX Versisons will only contain other (not the current) version if the x-version (singular) extension is implemented XXX
 type API struct {
 	ID             string
 	Name           string
+	URL            *url.URL
 	Versions       map[string][]Method // All versions, keyed by version string.
 	Methods        []Method            // The current version
-	URL            *url.URL
 	CurrentVersion string
+	Resources      map[string]*Resource
 }
 
 type Version struct {
@@ -313,8 +313,14 @@ func processMethod(api *API, o *spec.Operation, path, methodname string) *Method
 		}
 	}
 
+	api.Resources = make(map[string]*Resource)
 	for _, r := range resources {
 		method.Resources = append(method.Resources, r)
+		// FIXME ERROR IF THERE IS A COLLISION FIXME
+		// NOTE This will be a collection of the resources available across all versions.
+		// XXX This may not be a valid thing to do - perhaps resources should only be accessible from the method that
+		//     declares them...
+		api.Resources[r.ID] = r
 	}
 
 	// Lookup security reference against SecurityDefinitions
