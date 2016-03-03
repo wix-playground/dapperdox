@@ -9,7 +9,7 @@ import (
 
 	//"github.com/companieshouse/swaggerly/logger"
 	"github.com/companieshouse/go-swagger/spec"
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 )
@@ -245,8 +245,13 @@ func getSecurityDefinitions(spec *spec.Swagger) {
 
 func processMethod(api *API, o *spec.Operation, path, methodname string) *Method {
 
+    id := o.ID
+    if id == "" {
+        id = methodname
+    }
+
 	method := &Method{
-		ID:          camelToKebab(o.ID),
+		ID:          camelToKebab(id),
 		Name:        o.Summary,
 		Description: o.Description,
 		Method:      methodname,
@@ -286,7 +291,8 @@ func processMethod(api *API, o *spec.Operation, path, methodname string) *Method
 	}
 
 	for status, response := range o.Responses.StatusCodeResponses {
-
+log.Printf("Got response schema (status %s):\n", status)
+spew.Dump(response.Schema)
 		r := resourceFromSchema(response.Schema, nil)
 
 		if response.Schema != nil {
@@ -362,6 +368,38 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 		return nil
 	}
 
+    // XXX This is a bit of a hack, as it is possible for a response to be an array of
+    //     objects, and it it possible to declare this in several ways:
+    // 1. As :
+    //      "schema": {
+    //        "$ref": "model"
+    //      }
+    //      Where the model declares itself of type array (of objects)
+    // 2. Or :
+    //    "schema": {
+    //        "type": "array",
+    //        "items": {
+    //            "$ref": "model"
+    //        }
+    //    }
+    //
+    //  In the second version, "items" points to a schema. So what we have done to align these
+    //  two cases is to keep the top level "type" in the second case, and apply it to items.schema.Type,
+    //  reseting our schema variable to items.schema.
+    //
+fmt.Printf("CHECK schema type and items\n")
+spew.Dump(s)
+    //if s.Type.Contains("array") && s.Items != nil {
+    if s.Items != nil {
+        stringorarray := s.Type
+        s = s.Items.Schema
+        if ! s.Type.Contains("array") {
+            s.Type = stringorarray
+        }
+//fmt.Printf("REMAP SCHEMA\n")
+//spew.Dump(s)
+    }
+
 	myFQNS := append([]string{}, fqNS...)
 	id := titleToKebab(s.Title)
 
@@ -402,10 +440,12 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 
 	json_representation := make(map[string]interface{})
 
-	// log.Printf("expandSchema Type %s FQNS %s\n", s.Type, strings.Join(myFQNS, "."))
+	log.Printf("expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
+        fmt.Printf("DUMP s.Properties\n")
+        spew.Dump(s.Properties)
 
 	for name, property := range s.Properties {
-		//log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
+		log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
 		newFQNS := append([]string{}, myFQNS...)
 		if chopped && len(id) > 0 {
 			newFQNS = append(newFQNS, id)
@@ -421,15 +461,15 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 
 		// FIXME this is as nasty as it looks...
 		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
-			// log.Printf("Type is '%s'\n", r.Properties[name].Type[0])
+			log.Printf("JR: Type is '%s'\n", r.Properties[name].Type[0])
 
 			// Arrays of objects need to be handled as a special case
 			if strings.ToLower(r.Properties[name].Type[0]) == "array" {
 				if property.Items != nil {
 					if property.Items.Schema != nil {
 
-						// log.Printf("ARRAY PROCESS %s:\n", name)
-						// spew.Dump(property.Items.Schema)
+						log.Printf("ARRAY PROCESS %s:\n", name)
+						//spew.Dump(property.Items.Schema)
 
 						// Add [] to end of fully qualified name space
 						xFQNS := append([]string{}, newFQNS...)
@@ -471,9 +511,22 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	}
 
 	// Build element of resource schema example
-	// FIXME also as nasty as it looks
+	// FIXME This explodes if there is no "type" member in the actual model definition - which is probably right
+    //       for setting type of array in the model is a bit restrictive - better if set in the response decl. to
+    //       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
+    //
+
+fmt.Printf("DUMP s.Type\n")
+spew.Dump(s.Type)
 	if strings.ToLower(r.Type[0]) != "object" {
-		r.Schema = r.Type[0]
+	    if strings.ToLower(r.Type[0]) == "array" {
+	        var array_obj []map[string]interface{}
+            array_obj = append(array_obj, json_representation)
+		    schema, _ := json.MarshalIndent(array_obj, "", "    ")
+		    r.Schema = string(schema)
+        } else {
+		    r.Schema = r.Type[0]
+        }
 	} else {
 		schema, err := json.MarshalIndent(json_representation, "", "    ")
 		if err != nil {

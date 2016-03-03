@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"github.com/companieshouse/swaggerly/logger"
 )
 
 var _bindata = map[string][]byte{}
@@ -67,6 +68,7 @@ func Compile(dir string, prefix string) {
 
 		// FIXME Make log trace
 		//fmt.Printf("Import file as '%s'\n", newname)
+	    logger.Tracef(nil, "Import file as '%s'\n", newname)
 
 		if _, ok := _bindata[newname]; !ok {
 			_bindata[newname] = buf
