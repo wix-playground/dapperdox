@@ -75,23 +75,41 @@
         </table>
       </div>
 
-        [: if not .User :]
-        <span>
-            <p>To explore this api, you must be <a href="/signin">signed in</a> and have registered for at least one API key. Registration takes a few seconds, and allows you to explore the API from right here in the web page!</p>
-            </p>You can create an API key through <a href="/applications">Your Applications</a> page.</p>
-        </span>
-        [: else :]
-        <span>
-            <p>Authorise with API Key: <label for="api-key-select">
-                    <select style="font-size: 16px" id="api-key-select" class="api-key-select">
-                        [: range $name, $key := .APIkeys :]<option value="[: $key :]">[: $name :]</option>[: end :]
-                        <option value="">None</option>
-                    </select>
-                </label>
-            </p>
-            <a href="#here" name="here" id="exploreButton" class="button">Try it out!</a>
-        </span>
+            [: if not .User :]
+            <span>
+                <p>To explore this api, you must be <a href="/signin">signed in</a> and have registered for at least one API key. Registration takes a few seconds, and allows you to explore the API from right here in the web page!</p>
+                </p>You can create an API key through <a href="/applications">Your Applications</a> page.</p>
+            </span>
+            [: else :]
+            <span>
+                <p>Authorise with API Key: <label for="api-key-select">
+                        <select style="font-size: 16px" id="api-key-select" class="api-key-select">
+                            [: range $name, $key := .APIkeys :]<option value="[: $key :]">[: $name :]</option>[: end :]
+                            <option value="">None</option>
+                        </select>
+                    </label>
+                </p>
+                <a href="#here" name="here" id="exploreButton" class="button">Try it out!</a>
+            </span>
         [: end :]
+<!--
+        [: if .Method.Security :]
+                <p>Authorise with:
+            [: range $name, $security := .Method.Security :]
+                [: if $security.Scheme.IsApiKey :]
+                    <br /><label for="api-key-input">API key</label>
+                    <input id="api-key-input" type="text" data-type="" name="apikey" value="" placeholder="API key" />
+                [: end :]
+                [: if $security.Scheme.IsOAuth2 :]
+                    <br /><label for="access-token-input">access token</label>
+                    <input id="access-token-input" type="text" data-type="" name="access_token" value="" placeholder="access token" />
+                [: end :]
+                [: if $security.Scheme.IsBasic :][: end :]
+                </p>
+            [: end :]
+            <a href="#here" name="here" id="exploreButton" class="button">Try it out!</a>
+        [: end :]
+-->
     </form>
     <img id="progress" src="/style/ajax-loader.gif" style="display: none; margin-left: 20px;" />
 
