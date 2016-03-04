@@ -149,12 +149,14 @@ li code, td p code {
 
 td.resource {
     color: #008000;
-    font-family: "Courier New", Courier, monospace;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace; 
     text-transform: none;
+    font-size: 95%
 }
 
 td span.object {
-    color: #6f777b;
+    /* color: #2f373b; */
+    color: #a0a0a0;
 }
 
 /* Allows button to be on same row as heading */

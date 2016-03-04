@@ -19,6 +19,7 @@ type APISet []API
 
 // APIs represents the parsed APIs
 var APIs APISet
+var APIInfo Info
 var SecurityDefinitions map[string]SecurityScheme
 
 // GetByName returns an API by name
@@ -41,6 +42,11 @@ func (a APISet) GetByID(id string) *API {
 	return nil
 }
 
+type Info struct {
+    Title       string
+    Description string
+}
+
 // API represents an API
 type API struct {
 	ID             string
@@ -50,6 +56,7 @@ type API struct {
 	Methods        []Method            // The current version
 	CurrentVersion string
 	Resources      map[string]*Resource
+    Info           *Info
 }
 
 type Version struct {
@@ -142,6 +149,10 @@ func Load(host string) {
 		log.Fatal(err)
 	}
 
+    APIInfo.Title = swaggerdoc.Spec().Info.Title
+    APIInfo.Description = swaggerdoc.Spec().Info.Description
+fmt.Printf( "TITLE %s\n", APIInfo.Title)
+
 	getSecurityDefinitions(swaggerdoc.Spec())
 
 	// Use the top level TAGS to order the API resources/endpoints
@@ -150,9 +161,10 @@ func Load(host string) {
 			ID:   titleToKebab(tag.Name),
 			Name: tag.Name,
 			URL:  u,
+            Info: &APIInfo,
 		}
 
-		// Match up on tags:
+		// Match up on tags: FIXME This does not work correctly if multiple paths have the same TAG (which is allowed)
 		var ok bool
 		var ver interface{}
 		for p, o := range swaggerdoc.AllPaths() {
@@ -389,11 +401,24 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
     //
 fmt.Printf("CHECK schema type and items\n")
 spew.Dump(s)
-    //if s.Type.Contains("array") && s.Items != nil {
+
+    if s.Type == nil {
+        s.Type = append(s.Type, "object")
+    }
+
     if s.Items != nil {
         stringorarray := s.Type
-        s = s.Items.Schema
-        if ! s.Type.Contains("array") {
+
+        // EEK This is officially icky! See the Activities model in petstore. It declares "items": [ { } ] !!
+        //     with an ARRAY
+        if s.Items.Schema != nil {
+            s = s.Items.Schema
+        } else {
+            s = &s.Items.Schemas[0]
+        }
+        if s.Type == nil {
+            s.Type = stringorarray
+        } else if s.Type.Contains("array") {
             s.Type = stringorarray
         }
 //fmt.Printf("REMAP SCHEMA\n")

@@ -93,7 +93,11 @@ func getVersionMethod(api spec.API, version string) *[]spec.Method {
 
 // ------------------------------------------------------------------------------------------------------------
 
-func getMethodVersions(versions versionedMethod) []string {
+func getMethodVersions(api spec.API, versions versionedMethod) []string {
+    // See how many versions there are accross the whole API. If 1, then version selection is not required.
+    if len(api.Versions) < 2 {
+        return nil
+    }
 	keys := make([]string, len(versions))
 	ix := 0
 	for key := range versions {
@@ -106,7 +110,11 @@ func getMethodVersions(versions versionedMethod) []string {
 // ------------------------------------------------------------------------------------------------------------
 
 func getAPIVersions(api spec.API) []string {
-	keys := make([]string, len(api.Versions))
+	count := len(api.Versions)
+    if count < 2 {
+        return nil // There is only one version defined
+    }
+	keys := make([]string, count)
 	ix := 0
 	for key := range api.Versions {
 		keys[ix] = key
@@ -117,7 +125,11 @@ func getAPIVersions(api spec.API) []string {
 
 // ------------------------------------------------------------------------------------------------------------
 
-func getResourceVersions(versions versionedResource) []string {
+func getResourceVersions(api spec.API, versions versionedResource) []string {
+    // See how many versions there are accross the whole API. If 1, then version selection is not required.
+    if len(api.Versions) < 2 {
+        return nil
+    }
 	keys := make([]string, len(versions))
 	ix := 0
 	for key := range versions {
@@ -160,7 +172,7 @@ func MethodHandler(api spec.API, path string) func(w http.ResponseWriter, req *h
 		if version == "" {
 			version = api.CurrentVersion
 		}
-		versions := getMethodVersions(pathVersionMethod[path])
+		versions := getMethodVersions(api, pathVersionMethod[path])
 		method := pathVersionMethod[path][version]
 
 		tmpl := "default-method"
@@ -190,7 +202,7 @@ func ResourceHandler(api spec.API, method spec.Method, path string) func(w http.
 		if version == "" {
 			version = api.CurrentVersion
 		}
-		versions := getResourceVersions(pathVersionResource[path])
+		versions := getResourceVersions(api, pathVersionResource[path])
 		resource := pathVersionResource[path][version]
 
 		logger.Printf(nil, "Render resource "+resource.ID)

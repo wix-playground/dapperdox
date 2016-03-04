@@ -14,9 +14,11 @@
     "application/json"
     ],
   "tags": [
-    {
-      "name": "Products"
-    }
+    { "name": "Products" },
+    { "name":"Estimates Price" },
+    { "name":"Estimates Time" },
+    { "name": "User Profile" },
+    { "name": "User Activity" }
   ],
     "paths": {
         "/products": {
@@ -48,8 +50,7 @@
                     "200": {
                         "description": "An array of products",
                         "schema": {
-                            "x-$ref": "#/definitions/Product",
-                            "x-type": "array",
+                            "type": "array",
                             "items": {
                                 "$ref": "#/definitions/Product"
                             }
@@ -103,7 +104,7 @@
                 }
                 ],
                 "tags": [
-                "Estimates"
+                "Estimates Price"
                 ],
                 "responses": {
                     "200": {
@@ -160,7 +161,7 @@
                 }
                 ],
                 "tags": [
-                "Estimates"
+                "Estimates Time"
                 ],
                 "responses": {
                     "200": {
@@ -186,7 +187,7 @@
                 "summary": "User Profile",
                 "description": "The User Profile endpoint returns information about the Uber user that has authorized with the application.",
                 "tags": [
-                "User"
+                "User Profile"
                 ],
                 "responses": {
                     "200": {
@@ -225,7 +226,7 @@
                 }
                 ],
                 "tags": [
-                "User"
+                "User Activity"
                 ],
                 "responses": {
                     "200": {
@@ -246,7 +247,6 @@
     },
     "definitions": {
         "Product": {
-            "type":"array",
             "title":"Product resource",
             "properties": {
                 "product_id": {
@@ -272,6 +272,8 @@
             }
         },
         "PriceEstimate": {
+            "type":"array",
+            "title":"Price Estimate resource",
             "properties": {
                 "product_id": {
                     "type": "string",
@@ -304,6 +306,7 @@
             }
         },
         "Profile": {
+            "title": "Profile resource",
             "properties": {
                 "first_name": {
                     "type": "string",
@@ -328,6 +331,7 @@
             }
         },
         "Activity": {
+            "title":"Activity resource",
             "properties": {
                 "uuid": {
                     "type": "string",
@@ -336,6 +340,7 @@
             }
         },
         "Activities": {
+            "title":"Activities resource",
             "properties": {
                 "offset": {
                     "type": "integer",
@@ -355,15 +360,16 @@
                 "history": {
                     "type": "array",
                     "items": [
-                    {
-                        "$ref": "#/definitions/Activity"
-                    }
+                        {
+                            "$ref": "#/definitions/Activity"
+                        }
                     ]
                 }
             }
         },
         "Error": {
             "type":"object",
+            "title":"Error resource",
             "properties": {
                 "code": {
                     "type": "integer",
