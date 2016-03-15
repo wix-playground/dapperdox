@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/companieshouse/swaggerly/config"
-	"github.com/companieshouse/swaggerly/logger"
-	"github.com/companieshouse/swaggerly/render/override"
-	"github.com/companieshouse/swaggerly/spec"
+	"fmt"
 	"github.com/ian-kent/htmlform"
 	"github.com/unrolled/render"
-	"fmt"
+	"github.com/zxchris/swaggerly/config"
+	"github.com/zxchris/swaggerly/logger"
+	"github.com/zxchris/swaggerly/render/override"
+	"github.com/zxchris/swaggerly/spec"
 )
 
 // Render is a global instance of github.com/unrolled/render.Render
@@ -40,15 +40,15 @@ func New() *render.Render {
 	// TODO only import the theme specified instead of all installed themes that will not be used!
 
 	if len(cfg.ThemesDir) != 0 {
-	    logger.Tracef(nil, "Picking up themes from directory: " + cfg.ThemesDir+"/"+cfg.Theme+"/assets")
-	    fmt.Printf("Picking up themes from directory: " + cfg.ThemesDir+"/"+cfg.Theme+"/assets\n")
+		logger.Tracef(nil, "Picking up themes from directory: "+cfg.ThemesDir+"/"+cfg.Theme+"/assets")
+		fmt.Printf("Picking up themes from directory: " + cfg.ThemesDir + "/" + cfg.Theme + "/assets\n")
 		override.Compile(cfg.ThemesDir+"/"+cfg.Theme, "assets")
 	}
-    // Fallback to local themes directory
+	// Fallback to local themes directory
 	override.Compile(cfg.DefaultAssetsDir+"/themes/"+cfg.Theme, "assets")
-    // Fallback to local templates directory
+	// Fallback to local templates directory
 	override.Compile(cfg.DefaultAssetsDir+"/templates", "assets/templates")
-    // Fallback to local static directory
+	// Fallback to local static directory
 	override.Compile(cfg.DefaultAssetsDir+"/static", "assets/static")
 
 	return render.New(render.Options{

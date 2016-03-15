@@ -7,10 +7,10 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/zxchris/go-swagger/spec"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
+	"github.com/zxchris/go-swagger/spec"
 )
 
 // APISet is a slice of API structs
@@ -42,8 +42,8 @@ func (a APISet) GetByID(id string) *API {
 }
 
 type Info struct {
-    Title       string
-    Description string
+	Title       string
+	Description string
 }
 
 // API represents an API
@@ -55,7 +55,7 @@ type API struct {
 	Methods        []Method            // The current version
 	CurrentVersion string
 	Resources      map[string]*Resource
-    Info           *Info
+	Info           *Info
 }
 
 type Version struct {
@@ -148,9 +148,9 @@ func Load(host string) {
 		log.Fatal(err)
 	}
 
-    APIInfo.Title = swaggerdoc.Spec().Info.Title
-    APIInfo.Description = swaggerdoc.Spec().Info.Description
-fmt.Printf( "TITLE %s\n", APIInfo.Title)
+	APIInfo.Title = swaggerdoc.Spec().Info.Title
+	APIInfo.Description = swaggerdoc.Spec().Info.Description
+	fmt.Printf("TITLE %s\n", APIInfo.Title)
 
 	getSecurityDefinitions(swaggerdoc.Spec())
 
@@ -160,7 +160,7 @@ fmt.Printf( "TITLE %s\n", APIInfo.Title)
 			ID:   titleToKebab(tag.Name),
 			Name: tag.Name,
 			URL:  u,
-            Info: &APIInfo,
+			Info: &APIInfo,
 		}
 
 		// Match up on tags: FIXME This does not work correctly if multiple paths have the same TAG (which is allowed)
@@ -256,10 +256,10 @@ func getSecurityDefinitions(spec *spec.Swagger) {
 
 func processMethod(api *API, o *spec.Operation, path, methodname string) *Method {
 
-    id := o.ID
-    if id == "" {
-        id = methodname
-    }
+	id := o.ID
+	if id == "" {
+		id = methodname
+	}
 
 	method := &Method{
 		ID:          camelToKebab(id),
@@ -302,8 +302,8 @@ func processMethod(api *API, o *spec.Operation, path, methodname string) *Method
 	}
 
 	for status, response := range o.Responses.StatusCodeResponses {
-log.Printf("Got response schema (status %s):\n", status)
-spew.Dump(response.Schema)
+		log.Printf("Got response schema (status %s):\n", status)
+		spew.Dump(response.Schema)
 		r := resourceFromSchema(response.Schema, nil)
 
 		if response.Schema != nil {
@@ -379,50 +379,50 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 		return nil
 	}
 
-    // XXX This is a bit of a hack, as it is possible for a response to be an array of
-    //     objects, and it it possible to declare this in several ways:
-    // 1. As :
-    //      "schema": {
-    //        "$ref": "model"
-    //      }
-    //      Where the model declares itself of type array (of objects)
-    // 2. Or :
-    //    "schema": {
-    //        "type": "array",
-    //        "items": {
-    //            "$ref": "model"
-    //        }
-    //    }
-    //
-    //  In the second version, "items" points to a schema. So what we have done to align these
-    //  two cases is to keep the top level "type" in the second case, and apply it to items.schema.Type,
-    //  reseting our schema variable to items.schema.
-    //
-fmt.Printf("CHECK schema type and items\n")
-spew.Dump(s)
+	// XXX This is a bit of a hack, as it is possible for a response to be an array of
+	//     objects, and it it possible to declare this in several ways:
+	// 1. As :
+	//      "schema": {
+	//        "$ref": "model"
+	//      }
+	//      Where the model declares itself of type array (of objects)
+	// 2. Or :
+	//    "schema": {
+	//        "type": "array",
+	//        "items": {
+	//            "$ref": "model"
+	//        }
+	//    }
+	//
+	//  In the second version, "items" points to a schema. So what we have done to align these
+	//  two cases is to keep the top level "type" in the second case, and apply it to items.schema.Type,
+	//  reseting our schema variable to items.schema.
+	//
+	fmt.Printf("CHECK schema type and items\n")
+	spew.Dump(s)
 
-    if s.Type == nil {
-        s.Type = append(s.Type, "object")
-    }
+	if s.Type == nil {
+		s.Type = append(s.Type, "object")
+	}
 
-    if s.Items != nil {
-        stringorarray := s.Type
+	if s.Items != nil {
+		stringorarray := s.Type
 
-        // EEK This is officially icky! See the Activities model in petstore. It declares "items": [ { } ] !!
-        //     with an ARRAY
-        if s.Items.Schema != nil {
-            s = s.Items.Schema
-        } else {
-            s = &s.Items.Schemas[0]
-        }
-        if s.Type == nil {
-            s.Type = stringorarray
-        } else if s.Type.Contains("array") {
-            s.Type = stringorarray
-        }
-//fmt.Printf("REMAP SCHEMA\n")
-//spew.Dump(s)
-    }
+		// EEK This is officially icky! See the Activities model in petstore. It declares "items": [ { } ] !!
+		//     with an ARRAY
+		if s.Items.Schema != nil {
+			s = s.Items.Schema
+		} else {
+			s = &s.Items.Schemas[0]
+		}
+		if s.Type == nil {
+			s.Type = stringorarray
+		} else if s.Type.Contains("array") {
+			s.Type = stringorarray
+		}
+		//fmt.Printf("REMAP SCHEMA\n")
+		//spew.Dump(s)
+	}
 
 	myFQNS := append([]string{}, fqNS...)
 	id := titleToKebab(s.Title)
@@ -465,8 +465,8 @@ spew.Dump(s)
 	json_representation := make(map[string]interface{})
 
 	log.Printf("expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
-        fmt.Printf("DUMP s.Properties\n")
-        spew.Dump(s.Properties)
+	fmt.Printf("DUMP s.Properties\n")
+	spew.Dump(s.Properties)
 
 	for name, property := range s.Properties {
 		log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
@@ -536,21 +536,21 @@ spew.Dump(s)
 
 	// Build element of resource schema example
 	// FIXME This explodes if there is no "type" member in the actual model definition - which is probably right
-    //       for setting type of array in the model is a bit restrictive - better if set in the response decl. to
-    //       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
-    //
+	//       for setting type of array in the model is a bit restrictive - better if set in the response decl. to
+	//       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
+	//
 
-fmt.Printf("DUMP s.Type\n")
-spew.Dump(s.Type)
+	fmt.Printf("DUMP s.Type\n")
+	spew.Dump(s.Type)
 	if strings.ToLower(r.Type[0]) != "object" {
-	    if strings.ToLower(r.Type[0]) == "array" {
-	        var array_obj []map[string]interface{}
-            array_obj = append(array_obj, json_representation)
-		    schema, _ := json.MarshalIndent(array_obj, "", "    ")
-		    r.Schema = string(schema)
-        } else {
-		    r.Schema = r.Type[0]
-        }
+		if strings.ToLower(r.Type[0]) == "array" {
+			var array_obj []map[string]interface{}
+			array_obj = append(array_obj, json_representation)
+			schema, _ := json.MarshalIndent(array_obj, "", "    ")
+			r.Schema = string(schema)
+		} else {
+			r.Schema = r.Type[0]
+		}
 	} else {
 		schema, err := json.MarshalIndent(json_representation, "", "    ")
 		if err != nil {

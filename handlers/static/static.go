@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strings"
 
-	//"github.com/companieshouse/swaggerly/assets"
-	"github.com/companieshouse/swaggerly/logger"
-	"github.com/companieshouse/swaggerly/render"
-	"github.com/companieshouse/swaggerly/render/override"
+	//"github.com/zxchris/swaggerly/assets"
 	"github.com/gorilla/pat"
+	"github.com/zxchris/swaggerly/logger"
+	"github.com/zxchris/swaggerly/render"
+	"github.com/zxchris/swaggerly/render/override"
 )
 
 // Register creates routes for each static resource

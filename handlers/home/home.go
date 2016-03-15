@@ -3,9 +3,9 @@ package home
 import (
 	"net/http"
 
-	"github.com/companieshouse/swaggerly/logger"
-	"github.com/companieshouse/swaggerly/render"
 	"github.com/gorilla/pat"
+	"github.com/zxchris/swaggerly/logger"
+	"github.com/zxchris/swaggerly/render"
 )
 
 // Register creates routes for each home handler

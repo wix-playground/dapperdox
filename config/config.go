@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/companieshouse/developer.ch.gov.uk-poc/logger"
 	"github.com/ian-kent/gofigure"
+	"github.com/zxchris/swaggerly/logger"
 )
 
 type config struct {

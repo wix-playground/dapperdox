@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/companieshouse/swaggerly/config"
-	"github.com/companieshouse/swaggerly/logger"
-	"github.com/companieshouse/swaggerly/render"
 	"github.com/gorilla/pat"
+	"github.com/zxchris/swaggerly/config"
+	"github.com/zxchris/swaggerly/logger"
+	"github.com/zxchris/swaggerly/render"
 )
 
 // Register routes for documentation pages

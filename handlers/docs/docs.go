@@ -3,11 +3,11 @@ package docs
 import (
 	"net/http"
 
-	"github.com/companieshouse/swaggerly/logger"
-	"github.com/companieshouse/swaggerly/render"
-	"github.com/companieshouse/swaggerly/spec"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/pat"
+	"github.com/zxchris/swaggerly/logger"
+	"github.com/zxchris/swaggerly/render"
+	"github.com/zxchris/swaggerly/spec"
 )
 
 type versionedMethod map[string]spec.Method      // key is version
@@ -94,10 +94,10 @@ func getVersionMethod(api spec.API, version string) *[]spec.Method {
 // ------------------------------------------------------------------------------------------------------------
 
 func getMethodVersions(api spec.API, versions versionedMethod) []string {
-    // See how many versions there are accross the whole API. If 1, then version selection is not required.
-    if len(api.Versions) < 2 {
-        return nil
-    }
+	// See how many versions there are accross the whole API. If 1, then version selection is not required.
+	if len(api.Versions) < 2 {
+		return nil
+	}
 	keys := make([]string, len(versions))
 	ix := 0
 	for key := range versions {
@@ -111,9 +111,9 @@ func getMethodVersions(api spec.API, versions versionedMethod) []string {
 
 func getAPIVersions(api spec.API) []string {
 	count := len(api.Versions)
-    if count < 2 {
-        return nil // There is only one version defined
-    }
+	if count < 2 {
+		return nil // There is only one version defined
+	}
 	keys := make([]string, count)
 	ix := 0
 	for key := range api.Versions {
@@ -126,10 +126,10 @@ func getAPIVersions(api spec.API) []string {
 // ------------------------------------------------------------------------------------------------------------
 
 func getResourceVersions(api spec.API, versions versionedResource) []string {
-    // See how many versions there are accross the whole API. If 1, then version selection is not required.
-    if len(api.Versions) < 2 {
-        return nil
-    }
+	// See how many versions there are accross the whole API. If 1, then version selection is not required.
+	if len(api.Versions) < 2 {
+		return nil
+	}
 	keys := make([]string, len(versions))
 	ix := 0
 	for key := range versions {
