@@ -8,6 +8,7 @@ package override
 
 import (
 	"fmt"
+	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/swaggerly/logger"
 	"io/ioutil"
 	"os"
@@ -48,10 +49,10 @@ func Compile(dir string, prefix string) {
 			return nil
 		}
 
-		//ext := ""
-		//if strings.Index(path, ".") != -1 {
-		//	ext = filepath.Ext(path)
-		//}
+		ext := ""
+		if strings.Index(path, ".") != -1 {
+			ext = filepath.Ext(path)
+		}
 
 		//if ext == ".tmpl" { // FIXME This may be too restrictive. What about images, css?
 		buf, err := ioutil.ReadFile(path)
@@ -64,10 +65,18 @@ func Compile(dir string, prefix string) {
 			panic(err)
 		}
 
+		// The file may be in GFM, so convert to HTML
+		if ext == ".md" {
+			buf = github_flavored_markdown.Markdown(buf)
+			// Now change extension to be .tmpl
+			md := strings.TrimSuffix(rel, ext)
+			rel = md + ".tmpl"
+		}
+
 		newname := prefix + "/" + rel
 
 		// FIXME Make log trace
-		//fmt.Printf("Import file as '%s'\n", newname)
+		fmt.Printf("Import file as '%s'\n", newname)
 		logger.Tracef(nil, "Import file as '%s'\n", newname)
 
 		if _, ok := _bindata[newname]; !ok {

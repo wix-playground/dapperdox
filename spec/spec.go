@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -303,7 +303,7 @@ func processMethod(api *API, o *spec.Operation, path, methodname string) *Method
 
 	for status, response := range o.Responses.StatusCodeResponses {
 		log.Printf("Got response schema (status %s):\n", status)
-		spew.Dump(response.Schema)
+		//spew.Dump(response.Schema)
 		r := resourceFromSchema(response.Schema, nil)
 
 		if response.Schema != nil {
@@ -398,8 +398,9 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	//  two cases is to keep the top level "type" in the second case, and apply it to items.schema.Type,
 	//  reseting our schema variable to items.schema.
 	//
-	fmt.Printf("CHECK schema type and items\n")
-	spew.Dump(s)
+
+	//fmt.Printf("CHECK schema type and items\n")
+	//spew.Dump(s)
 
 	if s.Type == nil {
 		s.Type = append(s.Type, "object")
@@ -465,8 +466,8 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	json_representation := make(map[string]interface{})
 
 	log.Printf("expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
-	fmt.Printf("DUMP s.Properties\n")
-	spew.Dump(s.Properties)
+	//fmt.Printf("DUMP s.Properties\n")
+	//spew.Dump(s.Properties)
 
 	for name, property := range s.Properties {
 		log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
@@ -540,8 +541,8 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	//       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
 	//
 
-	fmt.Printf("DUMP s.Type\n")
-	spew.Dump(s.Type)
+	//fmt.Printf("DUMP s.Type\n")
+	//spew.Dump(s.Type)
 	if strings.ToLower(r.Type[0]) != "object" {
 		if strings.ToLower(r.Type[0]) == "array" {
 			var array_obj []map[string]interface{}
