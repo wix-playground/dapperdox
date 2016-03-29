@@ -1,68 +1,57 @@
 <div id="explorer">
     <hr/>
     <h2 class="sub-header">Explore this API</h2>
-    <script src='/js/jquery-1.8.0.min.js'  type='text/javascript'></script>
-    <script src='/js/jquery.wiggle.min.js' type='text/javascript'></script>
-    <script src="/js/explorer.js"          type="text/javascript"></script>
 <!--
     <link  href="/style/highlight/xcode.css"   type="text/css" media="screen" rel="stylesheet">
+    <script src='/js/jquery.wiggle.min.js' type='text/javascript'></script>
+    <script src="/js/explorer.js"          type="text/javascript"></script>
 -->
 
     <form id="apiexplorer">
       <div class="table-responsive">
         <table class="table table-striped">
         [: range .Method.PathParams :]
-            <tr>
+            <tr class="form-group" id="[: .Name :]-group">
                 <td>[: .Name :]</td>
-                <td>
-                    [: template "explorer_input" (map "Param" . "Section" "path") :]
-                </td>
+                <td>[: template "explorer_input" (map "Param" . "Section" "path") :]</td>
                 <td>[: .Description :]</td>
             <tr>
         [: end :]
         [: range .Method.QueryParams :]
-            <tr>
+            <tr class="form-group">
                 <td>[: .Name :]</td>
-                <td>
-                    [: template "explorer_input" (map "Param" . "Section" "query") :]
-                </td>
+                <td>[: template "explorer_input" (map "Param" . "Section" "query") :]</td>
                 <td>[: .Description :]</td>
             </tr>
         [: end :]
 [: if .Method.BodyParam :]
 <!-- THIS IS TODO -->
         [: range .Method.BodyParam :]
-            <tr>
+            <tr class="form-group">
                 <td>[: .Name :]</td>
-                <td>
-                    [: template "explorer_input" (map "Param" . "Section" "body") :]
-                </td>
+                <td>[: template "explorer_input" (map "Param" . "Section" "body") :]</td>
                 <td>[: .Description :]</td>
             </tr>
         [: end :]
 [: end :]
         [: range .Method.FormParams :]
-            <tr>
+            <tr class="form-group">
                 <td>[: .Name :]</td>
-                <td>
-                    [: template "explorer_input" (map "Param" . "Section" "form") :]
-                </td>
+                <td>[: template "explorer_input" (map "Param" . "Section" "form") :]</td>
                 <td>[: .Description :]</td>
             </tr>
         [: end :]
         [: range .Method.HeaderParams :]
-            <tr>
+            <tr class="form-group">
                 <td>[: .Name :]</td>
-                <td>
-                    [: template "explorer_input" (map "Param" . "Section" "header") :]
-                </td>
+                <td>[: template "explorer_input" (map "Param" . "Section" "header") :]</td>
                 <td>[: .Description :]</td>
             </tr>
         [: end :]
         <!-- Some request bodies are blocks of JSON or XML. This is different to a body parameter
              which is single string. TODO
         [  : range .Method.Method. :]
-            <tr>
+            <tr class="form-group">
                 <td>Request Body</td>
                 <td colspan="2"><textarea data-type="model" name="<: $param.name :>"
                 : if $param.required {
@@ -75,41 +64,36 @@
         </table>
       </div>
 
-            [: if not .User :]
-            <span>
-                <p>To explore this api, you must be <a href="/signin">signed in</a> and have registered for at least one API key. Registration takes a few seconds, and allows you to explore the API from right here in the web page!</p>
-                </p>You can create an API key through <a href="/applications">Your Applications</a> page.</p>
-            </span>
-            [: else :]
-            <span>
-                <p>Authorise with API Key: <label for="api-key-select">
-                        <select style="font-size: 16px" id="api-key-select" class="api-key-select">
-                            [: range $name, $key := .APIkeys :]<option value="[: $key :]">[: $name :]</option>[: end :]
-                            <option value="">None</option>
-                        </select>
-                    </label>
-                </p>
-                <a href="#here" name="here" id="exploreButton" class="button">Try it out!</a>
-            </span>
-        [: end :]
-<!--
         [: if .Method.Security :]
-                <p>Authorise with:
+          <h3 class="sub-sub-header">Choose one authorisation method to use:</h3>
+      <div class="table-responsive">
+        <table class="table table-striped">
             [: range $name, $security := .Method.Security :]
-                [: if $security.Scheme.IsApiKey :]
-                    <br /><label for="api-key-input">API key</label>
-                    <input id="api-key-input" type="text" data-type="" name="apikey" value="" placeholder="API key" />
-                [: end :]
-                [: if $security.Scheme.IsOAuth2 :]
-                    <br /><label for="access-token-input">access token</label>
-                    <input id="access-token-input" type="text" data-type="" name="access_token" value="" placeholder="access token" />
-                [: end :]
-                [: if $security.Scheme.IsBasic :][: end :]
-                </p>
+              [: if $security.Scheme.IsApiKey :]
+                <tr class="form-group">
+                    <td>API key</td>
+                    <td>
+                       <select style="font-size: 16px" id="api-key-select" class="form-control api-key-select">
+                           <option value="">None</option>
+                       </select>
+                       <input id="api-key-input" type="text" name="api_key" value="" placeholder="API key" class="form-control"/>
+                    </td>
+                    <td>API key to be used for request</td>
+                </tr>
+              [: end :]
+              [: if $security.Scheme.IsOAuth2 :]
+                <tr class="form-group"><td id="api-key-block">Access Token</td>
+                    <td><input id="access-token-input" type="text" data-type="" name="access_token" value="" placeholder="access token" class="form-control"/></td>
+                    <td>Access token to be used for request</td>
+                </tr>
+              [: end :]
+              [: if $security.Scheme.IsBasic :][: end :]
             [: end :]
-            <a href="#here" name="here" id="exploreButton" class="button">Try it out!</a>
+          </p>
         [: end :]
--->
+        </table>
+     </div>
+        <a href="#here" name="here" id="exploreButton" class="btn btn-success">Try it out!</a>
     </form>
     <img id="progress" src="/style/ajax-loader.gif" style="display: none; margin-left: 20px;" />
 
@@ -135,6 +119,7 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+        explorerInjectApiKeys();
         $(document).on('click', '#exploreButton', function() {
             var url   = '[: .API.URL :][: .Method.Path :]';
             var method= '[: .Method.Method :]';

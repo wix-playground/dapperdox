@@ -1,5 +1,39 @@
 // --------------------------------------------------------------------------------------
 //
+var _apiKeys = {};
+var explorerAddApiKey = function(name,key) {
+    _apiKeys[name] = key;
+}
+var explorerListApiKeys = function(){
+    return Object.keys(_apiKeys);
+}
+var explorerGetApiKey = function(name){
+    return _apiKeys[name];
+}
+var explorerInjectApiKeys = function() {
+    var select = document.getElementById("api-key-select");
+
+    var names = explorerListApiKeys();
+    var len   = names.length;
+
+    if( len == 0 ) {
+        $('#api-key-select').hide();
+        $('#api-key-input').show();
+        return;
+    } 
+
+    $('#api-key-select').show();
+    $('#api-key-input').hide();
+
+    for (var i = 0; i < len; i++) {
+        var option = document.createElement("option");
+        option.text = names[i];
+        option.setAttribute("value", explorerGetApiKey(option.text) );
+        select.appendChild(option);
+    }
+}
+
+// --------------------------------------------------------------------------------------
 var process = function(text, status, xhr, fullhost) {
     var content = xhr.getResponseHeader('Content-Type');
 
@@ -109,7 +143,6 @@ var exploreapi = function( method, url ){
 
         // Pick up any missing mandatory fields
         if( required && val == "" ) {
-            //errors.push( input );
             errors.push( $input );
         }
 
@@ -147,7 +180,9 @@ var exploreapi = function( method, url ){
     // Handle errors
     if( errors.length ) {
         $.each( errors, function( index, value ) {
-            value.addClass("errorfield");
+            // Target outer "group" with has-error class, as well as the input field. This gives a bit of flexibility
+            $('#'+value.prop('name')+'-group').addClass("has-error");
+            value.addClass("has-error");
             value.wiggle();
         });
         $('#results').hide();
@@ -227,7 +262,6 @@ var exploreapi = function( method, url ){
         error:    function( xhr,  status, text) { process(xhr.responseText,  status, xhr, fullhost) },
         beforeSend: function( request ) {
             set_headers( request, headers );
-            //request.setRequestHeader("Authorization", "Basic " + btoa(atob(apiKey) + ":"));
             request.setRequestHeader("Authorization", "Basic " + btoa(apiKey + ":"));
             $('#progress').stop(1,0).hide().delay(800).fadeIn();
             $('#response').stop(1,0).delay(10).hide();
