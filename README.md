@@ -20,6 +20,7 @@ Point your browser to `http://0.0.0.0:3123` or `http://127.0.0.1:3123` or `http:
 ### Next steps
 Where simply running Swaggerly and pointing it at your swagger specifications will give you some documentation quickly, there
 will be a number of things that you will want to configure or change:
+
 1. The URLs picked up from the swagger specifications will probably not match your environment.
 2. You will want to supplement the auto-generated resource documentation with your own authored text and guides.
 

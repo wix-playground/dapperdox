@@ -76,7 +76,7 @@
                        <select style="font-size: 16px" id="api-key-select" class="form-control api-key-select">
                            <option value="">None</option>
                        </select>
-                       <input id="api-key-input" type="text" name="api_key" value="" placeholder="API key" class="form-control"/>
+                       <input id="api-key-input" type="text" name="api-key" value="" placeholder="API key" class="form-control"/>
                     </td>
                     <td>API key to be used for request</td>
                 </tr>
@@ -119,11 +119,11 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        explorerInjectApiKeys();
+        apiExplorer.injectApiKeysIntoPage();
         $(document).on('click', '#exploreButton', function() {
             var url   = '[: .API.URL :][: .Method.Path :]';
             var method= '[: .Method.Method :]';
-            exploreapi( method, url )
+            apiExplorer.go( method, url );
         });
     });
 </script>

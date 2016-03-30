@@ -1,19 +1,20 @@
 // --------------------------------------------------------------------------------------
 //
-var _apiKeys = {};
-var explorerAddApiKey = function(name,key) {
-    _apiKeys[name] = key;
+var apiExplorer = { _apiKeys: {} };
+
+apiExplorer.addApiKey = function(name,key) {
+    this._apiKeys[name] = key;
 }
-var explorerListApiKeys = function(){
-    return Object.keys(_apiKeys);
+apiExplorer.listApiKeys = function(){
+    return Object.keys(this._apiKeys);
 }
-var explorerGetApiKey = function(name){
-    return _apiKeys[name];
+apiExplorer.getApiKey = function(name){
+    return this._apiKeys[name];
 }
-var explorerInjectApiKeys = function() {
+apiExplorer.injectApiKeysIntoPage = function() {
     var select = document.getElementById("api-key-select");
 
-    var names = explorerListApiKeys();
+    var names = this.listApiKeys();
     var len   = names.length;
 
     if( len == 0 ) {
@@ -28,13 +29,21 @@ var explorerInjectApiKeys = function() {
     for (var i = 0; i < len; i++) {
         var option = document.createElement("option");
         option.text = names[i];
-        option.setAttribute("value", explorerGetApiKey(option.text) );
+        option.setAttribute("value", this.getApiKey(option.text) );
         select.appendChild(option);
     }
+};
+apiExplorer.setBeforeSendCallback = function( func ) {
+    this._extendCallback = func;
 }
 
+// Read the API get from the explorer input parameters.
+apiExplorer.readApiKey = function() {
+    return $('#api-key-select').val() || $('#api-key-input').val() || "";
+};
+
 // --------------------------------------------------------------------------------------
-var process = function(text, status, xhr, fullhost) {
+var _process = function(text, status, xhr, fullhost) {
     var content = xhr.getResponseHeader('Content-Type');
 
     // Clean up previously opened result blocks
@@ -100,7 +109,7 @@ var process = function(text, status, xhr, fullhost) {
 
 // --------------------------------------------------------------------------------------
 
-var set_headers = function(request, headers ) {
+var _set_headers = function(request, headers ) {
 
     for( var i = 0; i < headers.length; i++ )
     {
@@ -110,7 +119,7 @@ var set_headers = function(request, headers ) {
 
 // --------------------------------------------------------------------------------------
 
-var get_header_text = function( headers ) {
+var _get_header_text = function( headers ) {
 
     var text = '';
 
@@ -122,8 +131,27 @@ var get_header_text = function( headers ) {
 }
 
 // --------------------------------------------------------------------------------------
+
+var _get_url = function(url,query) {
+
+    full_url = url + '?' + $.param(query);
+
+    var urlp = document.createElement('a');
+    urlp.href = url;
+    // Make sure there is a leading / on the path
+    urlp.pathname = urlp.pathname.replace(/(^\/?)/,"/");
+    var port = '';
+    if( urlp.port )
+    {
+        port = ':'+urlp.port;
+    }
+
+    return { fullUrl: full_url, fullhost:urlp.hostname + port, requestUrl: urlp.pathname + urlp.search };
+};
+
+// --------------------------------------------------------------------------------------
 //
-var exploreapi = function( method, url ){
+apiExplorer.go = function( method, url ){
     var query   = [];
     var form    = [];
     var body    = {};
@@ -224,45 +252,43 @@ var exploreapi = function( method, url ){
         }
     }
 
-    // Take array of query parameters and use jquery.params to serialise out a query string
-    if( query.length ) {
-        url = url + '?' + $.param(query);
+    // Create display headers and url before custom headers/queries are added, as these are internal.
+    var display_headers = _get_header_text( headers );
+    var display_url = _get_url(url, query).requestUrl;
+    
+    // Add internal queries and headers, if the extend callback is configured.
+    // This allows authentication paramerters, for example, to be added to the request.
+    if( this._extendCallback ) {
+        var req = {};
+        this._extendCallback(req); 
+        if( req.headers ) {
+            headers.push( req.headers );
+        }
+        if( req.query ) {
+            query.push( req.query );
+        }
     }
 
-    var urlp = document.createElement('a');
-    urlp.href = url;
-    // Make sure there is a leading / on the path
-    urlp.pathname = urlp.pathname.replace(/(^\/?)/,"/");
-    var port = '';
-    if( urlp.port )
-    {
-        port = ':'+urlp.port;
-    }
-    var fullhost = urlp.hostname + port;
+    // Construct request URL bits from the url and extended query
+    var constructed_request = _get_url( url, query );
 
-    var header_block = get_header_text( headers );
-
-    // FIXME Do not use http!
-    $('#request_url').html( hljs.highlight( 'http', method.toUpperCase() + ' ' + urlp.pathname + urlp.search + ' HTTP/1.1\nHost: ' + fullhost + content_type + header_block ).value );
+    // FIXME Get protocol from passed in url
+    $('#request_url').html( hljs.highlight( 'http', method.toUpperCase() + ' ' + display_url + ' HTTP/1.1\nHost: ' + constructed_request.fullhost + content_type + display_headers ).value );
 
     $('#exploreButton').attr('disabled', 'disabled');
 
     $.support.cors = true;
 
-    var apiKey = $('#api-key-select').val();
-    console.log(apiKey);
-
     $.ajax({
-        url: url,
+        url: constructed_request.fullUrl,
         type: method,
         async: true,
         data: body,
         dataType: "text",
-        success:  function( text, status, xhr)  { process(text, status, xhr, fullhost) },
-        error:    function( xhr,  status, text) { process(xhr.responseText,  status, xhr, fullhost) },
+        success:  function( text, status, xhr)  { _process(text, status, xhr, constructed_request.fullhost) },
+        error:    function( xhr,  status, text) { _process(xhr.responseText,  status, xhr, constructed_request.fullhost) },
         beforeSend: function( request ) {
-            set_headers( request, headers );
-            request.setRequestHeader("Authorization", "Basic " + btoa(apiKey + ":"));
+            _set_headers( request, headers );
             $('#progress').stop(1,0).hide().delay(800).fadeIn();
             $('#response').stop(1,0).delay(10).hide();
         },

@@ -1,9 +1,21 @@
 <!-- Inject API key(s). This would probably be done via an ajax request to a server to request the API keys for
      the signed in user.
+     Register callback to appropriately add the authentication credentions to the request before it is sent: Either
+       by adding to the query parameters or as a Header parameter.
   -->
 <script type="text/javascript">
+    $.fn.extend({xalert: function(x) { alert(x); }});
     $(document).ready(function(){
-        explorerAddApiKey("A test key","6jnD1-ZnGBsT2ST7mSm9ASaGxO7BPWU4iz9TlfE2");
-        explorerInjectApiKeys();
+        apiExplorer.addApiKey("A test key","2jnD1-ZnGBsT2ST7mSm9ASaGxO7BPWU4iz9TlfE6");
+        apiExplorer.injectApiKeysIntoPage();
+
+        // Register callback to add authorisation parameters to request before it is sent
+        //explorerBeforeSendCallback = function( request ) {
+        apiExplorer.setBeforeSendCallback( function( request ) {
+            var apiKey = apiExplorer.readApiKey(); // Read API key from explorer input
+            request.headers = {name: "Authorization", value:"Basic " + btoa(apiKey + ":")};
+            //request.headers = {name: "Authorization", value:"Bearer " + apiKey};
+            //request.query = {name: "key", value: apiKey};
+        } );
     });
 </script>
