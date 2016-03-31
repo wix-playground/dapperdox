@@ -12,8 +12,8 @@
         //explorerBeforeSendCallback = function( request ) {
         apiExplorer.setBeforeSendCallback( function( request ) {
             var apiKey = apiExplorer.readApiKey(); // Read API key from explorer input
+            // Set the API key in the request as an Authorization header, using BASIC authentication
             request.headers = {Authorization:"Basic " + btoa(apiKey + ":")};
-            //request.params = {key: apiKey};
         } );
     });
 </script>

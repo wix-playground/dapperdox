@@ -126,4 +126,25 @@ request.headers = { header: "value" };
 request.headers = { header1: "value1", header2: "value2" }
 ```
 
+To put this into practice, if you wanted to change the authentication credential passing mechanism to instead supply the API key
+as an Authorization header, then create a `scripts.tmpl` within your own assets directory to override this. For example, the
+Swaggerly example file `examples/apikey_injection/assets/templates/fragments/scripts.tmpl` passes the API key in the 
+Authorization header using BASIC authentication:
+
+```javascript
+$(document).ready(function(){
+    // ... other code cut from here ...
+
+    // Register callback to add authorisation parameters to request before it is sent
+    apiExplorer.setBeforeSendCallback( function( request ) {
+        var apiKey = apiExplorer.readApiKey(); // Read API key from explorer input
+        request.headers = {Authorization:"Basic " + btoa(apiKey + ":")};
+    });
+});
+```
+
+Swaggerly then needs to be told about this local assets directory for it to pick up the override, which is achieved through
+the configuration parameter `-assets-dir`, passed to swaggerly when starting. For example, to pick up the example above, use
+`-assets-dir=examples/apikey_injection/assets`.
+
 
