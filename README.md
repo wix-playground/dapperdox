@@ -71,3 +71,59 @@ A typical theme assets structure is:
    -theme=<name of theme to use>
    -default-assets-dir=<locaton of swaggerly default assets> (usually swaggerly_install_directory/assets)
 ```
+
+# The API explorer
+
+## Controlling authentication
+
+The Swaggerly in-page API explorer detects when a method is configured as authenticated, and prompts for appropriate
+credentials to be supplied as part of the request being explored.
+
+By default, Swaggerly will automatically attach the API key, if supplied, to the request URL as a `key=` query parameter.
+This behaviour can be customised to satisfy the authentication requirements of your API.
+
+The template fragment `assets/themes/default/templates/fragments/scripts.tmpl`, which is included at the end of the common
+page template `layout.tmpl` contains the following javascript snippet:
+
+```javascript
+<!-- Additional scripts to be loaded at end of page -->
+<!-- This should be overridden to take control of the authorisation process (adding keys to the explorer request). -->
+<script>
+    $(document).ready(function(){
+        // Register callback to add authorisation parameters to request before it is sent
+        apiExplorer.setBeforeSendCallback( function( request ) {
+            var apiKey = apiExplorer.readApiKey(); // Read API key from explorer input
+            request.params = {key: apiKey};
+        });
+    });
+</script>
+```
+
+This snippet registers a callback with the `apiExplorer` object which is invoked while the explorer is building the request
+to send to the API. This callback is passed an empty object which has two properties that can be set as needed, `request.headers` and `request.params`:
+
+```json
+{
+    headers: {},
+    params: {}
+}
+```
+
+Both the `headers` and `params` objects contain zero or more name/value pairs:
+
+```json
+{
+    key1: value,
+    ..
+    ..
+    key_n: value_n,
+}
+```
+
+For example:
+```json
+request.headers = { header: "value" };
+request.headers = { header1: "value1", header2: "value2" }
+```
+
+

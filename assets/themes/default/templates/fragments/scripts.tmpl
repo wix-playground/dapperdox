@@ -5,7 +5,7 @@
         // Register callback to add authorisation parameters to request before it is sent
         apiExplorer.setBeforeSendCallback( function( request ) {
             var apiKey = apiExplorer.readApiKey(); // Read API key from explorer input
-            request.query = {name: "key", value: apiKey};
+            request.params = {key: apiKey};
         });
     });
 </script>

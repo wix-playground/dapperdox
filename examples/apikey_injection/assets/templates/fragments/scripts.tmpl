@@ -4,7 +4,6 @@
        by adding to the query parameters or as a Header parameter.
   -->
 <script type="text/javascript">
-    $.fn.extend({xalert: function(x) { alert(x); }});
     $(document).ready(function(){
         apiExplorer.addApiKey("A test key","2jnD1-ZnGBsT2ST7mSm9ASaGxO7BPWU4iz9TlfE6");
         apiExplorer.injectApiKeysIntoPage();
@@ -13,9 +12,8 @@
         //explorerBeforeSendCallback = function( request ) {
         apiExplorer.setBeforeSendCallback( function( request ) {
             var apiKey = apiExplorer.readApiKey(); // Read API key from explorer input
-            request.headers = {name: "Authorization", value:"Basic " + btoa(apiKey + ":")};
-            //request.headers = {name: "Authorization", value:"Bearer " + apiKey};
-            //request.query = {name: "key", value: apiKey};
+            request.headers = {Authorization:"Basic " + btoa(apiKey + ":")};
+            //request.params = {key: apiKey};
         } );
     });
 </script>

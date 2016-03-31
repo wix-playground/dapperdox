@@ -261,11 +261,21 @@ apiExplorer.go = function( method, url ){
     if( this._extendCallback ) {
         var req = {};
         this._extendCallback(req); 
+
         if( req.headers ) {
-            headers.push( req.headers );
+            for( var p in req.headers ) {
+                if( req.headers.hasOwnProperty(p) ) {
+                    headers.push( { name: p, value:req.headers[p] } );
+                }
+            }
         }
-        if( req.query ) {
-            query.push( req.query );
+
+        if( req.params ) {
+            for( var p in req.params ) {
+                if( req.params.hasOwnProperty(p) ) {
+                    query.push( { name: p, value:req.params[p] } );
+                }
+            }
         }
     }
 
