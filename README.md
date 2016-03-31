@@ -102,7 +102,7 @@ page template `layout.tmpl` contains the following javascript snippet:
 This snippet registers a callback with the `apiExplorer` object which is invoked while the explorer is building the request
 to send to the API. This callback is passed an empty object which has two properties that can be set as needed, `request.headers` and `request.params`:
 
-```json
+```javascript
 {
     headers: {},
     params: {}
@@ -111,7 +111,7 @@ to send to the API. This callback is passed an empty object which has two proper
 
 Both the `headers` and `params` objects contain zero or more name/value pairs:
 
-```json
+```javascript
 {
     key1: value,
     ..
@@ -121,7 +121,7 @@ Both the `headers` and `params` objects contain zero or more name/value pairs:
 ```
 
 For example:
-```json
+```javascript
 request.headers = { header: "value" };
 request.headers = { header1: "value1", header2: "value2" }
 ```
