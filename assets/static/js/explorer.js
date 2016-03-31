@@ -41,6 +41,9 @@ apiExplorer.setBeforeSendCallback = function( func ) {
 apiExplorer.readApiKey = function() {
     return $('#api-key-select').val() || $('#api-key-input').val() || "";
 };
+apiExplorer.readAccessToken = function() {
+    return $('#access-token-input').val() || "";
+};
 
 // --------------------------------------------------------------------------------------
 var _process = function(text, status, xhr, fullhost) {

@@ -4,8 +4,12 @@
     $(document).ready(function(){
         // Register callback to add authorisation parameters to request before it is sent
         apiExplorer.setBeforeSendCallback( function( request ) {
-            var apiKey = apiExplorer.readApiKey(); // Read API key from explorer input
-            request.params = {key: apiKey};
+            var apiKey = apiExplorer.readApiKey();           // Read API key from explorer input
+            var accessToken = apiExplorer.readAccessToken(); // Read access token from explorer input
+
+            // Favour access tokens over api keys
+            if( accessToken != "" ) { request.headers = {Authorization: "Bearer "+accessToken}; }
+            else if( apiKey != "" ) { request.params  = {key: apiKey}; }
         });
     });
 </script>
