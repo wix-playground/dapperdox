@@ -56,7 +56,8 @@ which would be rewritten with:
 -document-rewrite-url=@MY_DOMAIN=http://www.mysite.com
 ```
 
-You may pass multiple `-document-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders.
+You may pass multiple `-document-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders,
+particularly useful if you additionally need to configure URLs such as CDN location.
 
 ### Specification URLs
 
