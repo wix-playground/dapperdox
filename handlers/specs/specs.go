@@ -27,7 +27,7 @@ func Register(r *pat.Router) {
 		logger.Errorf(nil, "error configuring app: %s", err)
 	}
 
-	base, err := filepath.Abs(cfg.SwaggerDir)
+	base, err := filepath.Abs(cfg.SpecDir)
 	if err != nil {
 		logger.Errorf(nil, "Error forming swagger path: %s", err)
 	}
@@ -51,7 +51,7 @@ func Register(r *pat.Router) {
 			specMap[route], _ = ioutil.ReadFile(path)
 
 			// Replace anything matching RewriteURL with SiteURL
-			specMap[route] = []byte(strings.Replace(string(specMap[route]), cfg.RewriteURL, cfg.SiteURL, -1))
+			//specMap[route] = []byte(strings.Replace(string(specMap[route]), cfg.RewriteURL, cfg.SiteURL, -1))
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				serveSpec(w, route)

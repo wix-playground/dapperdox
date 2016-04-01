@@ -9,6 +9,7 @@ package override
 import (
 	"fmt"
 	"github.com/shurcooL/github_flavored_markdown"
+	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
 	"io/ioutil"
 	"os"
@@ -17,6 +18,7 @@ import (
 )
 
 var _bindata = map[string][]byte{}
+var guideReplacer *strings.Replacer
 
 func Asset(name string) ([]byte, error) {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
@@ -35,6 +37,25 @@ func AssetNames() []string {
 }
 
 func Compile(dir string, prefix string) {
+
+	cfg, _ := config.Get()
+
+	// Build a replacer to search/replace Document URLs in the documents.
+	if guideReplacer == nil {
+		var replacements []string
+
+		// Configure the replacer with key=value pairs
+		for i := range cfg.DocumentRewriteURL {
+
+			slice := strings.Split(cfg.DocumentRewriteURL[i], "=")
+
+			if len(slice) != 2 {
+				panic("Invalid DocumentWriteUrl - does not contain an = delimited from=to pair")
+			}
+			replacements = append(replacements, slice...)
+		}
+		guideReplacer = strings.NewReplacer(replacements...)
+	}
 
 	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info == nil {
@@ -80,9 +101,9 @@ func Compile(dir string, prefix string) {
 		logger.Tracef(nil, "Import file as '%s'\n", newname)
 
 		if _, ok := _bindata[newname]; !ok {
-			_bindata[newname] = buf
+			// Store the template, doing and search/replaces on the way
+			_bindata[newname] = []byte(guideReplacer.Replace(string(buf)))
 		}
-		//}
 		return nil
 	})
 }

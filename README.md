@@ -10,11 +10,13 @@ go get && go build
 
 Then start up Swaggerly, pointing it to your swagger specifications:
 ```
-./swaggerly -bind-addr=0.0.0.0:3128 -swagger-dir=<location of swagger 2.0 specifications>
+./swaggerly -bind-addr=0.0.0.0:3128 -swagger-dir=<location of swagger 2.0 spec>
 ```
 
 Swaggerly looks for the file path `spec/swagger.json` at the `-swagger-dir` location, and builds documentation for the swagger specification it finds. For example, the obligitary *petstore* swagger specification is provided in the `petstore` directory, so
 passing parameter `-swagger-dir=petstore` will build the petstore documentation.
+
+**TODO: Support multiple API specifications**
 
 The `-bind-addr` parameter configures the address and port number that Swaggerly will serve the documentation from, so in
 this case you can point your browser to `http://0.0.0.0:3123`, `http://127.0.0.1:3123` or `http://localhost:3123`
@@ -27,32 +29,57 @@ will be a number of things that you will want to configure or change:
 2. You will want to supplement the auto-generated resource documentation with your own authored text and guides.
 3. The default authentication credential passing may not match your API requirements.
 
-## Rewriting URLs in the documentation
+## Rewriting URLs
+### Documentation URLs
 The swagger specification often does not contain API or resource URLs that are correct for the environment being documented.
 For example, the swagger specifications may contain the production URLs, which are not appropriate when the specification and
 documentation is being served up in a development or test environment.
 
 Swaggerly allows you to rewrite URLs on the fly, so that they match the environment they are being served from. To do this,
-you specify the URL pattern that should be rewritten *from*, by passing the `-rewrite-url` configuration parameter, along with
-a `site-url` specifyig the URL pattern URLs should be rewritten *to*:
+you specify the URL pattern that should be rewritten *from* and *to*, by passing the `-document-rewrite-url` configuration
+parameter. The parameter takes a `from=to` pair, such as
 
-This is important if your swagger specification is split over multiple files, and therefore contain absolute `$ref:` object 
-references. These will not be followed correctly unless they resolve to the running Swaggerly instance serving the file
-collection.
+```
+-document-rewrite-url=domain.name.from=domain.name.to
+```
+
+You may also choose to use placeholders in your documentation, instead of real URLs, so that you replace the placeholder with
+a valid URL:
+
+```html
+<a href="@MY_DOMAIN/some/document.html">Some document</a>
+```
+
+which would be rewritten with:
+
+```bash
+-document-rewrite-url=@MY_DOMAIN=http://www.mysite.com
+```
+
+You may pass multiple `-document-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders.
+
+### Specification URLs
+
+If your swagger specification is split over multiple files, and therefore contain absolute `$ref:` object references, these
+references will not be followed correctly unless they resolve to the running Swaggerly instance serving the files.
 
 For example, if the swagger specification uses the absolute references of `http://mydomain.com/swagger-2.0/....`, and
 Swagger is serving content from `http://localhost:3123`, then the additional configuration parameters to pass to Swaggerly
-would be:
+to correct this would be:
 
 ```
--rewrite-url=http://mydomain.com/swagger-2.0 \
--site-url=http://localhost:3123
+-spec-rewrite-url=http://mydomain.com/swagger-2.0 \
+-site-url=http://localhost:3123 \
+-default-assets-dir=<swaggerly install directory>/assets
 ```
 
-**Multiple rewite URL sets need to be supported to cover all URL translation scenarios. For instance, Swaggerly does not
-currently does not translate the swagger Host: member.**
+**Swaggerly does not currently does not translate the swagger Host: member.**
 
+#### NOTES ####
 
+- Swagger - `Host:` member needs setting to API address. `-api-host-url` configuration. **This will not work for multiple api specifications.**
+- Swagger - `$ref:` members need setting to Swaggerly address. `-swagger-rewrite-urls` instead of `-rewrite-url` (should accept a list)
+- Documentation - Various URLs needed for pages. `-document-rewrite-urls` (a list of key=value,) **done**
 
 
 ## Customising the documentation
@@ -91,7 +118,6 @@ A typical theme assets structure is:
 ```
    -themes-dir=<installation directory of additional themes>
    -theme=<name of theme to use>
-   -default-assets-dir=<locaton of swaggerly default assets> (usually swaggerly_install_directory/assets)
 ```
 
 ### Adding custom documentation
