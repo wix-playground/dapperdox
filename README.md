@@ -70,18 +70,17 @@ to correct this would be:
 
 ```
 -spec-rewrite-url=http://mydomain.com/swagger-2.0 \
--site-url=http://localhost:3123 \
--default-assets-dir=<swaggerly install directory>/assets
+-site-url=http://localhost:3123 
 ```
 
-**Swaggerly does not currently does not translate the swagger Host: member.**
+Sometimes you will want to map a specification URL to one that is not the `site url`, for example changing the URL that the
+API is served from to be live instead of test. To do this, supply `-spec-rewrite-url` with a `from=to` pair. 
 
-#### NOTES ####
+```
+-spec-rewrite-url=http://api.test.domain.com=http://api.live.domain.com
+```
 
-- Swagger - `Host:` member needs setting to API address. `-api-host-url` configuration. **This will not work for multiple api specifications.**
-- Swagger - `$ref:` members need setting to Swaggerly address. `-swagger-rewrite-urls` instead of `-rewrite-url` (should accept a list)
-- Documentation - Various URLs needed for pages. `-document-rewrite-urls` (a list of key=value,) **done**
-
+You may pass multiple `-spec-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders.
 
 ## Customising the documentation
 Swaggerly presents two classes of documentation:
@@ -96,7 +95,7 @@ to form a theme. To customise the documentation:
 2. Parts of a theme may be overridden
 3. Additional assets may be provided to extend the generated documentation, such as guides
 
-First, and explanation of **assets** is required, and an introduction to its directory structure.
+First an explanation of **assets** is required, and an introduction to its directory structure.
 
 ## Theme assets
 
@@ -155,7 +154,7 @@ Any theme assets may be overridden, as shown in the previous section with `siden
 
 ### Customisation of auto-generated pages
 
-Each of the pages auto-generated from the swagger specification may be customised. These pages fall into three categories:
+Every reference page, auto-generated from the swagger specification, can be customised. These pages fall into three categories:
 
 1. API pages. These list and document all the methods available for an API endpoint.
 2. Method pages. These document a particular method, acting on an API endpoint.
@@ -165,14 +164,26 @@ There are three theme templates that provide the presentation structure for each
 overridden if you wish to affect a documentation change consistently across all instances of a particular page type.
 Alternatively, you may override a page template on an API, method and resource basis.
 
+
 **TODO: complete this**
+
 
 # The API explorer
 
-## Controlling authentication credential capture
+The Swaggerly in-page API explorer is similar in function to **swagger-ui**, as it allows users to try out API calls
+from within the reference page, without needing to write any client code.
 
 The Swaggerly in-page API explorer detects when a method is configured as authenticated, and prompts for appropriate
 credentials to be supplied as part of the request being explored. These could be one of API key or an OAuth2 access token.
+
+If you have, or are building, a developer site that allows users to regiser for and manage their own API keys, you may want 
+Swaggerly to integrate with that site, so that a users API keys are automatically available to the explorer once the user has
+signed-in. Swaggerly provides a simple Javascript interface via which you can pass API keys to the explorer, through a piece
+of custom Javascript.
+
+
+## Controlling authentication credential capture
+
 
 The `apiExplorer` javascript object provides a method to add API keys to an internal list, and a method to inject those
 API keys into the explorer page, so that the user can select the key from a dropdown menu instead of having to type it in.
@@ -213,7 +224,7 @@ This is achieved through the configuration parameter `-assets-dir`, passed to sw
 
 ## Controlling authentication credential passing
 
-By default, Swaggerly will automatically attach the API key, if supplied, to the request URL as a `key=` query parameter.
+By default, Swaggerly will automatically attach the API key if supplied, to the request URL as a `key=` query parameter.
 This behaviour can be customised to satisfy the authentication requirements of your API.
 
 The template fragment `assets/themes/default/templates/fragments/scripts.tmpl`, which is included at the end of the common

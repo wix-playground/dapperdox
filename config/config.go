@@ -19,8 +19,8 @@ type config struct {
 	LogLevel           string      `env:"LOGLEVEL" flag:"log-level" flagDesc:"Log level"`
 	SiteURL            string      `env:"SITE_URL" flag:"site-url" flagDesc:"Public URL of the documentation service"`
 	SpecRewriteURL     []string    `env:"SPEC_REWRITE_URL" flag:"spec-rewrite-url" flagDesc:"The URLs in the swagger specifications to be rewritten as site-url"`
-	DocumentRewriteURL []string    `env:"DOCUMENT_REWRITE_URL" flag:"document-rewrite-url" flagDesc:"Specify a document URL that is tom be rewritten. May be multiply defined. Format is from=to."`
-	ApiHostURL         string      `env:"API_HOST_URL" flag:"api-host-url" flagDesc:"The URL of the API host"`
+	DocumentRewriteURL []string    `env:"DOCUMENT_REWRITE_URL" flag:"document-rewrite-url" flagDesc:"Specify a document URL that is to be rewritten. May be multiply defined. Format is from=to."`
+	//ApiHostURL         string      `env:"API_HOST_URL" flag:"api-host-url" flagDesc:"The URL of the API host"`
 }
 
 var cfg *config
@@ -46,10 +46,6 @@ func Get() (*config, error) {
 	}
 
 	cfg.print()
-
-	for i := range cfg.DocumentRewriteURL {
-		logger.Println(nil, "DRU: %s", cfg.DocumentRewriteURL[i])
-	}
 
 	return cfg, nil
 }

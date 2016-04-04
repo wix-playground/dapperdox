@@ -14,10 +14,13 @@ import (
 )
 
 var specMap map[string][]byte
+var specReplacer *strings.Replacer
 
 // Register creates routes for each static resource
 func Register(r *pat.Router) {
+
 	logger.Debugln(nil, "registering not found handler for static package")
+
 	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		render.HTML(w, http.StatusNotFound, "error", render.DefaultVars(req, map[string]interface{}{"error": "Page not found"}))
 	})
@@ -25,6 +28,27 @@ func Register(r *pat.Router) {
 	cfg, err := config.Get()
 	if err != nil {
 		logger.Errorf(nil, "error configuring app: %s", err)
+	}
+
+	// Build a replacer to search/replace specification URLs
+	if specReplacer == nil {
+		var replacements []string
+
+		// Configure the replacer with key=value pairs
+		for i := range cfg.SpecRewriteURL {
+
+			slice := strings.Split(cfg.SpecRewriteURL[i], "=")
+
+			switch len(slice) {
+			case 1: // Map between configured URL and site URL
+				replacements = append(replacements, slice[0], cfg.SiteURL)
+			case 2: // Map between configured to=from URL pair
+				replacements = append(replacements, slice...)
+			default:
+				panic("Invalid DocumentWriteUrl - does not contain an = delimited from=to pair")
+			}
+		}
+		specReplacer = strings.NewReplacer(replacements...)
 	}
 
 	base, err := filepath.Abs(cfg.SpecDir)
@@ -50,8 +74,8 @@ func Register(r *pat.Router) {
 
 			specMap[route], _ = ioutil.ReadFile(path)
 
-			// Replace anything matching RewriteURL with SiteURL
-			//specMap[route] = []byte(strings.Replace(string(specMap[route]), cfg.RewriteURL, cfg.SiteURL, -1))
+			// Replace URLs in document
+			specMap[route] = []byte(specReplacer.Replace(string(specMap[route])))
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				serveSpec(w, route)
