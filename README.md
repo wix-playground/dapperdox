@@ -1,6 +1,8 @@
 Swaggerly
 =========
 
+> Themed documentation generator, server and API explorer for OpenAPI (Swagger) Specifications. Helps you build integrated, browsable reference documentation and guides.
+
 ## Quickstart
 
 First build swaggerly (this assumes that you have your golang environment configured correctly):
@@ -8,26 +10,45 @@ First build swaggerly (this assumes that you have your golang environment config
 go get && go build
 ```
 
-Then start up Swaggerly, pointing it to your swagger specifications:
+Then start up Swaggerly, pointing it to your OpenAPI 2.0 specifications:
 ```
-./swaggerly -bind-addr=0.0.0.0:3128 -swagger-dir=<location of swagger 2.0 spec>
+./swaggerly -bind-addr=0.0.0.0:3128 -spec-dir=<location of OpenAPI 2.0 spec>
 ```
 
-Swaggerly looks for the file path `spec/swagger.json` at the `-swagger-dir` location, and builds documentation for the swagger specification it finds. For example, the obligitary *petstore* swagger specification is provided in the `petstore` directory, so
-passing parameter `-swagger-dir=petstore` will build the petstore documentation.
-
-**TODO: Support multiple API specifications**
+Swaggerly looks for the file path `spec/swagger.json` at the `-spec-dir` location, and builds documentation for the OpenAPI specification it finds. For example, the obligitary *petstore* OpenAPI specification is provided in the `petstore` directory, so
+passing parameter `-spec-dir=petstore` will build the petstore documentation.
 
 The `-bind-addr` parameter configures the address and port number that Swaggerly will serve the documentation from, so in
 this case you can point your browser to `http://0.0.0.0:3123`, `http://127.0.0.1:3123` or `http://localhost:3123`
 
-### Next steps
+**TODO: Support multiple API specifications**
+
+## Guide Contents
+- [Next steps](#next-steps)
+- [Specifying an OpenAPI specification](#specifying-an-openapi-specification)
+- [Rewriting URLs](#rewriting-urls)
+- [Customising the documentation](#customising-the-documentation)
+  - [Themes](#theme-assets)
+  - [Custom documentation pages](#adding-custom-documentation)
+  - [Adding nagivation](#adding-navigation)
+- [The API explorer](#the-api-explorer)
+  - [Customising authentication credential capture](#customising-authentication-credential-capture)
+    - [apiExplorer methods](#apiexplorer-methods)
+  - [Controlling authentication credential passing](#controlling-authentication-credential-passing)
+
+## Next steps
 While simply running Swaggerly and pointing it at your swagger specifications will give you some documentation quickly, there
 will be a number of things that you will want to configure or change:
 
 1. The URLs picked up from the swagger specifications will probably not match your environment.
 2. You will want to supplement the auto-generated resource documentation with your own authored text and guides.
 3. The default authentication credential passing may not match your API requirements.
+
+## Specifying an OpenAPI specification
+
+Out of the box, Swaggerly will look for the OpenAPI specification `spec/swagger.json` under the directory specified by the
+command line option `-spec-dir`. To change this, you can supply the `-spec-filename` option to Swaggerly. For example,
+`-spec-filename=spec/swagger.json` does the same as the default.
 
 ## Rewriting URLs
 ### Documentation URLs
@@ -182,8 +203,7 @@ signed-in. Swaggerly provides a simple Javascript interface via which you can pa
 of custom Javascript.
 
 
-## Controlling authentication credential capture
-
+## Customising authentication credential capture
 
 The `apiExplorer` javascript object provides a method to add API keys to an internal list, and a method to inject those
 API keys into the explorer page, so that the user can select the key from a dropdown menu instead of having to type it in.
@@ -245,7 +265,7 @@ page template `layout.tmpl` contains the following javascript snippet:
 ```
 
 This snippet registers a callback with the `apiExplorer` object which is invoked while the explorer is building the request
-to send to the API. This callback is passed an empty object which has two properties that can be set as needed, `request.headers` and `request.params`:
+to send to the API. This callback is passed an empty object which has two properties that can be set as needed, `request.headers` - items that are sent as request HTTP headers,  and `request.params` - items that are sent as query parameters:
 
 ```javascript
 {
