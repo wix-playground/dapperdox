@@ -34,6 +34,7 @@ either http://0.0.0.0:3123, http://127.0.0.1:3123 or http://localhost:3123.
     - [apiExplorer methods](#apiexplorer-methods)
   - [Controlling authentication credential passing](#controlling-authentication-credential-passing)
 - [Versioning](#versioning)
+- [Reverse proxying to other resources](#reverse-proxying-through-to-other-resources)
 
 ## Next steps
 While simply running Swaggerly and pointing it at your swagger specifications will give you some documentation quickly, there
@@ -375,6 +376,14 @@ the configuration parameter `-assets-dir`, passed to swaggerly when starting. Fo
 
 To be completed
 
+## Reverse proxying through to other resources
+
+To create an integrated developer hub. Such resources could be:
+
+1. API key management tools
+2. Forum
+
+To be completed
 
 ## Dependencies
 
