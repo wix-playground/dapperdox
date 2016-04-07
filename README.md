@@ -10,22 +10,20 @@ First build swaggerly (this assumes that you have your golang environment config
 go get && go build
 ```
 
-Then start up Swaggerly, pointing it to your OpenAPI 2.0 specifications:
+Then start up Swaggerly, pointing it to your OpenAPI 2.0 specification file:
 ```
-./swaggerly -bind-addr=0.0.0.0:3128 -spec-dir=<location of OpenAPI 2.0 spec>
+./swaggerly -spec-dir=<location of OpenAPI 2.0 spec>
 ```
-
 Swaggerly looks for the file path `spec/swagger.json` at the `-spec-dir` location, and builds documentation for the OpenAPI specification it finds. For example, the obligitary *petstore* OpenAPI specification is provided in the `petstore` directory, so
 passing parameter `-spec-dir=petstore` will build the petstore documentation.
 
-The `-bind-addr` parameter configures the address and port number that Swaggerly will serve the documentation from, so in
-this case you can point your browser to `http://0.0.0.0:3123`, `http://127.0.0.1:3123` or `http://localhost:3123`
-
-**TODO: Support multiple API specifications**
+Swaggerly will default to serving documentation from port 3123 on all interfaces, so you can point your web browser to
+either http://0.0.0.0:3123, http://127.0.0.1:3123 or http://localhost:3123.
 
 ## Guide Contents
 - [Next steps](#next-steps)
 - [Specifying an OpenAPI specification](#specifying-an-openapi-specification)
+- [Configuring the address of the server](#specifying-the-address-of-the-server)
 - [Rewriting URLs](#rewriting-urls)
 - [Customising the documentation](#customising-the-documentation)
   - [Themes](#theme-assets)
@@ -35,6 +33,7 @@ this case you can point your browser to `http://0.0.0.0:3123`, `http://127.0.0.1
   - [Customising authentication credential capture](#customising-authentication-credential-capture)
     - [apiExplorer methods](#apiexplorer-methods)
   - [Controlling authentication credential passing](#controlling-authentication-credential-passing)
+- [Versioning](#versioning)
 
 ## Next steps
 While simply running Swaggerly and pointing it at your swagger specifications will give you some documentation quickly, there
@@ -49,6 +48,14 @@ will be a number of things that you will want to configure or change:
 Out of the box, Swaggerly will look for the OpenAPI specification `spec/swagger.json` under the directory specified by the
 command line option `-spec-dir`. To change this, you can supply the `-spec-filename` option to Swaggerly. For example,
 `-spec-filename=spec/swagger.json` does the same as the default.
+
+Multiple API specifications are not currently supported, but are on the feature list.
+
+
+## Configuring the address of the server
+
+Swaggerly will start serving content from http://0.0.0.0:3123. You can change this through the `-bind-addr` configuration
+parameter, the format of which being `IP address:port number`, such as `-bind-address=0.0.0.0:3123`.
 
 ## Rewriting URLs
 ### Documentation URLs
@@ -148,16 +155,16 @@ authored guides and reference notes, allowing the production of a complete unifi
 APIs.
 
 To do this, Swaggerly would be configured to pick up and serve additional documentation, written in HTML or Github Flavoured 
-Markdown (support for which is currently incomplete). These documents are grouped under an application-specific `assets` directory.
+Markdown (styling support for which is currently incomplete). These documents are grouped under an application-specific `assets` directory.
 The structure of this assets directory is important, as it also allows you to override assets that are normally supplied
-by the chosen theme, and so must follow the structure set out in **Theme assets** above.
+by the chosen theme, and so must follow the structure set out in the section called [Theme assets](#theme-assets).
 
-Custom documentation introduces a new directory to the assets structure: `assets/templates/guides/`.
+Custom documentation introduces a new directory into the assets structure, that of `assets/templates/guides/`.
 Under this directory is placed all the authored content you wish to publish. The content may be a `.tmpl` HTML template or
 a `.md` Github Flavoured Markdown file, and will be rendered within the common `theme name/templates/layout.tmpl` page
 template.
 
-Swaggerly will serve this content from the `/guides/` URL path, for example `http://localhost:3128/guides/my_example_page`.
+Swaggerly will serve this content from the `/guides/` URL path, for example `http://localhost:3123/guides/my_example_page`.
 
 
 #### Adding navigation
@@ -170,7 +177,8 @@ straightforward to do, as you can override the theme `templates/fragments/sidena
 
 ### Overriding theme assets
 
-Any theme assets may be overridden, as shown in the previous section with `sidenav.tmpl`. This allows you to modify 
+Any theme assets may be overridden, as shown in the previous section with `sidenav.tmpl`. This allows you to modify any of
+the presentation to suit your local requirements.
 
 
 ### Customisation of auto-generated pages
@@ -185,8 +193,58 @@ There are three theme templates that provide the presentation structure for each
 overridden if you wish to affect a documentation change consistently across all instances of a particular page type.
 Alternatively, you may override a page template on an API, method and resource basis.
 
+*The consequence of overriding theme templates is that you cannot change themes without changing your overridden pages. A
+Git Flavoured Markdown approach is being developed which will make theme template overriding unnecessary for a majority of
+cases.*
 
-**TODO: complete this**
+#### API pages
+
+An API page will have a URL formed with the following pattern:
+
+```
+/docs/<api-name>
+```
+
+To override the API page for an endpoint called `example-api`, when using the default theme:
+
+1. Copy `assets/themes/default/templates/default-api.tmpl` to `local-assets/assets/templates/docs/example-api.tmpl`
+2. Edit `example-api.tmpl` to add any additional content you required.
+
+Whenever Swaggerly renders the page for the API `example-api`, it will use your overridden template.
+		
+#### Method pages
+
+A method page will have a URL formed with the following pattern:
+
+```
+/docs/<api-name>/<method-name>
+```
+
+where `method-name` will be `GET`, `POST` etc
+
+To override the `GET` method page for an endpoint called `example-api`, when using the default theme:
+
+1. Copy `assets/themes/default/templates/default-method.tmpl` to `local-assets/assets/templates/docs/example-api/get.tmpl`
+2. Edit `get.tmpl` to add any additional content you required.
+
+Whenever Swaggerly renders the page for that API method, it will use your overridden template.
+
+#### Resource pages
+
+An API page will have a URL formed with the following pattern:
+
+```
+/resources/<resource-name>
+```
+
+There can only be one resource of a given name.
+
+To override the resource page for an example resource `example-resource`, when using the default theme:
+
+1. Copy `assets/themes/default/templates/default-resource.tmpl` to `local-assets/assets/templates/resources/example-resource.tmpl`
+2. Edit `example-resource.tmpl` to add any additional content you required.
+
+Whenever Swaggerly renders the page for this resource, it will use your overridden template.
 
 
 # The API explorer
@@ -232,7 +290,7 @@ Injects the named API keys into the explorer, building a pulldown menu that can 
 
 It would be usual for the template fragment `assets/themes/default/templates/fragments/scripts.tmpl` to be overridden, so
 that it can build a list of valid API keys to be used and inject them into the explorer page. Generally the keys would be
-fetched from some ajax endpoint, having previously gone through user authentication.
+fetched from some ajax endpoint that you provide, once the user as gone though some sign-in process.
 
 The supplied example, `examples/apikey_injection/assets/templates/fragments/scripts.tmpl` demonstrates the addition of an
 API key (hardcoded for the benefit of this example), and injects the list of one into the explorer page.
@@ -264,8 +322,9 @@ page template `layout.tmpl` contains the following javascript snippet:
 </script>
 ```
 
-This snippet registers a callback with the `apiExplorer` object which is invoked while the explorer is building the request
-to send to the API. This callback is passed an empty object which has two properties that can be set as needed, `request.headers` - items that are sent as request HTTP headers,  and `request.params` - items that are sent as query parameters:
+The above snippet registers a callback with the `apiExplorer` object which gets invoked while the explorer is building the 
+request to send to the API. This callback will be receive an empty object which has two properties that can be set as needed,
+`request.headers` - items that are sent as request HTTP headers,  and `request.params` - items that are sent as query parameters:
 
 ```javascript
 {
@@ -311,4 +370,17 @@ $(document).ready(function(){
 Swaggerly then needs to be told about this local assets directory for it to pick up the override, which is achieved through
 the configuration parameter `-assets-dir`, passed to swaggerly when starting. For example, to pick up the example above, use
 `-assets-dir=examples/apikey_injection/assets`.
+
+## Versioning
+
+To be completed
+
+
+## Dependencies
+
+### `go-swagger`
+
+Swaggerly depends on a fork of [go-swagger](https://github.com/zxchris/go-swagger) as it's specification parser. This
+fork adds missing support for complex object response (arrays of objects), and the Swaggerly specific versioning scheme.
+
 

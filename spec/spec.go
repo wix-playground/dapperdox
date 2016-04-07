@@ -11,6 +11,8 @@ import (
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
+	"github.com/zxchris/swaggerly/config"
+	"github.com/zxchris/swaggerly/logger"
 )
 
 // APISet is a slice of API structs
@@ -138,7 +140,18 @@ type Resource struct {
 
 // Load loads API specs from the supplied host (usually local!)
 func Load(host string) {
-	swaggerdoc, err := loadSpec("http://" + host + "/spec/swagger.json")
+
+	cfg, err := config.Get()
+	if err != nil {
+		logger.Errorf(nil, "error configuring app: %s", err)
+	}
+
+	fname := cfg.SpecFilename
+	if !strings.HasPrefix(fname, "/") {
+		fname = "/" + fname
+	}
+
+	swaggerdoc, err := loadSpec("http://" + host + fname)
 	if err != nil {
 		log.Fatal(err)
 	}

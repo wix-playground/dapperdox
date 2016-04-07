@@ -42,7 +42,10 @@ func Register(r *pat.Router) {
 
 			for _, resource := range method.Resources {
 				logger.Tracef(nil, "registering handler for %s api method %s resource %s: %s/%s/%s", api.Name, method.Name, resource.Description, api.ID, method.ID, resource.ID)
-				path := "/docs/" + api.ID + "/" + method.ID + "/" + resource.ID
+				// Use this for per api/method resources
+				//path := "/docs/" + api.ID + "/" + method.ID + "/" + resource.ID
+				// Use this for global (ie only one with that name) resources
+				path := "/resources/" + resource.ID
 
 				// Add version->resource to pathVersionResource
 				if _, ok := pathVersionResource[path]; !ok {
@@ -65,7 +68,10 @@ func Register(r *pat.Router) {
 
 				for _, resource := range method.Resources {
 					logger.Tracef(nil, "registering handler for %s api method %s resource %s: %s/%s/%s Version %s", api.Name, method.Name, resource.Description, api.ID, method.ID, resource.ID, version)
-					path := "/docs/" + api.ID + "/" + method.ID + "/" + resource.ID
+					// Use this for per api/method resources
+					//path := "/docs/" + api.ID + "/" + method.ID + "/" + resource.ID
+					// Use this for global (ie only one with that name) resources
+					path := "/resources/" + resource.ID
 					// Add version->resource to pathVersionResource
 					if _, ok := pathVersionResource[path]; !ok {
 						pathVersionResource[path] = make(versionedResource)
@@ -210,10 +216,16 @@ func ResourceHandler(api spec.API, method spec.Method, path string) func(w http.
 		logger.Printf(nil, "Render api.ID   "+api.ID)
 		tmpl := "default-resource"
 
-		customTmpl := "docs/" + api.ID + "/" + method.ID + "/" + resource.ID // FIXME resources should be globally unique
+		// Use this for per api/method resources
+		//customTmpl := "docs/" + api.ID + "/" + method.ID + "/" + resource.ID // FIXME resources should be globally unique
+		// Use this for global (ie only one with that name) resources
+		customTmpl := "resources/" + resource.ID
+
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
 		}
+
+		// TODO, should we look for a versioned custom template file, in case there is any version specific custom docs?
 
 		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
 

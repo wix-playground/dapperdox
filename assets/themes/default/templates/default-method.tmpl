@@ -53,7 +53,7 @@
     <tr>
       <td class="type">[: $status :]</td>
       <td class="hyphenate Hyphenator616hide">[: $response.Description :]</td>
-      <td class="resource">[: if $response.Schema :]<a href="/docs/[: $.API.ID :]/[: $.Method.ID :]/[: $response.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: $response.Schema.Title :]</a>[: end :]
+      <td class="resource">[: if $response.Schema :]<a href="/resources/[: $response.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: $response.Schema.Title :]</a><!-- /docs/[: $.API.ID :]/[: $.Method.ID :]/[: $response.Schema.ID :] --> [: end :]
       </td>
     </tr>
     [: end :]
@@ -61,7 +61,7 @@
     <tr>
       <td class="type">default</td>
       <td class="hyphenate Hyphenator616hide">[: .Method.DefaultResponse.Description :]</td>
-      <td class="resource">[: if .Method.DefaultResponse.Schema :]<a href="/docs/[: .API.ID :]/[: .Method.ID :]/[: .Method.DefaultResponse.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method.DefaultResponse.Schema.Title :]</a>[: end :]</td>
+      <td class="resource">[: if .Method.DefaultResponse.Schema :]<a href="/resources/[: .Method.DefaultResponse.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method.DefaultResponse.Schema.Title :]</a> <!-- /docs/[: .API.ID :]/[: .Method.ID :]/[: .Method.DefaultResponse.Schema.ID :] --> [: end :]</td> 
     </tr>
     [: end :]
   </tbody>
