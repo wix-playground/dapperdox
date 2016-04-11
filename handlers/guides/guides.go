@@ -65,8 +65,7 @@ func Register(r *pat.Router) {
 			//logger.Printf(nil, "== "+resource)
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				logger.Printf(nil, "Render resource '%s'", resource)
-
+				//logger.Printf(nil, "Render resource '%s'", resource)
 				render.HTML(w, http.StatusOK, resource, render.DefaultVars(req, render.Vars{}))
 			})
 		}

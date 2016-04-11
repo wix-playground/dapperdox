@@ -141,7 +141,11 @@ func ProcessMarkdown(doc []byte) ([]byte, map[string]string) {
 		splitLine := strings.Split(scanner.Text(), ":")
 
 		trimmed := strings.TrimSpace(splitLine[0])
-		if len(trimmed) == 0 {
+		if len(splitLine) < 2 { // Have we reached a non KEY: line? If so, we're done with the metadata.
+			if len(trimmed) > 0 { // If the line is not empty, keep the contents
+				newdoc = newdoc + trimmed + "\n"
+			}
+			// Gather up all remainging lines
 			for scanner.Scan() {
 				// TODO Make this more efficient!
 				newdoc = newdoc + scanner.Text() + "\n"
