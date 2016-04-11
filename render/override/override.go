@@ -7,6 +7,8 @@ package override
 // dropping files in the override directory.
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/swaggerly/config"
@@ -18,6 +20,7 @@ import (
 )
 
 var _bindata = map[string][]byte{}
+var _metadata = map[string]map[string]string{}
 var guideReplacer *strings.Replacer
 
 func Asset(name string) ([]byte, error) {
@@ -34,6 +37,15 @@ func AssetNames() []string {
 		names = append(names, name)
 	}
 	return names
+}
+
+func MetaData(filename string, name string) string {
+	if md, ok := _metadata[filename]; ok {
+		if val, ok := md[name]; ok {
+			return val
+		}
+	}
+	return ""
 }
 
 func Compile(dir string, prefix string) {
@@ -75,7 +87,7 @@ func Compile(dir string, prefix string) {
 			ext = filepath.Ext(path)
 		}
 
-		//if ext == ".tmpl" { // FIXME This may be too restrictive. What about images, css?
+		//if ext == ".tmpl" { // Removed as may be too restrictive. What about images, css?
 		buf, err := ioutil.ReadFile(path)
 		if err != nil {
 			panic(err)
@@ -86,9 +98,12 @@ func Compile(dir string, prefix string) {
 			panic(err)
 		}
 
+		var meta map[string]string
+
 		// The file may be in GFM, so convert to HTML
 		if ext == ".md" {
-			buf = github_flavored_markdown.Markdown(buf)
+			buf, meta = ProcessMarkdown(buf)
+
 			// Now change extension to be .tmpl
 			md := strings.TrimSuffix(rel, ext)
 			rel = md + ".tmpl"
@@ -96,14 +111,58 @@ func Compile(dir string, prefix string) {
 
 		newname := prefix + "/" + rel
 
-		// FIXME Make log trace
-		fmt.Printf("Import file as '%s'\n", newname)
 		logger.Tracef(nil, "Import file as '%s'\n", newname)
 
 		if _, ok := _bindata[newname]; !ok {
 			// Store the template, doing and search/replaces on the way
 			_bindata[newname] = []byte(guideReplacer.Replace(string(buf)))
+			if len(meta) > 0 {
+				_metadata[newname] = meta
+			}
 		}
 		return nil
 	})
 }
+
+// ---------------------------------------------------------------------------
+// Returns rendered metadata and mpa of metadata key/value pairs
+//
+func ProcessMarkdown(doc []byte) ([]byte, map[string]string) {
+
+	// Inspect the markdown src doc to see if it contains metadata
+	reader := bytes.NewReader(doc)
+	scanner := bufio.NewScanner(reader)
+	scanner.Split(bufio.ScanLines)
+
+	var newdoc string
+	metaData := make(map[string]string)
+
+	for scanner.Scan() {
+		splitLine := strings.Split(scanner.Text(), ":")
+
+		trimmed := strings.TrimSpace(splitLine[0])
+		if len(trimmed) == 0 {
+			for scanner.Scan() {
+				// TODO Make this more efficient!
+				newdoc = newdoc + scanner.Text() + "\n"
+			}
+			break
+		}
+
+		// Else, deal with meta-data
+		metaValue := ""
+		if len(splitLine) > 1 {
+			metaValue = strings.TrimSpace(splitLine[1])
+		}
+
+		metaKey := strings.ToLower(splitLine[0])
+		metaData[metaKey] = metaValue
+	}
+
+	doc = github_flavored_markdown.Markdown([]byte(newdoc))
+
+	return doc, metaData
+}
+
+// ---------------------------------------------------------------------------
+// end

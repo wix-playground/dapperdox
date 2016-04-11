@@ -19,12 +19,6 @@ var specReplacer *strings.Replacer
 // Register creates routes for each static resource
 func Register(r *pat.Router) {
 
-	logger.Debugln(nil, "registering not found handler for static package")
-
-	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		render.HTML(w, http.StatusNotFound, "error", render.DefaultVars(req, map[string]interface{}{"error": "Page not found"}))
-	})
-
 	cfg, err := config.Get()
 	if err != nil {
 		logger.Errorf(nil, "error configuring app: %s", err)

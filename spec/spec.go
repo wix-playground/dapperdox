@@ -163,7 +163,6 @@ func Load(host string) {
 
 	APIInfo.Title = swaggerdoc.Spec().Info.Title
 	APIInfo.Description = swaggerdoc.Spec().Info.Description
-	fmt.Printf("TITLE %s\n", APIInfo.Title)
 
 	getSecurityDefinitions(swaggerdoc.Spec())
 
@@ -200,7 +199,7 @@ func getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path
 	api.Versions = make(map[string][]Method)
 
 	for v, pi := range versions {
-		fmt.Printf("Process version %s\n", v)
+		logger.Tracef(nil, "Process version %s\n", v)
 		var method []Method
 		getMethods(tag, api, &method, pi, path)
 		api.Versions[v] = method
@@ -315,7 +314,7 @@ func processMethod(api *API, o *spec.Operation, path, methodname string) *Method
 	}
 
 	for status, response := range o.Responses.StatusCodeResponses {
-		log.Printf("Got response schema (status %s):\n", status)
+		//log.Printf("Got response schema (status %s):\n", status)
 		//spew.Dump(response.Schema)
 		r := resourceFromSchema(response.Schema, nil)
 
@@ -478,12 +477,12 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 
 	json_representation := make(map[string]interface{})
 
-	log.Printf("expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
+	//log.Printf("expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
 	//fmt.Printf("DUMP s.Properties\n")
 	//spew.Dump(s.Properties)
 
 	for name, property := range s.Properties {
-		log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
+		//log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
 		newFQNS := append([]string{}, myFQNS...)
 		if chopped && len(id) > 0 {
 			newFQNS = append(newFQNS, id)
@@ -499,14 +498,12 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 
 		// FIXME this is as nasty as it looks...
 		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
-			log.Printf("JR: Type is '%s'\n", r.Properties[name].Type[0])
-
 			// Arrays of objects need to be handled as a special case
 			if strings.ToLower(r.Properties[name].Type[0]) == "array" {
 				if property.Items != nil {
 					if property.Items.Schema != nil {
 
-						log.Printf("ARRAY PROCESS %s:\n", name)
+						//log.Printf("ARRAY PROCESS %s:\n", name)
 						//spew.Dump(property.Items.Schema)
 
 						// Add [] to end of fully qualified name space
