@@ -1,9 +1,3 @@
-___
-Title: Swaggerly readme  
-Author: Chris Smith
-Navigation: /guides/
----
-   
 Swaggerly
 =========
 
