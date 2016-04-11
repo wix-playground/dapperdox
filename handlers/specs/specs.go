@@ -10,7 +10,6 @@ import (
 	"github.com/gorilla/pat"
 	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
-	"github.com/zxchris/swaggerly/render"
 )
 
 var specMap map[string][]byte

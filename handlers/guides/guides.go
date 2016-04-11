@@ -33,7 +33,7 @@ func Register(r *pat.Router) {
 	base = base + "/templates"
 	root := base + "/guides"
 
-	logger.Printf(nil, "Scanning "+root)
+	//logger.Printf(nil, "Scanning "+root)
 
 	err = filepath.Walk(root, func(path string, info os.FileInfo, _ error) error {
 		if info == nil {
@@ -54,15 +54,15 @@ func Register(r *pat.Router) {
 
 		switch ext {
 		case ".html", ".tmpl", ".md":
-			logger.Printf(nil, "** "+path)
-			logger.Printf(nil, "base: "+base)
+			//logger.Printf(nil, "** "+path)
+			//logger.Printf(nil, "base: "+base)
 
 			// Strip base path and file extension
 			route := strings.TrimSuffix(strings.TrimPrefix(path, base), ext)
 			resource := strings.TrimPrefix(route, "/")
 
 			logger.Printf(nil, ">> "+route)
-			logger.Printf(nil, "== "+resource)
+			//logger.Printf(nil, "== "+resource)
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				logger.Printf(nil, "Render resource '%s'", resource)
