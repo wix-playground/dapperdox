@@ -3,7 +3,7 @@ package docs
 import (
 	"net/http"
 
-	"github.com/davecgh/go-spew/spew"
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/pat"
 	"github.com/zxchris/swaggerly/logger"
 	"github.com/zxchris/swaggerly/render"
@@ -192,8 +192,8 @@ func MethodHandler(api spec.API, path string) func(w http.ResponseWriter, req *h
 		// TODO default to latest if version not found, or 404 ?
 		method = pathVersionMethod[path][version]
 
-		logger.Printf(nil, "Method versions:\n")
-		spew.Dump(versions)
+		//logger.Printf(nil, "Method versions:\n")
+		//spew.Dump(versions)
 
 		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": method.Name, "API": api, "Method": method, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion}))
 	}
