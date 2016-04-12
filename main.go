@@ -11,9 +11,9 @@ import (
 	"github.com/justinas/alice"
 	"github.com/justinas/nosurf"
 	"github.com/zxchris/swaggerly/config"
-	"github.com/zxchris/swaggerly/handlers/docs"
 	"github.com/zxchris/swaggerly/handlers/guides"
 	"github.com/zxchris/swaggerly/handlers/home"
+	"github.com/zxchris/swaggerly/handlers/reference"
 	"github.com/zxchris/swaggerly/handlers/specs"
 	"github.com/zxchris/swaggerly/handlers/static"
 	"github.com/zxchris/swaggerly/handlers/timeout"
@@ -65,7 +65,7 @@ func main() {
 
 	// Now the spec routes have been registered, we're safe to import and parse the swagger (via the registered spec routes)
 	spec.Load(cfg.BindAddr)
-	docs.Register(router)
+	reference.Register(router)
 
 	guides.Register(router)
 	static.Register(router) // TODO - Static content should be capable of being CDN hosted

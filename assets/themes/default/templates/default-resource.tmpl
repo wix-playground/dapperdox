@@ -1,10 +1,10 @@
-[: template "fragments/docs/version_header" . :]
+[: template "fragments/reference/version_header" . :]
 
 <h2 class="sub-header">Methods</h2>
 
 <ul class="">
   [: range .Resource.Methods :]
-    <li><a href="/docs/[: .API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method :]</a> - [: .Name :]</li>
+    <li><a href="/reference/[: .API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method :]</a> - [: .Name :]</li>
   [: end :]
 </ul>
 
@@ -31,7 +31,7 @@
       </tr>
     </thead>
     <tbody>
-      [: template "fragments/docs/properties" .Resource :]
+      [: template "fragments/reference/properties" .Resource :]
     </tbody>
   </table>
 </div>

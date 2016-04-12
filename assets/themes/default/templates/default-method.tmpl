@@ -1,4 +1,4 @@
-[: template "fragments/docs/version_header" . :]
+[: template "fragments/reference/version_header" . :]
 
 <p>[: .Method.Description :]</p>
 
@@ -8,22 +8,22 @@
 
 [: if .Method.PathParams :]
   <h2 class="sub-header">Path parameters</h2>
-  [: template "fragments/docs/params" .Method.PathParams :]
+  [: template "fragments/reference/params" .Method.PathParams :]
 [: end :]
 
 [: if .Method.QueryParams :]
   <h2 class="sub-header">Query parameters</h2>
-  [: template "fragments/docs/params" .Method.QueryParams :]
+  [: template "fragments/reference/params" .Method.QueryParams :]
 [: end :]
 
 [: if .Method.HeaderParams :]
   <h2 class="sub-header">Request headers</h2>
-  [: template "fragments/docs/params" .Method.HeaderParams :]
+  [: template "fragments/reference/params" .Method.HeaderParams :]
 [: end :]
 
 [: if .Method.FormParams :]
   <h2 class="sub-header">Form parameters</h2>
-  [: template "fragments/docs/params" .Method.FormParams :]
+  [: template "fragments/reference/params" .Method.FormParams :]
 [: end :]
 
 [: if .Method.BodyParam :]
@@ -33,7 +33,7 @@
 
 [: if .Method.Security :]
   <h2 class="sub-header">Authorisation</h2>
-  [: template "fragments/docs/authorisation" .Method.Security :]
+  [: template "fragments/reference/authorisation" .Method.Security :]
 [: end :]
 
 <h2 class="sub-header">Response</h2>
@@ -53,7 +53,7 @@
     <tr>
       <td class="type">[: $status :]</td>
       <td class="hyphenate Hyphenator616hide">[: $response.Description :]</td>
-      <td class="resource">[: if $response.Schema :]<a href="/resources/[: $response.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: $response.Schema.Title :]</a><!-- /docs/[: $.API.ID :]/[: $.Method.ID :]/[: $response.Schema.ID :] --> [: end :]
+      <td class="resource">[: if $response.Schema :]<a href="/resources/[: $response.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: $response.Schema.Title :]</a><!-- /reference/[: $.API.ID :]/[: $.Method.ID :]/[: $response.Schema.ID :] --> [: end :]
       </td>
     </tr>
     [: end :]
@@ -61,7 +61,7 @@
     <tr>
       <td class="type">default</td>
       <td class="hyphenate Hyphenator616hide">[: .Method.DefaultResponse.Description :]</td>
-      <td class="resource">[: if .Method.DefaultResponse.Schema :]<a href="/resources/[: .Method.DefaultResponse.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method.DefaultResponse.Schema.Title :]</a> <!-- /docs/[: .API.ID :]/[: .Method.ID :]/[: .Method.DefaultResponse.Schema.ID :] --> [: end :]</td> 
+      <td class="resource">[: if .Method.DefaultResponse.Schema :]<a href="/resources/[: .Method.DefaultResponse.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method.DefaultResponse.Schema.Title :]</a> <!-- /reference/[: .API.ID :]/[: .Method.ID :]/[: .Method.DefaultResponse.Schema.ID :] --> [: end :]</td> 
     </tr>
     [: end :]
   </tbody>

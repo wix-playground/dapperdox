@@ -27,7 +27,7 @@ func Register(r *pat.Router) {
 		logger.Errorf(nil, "Error forming guide template path: %s", err)
 	}
 	// FIXME - We should create a generic "file tree" map that we can itterate over to generate these paths
-	//       - The same for static resources. Particularly as we'll probably remove the override package and patch
+	//       - The same for static resources. Particularly as we'll probably remove the asset package and patch
 	//         unroller/render to allow an array of template directories to be passed in.
 	//
 	base = base + "/templates"

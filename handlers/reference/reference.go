@@ -1,4 +1,4 @@
-package docs
+package reference
 
 import (
 	"net/http"
@@ -18,21 +18,21 @@ var pathVersionResource map[string]versionedResource // Key is path
 
 // Register creates routes for specification resource
 func Register(r *pat.Router) {
-	logger.Debugln(nil, "registering handlers for docs package")
+	logger.Debugln(nil, "registering handlers for reference package")
 
 	pathVersionMethod = make(map[string]versionedMethod)
 	pathVersionResource = make(map[string]versionedResource)
 
 	for _, api := range spec.APIs {
 		logger.Tracef(nil, "registering handler for %s api: %s", api.Name, api.ID)
-		r.Path("/docs/" + api.ID).Methods("GET").HandlerFunc(APIHandler(api))
+		r.Path("/reference/" + api.ID).Methods("GET").HandlerFunc(APIHandler(api))
 
 		version := api.CurrentVersion
 
 		for _, method := range api.Methods {
 			logger.Tracef(nil, "registering handler for %s api method %s: %s/%s", api.Name, method.Name, api.ID, method.ID)
 
-			path := "/docs/" + api.ID + "/" + method.ID
+			path := "/reference/" + api.ID + "/" + method.ID
 			// Add version->method to pathVersionMethod
 			if _, ok := pathVersionMethod[path]; !ok {
 				pathVersionMethod[path] = make(versionedMethod)
@@ -43,7 +43,7 @@ func Register(r *pat.Router) {
 			for _, resource := range method.Resources {
 				logger.Tracef(nil, "registering handler for %s api method %s resource %s: %s/%s/%s", api.Name, method.Name, resource.Description, api.ID, method.ID, resource.ID)
 				// Use this for per api/method resources
-				//path := "/docs/" + api.ID + "/" + method.ID + "/" + resource.ID
+				//path := "/reference/" + api.ID + "/" + method.ID + "/" + resource.ID
 				// Use this for global (ie only one with that name) resources
 				path := "/resources/" + resource.ID
 
@@ -58,7 +58,7 @@ func Register(r *pat.Router) {
 		for version, methods := range api.Versions {
 			for _, method := range methods {
 				logger.Tracef(nil, "registering handler for %s api method %s: %s/%s Version %s", api.Name, method.Name, api.ID, method.ID, version)
-				path := "/docs/" + api.ID + "/" + method.ID
+				path := "/reference/" + api.ID + "/" + method.ID
 				// Add version->resource to pathVersionResource
 				if _, ok := pathVersionMethod[path]; !ok {
 					pathVersionMethod[path] = make(versionedMethod)
@@ -69,7 +69,7 @@ func Register(r *pat.Router) {
 				for _, resource := range method.Resources {
 					logger.Tracef(nil, "registering handler for %s api method %s resource %s: %s/%s/%s Version %s", api.Name, method.Name, resource.Description, api.ID, method.ID, resource.ID, version)
 					// Use this for per api/method resources
-					//path := "/docs/" + api.ID + "/" + method.ID + "/" + resource.ID
+					//path := "/reference/" + api.ID + "/" + method.ID + "/" + resource.ID
 					// Use this for global (ie only one with that name) resources
 					path := "/resources/" + resource.ID
 					// Add version->resource to pathVersionResource
@@ -146,7 +146,7 @@ func getResourceVersions(api spec.API, versions versionedResource) []string {
 }
 
 // ------------------------------------------------------------------------------------------------------------
-// APIHandler is a http.Handler for rendering API docs
+// APIHandler is a http.Handler for rendering API reference docs
 func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 
@@ -158,7 +158,7 @@ func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
 		methods := getVersionMethod(api, version)
 
 		tmpl := "default-api"
-		customTmpl := "docs/" + api.ID
+		customTmpl := "reference/" + api.ID
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
 		}
@@ -170,7 +170,7 @@ func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
 }
 
 // ------------------------------------------------------------------------------------------------------------
-// MethodHandler is a http.Handler for rendering API method docs
+// MethodHandler is a http.Handler for rendering API method reference docs
 func MethodHandler(api spec.API, path string) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 
@@ -182,7 +182,7 @@ func MethodHandler(api spec.API, path string) func(w http.ResponseWriter, req *h
 		method := pathVersionMethod[path][version]
 
 		tmpl := "default-method"
-		customTmpl := "docs/" + api.ID + "/" + method.ID
+		customTmpl := "reference/" + api.ID + "/" + method.ID
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
 		}
@@ -200,7 +200,7 @@ func MethodHandler(api spec.API, path string) func(w http.ResponseWriter, req *h
 }
 
 // ------------------------------------------------------------------------------------------------------------
-// ResourceHandler is a http.Handler for rendering API resource docs
+// ResourceHandler is a http.Handler for rendering API resource reference docs
 func ResourceHandler(api spec.API, method spec.Method, path string) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 
@@ -217,7 +217,7 @@ func ResourceHandler(api spec.API, method spec.Method, path string) func(w http.
 		tmpl := "default-resource"
 
 		// Use this for per api/method resources
-		//customTmpl := "docs/" + api.ID + "/" + method.ID + "/" + resource.ID // FIXME resources should be globally unique
+		//customTmpl := "reference/" + api.ID + "/" + method.ID + "/" + resource.ID // FIXME resources should be globally unique
 		// Use this for global (ie only one with that name) resources
 		customTmpl := "resources/" + resource.ID
 
@@ -225,7 +225,7 @@ func ResourceHandler(api spec.API, method spec.Method, path string) func(w http.
 			tmpl = customTmpl
 		}
 
-		// TODO, should we look for a versioned custom template file, in case there is any version specific custom docs?
+		// TODO, should we look for a versioned custom template file, in case there is any version specific custom reference docs?
 
 		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
 

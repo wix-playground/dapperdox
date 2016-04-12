@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/pat"
 	"github.com/zxchris/swaggerly/logger"
 	"github.com/zxchris/swaggerly/render"
-	"github.com/zxchris/swaggerly/render/override"
+	"github.com/zxchris/swaggerly/render/asset"
 )
 
 // Register creates routes for each static resource
@@ -23,10 +23,10 @@ func Register(r *pat.Router) {
 	logger.Debugln(nil, "registering static content handlers for static package")
 
 	// FIXME - We should create a generic "file tree" map that we can itterate over to generate these paths
-	//       - The same for guides. Particularly as we'll probably remove the override package and patch
+	//       - The same for guides. Particularly as we'll probably remove the asset package and patch
 	//         unroller/render to allow an array of template directories to be passed in.
 	//
-	for _, file := range override.AssetNames() {
+	for _, file := range asset.AssetNames() {
 		if strings.HasPrefix(file, "assets/static/") {
 
 			// Drop assets/static prefix
@@ -46,7 +46,7 @@ func Register(r *pat.Router) {
 			logger.Tracef(nil, "using mime type: %s", mimeType)
 
 			r.Path(path).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				if b, err := override.Asset("assets/static" + path); err == nil {
+				if b, err := asset.Asset("assets/static" + path); err == nil {
 					w.Header().Set("Content-Type", mimeType)
 					w.Header().Set("Cache-control", "public, max-age=259200")
 					w.WriteHeader(200)

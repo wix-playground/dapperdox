@@ -1,4 +1,4 @@
-package override
+package asset
 
 // This package scans a default template directory *and* an override template directory,
 // building an "go generate" compliant Assets structure. Templates in under the override

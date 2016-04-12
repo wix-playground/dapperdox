@@ -2,10 +2,10 @@
     <ul class="nav nav-sidebar">
         [: range $api := .APIs :]
           <li>
-              <a href="/docs/[: $api.ID :]" class="nav-toggle" data-toggle="collapse" data-target="#sub[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
+              <a href="/reference/[: $api.ID :]" class="nav-toggle" data-toggle="collapse" data-target="#sub[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
               <ul class="nav" id="sub[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
                   [: range $method := .Methods :]
-                  <li><a href="/docs/[: $api.ID :]/[: $method.ID :]">[: $method.Method :]</a></li>
+                  <li><a href="/reference/[: $api.ID :]/[: $method.ID :]">[: $method.Method :]</a></li>
                   [: end :]
                   <!-- Resources for the entire API -->
 <!-- This might not be valid, and far better if the resources are accessed from within the method page,
@@ -14,7 +14,7 @@
                   <li>Resources
                       <ul class="nav">
                           [: range $name, $resource := $api.Resources :]
-                          <li><a href="/docs/[: $api.ID :]/resource/[: $name :]">[: $resource.Title :]</a></li>
+                          <li><a href="/reference/[: $api.ID :]/resource/[: $name :]">[: $resource.Title :]</a></li>
                           [: end :]
                       </ul>
                   </li>
