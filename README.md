@@ -374,7 +374,7 @@ the configuration parameter `-assets-dir`, passed to swaggerly when starting. Fo
 
 ## Versioning
 
-To be completed
+To be completed.
 
 ## Reverse proxying through to other resources
 
@@ -383,7 +383,13 @@ To create an integrated developer hub. Such resources could be:
 1. API key management tools
 2. Forum
 
-To be completed
+To be completed.
+
+## Tagging
+
+Swaggerly reads the top level tags member of the specification, and only builds API endpoints named, in the order they are names. Without Tags, perhaps ALL should be built.
+
+To be completed.
 
 ## Dependencies
 

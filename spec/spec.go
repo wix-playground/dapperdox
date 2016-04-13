@@ -23,6 +23,8 @@ var APIs APISet
 var APIInfo Info
 var SecurityDefinitions map[string]SecurityScheme
 
+//var ResourceList map[string]map[string]Resource // Version->ResourceName->Resource
+
 // GetByName returns an API by name
 func (a APISet) GetByName(name string) *API {
 	for _, a := range APIs {
@@ -56,8 +58,8 @@ type API struct {
 	Versions       map[string][]Method // All versions, keyed by version string.
 	Methods        []Method            // The current version
 	CurrentVersion string
-	Resources      map[string]*Resource
-	Info           *Info
+	//Resources      map[string]*Resource
+	Info *Info
 }
 
 type Version struct {
@@ -120,7 +122,7 @@ type Parameter struct {
 // Response represents an API method response
 type Response struct {
 	Description string
-	Schema      *Resource
+	Schema      *Resource // FIXME rename as Resource?
 }
 
 // Resource represents an API resource
@@ -184,8 +186,8 @@ func Load(host string) {
 			}
 			api.CurrentVersion = ver.(string)
 
-			getMethods(tag, &api, &api.Methods, o, p) // Current version
-			getVersions(tag, &api, o.Versions, p)     // All versions
+			getMethods(tag, &api, &api.Methods, o, p, ver.(string)) // Current version
+			getVersions(tag, &api, o.Versions, p)                   // All versions
 		}
 
 		APIs = append(APIs, api)
@@ -201,29 +203,30 @@ func getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path
 	for v, pi := range versions {
 		logger.Tracef(nil, "Process version %s\n", v)
 		var method []Method
-		getMethods(tag, api, &method, pi, path)
+		getMethods(tag, api, &method, pi, path, v)
 		api.Versions[v] = method
 	}
 }
 
-func getMethods(tag spec.Tag, api *API, methods *[]Method, pi spec.PathItem, path string) {
+func getMethods(tag spec.Tag, api *API, methods *[]Method, pi spec.PathItem, path string, version string) {
 
-	getMethod(tag, api, methods, pi.Get, path, "get")
-	getMethod(tag, api, methods, pi.Post, path, "post")
-	getMethod(tag, api, methods, pi.Put, path, "put")
-	getMethod(tag, api, methods, pi.Delete, path, "delete")
-	getMethod(tag, api, methods, pi.Head, path, "head")
-	getMethod(tag, api, methods, pi.Options, path, "options")
-	getMethod(tag, api, methods, pi.Patch, path, "patch")
+	getMethod(tag, api, methods, version, pi.Get, path, "get")
+	getMethod(tag, api, methods, version, pi.Post, path, "post")
+	getMethod(tag, api, methods, version, pi.Put, path, "put")
+	getMethod(tag, api, methods, version, pi.Delete, path, "delete")
+	getMethod(tag, api, methods, version, pi.Head, path, "head")
+	getMethod(tag, api, methods, version, pi.Options, path, "options")
+	getMethod(tag, api, methods, version, pi.Patch, path, "patch")
 }
 
-func getMethod(tag spec.Tag, api *API, methods *[]Method, o *spec.Operation, path, methodname string) {
+func getMethod(tag spec.Tag, api *API, methods *[]Method, version string, o *spec.Operation, path, methodname string) {
 	if o == nil {
 		return
 	}
+	// Filter by tags TODO if no Tags, build everything
 	for _, t := range o.Tags {
 		if t == tag.Name {
-			method := processMethod(api, o, path, methodname)
+			method := processMethod(api, o, path, methodname, version)
 			*methods = append(*methods, *method)
 		}
 	}
@@ -266,7 +269,7 @@ func getSecurityDefinitions(spec *spec.Swagger) {
 	}
 }
 
-func processMethod(api *API, o *spec.Operation, path, methodname string) *Method {
+func processMethod(api *API, o *spec.Operation, path, methodname string, version string) *Method {
 
 	id := o.ID
 	if id == "" {
@@ -318,6 +321,7 @@ func processMethod(api *API, o *spec.Operation, path, methodname string) *Method
 		//spew.Dump(response.Schema)
 		r := resourceFromSchema(response.Schema, nil)
 
+		// FIXME Collect up all methods for a resource
 		if response.Schema != nil {
 			r.Methods = append(r.Methods, *method)
 			resources[r.ID] = r
@@ -342,14 +346,17 @@ func processMethod(api *API, o *spec.Operation, path, methodname string) *Method
 		}
 	}
 
-	api.Resources = make(map[string]*Resource)
+	//api.Resources = make(map[string]*Resource) // List resources against API
+
+	// List resources against method
 	for _, r := range resources {
 		method.Resources = append(method.Resources, r)
 		// FIXME ERROR IF THERE IS A COLLISION FIXME
 		// NOTE This will be a collection of the resources available across all versions.
 		// XXX This may not be a valid thing to do - perhaps resources should only be accessible from the method that
 		//     declares them...
-		api.Resources[r.ID] = r
+
+		//api.Resources[r.ID] = r
 	}
 
 	// Lookup security reference against SecurityDefinitions
@@ -572,6 +579,22 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 
 	return r
 }
+
+// -----------------------------------------------------------------------------
+// Take all the resources used by the method, and add them to the global resource
+// list, merging the methods:w
+
+func mergeResources(method *Method, version string) {
+
+	//var ResourceList map[string]map[string]Resource // Version->ResourceName->Resource
+
+	for _, r := range method.Resources {
+		//ResourceList[version]
+		method.Resources = append(method.Resources, r)
+	}
+}
+
+// -----------------------------------------------------------------------------
 
 func titleToKebab(s string) string {
 	s = strings.ToLower(s)
