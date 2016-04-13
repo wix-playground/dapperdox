@@ -86,6 +86,8 @@ func DefaultVars(req *http.Request, m Vars) map[string]interface{} {
 
 	m["Config"], _ = config.Get()
 	m["APIs"] = spec.APIs
+	m["APIVersions"] = spec.APIVersions
+	m["Resources"] = spec.ResourceList
 	m["Info"] = spec.APIInfo
 
 	return m

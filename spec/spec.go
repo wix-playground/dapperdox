@@ -22,8 +22,8 @@ type APISet []API
 var APIs APISet
 var APIInfo Info
 var SecurityDefinitions map[string]SecurityScheme
-
-//var ResourceList map[string]map[string]Resource // Version->ResourceName->Resource
+var ResourceList map[string]map[string]*Resource // Version->ResourceName->Resource
+var APIVersions map[string]APISet                // Version->APISet
 
 // GetByName returns an API by name
 func (a APISet) GetByName(name string) *API {
@@ -57,9 +57,8 @@ type API struct {
 	URL            *url.URL
 	Versions       map[string][]Method // All versions, keyed by version string.
 	Methods        []Method            // The current version
-	CurrentVersion string
-	//Resources      map[string]*Resource
-	Info *Info
+	CurrentVersion string              // The latest version in operation for the API
+	Info           *Info
 }
 
 type Version struct {
@@ -189,9 +188,23 @@ func Load(host string) {
 			getMethods(tag, &api, &api.Methods, o, p, ver.(string)) // Current version
 			getVersions(tag, &api, o.Versions, p)                   // All versions
 		}
-
-		APIs = append(APIs, api)
+		APIs = append(APIs, api) // All APIs (versioned within)
 	}
+
+	// Build a API map, grouping by version
+	for _, api := range APIs {
+		for v, _ := range api.Versions {
+			if APIVersions == nil {
+				APIVersions = make(map[string]APISet)
+			}
+			// Create copy of API and set Methods array to be correct for the version we are building
+			napi := api
+			napi.Methods = napi.Versions[v]
+			napi.Versions = nil
+			APIVersions[v] = append(APIVersions[v], napi) // Group APIs by version
+		}
+	}
+
 }
 
 func getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path string) {
@@ -223,9 +236,10 @@ func getMethod(tag spec.Tag, api *API, methods *[]Method, version string, o *spe
 	if o == nil {
 		return
 	}
-	// Filter by tags TODO if no Tags, build everything
+	// Filter by tags or, if no Tags, build all APIs
+	taglen := len(o.Tags)
 	for _, t := range o.Tags {
-		if t == tag.Name {
+		if taglen == 0 || t == tag.Name {
 			method := processMethod(api, o, path, methodname, version)
 			*methods = append(*methods, *method)
 		}
@@ -286,6 +300,10 @@ func processMethod(api *API, o *spec.Operation, path, methodname string, version
 		API:         api,
 	}
 
+	if ResourceList == nil {
+		ResourceList = make(map[string]map[string]*Resource)
+	}
+
 	resources := make(map[string]*Resource)
 
 	for _, param := range o.Parameters {
@@ -316,20 +334,41 @@ func processMethod(api *API, o *spec.Operation, path, methodname string, version
 		}
 	}
 
+	// Compile resources from response declaration
 	for status, response := range o.Responses.StatusCodeResponses {
 		//log.Printf("Got response schema (status %s):\n", status)
 		//spew.Dump(response.Schema)
-		r := resourceFromSchema(response.Schema, nil)
 
-		// FIXME Collect up all methods for a resource
+		var vres *Resource
+
+		// Discover if the resource is already declared, and pick it up
+		// if it is (keyed on version number)
 		if response.Schema != nil {
-			r.Methods = append(r.Methods, *method)
-			resources[r.ID] = r
+			if _, ok := ResourceList[version]; !ok {
+				ResourceList[version] = make(map[string]*Resource)
+			}
+			var ok bool
+			r := resourceFromSchema(response.Schema, nil) // May be thrown away
+
+			// Look for a pre-declared resource with the response ID, and use that or create the first one...
+			log.Printf("++ Resource version %s  ID %s\n", version, r.ID)
+			if vres, ok = ResourceList[version][r.ID]; !ok {
+				log.Printf("   - Creating new resource\n")
+				vres = r
+			}
+			ResourceList[version][r.ID] = vres
+
+			// Compile a list of the methods which use this resource
+			vres.Methods = append(vres.Methods, *method)
+
+			// Add the resource to the method which uses it
+			method.Resources = append(method.Resources, vres)
+
 		}
 
 		method.Responses[status] = Response{
 			Description: response.Description,
-			Schema:      r,
+			Schema:      vres,
 		}
 	}
 
@@ -348,16 +387,11 @@ func processMethod(api *API, o *spec.Operation, path, methodname string, version
 
 	//api.Resources = make(map[string]*Resource) // List resources against API
 
-	// List resources against method
-	for _, r := range resources {
-		method.Resources = append(method.Resources, r)
-		// FIXME ERROR IF THERE IS A COLLISION FIXME
-		// NOTE This will be a collection of the resources available across all versions.
-		// XXX This may not be a valid thing to do - perhaps resources should only be accessible from the method that
-		//     declares them...
-
-		//api.Resources[r.ID] = r
-	}
+	//	// List resources against method
+	//	for _, r := range resources {
+	//		method.Resources = append(method.Resources, r)
+	//		//api.Resources[r.ID] = r
+	//	}
 
 	// Lookup security reference against SecurityDefinitions
 	// TODO FIXME If no Security given from operation, then the global defaults are appled. CHECK THIS IS TRUE!

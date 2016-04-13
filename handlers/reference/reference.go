@@ -40,20 +40,22 @@ func Register(r *pat.Router) {
 			}
 			pathVersionMethod[path][version] = method
 
-			for _, resource := range method.Resources {
-				logger.Tracef(nil, "registering handler for %s api method %s resource %s: %s/%s/%s", api.Name, method.Name, resource.Description, api.ID, method.ID, resource.ID)
-				// Use this for per api/method resources
-				//path := "/reference/" + api.ID + "/" + method.ID + "/" + resource.ID
-				// Use this for global (ie only one with that name) resources
-				path := "/resources/" + resource.ID
-
-				// Add version->resource to pathVersionResource
-				if _, ok := pathVersionResource[path]; !ok {
-					pathVersionResource[path] = make(versionedResource)
-					r.Path(path).Methods("GET").HandlerFunc(ResourceHandler(api, method, path))
-				}
-				pathVersionResource[path][version] = resource
-			}
+			//          Resources used to be at method level... this was really confusing, as you had a
+			//          new instance of each resource for each method. Also really tricky to list all
+			//          methods that use a resource. So have changed to be a global set of resources,
+			//          shared across methods. Thus Code commented out. Will remove after some usecase testing.
+			//			for _, resource := range method.Resources {
+			//				logger.Tracef(nil, "registering handler for %s api method %s resource %s: %s/%s/%s", api.Name, method.Name, resource.Description, api.ID, method.ID, resource.ID)
+			//				// Use this for per api/method resources
+			//				path := "/reference/" + api.ID + "/" + method.ID + "/" + resource.ID
+			//
+			//				// Add version->resource to pathVersionResource
+			//				if _, ok := pathVersionResource[path]; !ok {
+			//					pathVersionResource[path] = make(versionedResource)
+			//					r.Path(path).Methods("GET").HandlerFunc(ResourceHandler(api, method, path))
+			//				}
+			//				pathVersionResource[path][version] = resource
+			//			}
 		}
 		for version, methods := range api.Versions {
 			for _, method := range methods {
@@ -66,20 +68,36 @@ func Register(r *pat.Router) {
 				}
 				pathVersionMethod[path][version] = method
 
-				for _, resource := range method.Resources {
-					logger.Tracef(nil, "registering handler for %s api method %s resource %s: %s/%s/%s Version %s", api.Name, method.Name, resource.Description, api.ID, method.ID, resource.ID, version)
-					// Use this for per api/method resources
-					//path := "/reference/" + api.ID + "/" + method.ID + "/" + resource.ID
-					// Use this for global (ie only one with that name) resources
-					path := "/resources/" + resource.ID
-					// Add version->resource to pathVersionResource
-					if _, ok := pathVersionResource[path]; !ok {
-						pathVersionResource[path] = make(versionedResource)
-						r.Path(path).Methods("GET").HandlerFunc(ResourceHandler(api, method, path))
-					}
-					pathVersionResource[path][version] = resource
-				}
+				//              Resources used to be at method level... this was really confusing, as you had a
+				//              new instance of each resource for each method. Also really tricky to list all
+				//              methods that use a resource. So have changed to be a global set of resources,
+				//              shared across methods. Thus Code commented out. Will remove after some usecase testing.
+				//				for _, resource := range method.Resources {
+				//					logger.Tracef(nil, "registering handler for %s api method %s resource %s: %s/%s/%s Version %s", api.Name, method.Name, resource.Description, api.ID, method.ID, resource.ID, version)
+				//					// Use this for per api/method resources
+				//					path := "/reference/" + api.ID + "/" + method.ID + "/" + resource.ID
+				//					// Add version->resource to pathVersionResource
+				//					if _, ok := pathVersionResource[path]; !ok {
+				//						pathVersionResource[path] = make(versionedResource)
+				//						r.Path(path).Methods("GET").HandlerFunc(ResourceHandler(api, method, path))
+				//					}
+				//					pathVersionResource[path][version] = resource
+				//				}
 			}
+		}
+	}
+
+	logger.Infof(nil, "Registering RESOURCES")
+	for version, resources := range spec.ResourceList {
+		logger.Infof(nil, "  - Version %s", version)
+		for id, resource := range resources {
+			logger.Infof(nil, "    - resource %s", id)
+			path := "/resources/" + id
+			if _, ok := pathVersionResource[path]; !ok {
+				pathVersionResource[path] = make(versionedResource)
+				r.Path(path).Methods("GET").HandlerFunc(GlobalResourceHandler(path))
+			}
+			pathVersionResource[path][version] = resource
 		}
 	}
 }
@@ -200,36 +218,65 @@ func MethodHandler(api spec.API, path string) func(w http.ResponseWriter, req *h
 }
 
 // ------------------------------------------------------------------------------------------------------------
+//// ResourceHandler is a http.Handler for rendering API resource reference docs
+//func ResourceHandler(api spec.API, method spec.Method, path string) func(w http.ResponseWriter, req *http.Request) {
+//	return func(w http.ResponseWriter, req *http.Request) {
+//
+//		version := req.FormValue("v") // Get the resource version - blank is the latest
+//		if version == "" {
+//			version = api.CurrentVersion
+//		}
+//		versions := getResourceVersions(api, pathVersionResource[path])
+//		resource := pathVersionResource[path][version]
+//
+//		logger.Printf(nil, "Render resource "+resource.ID)
+//		logger.Printf(nil, "Render method.ID "+method.ID)
+//		logger.Printf(nil, "Render api.ID   "+api.ID)
+//		tmpl := "default-resource"
+//
+//		customTmpl := "reference/" + api.ID + "/" + method.ID + "/" + resource.ID // FIXME resources should be globally unique
+//
+//		if render.TemplateLookup(customTmpl) != nil {
+//			tmpl = customTmpl
+//		}
+//
+//		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
+//
+//		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": resource.Title, "API": api, "Resource": resource, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion}))
+//	}
+//}
+
+// ------------------------------------------------------------------------------------------------------------
 // ResourceHandler is a http.Handler for rendering API resource reference docs
-func ResourceHandler(api spec.API, method spec.Method, path string) func(w http.ResponseWriter, req *http.Request) {
+func GlobalResourceHandler(path string) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		version := req.FormValue("v") // Get the resource version - blank is the latest
 		if version == "" {
-			version = api.CurrentVersion
+			version = "latest"
 		}
-		versions := getResourceVersions(api, pathVersionResource[path])
+
+		// Get list of versions
+		versions := make([]string, len(pathVersionResource[path]))
+		ix := 0
+		for key := range pathVersionResource[path] {
+			versions[ix] = key
+			ix++
+		}
 		resource := pathVersionResource[path][version]
 
 		logger.Printf(nil, "Render resource "+resource.ID)
-		logger.Printf(nil, "Render method.ID "+method.ID)
-		logger.Printf(nil, "Render api.ID   "+api.ID)
 		tmpl := "default-resource"
 
-		// Use this for per api/method resources
-		//customTmpl := "reference/" + api.ID + "/" + method.ID + "/" + resource.ID // FIXME resources should be globally unique
-		// Use this for global (ie only one with that name) resources
 		customTmpl := "resources/" + resource.ID
 
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
 		}
 
-		// TODO, should we look for a versioned custom template file, in case there is any version specific custom reference docs?
-
 		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
 
-		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": resource.Title, "API": api, "Resource": resource, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion}))
+		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": resource.Title, "Resource": resource, "Version": version, "Versions": versions}))
 	}
 }
 

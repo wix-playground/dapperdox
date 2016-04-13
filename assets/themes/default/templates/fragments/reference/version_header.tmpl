@@ -11,8 +11,10 @@
           [: range $version := .Versions :]
           <li><a href="?v=[: $version :]">[: $version :]</a></li>
           [: end :]
-          <li role="separator" class="divider"></li>
-          <li><a href="?">Latest version [: $.LatestVersion :]</a></li>
+          [: if $.LatestVersion :]
+            <li role="separator" class="divider"></li>
+            <li><a href="?">Latest version [: $.LatestVersion :]</a></li>
+          [: end :]
         </ul>
       </div>
     </div>

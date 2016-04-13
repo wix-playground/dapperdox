@@ -1,7 +1,7 @@
 [: template "fragments/reference/version_header" . :]
 
 <h2 class="sub-header">Methods</h2>
-
+<p>[: .Resource.Title :]</p>
 <ul class="">
   [: range .Resource.Methods :]
     <li><a href="/reference/[: .API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method :]</a> - [: .Name :]</li>

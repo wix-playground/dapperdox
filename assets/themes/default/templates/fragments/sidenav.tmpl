@@ -4,11 +4,34 @@
           <li>
               <a href="/reference/[: $api.ID :]" class="nav-toggle" data-toggle="collapse" data-target="#sub[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
               <ul class="nav" id="sub[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
-                  [: range $method := .Methods :]
+                [: range $method := .Methods :]
                   <li><a href="/reference/[: $api.ID :]/[: $method.ID :]">[: $method.Method :]</a></li>
-                  [: end :]
+                [: end :]
               </ul>
           </li>
         [: end :]
     </ul>
+
+
+    [: if .APIVersions :]
+        <a href="" class="nav-toggle" data-toggle="collapse" data-target="#older">Older Versions</a>
+        <ul class="nav nav-sidebar" id="older">
+            [: range $v, $versions := .APIVersions :]
+            <li><a>[: $v :]</a>
+                <ul class="nav">
+                   <li>
+                    [: range $vapi := $versions :]
+                      <a href="/reference/[: $vapi.ID :]?v=[: $v :]" class="nav-toggle" data-toggle="collapse" data-target="#sub[: $vapi.ID :]">[: $vapi.Name :]</a>
+                      <ul class="nav" id="sub[: $vapi.ID :]"> <!-- add collapse to collapse! WIP! -->
+                        [: range $method := $vapi.Methods :]
+                          <li><a href="/reference/[: $vapi.ID :]/[: $method.ID :]?v=[: $v :]">[: $method.Method :]</a></li>
+                        [: end :]
+                      </ul>
+                    [: end :]
+                  </li>
+                </ul>
+            </li>
+            [: end :]
+        </ul>
+    [: end :]
 </div>
