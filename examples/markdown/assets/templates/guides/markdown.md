@@ -1,6 +1,8 @@
 Title: Swaggerly readme  
 Author: Chris Smith
-Navigation: /guides/markdown
+SortOrder: 10
+Navigation1: A markdown example
+Navigation: Overview/A markdown example H
 
 This page was written using Git Flavoured Markdown
 ==================================================

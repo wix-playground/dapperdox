@@ -10,32 +10,29 @@ import (
 	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
 	"github.com/zxchris/swaggerly/render"
+	"github.com/zxchris/swaggerly/render/asset"
 )
 
+type NavigationNode struct {
+	Child map[string]*NavigationNode
+	Name  string
+	Id    string
+	Uri   string
+}
+
+var guidesNavigation map[string]*NavigationNode
+
+// ---------------------------------------------------------------------------
 // Register routes for documentation pages
 func Register(r *pat.Router) {
 	logger.Printf(nil, "Registering routes for guides")
 
-	cfg, _ := config.Get()
-
-	if len(cfg.AssetsDir) == 0 {
-		return
-	}
-
-	base, err := filepath.Abs(cfg.AssetsDir)
-	if err != nil {
-		logger.Errorf(nil, "Error forming guide template path: %s", err)
-	}
-	// FIXME - We should create a generic "file tree" map that we can itterate over to generate these paths
-	//       - The same for static resources. Particularly as we'll probably remove the asset package and patch
-	//         unroller/render to allow an array of template directories to be passed in.
-	//
-	base = base + "/templates"
+	base := GetBasePath()
 	root := base + "/guides"
 
-	//logger.Printf(nil, "Scanning "+root)
+	guidesNavigation = make(map[string]*NavigationNode)
 
-	err = filepath.Walk(root, func(path string, info os.FileInfo, _ error) error {
+	err := filepath.Walk(root, func(path string, info os.FileInfo, _ error) error {
 		if info == nil {
 			return nil
 		}
@@ -52,24 +49,105 @@ func Register(r *pat.Router) {
 
 		ext := filepath.Ext(path)
 
+		buildNavigation(path, base, ext)
+
 		switch ext {
 		case ".html", ".tmpl", ".md":
-			//logger.Printf(nil, "** "+path)
-			//logger.Printf(nil, "base: "+base)
+			logger.Printf(nil, "** "+path)
+			logger.Printf(nil, "base: "+base)
 
-			// Strip base path and file extension
-			route := strings.TrimSuffix(strings.TrimPrefix(path, base), ext)
+			// Convert path/filename to route
+			route := FilenameToRoute(path, base)
 			resource := strings.TrimPrefix(route, "/")
 
-			logger.Printf(nil, ">> "+route)
-			//logger.Printf(nil, "== "+resource)
+			logger.Tracef(nil, ">> "+route)
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				//logger.Printf(nil, "Render resource '%s'", resource)
 				render.HTML(w, http.StatusOK, resource, render.DefaultVars(req, render.Vars{}))
 			})
 		}
 		return nil
 	})
 	_ = err
+
+	// Register the guides navigation with the renderer
+	render.SetGuidesNavigation(&guidesNavigation)
 }
+
+// ---------------------------------------------------------------------------
+func GetBasePath() string {
+	cfg, _ := config.Get()
+
+	if len(cfg.AssetsDir) == 0 {
+		return ""
+	}
+
+	base, err := filepath.Abs(cfg.AssetsDir)
+	if err != nil {
+		logger.Errorf(nil, "Error forming guide template path: %s", err)
+	}
+	base = base + "/templates"
+
+	return base
+}
+
+// ---------------------------------------------------------------------------
+func FilenameToRoute(name string, basepath string) string {
+	//logger.Printf(nil, "** "+name)
+	//logger.Printf(nil, "base: "+basepath)
+
+	// Strip base path and file extension
+	route := strings.TrimSuffix(strings.TrimPrefix(name, basepath), filepath.Ext(name))
+
+	return route
+}
+
+// ---------------------------------------------------------------------------
+func buildNavigation(filename string, base string, ext string) {
+
+	metafile := "assets/templates/" + strings.TrimPrefix(strings.TrimSuffix(filename, ext), base+"/") + ".tmpl"
+
+	hierarchy := asset.MetaData(metafile, "Navigation")
+	if len(hierarchy) > 0 {
+		logger.Tracef(nil, "Got Navigation metadata %s for file %s\n", hierarchy, filename)
+
+		// Convert filename to route
+		route := FilenameToRoute(filename, base)
+
+		// Break hierarchy into bits
+		split := strings.Split(hierarchy, "/")
+		parts := len(split)
+
+		current := guidesNavigation
+
+		// Build tree for this navigation item
+		for i := range split {
+
+			name := split[i]
+			id := strings.Replace(strings.ToLower(name), " ", "-", -1)
+
+			if i < parts-1 {
+				// Have we already created this navigation node?
+				if _, ok := current[id]; !ok {
+					current[id] = &NavigationNode{
+						Id:    id,
+						Name:  name,
+						Child: make(map[string]*NavigationNode),
+					}
+				}
+				// Step into tree
+				current = current[id].Child
+			} else {
+				current[id] = &NavigationNode{
+					Id:   id,
+					Uri:  route,
+					Name: name,
+				}
+			}
+		}
+
+		// TODO SortOrder metadata, if not set, use sort 99999
+	}
+}
+
+// ---------------------------------------------------------------------------

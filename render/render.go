@@ -17,6 +17,8 @@ import (
 // Render is a global instance of github.com/unrolled/render.Render
 var Render = New()
 
+var guides interface{}
+
 // Vars is a map of variables
 type Vars map[string]interface{}
 
@@ -28,9 +30,6 @@ func New() *render.Render {
 
 	// XXX Order of directory inporting is IMPORTANT XXX
 	if len(cfg.AssetsDir) != 0 {
-		//asset.Compile(cfg.AssetsDir+"/templates", "assets/templates")
-		//asset.Compile(cfg.AssetsDir+"/static", "assets/static")
-
 		asset.Compile(cfg.AssetsDir+"/templates", "assets/templates")
 		asset.Compile(cfg.AssetsDir+"/static", "assets/static")
 		asset.Compile(cfg.AssetsDir+"/themes/"+cfg.Theme, "assets")
@@ -89,6 +88,11 @@ func DefaultVars(req *http.Request, m Vars) map[string]interface{} {
 	m["APIVersions"] = spec.APIVersions
 	m["Resources"] = spec.ResourceList
 	m["Info"] = spec.APIInfo
+	m["NavigationGuides"] = guides
 
 	return m
+}
+
+func SetGuidesNavigation(guidesnav interface{}) {
+	guides = guidesnav
 }

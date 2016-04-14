@@ -378,10 +378,22 @@ func processMethod(api *API, o *spec.Operation, path, methodname string, version
 			r.Methods = append(r.Methods, *method)
 			resources[r.ID] = r
 		}
+		// Look for a pre-declared resource with the response ID, and use that or create the first one...
+		log.Printf("++ Resource version %s  ID %s\n", version, r.ID)
+		var vres *Resource
+		var ok bool
+		if vres, ok = ResourceList[version][r.ID]; !ok {
+			log.Printf("   - Creating new resource\n")
+			vres = r
+		}
+		ResourceList[version][r.ID] = vres
+
+		// Compile a list of the methods which use this resource
+		vres.Methods = append(vres.Methods, *method)
 
 		method.DefaultResponse = &Response{
 			Description: o.Responses.Default.Description,
-			Schema:      r,
+			Schema:      vres,
 		}
 	}
 

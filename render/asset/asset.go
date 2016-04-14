@@ -10,6 +10,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
@@ -41,11 +42,21 @@ func AssetNames() []string {
 
 func MetaData(filename string, name string) string {
 	if md, ok := _metadata[filename]; ok {
-		if val, ok := md[name]; ok {
+		if val, ok := md[strings.ToLower(name)]; ok {
 			return val
 		}
 	}
 	return ""
+}
+
+func MetaDataFileList() []string {
+	files := make([]string, len(_metadata))
+	ix := 0
+	for key := range _metadata {
+		files[ix] = key
+		ix++
+	}
+	return files
 }
 
 func Compile(dir string, prefix string) {
@@ -67,6 +78,11 @@ func Compile(dir string, prefix string) {
 			replacements = append(replacements, slice...)
 		}
 		guideReplacer = strings.NewReplacer(replacements...)
+	}
+
+	dir, err := filepath.Abs(dir)
+	if err != nil {
+		logger.Errorf(nil, "Error forming absolute path: %s", err)
 	}
 
 	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -117,6 +133,7 @@ func Compile(dir string, prefix string) {
 			// Store the template, doing and search/replaces on the way
 			_bindata[newname] = []byte(guideReplacer.Replace(string(buf)))
 			if len(meta) > 0 {
+				logger.Printf(nil, "Adding metadata for file %s\n", newname)
 				_metadata[newname] = meta
 			}
 		}

@@ -1,4 +1,23 @@
 <div class="col-sm-3 col-md-2 sidebar">
+    <!-- Guides -->
+    [: if .NavigationGuides :]
+    <ul class="nav nav-sidebar">
+      [: range $nav := .NavigationGuides :]
+        <li>
+          <a href="[: $nav.Uri :]" [: if $nav.Child :]class="nav-toggle" data-toggle="collapse" data-target="#sub[: $nav.Id :]"[: end :]>[: $nav.Name :]</a>
+          [: if $nav.Child :]
+            <ul class="nav" id="sub[: $nav.Id :]">
+              [: range $child := $nav.Child :]
+                <li><a href="[: $child.Uri :]">[: $child.Name :]</a></li>
+              [: end :]
+            </ul>
+          [: end :]
+        </li>
+      [: end :]
+    </ul>
+    [: end :]
+
+    <!-- Reference -->
     <ul class="nav nav-sidebar">
         [: range $api := .APIs :]
           <li>
@@ -12,9 +31,9 @@
         [: end :]
     </ul>
 
-
     [: if .APIVersions :]
-        <a href="" class="nav-toggle" data-toggle="collapse" data-target="#older">Older Versions</a>
+    <!-- Reference - Other versions -->
+        <a href="" class="nav-toggle" data-toggle="collapse" data-target="#older">Other Versions</a>
         <ul class="nav nav-sidebar" id="older">
             [: range $v, $versions := .APIVersions :]
             <li><a>[: $v :]</a>
@@ -34,4 +53,5 @@
             [: end :]
         </ul>
     [: end :]
+
 </div>
