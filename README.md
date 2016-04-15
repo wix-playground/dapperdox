@@ -117,7 +117,7 @@ You may pass multiple `-spec-rewrite-url` parameters to Swaggerly, to have it re
 Swaggerly reads the top level Swagger object `tags` member, and only documents API operations where tags match. It will use the
 tag description or name in these cases as the API identifier in pages, navigation and URLs.
 
-```json
+```javascript
 {
   "swagger": "2.0",
 
