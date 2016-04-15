@@ -14,14 +14,18 @@
     "application/json"
     ],
   "tags": [
+    { 
+        "name":"Estimates Price",
+        "description" : "Estimates of Price"
+    },
     { "name": "Products" },
-    { "name":"Estimates Price" },
     { "name":"Estimates Time" },
     { "name": "User Profile" },
     { "name": "User Activity" }
   ],
     "paths": {
         "/products": {
+            "x-pathName" : "Types of product",
             "get": {
                 "summary": "Product Types",
                 "description": "The Products endpoint returns information about the Uber products offered at a given location. The response includes the display name and other details about each product, and lists the products in the proper display order.",
@@ -44,7 +48,7 @@
                 }
                 ],
                 "tags": [
-                "Products"
+                  "Products"
                 ],
                 "responses": {
                     "200": {

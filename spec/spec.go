@@ -139,6 +139,8 @@ type Resource struct {
 	Enum        []string
 }
 
+// -----------------------------------------------------------------------------
+
 // Load loads API specs from the supplied host (usually local!)
 func Load(host string) {
 
@@ -168,27 +170,41 @@ func Load(host string) {
 	getSecurityDefinitions(swaggerdoc.Spec())
 
 	// Use the top level TAGS to order the API resources/endpoints
-	for _, tag := range swaggerdoc.Spec().Tags {
-		api := API{
-			ID:   titleToKebab(tag.Name),
-			Name: tag.Name,
-			URL:  u,
-			Info: &APIInfo,
-		}
-
-		// Match up on tags: FIXME This does not work correctly if multiple paths have the same TAG (which is allowed)
+	// If Tags: [] is not defined, or empty, then no filtering or ordering takes place,#
+	// and all API paths will be documented..
+	for _, tag := range getTags(swaggerdoc.Spec()) {
+		// Tag matching may not be as expected if multiple paths have the same TAG (which is technically permitted)
 		var ok bool
 		var ver interface{}
-		for p, o := range swaggerdoc.AllPaths() {
-			if ver, ok = o.Extensions["x-version"]; !ok {
+
+		for path, pathItem := range swaggerdoc.AllPaths() {
+
+			var name string // Will only populate if Tagging used in spec. processMethod overrides if needed.
+			name = tag.Description
+			if name == "" {
+				name = tag.Name
+			}
+
+			api := &API{
+				ID:   titleToKebab(name),
+				Name: name,
+				URL:  u,
+				Info: &APIInfo,
+			}
+
+			if ver, ok = pathItem.Extensions["x-version"]; !ok {
 				ver = "latest"
 			}
 			api.CurrentVersion = ver.(string)
 
-			getMethods(tag, &api, &api.Methods, o, p, ver.(string)) // Current version
-			getVersions(tag, &api, o.Versions, p)                   // All versions
+			getMethods(tag, api, &api.Methods, &pathItem, path, ver.(string)) // Current version
+			getVersions(tag, api, pathItem.Versions, path)                    // All versions
+
+			// If API was populated, add to set
+			if len(api.Methods) > 0 {
+				APIs = append(APIs, *api) // All APIs (versioned within)
+			}
 		}
-		APIs = append(APIs, api) // All APIs (versioned within)
 	}
 
 	// Build a API map, grouping by version
@@ -204,8 +220,23 @@ func Load(host string) {
 			APIVersions[v] = append(APIVersions[v], napi) // Group APIs by version
 		}
 	}
-
 }
+
+// -----------------------------------------------------------------------------
+
+func getTags(specification *spec.Swagger) []spec.Tag {
+	var tags []spec.Tag
+
+	for _, tag := range specification.Tags {
+		tags = append(tags, tag)
+	}
+	if len(tags) == 0 {
+		tags = append(tags, spec.Tag{})
+	}
+	return tags
+}
+
+// -----------------------------------------------------------------------------
 
 func getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path string) {
 	if versions == nil {
@@ -216,35 +247,42 @@ func getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path
 	for v, pi := range versions {
 		logger.Tracef(nil, "Process version %s\n", v)
 		var method []Method
-		getMethods(tag, api, &method, pi, path, v)
+		getMethods(tag, api, &method, &pi, path, v)
 		api.Versions[v] = method
 	}
 }
 
-func getMethods(tag spec.Tag, api *API, methods *[]Method, pi spec.PathItem, path string, version string) {
+// -----------------------------------------------------------------------------
 
-	getMethod(tag, api, methods, version, pi.Get, path, "get")
-	getMethod(tag, api, methods, version, pi.Post, path, "post")
-	getMethod(tag, api, methods, version, pi.Put, path, "put")
-	getMethod(tag, api, methods, version, pi.Delete, path, "delete")
-	getMethod(tag, api, methods, version, pi.Head, path, "head")
-	getMethod(tag, api, methods, version, pi.Options, path, "options")
-	getMethod(tag, api, methods, version, pi.Patch, path, "patch")
+func getMethods(tag spec.Tag, api *API, methods *[]Method, pi *spec.PathItem, path string, version string) {
+
+	getMethod(tag, api, methods, version, pi, pi.Get, path, "get")
+	getMethod(tag, api, methods, version, pi, pi.Post, path, "post")
+	getMethod(tag, api, methods, version, pi, pi.Put, path, "put")
+	getMethod(tag, api, methods, version, pi, pi.Delete, path, "delete")
+	getMethod(tag, api, methods, version, pi, pi.Head, path, "head")
+	getMethod(tag, api, methods, version, pi, pi.Options, path, "options")
+	getMethod(tag, api, methods, version, pi, pi.Patch, path, "patch")
 }
 
-func getMethod(tag spec.Tag, api *API, methods *[]Method, version string, o *spec.Operation, path, methodname string) {
-	if o == nil {
+// -----------------------------------------------------------------------------
+
+func getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
+	if operation == nil {
 		return
 	}
-	// Filter by tags or, if no Tags, build all APIs
-	taglen := len(o.Tags)
-	for _, t := range o.Tags {
-		if taglen == 0 || t == tag.Name {
-			method := processMethod(api, o, path, methodname, version)
+	// Filter and sort by matching current top-level tag with the operation tags.
+	// If Tagging is not used by spec, then process each operation without filtering.
+	taglen := len(operation.Tags)
+	for _, t := range operation.Tags {
+		if taglen == 0 || tag.Name == "" || t == tag.Name {
+			method := processMethod(api, pathitem, operation, path, methodname, version)
 			*methods = append(*methods, *method)
 		}
 	}
 }
+
+// -----------------------------------------------------------------------------
 
 func getSecurityDefinitions(spec *spec.Swagger) {
 
@@ -283,7 +321,9 @@ func getSecurityDefinitions(spec *spec.Swagger) {
 	}
 }
 
-func processMethod(api *API, o *spec.Operation, path, methodname string, version string) *Method {
+// -----------------------------------------------------------------------------
+
+func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
 
 	id := o.ID
 	if id == "" {
@@ -300,11 +340,27 @@ func processMethod(api *API, o *spec.Operation, path, methodname string, version
 		API:         api,
 	}
 
+	// If Tagging is not used by spec to select and order API paths to document, then
+	// complete the missing names.
+	// First try the vendor extension x-pathName, falling back to summary if not set.
+	if pathname, ok := pathItem.Extensions["x-pathName"]; ok {
+		api.Name = pathname.(string)
+		api.ID = titleToKebab(api.Name)
+	}
+	if api.Name == "" {
+		name := o.Summary
+		if name == "" {
+			logger.Errorf(nil, "Operation '%s' does not have an operationId or summary member.", id)
+			panic("aborting")
+
+		}
+		api.Name = name
+		api.ID = titleToKebab(name)
+	}
+
 	if ResourceList == nil {
 		ResourceList = make(map[string]map[string]*Resource)
 	}
-
-	resources := make(map[string]*Resource)
 
 	for _, param := range o.Parameters {
 		p := Parameter{
@@ -336,9 +392,6 @@ func processMethod(api *API, o *spec.Operation, path, methodname string, version
 
 	// Compile resources from response declaration
 	for status, response := range o.Responses.StatusCodeResponses {
-		//log.Printf("Got response schema (status %s):\n", status)
-		//spew.Dump(response.Schema)
-
 		var vres *Resource
 
 		// Discover if the resource is already declared, and pick it up
@@ -351,9 +404,9 @@ func processMethod(api *API, o *spec.Operation, path, methodname string, version
 			r := resourceFromSchema(response.Schema, nil) // May be thrown away
 
 			// Look for a pre-declared resource with the response ID, and use that or create the first one...
-			log.Printf("++ Resource version %s  ID %s\n", version, r.ID)
+			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
 			if vres, ok = ResourceList[version][r.ID]; !ok {
-				log.Printf("   - Creating new resource\n")
+				logger.Tracef(nil, "   - Creating new resource\n")
 				vres = r
 			}
 			ResourceList[version][r.ID] = vres
@@ -375,37 +428,27 @@ func processMethod(api *API, o *spec.Operation, path, methodname string, version
 	if o.Responses.Default != nil {
 		r := resourceFromSchema(o.Responses.Default.Schema, nil)
 		if r != nil {
-			r.Methods = append(r.Methods, *method)
-			resources[r.ID] = r
-		}
-		// Look for a pre-declared resource with the response ID, and use that or create the first one...
-		log.Printf("++ Resource version %s  ID %s\n", version, r.ID)
-		var vres *Resource
-		var ok bool
-		if vres, ok = ResourceList[version][r.ID]; !ok {
-			log.Printf("   - Creating new resource\n")
-			vres = r
-		}
-		ResourceList[version][r.ID] = vres
+			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
+			// Look for a pre-declared resource with the response ID, and use that or create the first one...
+			var vres *Resource
+			var ok bool
+			if vres, ok = ResourceList[version][r.ID]; !ok {
+				logger.Tracef(nil, "   - Creating new resource\n")
+				vres = r
+			}
+			ResourceList[version][r.ID] = vres
 
-		// Compile a list of the methods which use this resource
-		vres.Methods = append(vres.Methods, *method)
+			// Add to the compiled list of methods which use this resource
+			vres.Methods = append(vres.Methods, *method)
 
-		method.DefaultResponse = &Response{
-			Description: o.Responses.Default.Description,
-			Schema:      vres,
+			// Set the default response
+			method.DefaultResponse = &Response{
+				Description: o.Responses.Default.Description,
+				Schema:      vres,
+			}
 		}
 	}
 
-	//api.Resources = make(map[string]*Resource) // List resources against API
-
-	//	// List resources against method
-	//	for _, r := range resources {
-	//		method.Resources = append(method.Resources, r)
-	//		//api.Resources[r.ID] = r
-	//	}
-
-	// Lookup security reference against SecurityDefinitions
 	// TODO FIXME If no Security given from operation, then the global defaults are appled. CHECK THIS IS TRUE!
 
 	method.Security = make(map[string]Security)
@@ -512,7 +555,7 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	if s.Example != nil {
 		example, err := json.MarshalIndent(&s.Example, "", "    ")
 		if err != nil {
-			log.Printf("error encoding example json: %s", err)
+			logger.Errorf(nil, "Error encoding example json: %s", err)
 		}
 		r.Example = string(example)
 	}
@@ -599,7 +642,7 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	}
 
 	// Build element of resource schema example
-	// FIXME This explodes if there is no "type" member in the actual model definition - which is probably right
+	// FIXME This *explodes* if there is no "type" member in the actual model definition - which is probably right
 	//       for setting type of array in the model is a bit restrictive - better if set in the response decl. to
 	//       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
 	//
@@ -618,26 +661,12 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	} else {
 		schema, err := json.MarshalIndent(json_representation, "", "    ")
 		if err != nil {
-			log.Printf("error encoding schema json: %s", err)
+			logger.Errorf(nil, "error encoding schema json: %s", err)
 		}
 		r.Schema = string(schema)
 	}
 
 	return r
-}
-
-// -----------------------------------------------------------------------------
-// Take all the resources used by the method, and add them to the global resource
-// list, merging the methods:w
-
-func mergeResources(method *Method, version string) {
-
-	//var ResourceList map[string]map[string]Resource // Version->ResourceName->Resource
-
-	for _, r := range method.Resources {
-		//ResourceList[version]
-		method.Resources = append(method.Resources, r)
-	}
 }
 
 // -----------------------------------------------------------------------------
@@ -648,11 +677,15 @@ func titleToKebab(s string) string {
 	return s
 }
 
+// -----------------------------------------------------------------------------
+
 func camelToKebab(s string) string {
 	s = snaker.CamelToSnake(s)
 	s = strings.Replace(s, "_", "-", -1)
 	return s
 }
+
+// -----------------------------------------------------------------------------
 
 func loadSpec(url string) (*spec.Document, error) {
 	spec, err := spec.Load(url)
@@ -667,3 +700,5 @@ func loadSpec(url string) (*spec.Document, error) {
 
 	return spec, err
 }
+
+// -----------------------------------------------------------------------------

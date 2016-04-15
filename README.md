@@ -25,6 +25,7 @@ either http://0.0.0.0:3123, http://127.0.0.1:3123 or http://localhost:3123.
 - [Specifying an OpenAPI specification](#specifying-an-openapi-specification)
 - [Configuring the address of the server](#specifying-the-address-of-the-server)
 - [Rewriting URLs](#rewriting-urls)
+- [Specification requirements](#specification-requirements)
 - [Customising the documentation](#customising-the-documentation)
   - [Themes](#theme-assets)
   - [Custom documentation pages](#adding-custom-documentation)
@@ -110,6 +111,93 @@ API is served from to be live instead of test. To do this, supply `-spec-rewrite
 ```
 
 You may pass multiple `-spec-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders.
+
+## Specification requirements
+
+Swaggerly reads the top level Swagger object `tags` member, and only documents API operations where tags match. It will use the
+tag description or name in these cases as the API identifier in pages, navigation and URLs.
+
+```json
+{
+  "swagger": "2.0",
+
+  "tags": [
+    { 
+        "name": "Products",
+        "description": "A more vebose decription of tag"
+    },
+    { "name": "Estimates Price" }
+  ],
+    "paths": {
+        "/products": {
+            "get": {
+                "tags": [
+                  "Products"
+                ],
+                "summary": "Product Types",
+                "description": "Read product types"
+            },
+            "post": {
+                "tags": [
+                  "Products"
+                ],
+                "summary": "Product Types",
+                "description": "Create product types"
+            }
+        }
+    }
+}
+```
+
+This incomplete specification example shows how documentation order and filtering is controlled by `tags`. The top level
+tags member declares that API operations tagged with `Estimates Price` and `Products` should be built, in that order.
+The `description` member of the `Products` tag is used to name all operations grouped by that tag. The name of the
+`Estimates Price` tag would be used to name all operations grouped by that tag, as there is no `description` member.
+
+This mechanism for naming and grouping API operations gives you the most control.
+
+However, if tags cannot be used, Swaggerly must still have a title to use for an API path, and will fall back to using
+the `summary` member from one of the path operations. This often does not produce the best results, unless
+the `summary` members of all operations for a path are set to the same text, as in the example above, but will often not be
+the case.
+
+To force the group name of all operations declared for a path, the Swaggerly specific `x-pathName` member may be specified
+in the Path Item object. This will always take effect, and will even override the description or name inherited from the top
+level `tags` member. However, tags are the most flexible approach.
+
+```json
+{
+  "swagger": "2.0",
+
+  "tags": [
+    { 
+        "name": "Products",
+        "description": "A more vebose decription of tag"
+    },
+    { "name": "Estimates Price" }
+  ],
+    "paths": {
+        "/products": {
+            "x-pathName": "Types of Product",
+            "get": {
+                "tags": [
+                  "Products"
+                ],
+                "summary": "Product Types",
+                "description": "Read product types"
+            },
+            "post": {
+                "tags": [
+                  "Products"
+                ],
+                "summary": "Product Types",
+                "description": "Create product types"
+            }
+        }
+    }
+}
+```
+
 
 ## Customising the documentation
 Swaggerly presents two classes of documentation:
@@ -382,12 +470,6 @@ To create an integrated developer hub. Such resources could be:
 
 1. API key management tools
 2. Forum
-
-To be completed.
-
-## Tagging
-
-Swaggerly reads the top level tags member of the specification, and only builds API endpoints named, in the order they are names. Without Tags, perhaps ALL should be built.
 
 To be completed.
 

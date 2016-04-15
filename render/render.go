@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	"fmt"
 	"github.com/ian-kent/htmlform"
 	"github.com/unrolled/render"
 	"github.com/zxchris/swaggerly/config"
@@ -37,8 +36,7 @@ func New() *render.Render {
 	// TODO only import the theme specified instead of all installed themes that will not be used!
 
 	if len(cfg.ThemesDir) != 0 {
-		logger.Tracef(nil, "Picking up themes from directory: "+cfg.ThemesDir+"/"+cfg.Theme+"/assets")
-		fmt.Printf("Picking up themes from directory: " + cfg.ThemesDir + "/" + cfg.Theme + "/assets\n")
+		logger.Infof(nil, "Picking up themes from directory: "+cfg.ThemesDir+"/"+cfg.Theme+"/assets")
 		asset.Compile(cfg.ThemesDir+"/"+cfg.Theme, "assets")
 	}
 	// Fallback to local themes directory
