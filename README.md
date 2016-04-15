@@ -117,7 +117,7 @@ You may pass multiple `-spec-rewrite-url` parameters to Swaggerly, to have it re
 Swaggerly reads the top level Swagger object `tags` member, and only documents API operations where tags match. It will use the
 tag description or name in these cases as the API identifier in pages, navigation and URLs.
 
-```javascript
+```json
 {
   "swagger": "2.0",
 
@@ -228,7 +228,7 @@ A typical theme assets structure is:
         - `default-method.tmpl` - The default API method page template
         - `default-resource.tmpl` - The default API resource page template
         - `fragments/` - Common HTML fragments used across pages
-            - `docs/` - Fragments such as the page side navigation and authorisation details
+            - `reference/` - Fragments such as the page side navigation and authorisation details
             - `explorer/` - API explorer fragments, such as input fields
 
 ### Using an alternative theme
@@ -291,12 +291,12 @@ cases.*
 An API page will have a URL formed with the following pattern:
 
 ```
-/docs/<api-name>
+/reference/<api-name>
 ```
 
 To override the API page for an endpoint called `example-api`, when using the default theme:
 
-1. Copy `assets/themes/default/templates/default-api.tmpl` to `local-assets/assets/templates/docs/example-api.tmpl`
+1. Copy `assets/themes/default/templates/default-api.tmpl` to `local-assets/assets/templates/reference/example-api.tmpl`
 2. Edit `example-api.tmpl` to add any additional content you required.
 
 Whenever Swaggerly renders the page for the API `example-api`, it will use your overridden template.
@@ -306,14 +306,14 @@ Whenever Swaggerly renders the page for the API `example-api`, it will use your 
 A method page will have a URL formed with the following pattern:
 
 ```
-/docs/<api-name>/<method-name>
+/reference/<api-name>/<method-name>
 ```
 
 where `method-name` will be `GET`, `POST` etc
 
 To override the `GET` method page for an endpoint called `example-api`, when using the default theme:
 
-1. Copy `assets/themes/default/templates/default-method.tmpl` to `local-assets/assets/templates/docs/example-api/get.tmpl`
+1. Copy `assets/themes/default/templates/default-method.tmpl` to `local-assets/assets/templates/reference/example-api/get.tmpl`
 2. Edit `get.tmpl` to add any additional content you required.
 
 Whenever Swaggerly renders the page for that API method, it will use your overridden template.
