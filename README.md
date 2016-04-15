@@ -22,10 +22,10 @@ either http://0.0.0.0:3123, http://127.0.0.1:3123 or http://localhost:3123.
 
 ## Guide Contents
 - [Next steps](#next-steps)
-- [Specifying an OpenAPI specification](#specifying-an-openapi-specification)
 - [Configuring the address of the server](#specifying-the-address-of-the-server)
-- [Rewriting URLs](#rewriting-urls)
+- [Specifying an OpenAPI specification](#specifying-an-openapi-specification)
 - [Specification requirements](#specification-requirements)
+- [Rewriting URLs](#rewriting-urls)
 - [Customising the documentation](#customising-the-documentation)
   - [Themes](#theme-assets)
   - [Custom documentation pages](#adding-custom-documentation)
@@ -45,6 +45,11 @@ will be a number of things that you will want to configure or change:
 2. You will want to supplement the auto-generated resource documentation with your own authored text and guides.
 3. The default authentication credential passing may not match your API requirements.
 
+## Configuring the address of the server
+
+Swaggerly will start serving content from http://0.0.0.0:3123. You can change this through the `-bind-addr` configuration
+parameter, the format of which being `IP address:port number`, such as `-bind-address=0.0.0.0:3123`.
+
 ## Specifying an OpenAPI specification
 
 Out of the box, Swaggerly will look for the OpenAPI specification `spec/swagger.json` under the directory specified by the
@@ -52,65 +57,6 @@ command line option `-spec-dir`. To change this, you can supply the `-spec-filen
 `-spec-filename=spec/swagger.json` does the same as the default.
 
 Multiple API specifications are not currently supported, but are on the feature list.
-
-
-## Configuring the address of the server
-
-Swaggerly will start serving content from http://0.0.0.0:3123. You can change this through the `-bind-addr` configuration
-parameter, the format of which being `IP address:port number`, such as `-bind-address=0.0.0.0:3123`.
-
-## Rewriting URLs
-### Documentation URLs
-The swagger specification often does not contain API or resource URLs that are correct for the environment being documented.
-For example, the swagger specifications may contain the production URLs, which are not appropriate when the specification and
-documentation is being served up in a development or test environment.
-
-Swaggerly allows you to rewrite URLs on the fly, so that they match the environment they are being served from. To do this,
-you specify the URL pattern that should be rewritten *from* and *to*, by passing the `-document-rewrite-url` configuration
-parameter. The parameter takes a `from=to` pair, such as
-
-```
--document-rewrite-url=domain.name.from=domain.name.to
-```
-
-You may also choose to use placeholders in your documentation, instead of real URLs, so that you replace the placeholder with
-a valid URL:
-
-```html
-<a href="@MY_DOMAIN/some/document.html">Some document</a>
-```
-
-which would be rewritten with:
-
-```bash
--document-rewrite-url=@MY_DOMAIN=http://www.mysite.com
-```
-
-You may pass multiple `-document-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders,
-particularly useful if you additionally need to configure URLs such as CDN location.
-
-### Specification URLs
-
-If your swagger specification is split over multiple files, and therefore contain absolute `$ref:` object references, these
-references will not be followed correctly unless they resolve to the running Swaggerly instance serving the files.
-
-For example, if the swagger specification uses the absolute references of `http://mydomain.com/swagger-2.0/....`, and
-Swagger is serving content from `http://localhost:3123`, then the additional configuration parameters to pass to Swaggerly
-to correct this would be:
-
-```
--spec-rewrite-url=http://mydomain.com/swagger-2.0 \
--site-url=http://localhost:3123 
-```
-
-Sometimes you will want to map a specification URL to one that is not the `site url`, for example changing the URL that the
-API is served from to be live instead of test. To do this, supply `-spec-rewrite-url` with a `from=to` pair. 
-
-```
--spec-rewrite-url=http://api.test.domain.com=http://api.live.domain.com
-```
-
-You may pass multiple `-spec-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders.
 
 ## Specification requirements
 
@@ -199,6 +145,59 @@ level `tags` member. However, tags are the most flexible approach.
 ```
 
 
+## Rewriting URLs
+### Documentation URLs
+The swagger specification often does not contain API or resource URLs that are correct for the environment being documented.
+For example, the swagger specifications may contain the production URLs, which are not appropriate when the specification and
+documentation is being served up in a development or test environment.
+
+Swaggerly allows you to rewrite URLs on the fly, so that they match the environment they are being served from. To do this,
+you specify the URL pattern that should be rewritten *from* and *to*, by passing the `-document-rewrite-url` configuration
+parameter. The parameter takes a `from=to` pair, such as
+
+```
+-document-rewrite-url=domain.name.from=domain.name.to
+```
+
+You may also choose to use placeholders in your documentation, instead of real URLs, so that you replace the placeholder with
+a valid URL:
+
+```html
+<a href="@MY_DOMAIN/some/document.html">Some document</a>
+```
+
+which would be rewritten with:
+
+```bash
+-document-rewrite-url=@MY_DOMAIN=http://www.mysite.com
+```
+
+You may pass multiple `-document-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders,
+particularly useful if you additionally need to configure URLs such as CDN location.
+
+### Specification URLs
+
+If your swagger specification is split over multiple files, and therefore contain absolute `$ref:` object references, these
+references will not be followed correctly unless they resolve to the running Swaggerly instance serving the files.
+
+For example, if the swagger specification uses the absolute references of `http://mydomain.com/swagger-2.0/....`, and
+Swagger is serving content from `http://localhost:3123`, then the additional configuration parameters to pass to Swaggerly
+to correct this would be:
+
+```
+-spec-rewrite-url=http://mydomain.com/swagger-2.0 \
+-site-url=http://localhost:3123 
+```
+
+Sometimes you will want to map a specification URL to one that is not the `site url`, for example changing the URL that the
+API is served from to be live instead of test. To do this, supply `-spec-rewrite-url` with a `from=to` pair. 
+
+```
+-spec-rewrite-url=http://api.test.domain.com=http://api.live.domain.com
+```
+
+You may pass multiple `-spec-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders.
+
 ## Customising the documentation
 Swaggerly presents two classes of documentation:
 
@@ -211,6 +210,11 @@ to form a theme. To customise the documentation:
 1. Alternative themes may be used
 2. Parts of a theme may be overridden
 3. Additional assets may be provided to extend the generated documentation, such as guides
+
+
+**NOTE - A Git Flavoured Markdown approach is underway which removes the need to override any HTML templates to customise
+a particular page. Generic changes which affect the documentation as a whole, would represent a new theme.  
+Therefore the following documentation should NOT be read as the prefered approach to customise and extend Swaggerlys output**
 
 First an explanation of **assets** is required, and an introduction to its directory structure.
 
@@ -291,8 +295,11 @@ cases.*
 An API page will have a URL formed with the following pattern:
 
 ```
-/reference/<api-name>
+/reference/<api-group-name>
 ```
+
+where `api-group-name` is the kabab formatted name derived from the tag description or name, or `x-pathName` as described
+in [Specification requirements](#specification-requirements).
 
 To override the API page for an endpoint called `example-api`, when using the default theme:
 
@@ -306,10 +313,11 @@ Whenever Swaggerly renders the page for the API `example-api`, it will use your 
 A method page will have a URL formed with the following pattern:
 
 ```
-/reference/<api-name>/<method-name>
+/reference/<api-group-name>/<method-name>
 ```
 
-where `method-name` will be `GET`, `POST` etc
+where `api-group-name` is the kabab formatted name derived from the tag description or name, or `x-pathName` as described
+in [Specification requirements](#specification-requirements), and `method-name` will be `GET`, `POST` etc
 
 To override the `GET` method page for an endpoint called `example-api`, when using the default theme:
 
