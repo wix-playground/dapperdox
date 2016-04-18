@@ -405,7 +405,7 @@ For example, the metadata contained within the example `example/markdown/assets/
 Title: Swaggerly Markdown Example
 Author: Chris Smith
 Navigation: Examples/A markdown example
-Note: This top section is just MetaData and gets stripped at the first blank line.
+Note: This top section is just MetaData and gets stripped to the first blank line.
 
 This page was written using Git Flavoured Markdown
 ==================================================
