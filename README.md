@@ -14,7 +14,7 @@ Then start up Swaggerly, pointing it to your OpenAPI 2.0 specification file:
 ```
 ./swaggerly -spec-dir=<location of OpenAPI 2.0 spec>
 ```
-Swaggerly looks for the file path `spec/swagger.json` at the `-spec-dir` location, and builds documentation for the OpenAPI specification it finds. For example, the obligitary *petstore* OpenAPI specification is provided in the `petstore` directory, so
+Swaggerly looks for the file path `spec/swagger.json` at the `-spec-dir` location, and builds reference documentation for the OpenAPI specification it finds. For example, the obligitary *petstore* OpenAPI specification is provided in the `petstore` directory, so
 passing parameter `-spec-dir=petstore` will build the petstore documentation.
 
 Swaggerly will default to serving documentation from port 3123 on all interfaces, so you can point your web browser to
@@ -26,16 +26,16 @@ either http://0.0.0.0:3123, http://127.0.0.1:3123 or http://localhost:3123.
 - [Specifying an OpenAPI specification](#specifying-an-openapi-specification)
 - [Specification requirements](#specification-requirements)
 - [Rewriting URLs](#rewriting-urls)
-- [Customising the documentation](#customising-the-documentation)
-  - [Themes](#theme-assets)
-  - [Custom documentation pages](#adding-custom-documentation)
-  - [Adding nagivation](#adding-navigation)
 - [The API explorer](#the-api-explorer)
   - [Customising authentication credential capture](#customising-authentication-credential-capture)
     - [apiExplorer methods](#apiexplorer-methods)
   - [Controlling authentication credential passing](#controlling-authentication-credential-passing)
+- [Customising the documentation](#customising-the-documentation)
+  - [Creating local assets](#creating-local-assets)
+  - [Creating authored documentation pages](#creating-authored-documentation-pages)
 - [Versioning](#versioning)
 - [Reverse proxying to other resources](#reverse-proxying-through-to-other-resources)
+- [Configuration parameters](#configuration-parameters)
 
 ## Next steps
 While simply running Swaggerly and pointing it at your swagger specifications will give you some documentation quickly, there
@@ -49,12 +49,14 @@ will be a number of things that you will want to configure or change:
 
 Swaggerly will start serving content from http://0.0.0.0:3123. You can change this through the `-bind-addr` configuration
 parameter, the format of which being `IP address:port number`, such as `-bind-address=0.0.0.0:3123`.
+See [Configuration parameters](#configuration-parameters) for further information on configuring Swaggerly.
 
 ## Specifying an OpenAPI specification
 
 Out of the box, Swaggerly will look for the OpenAPI specification `spec/swagger.json` under the directory specified by the
 command line option `-spec-dir`. To change this, you can supply the `-spec-filename` option to Swaggerly. For example,
 `-spec-filename=spec/swagger.json` does the same as the default.
+See [Configuration parameters](#configuration-parameters) for further information on configuring Swaggerly.
 
 Multiple API specifications are not currently supported, but are on the feature list.
 
@@ -175,6 +177,8 @@ which would be rewritten with:
 You may pass multiple `-document-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders,
 particularly useful if you additionally need to configure URLs such as CDN location.
 
+See [Configuration parameters](#configuration-parameters) for further information on configuring Swaggerly.
+
 ### Specification URLs
 
 If your swagger specification is split over multiple files, and therefore contain absolute `$ref:` object references, these
@@ -197,152 +201,7 @@ API is served from to be live instead of test. To do this, supply `-spec-rewrite
 ```
 
 You may pass multiple `-spec-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders.
-
-## Customising the documentation
-Swaggerly presents two classes of documentation:
-
-1. API reference documentation, derived from Swagger specifications
-2. Guides and other authored documentation
-
-Documentation is built from assets, which mostly consist of styles, page templates and template fragments, grouped together
-to form a theme. To customise the documentation: 
-
-1. Alternative themes may be used
-2. Parts of a theme may be overridden
-3. Additional assets may be provided to extend the generated documentation, such as guides
-
-
-**NOTE - A Git Flavoured Markdown approach is underway which removes the need to override any HTML templates to customise
-a particular page. Generic changes which affect the documentation as a whole, would represent a new theme.  
-Therefore the following documentation should NOT be read as the prefered approach to customise and extend Swaggerlys output**
-
-First an explanation of **assets** is required, and an introduction to its directory structure.
-
-## Theme assets
-
-A typical theme assets structure is:
-
-- `theme name/`
-    - `static/`
-        - `css/` - Theme specific stylesheets
-        - `js/` - Theme specific javascript
-    - `templates/`
-        - `layout.tmpl` - The common page template
-        - `default-api.tmpl` - The default API page template
-        - `default-method.tmpl` - The default API method page template
-        - `default-resource.tmpl` - The default API resource page template
-        - `fragments/` - Common HTML fragments used across pages
-            - `reference/` - Fragments such as the page side navigation and authorisation details
-            - `explorer/` - API explorer fragments, such as input fields
-
-### Using an alternative theme
-```
-   -themes-dir=<installation directory of additional themes>
-   -theme=<name of theme to use>
-```
-
-### Adding custom documentation
-
-One of the main features of Swaggerly is its ability to serve specification generated reference documentation along with
-authored guides and reference notes, allowing the production of a complete unified documentation suite for an API, or set of
-APIs.
-
-To do this, Swaggerly would be configured to pick up and serve additional documentation, written in HTML or Github Flavoured 
-Markdown (styling support for which is currently incomplete). These documents are grouped under an application-specific `assets` directory.
-The structure of this assets directory is important, as it also allows you to override assets that are normally supplied
-by the chosen theme, and so must follow the structure set out in the section called [Theme assets](#theme-assets).
-
-Custom documentation introduces a new directory into the assets structure, that of `assets/templates/guides/`.
-Under this directory is placed all the authored content you wish to publish. The content may be a `.tmpl` HTML template or
-a `.md` Github Flavoured Markdown file, and will be rendered within the common `theme name/templates/layout.tmpl` page
-template.
-
-Swaggerly will serve this content from the `/guides/` URL path, for example `http://localhost:3123/guides/my_example_page`.
-
-
-#### Adding navigation
-
-Swaggerly will automatically build the necessary navigation for the swagger spec generated content, but it cannot do this
-for authored content within the `assets/templates/guides` directory. It leaves you to manage this appropriately. This is
-straightforward to do, as you can override the theme `templates/fragments/sidenav.tmpl` and introduce any navigation links you require. Simply copy this file from the theme directory into your application-specific assets as `assets/templates/fragments/sidenav.tmpl` and amend as appropraite.
-
-**(TODO: Investigate whether directives could be added to /guides/* files, giving navigation hints for auto-building of navigation links, which may be sufficient in many cases)**
-
-### Overriding theme assets
-
-Any theme assets may be overridden, as shown in the previous section with `sidenav.tmpl`. This allows you to modify any of
-the presentation to suit your local requirements.
-
-
-### Customisation of auto-generated pages
-
-Every reference page, auto-generated from the swagger specification, can be customised. These pages fall into three categories:
-
-1. API pages. These list and document all the methods available for an API endpoint.
-2. Method pages. These document a particular method, acting on an API endpoint.
-2. Resource pages. These document the resource that is submitted to or returned from an API endpoint, depending on method.
-
-There are three theme templates that provide the presentation structure for each of these pages, and can therefore be
-overridden if you wish to affect a documentation change consistently across all instances of a particular page type.
-Alternatively, you may override a page template on an API, method and resource basis.
-
-*The consequence of overriding theme templates is that you cannot change themes without changing your overridden pages. A
-Git Flavoured Markdown approach is being developed which will make theme template overriding unnecessary for a majority of
-cases.*
-
-#### API pages
-
-An API page will have a URL formed with the following pattern:
-
-```
-/reference/<api-group-name>
-```
-
-where `api-group-name` is the kabab formatted name derived from the tag description or name, or `x-pathName` as described
-in [Specification requirements](#specification-requirements).
-
-To override the API page for an endpoint called `example-api`, when using the default theme:
-
-1. Copy `assets/themes/default/templates/default-api.tmpl` to `local-assets/assets/templates/reference/example-api.tmpl`
-2. Edit `example-api.tmpl` to add any additional content you required.
-
-Whenever Swaggerly renders the page for the API `example-api`, it will use your overridden template.
-		
-#### Method pages
-
-A method page will have a URL formed with the following pattern:
-
-```
-/reference/<api-group-name>/<method-name>
-```
-
-where `api-group-name` is the kabab formatted name derived from the tag description or name, or `x-pathName` as described
-in [Specification requirements](#specification-requirements), and `method-name` will be `GET`, `POST` etc
-
-To override the `GET` method page for an endpoint called `example-api`, when using the default theme:
-
-1. Copy `assets/themes/default/templates/default-method.tmpl` to `local-assets/assets/templates/reference/example-api/get.tmpl`
-2. Edit `get.tmpl` to add any additional content you required.
-
-Whenever Swaggerly renders the page for that API method, it will use your overridden template.
-
-#### Resource pages
-
-An API page will have a URL formed with the following pattern:
-
-```
-/resources/<resource-name>
-```
-
-There can only be one resource of a given name.
-
-To override the resource page for an example resource `example-resource`, when using the default theme:
-
-1. Copy `assets/themes/default/templates/default-resource.tmpl` to `local-assets/assets/templates/resources/example-resource.tmpl`
-2. Edit `example-resource.tmpl` to add any additional content you required.
-
-Whenever Swaggerly renders the page for this resource, it will use your overridden template.
-
+See [Configuration parameters](#configuration-parameters) for further information on configuring Swaggerly.
 
 # The API explorer
 
@@ -365,25 +224,12 @@ API keys into the explorer page, so that the user can select the key from a drop
 
 ### apiExplorer methods
 
-`apiExplorer.addApiKey(name, key)`
-
-This method adds the named key to the internal list.
-
-
-`apiExplorer.listApiKeys()`
-
-Returns an array of key names.
-
-
-`apiExplorer.getApiKey( name )`
-
-Returns the key associated with name `name`.
-
-
-`apiExplorer.injectApiKeysIntoPage()`
-
-Injects the named API keys into the explorer, building a pulldown menu that can be selected from by the user.
-
+| Method | Description |
+| ------ | ----------- |
+| `apiExplorer.addApiKey(name, key)` | This method adds the named key to the internal list. |
+| `apiExplorer.listApiKeys()` | Returns an array of key names. |
+| `apiExplorer.getApiKey( name )` | Returns the key associated with name `name`. |
+| `apiExplorer.injectApiKeysIntoPage()` | Injects the named API keys into the explorer, building a pulldown menu that can be selected from by the user. |
 
 It would be usual for the template fragment `assets/themes/default/templates/fragments/scripts.tmpl` to be overridden, so
 that it can build a list of valid API keys to be used and inject them into the explorer page. Generally the keys would be
@@ -468,6 +314,78 @@ Swaggerly then needs to be told about this local assets directory for it to pick
 the configuration parameter `-assets-dir`, passed to swaggerly when starting. For example, to pick up the example above, use
 `-assets-dir=examples/apikey_injection/assets`.
 
+See [Creating local assets](#creating-local-assets) for further information about creating custom assets.
+
+## Customising the documentation
+Swaggerly presents two classes of documentation:
+
+1. API reference documentation, derived from Swagger specifications
+2. Guides and other authored documentation
+
+Documentation is built from assets, which mostly consist of styles, page templates and template fragments, grouped together
+to form a theme. To customise the documentation: 
+
+1. Alternative themes may be used to change the look and feel.
+2. Additional assets may be provided to extend the generated documentation, such as guides
+3. Parts of a theme may be overridden (advanced topic)
+
+In general, documentation should be written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/), which seamlessly integrates with the reference
+documentation generated from the OpenAPI specification.
+
+### Creating local assets
+
+Swaggerly builds documentation for several sets of assets. The primary assets are those which make up the theme being used
+for presentation, however Swaggerly will also pick up local assets and serve them along with the reference documentation
+it builds from the OpenAPI specification. The local assets directory can be considered equivalent to the `docroot` of a
+web server.
+
+Local assets can be images, guides, styles, javascript and *replacement* assets for those provided by the theme.
+
+The directory structure of your local assets must follow a defined directory structure, as Swaggerly needs to understand
+what it is serving and whether it is a replacement resource or not. It can do this by matching the assets directory
+structure with that provided by the theme:
+
+- `assets/`
+    - `static/`
+        - `css/` - Local stylesheets
+        - `js/` - Local javascript
+    - `templates/`
+        - `guides/` - Local authored documentation
+
+To have Swaggerly pick up your local assets, pass the `-assets-dir=<directory-path>` option to Swaggerly on start up. See
+[Configuration parameters](#configuration-parameters) for further information on configuring Swaggerly.
+
+### Creating authored documentation pages
+
+Authored documentation pages are refered to as *guides*, and have their own directory within an assets structure. Guides may
+be authored in HTML as `.tmpl` files, or as [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/). Writing guides as HTML `.tmpl` files will make those files dependant on the theme in use when they were written,
+and therefore not resistant to change. The flexible approach is to use Github Flavoured Markdown.
+
+#### Github Flavoured Markdown
+
+Guides written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/) (GFM)
+have a file extension of `.md` and are stored within directory `assets/templates/guides/` of your [local assets](#creating-local-assets). You can organise your files in subdirectories within the `/guides/` directory.
+
+On startup, Swaggerly will locate and build pages for all of your guides, maintaining the directory structure if finds below
+the `/guides/` directory.
+
+For example, the Swaggerly assets example `example/markdown/assets/` contains two guides:
+
+- `guides/markdown.md`
+- `guides/level2/markdown2.md`
+
+Passing Swaggerly the `-assets-dir=<Swaggerly-source-directory>/example/markdown/assets` will build these two guides,
+making them available as http://127.0.0.1:3123/guides/markdown and http://127.0.0.1:3123/guides/level2/markdown2
+
+You may also note that the site navigation, located at the left hand side of each page, shows two entries:
+*A markdown example* and *A markdown example 2*. This insertion into the navigation tree has been activated and is
+controlled by some meta data contained within the GFM files. This is described in the section [Controlling guide behaviour with meta data](#controlling-guide-behaviour-with-meta-data).
+
+#### Controlling guide behaviour with meta data
+
+
+
+
 ## Versioning
 
 To be completed.
@@ -488,4 +406,19 @@ To be completed.
 Swaggerly depends on a fork of [go-swagger](https://github.com/zxchris/go-swagger) as it's specification parser. This
 fork adds missing support for complex object response (arrays of objects), and the Swaggerly specific versioning scheme.
 
+## Configuration parameters
+
+| Option | Environment variable | Description |
+| ------ | -------------------- | ----------- |
+| `-assets-dir` | `ASSETS_DIR` | Assets to serve. Effectively the document root. |
+| `-bind-addr` | `BIND_ADDR` | Bind address. |
+| `-default-assets-dir` | `DEFAULT_ASSETS_DIR` | Default assets. |
+| `-document-rewrite-url` | `DOCUMENT_REWRITE_URL` | Specify a document URL that is to be rewritten. May be multiply defined. Format is from=to. |
+| `-log-level` | `LOGLEVEL` | Log level (info, debug, trace) |
+| `-site-url` | `SITE_URL` | Public URL of the documentation service. |
+| `-spec-dir` | `SPEC_DIR` | OpenAPI specification (swagger) directory. |
+| `-spec-filename` | `SPEC_FILENAME` | The filename of the OpenAPI specification file within the spec-dir. Defaults to spec/swagger.json |
+| `-spec-rewrite-url` | `SPEC_REWRITE_URL` | The URLs in the swagger specifications to be rewritten as site-url. |
+| `-theme` | `THEME` | Name of the theme to render documentation. |
+| `-themes-dir` | `THEMES_DIR` | Directory containing installed themes. |
 

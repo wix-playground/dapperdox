@@ -1,8 +1,7 @@
-Title: Swaggerly readme  
+Title: Swaggerly Markdown Example
 Author: Chris Smith
-SortOrder: 10
-Navigation1: A markdown example
-Navigation: Overview/A markdown example H
+Navigation: Examples/A markdown example
+Note: This top section is just MetaData and gets stripped at the first blank line.
 
 This page was written using Git Flavoured Markdown
 ==================================================
@@ -22,3 +21,10 @@ This is a link to (Google)[http://www.google.com].
 #### Smaller heading 2
 ##### Smaller heading 3
 ###### Smallest heading
+
+## This is a table
+
+| Column One | Column Two |
+| ---------- | ---------- |
+| Cell one | Cell two |
+| Cell three | Cell four |
