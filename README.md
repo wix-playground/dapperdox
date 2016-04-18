@@ -184,6 +184,8 @@ which would be rewritten with:
 -document-rewrite-url=@MY_DOMAIN=http://www.mysite.com
 ```
 
+There is nothing special about the @ in the above example, it is merely a convention. You can use any expansion syntax you want.
+
 You may pass multiple `-document-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders,
 particularly useful if you additionally need to configure URLs such as CDN location.
 
