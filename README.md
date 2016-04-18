@@ -382,7 +382,7 @@ You may also note that the site navigation, located at the left hand side of eac
 *A markdown example* and *A markdown example 2*. This insertion into the navigation tree has been activated and is
 controlled by some meta data contained within the GFM files. This is described in the section [Controlling guide behaviour with meta data](#controlling-guide-behaviour-with-meta-data).
 
-**GFM support is a new feature, and so guides created using GFM are not currently styled correctly. Standard GFM HTML is generated which does not use the appropriate theme CSS. This will be addressed shortly.**
+**GFM support is a new feature, and so guides created using GFM are not currently styled correctly. Standard GFM HTML is generated which does not use the appropriate theme CSS. This being addressed in issue https://github.com/zxchris/swaggerly/issues/1 **
 
 #### Controlling guide behaviour with meta data
 
