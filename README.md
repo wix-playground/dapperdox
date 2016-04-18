@@ -20,6 +20,12 @@ passing parameter `-spec-dir=petstore` will build the petstore documentation.
 Swaggerly will default to serving documentation from port 3123 on all interfaces, so you can point your web browser to
 either http://0.0.0.0:3123, http://127.0.0.1:3123 or http://localhost:3123.
 
+For an out-of-the-box example, execute the example run script. A description of what this does is given in the section [Swaggerly start up example](#swaggerly-start-up-example), as it makes use of many of the configuration options discussed in this README.
+
+```bash
+./run_example.sh
+```
+
 *See the section [Why a makefile and not go build?](#why-a-makefile-and-not-go-build) to understand why a makefile is necessary.*
 
 ## Guide Contents
