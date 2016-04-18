@@ -414,7 +414,7 @@ For example, a page containing the meta data `Navigation: Examples/A markdown ex
 At present there are two limitations:
 
 1. Only two levels of navigation are supported.
-2. Navigation for guides are listed alphabetically. Work is in progress to give authors controll over this order.
+2. Navigation for guides are listed alphabetically. Work is in progress to give authors controll over this order - see [issue #2](https://github.com/zxchris/swaggerly/issues/2).
 
 Swaggerly currenly only recognises the `Navigation` entry, and will ignore other entries.
 
