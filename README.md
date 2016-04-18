@@ -7,7 +7,7 @@ Swaggerly
 
 First build swaggerly (this assumes that you have your golang environment configured correctly):
 ```bash
-go get && go build
+make
 ```
 
 Then start up Swaggerly, pointing it to your OpenAPI 2.0 specification file:
@@ -19,6 +19,8 @@ passing parameter `-spec-dir=petstore` will build the petstore documentation.
 
 Swaggerly will default to serving documentation from port 3123 on all interfaces, so you can point your web browser to
 either http://0.0.0.0:3123, http://127.0.0.1:3123 or http://localhost:3123.
+
+*See the section [Why a makefile and not go build?](#why-a-makefile-and-not-go-build) to understand why a makefile is necessary.*
 
 ## Guide Contents
 - [Next steps](#next-steps)
@@ -37,6 +39,7 @@ either http://0.0.0.0:3123, http://127.0.0.1:3123 or http://localhost:3123.
 - [Reverse proxying to other resources](#reverse-proxying-through-to-other-resources)
 - [Configuration parameters](#configuration-parameters)
 - [Swaggerly start up example](#swaggerly-start-up-example)
+- [Why a makefile and not go build?](#why-a-makefile-and-not-go-build)
 
 ## Next steps
 While simply running Swaggerly and pointing it at your swagger specifications will give you some documentation quickly, there
@@ -438,6 +441,23 @@ To be completed.
 
 Swaggerly depends on a fork of [go-swagger](https://github.com/zxchris/go-swagger) as it's specification parser. This
 fork adds missing support for complex object response (arrays of objects), and the Swaggerly specific versioning scheme.
+Versioning is currently implemented on the `feature/swaggerly-versioning-extension` branch, and it is on this branch that
+Swaggerly depends.
+
+## Why a makefile and not go build?
+
+As described in [Dependencies](#dependencies), Swaggerly requires a particular branch of `go-swagger` and `go get`, by default,
+will checkout the master branch. The supplied makefile ensures the correct `go-swagger` branch is checked out and built.
+
+If you wish to perform the build manually, the following steps should be carried out (as shown in the Makefile):
+
+```bash
+go get github.com/zxchris/go-swagger
+cd ../go-swagger
+git checkout feature/swaggerly-versioning-extension
+cd ../swaggerly
+go get && go build
+```
 
 ## Configuration parameters
 
