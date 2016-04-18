@@ -481,6 +481,8 @@ The following command line will start Swaggerly serving the petshop OpenAPI spec
 of the petstore specification from api.uber.com to API.UBER.COM, and picking up the local assets `examples/markdown/assets` 
 which brings in the two GFM example guides, rewriting `www.google.com` within them to `www.google.co.uk`.
 
+This start up script can be found as `run_example.sh` in the swaggerly source directory.
+
 ```bash
 ./swaggerly \
     -spec-dir=petstore \
