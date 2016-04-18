@@ -36,6 +36,7 @@ either http://0.0.0.0:3123, http://127.0.0.1:3123 or http://localhost:3123.
 - [Versioning](#versioning)
 - [Reverse proxying to other resources](#reverse-proxying-through-to-other-resources)
 - [Configuration parameters](#configuration-parameters)
+- [Swaggerly start up example](#swaggerly-start-up-example)
 
 ## Next steps
 While simply running Swaggerly and pointing it at your swagger specifications will give you some documentation quickly, there
@@ -369,10 +370,10 @@ have a file extension of `.md` and are stored within directory `assets/templates
 On startup, Swaggerly will locate and build pages for all of your guides, maintaining the directory structure if finds below
 the `/guides/` directory.
 
-For example, the Swaggerly assets example `example/markdown/assets/` contains two guides:
+For example, the Swaggerly assets example `example/markdown/assets/templates/` contains two guides:
 
-- `guides/markdown.md`
-- `guides/level2/markdown2.md`
+1. `guides/markdown.md`
+2. `guides/level2/markdown2.md`
 
 Passing Swaggerly the `-assets-dir=<Swaggerly-source-directory>/example/markdown/assets` will build these two guides,
 making them available as http://127.0.0.1:3123/guides/markdown and http://127.0.0.1:3123/guides/level2/markdown2
@@ -381,9 +382,41 @@ You may also note that the site navigation, located at the left hand side of eac
 *A markdown example* and *A markdown example 2*. This insertion into the navigation tree has been activated and is
 controlled by some meta data contained within the GFM files. This is described in the section [Controlling guide behaviour with meta data](#controlling-guide-behaviour-with-meta-data).
 
+**GFM support is a new feature, and so guides created using GFM are not currently styled correctly. Standard GFM HTML is generated which does not use the appropriate theme CSS. This will be addressed shortly.**
+
 #### Controlling guide behaviour with meta data
 
+Swaggerly allows the integration of guides to be controlled with some simple meta data. This meta data is added to the
+beginning of GFM files as a block of lines containing `key: value` pairs. If present, meta data ends at the first blank line.
+For example, the meta data contained within the example `example/markdown/assets/guides/markdown.md` is:
 
+```http
+Title: Swaggerly Markdown Example
+Author: Chris Smith
+Navigation: Examples/A markdown example
+Note: This top section is just MetaData and gets stripped at the first blank line.
+
+This page was written using Git Flavoured Markdown
+==================================================
+```
+
+#### Supported meta data
+
+##### Navigation
+
+The Navigation meta data entry describes how the page is integrated into the site navigation. The navigation value is a
+path that defines the page placement in the navigation tree. With the default theme, guides are placed *before* the
+reference documenation in the navigation.
+
+For example, a page containing the meta data `Navigation: Examples/A markdown example` creates a navigation section called
+*Examples* and places that page beneigth it, with the description *A markdown example*.
+
+At present there are two limitations:
+
+1. Only two levels of navigation are supported.
+2. Navigation for guides are listed alphabetically. Work is in progress to give authors controll over this order.
+
+Swaggerly currenly only recognises the `Navigation` entry, and will ignore other entries.
 
 
 ## Versioning
@@ -413,12 +446,28 @@ fork adds missing support for complex object response (arrays of objects), and t
 | `-assets-dir` | `ASSETS_DIR` | Assets to serve. Effectively the document root. |
 | `-bind-addr` | `BIND_ADDR` | Bind address. |
 | `-default-assets-dir` | `DEFAULT_ASSETS_DIR` | Default assets. |
-| `-document-rewrite-url` | `DOCUMENT_REWRITE_URL` | Specify a document URL that is to be rewritten. May be multiply defined. Format is from=to. |
+| `-document-rewrite-url` | `DOCUMENT_REWRITE_URL` | Specify a URL that is to be rewritten in the documentation. May be multiply defined. Format is from=to. This is applied to assets, not to OpenAPI specification generated text. |
 | `-log-level` | `LOGLEVEL` | Log level (info, debug, trace) |
 | `-site-url` | `SITE_URL` | Public URL of the documentation service. |
 | `-spec-dir` | `SPEC_DIR` | OpenAPI specification (swagger) directory. |
 | `-spec-filename` | `SPEC_FILENAME` | The filename of the OpenAPI specification file within the spec-dir. Defaults to spec/swagger.json |
-| `-spec-rewrite-url` | `SPEC_REWRITE_URL` | The URLs in the swagger specifications to be rewritten as site-url. |
+| `-spec-rewrite-url` | `SPEC_REWRITE_URL` | The URLs in the OpenAPI specifications to be rewritten as site-url, or to the `to` URL if the value given is of the form from=to. Applies to OpenAPI specification text, not asset files. |
 | `-theme` | `THEME` | Name of the theme to render documentation. |
 | `-themes-dir` | `THEMES_DIR` | Directory containing installed themes. |
 
+## Swaggerly start up example
+
+The following command line will start Swaggerly serving the petshop OpenAPI specification, rewriting the API host URL
+of the petstore specification from api.uber.com to API.UBER.COM, and picking up the local assets `examples/markdown/assets` 
+which brings in the two GFM example guides, rewriting `www.google.com` within them to `www.google.co.uk`.
+
+```bash
+./swaggerly \
+    -spec-dir=petstore \
+    -bind-addr=0.0.0.0:3123 \
+    -spec-rewrite-url=api.uber.com=API.UBER.COM \
+    -document-rewrite-url=www.google.com=www.google.co.uk \
+    -site-url=http://127.0.0.1:3123 \
+    -assets-dir=./examples/markdown/assets \
+    -log-level=trace
+```
