@@ -73,7 +73,7 @@ tag description or name in these cases as the API identifier in pages, navigatio
   "tags": [
     { 
         "name": "Products",
-        "description": "A more vebose decription of tag"
+        "description": "A more verbose description of tag"
     },
     { "name": "Estimates Price" }
   ],
@@ -121,7 +121,7 @@ level `tags` member. However, tags are the most flexible approach.
   "tags": [
     { 
         "name": "Products",
-        "description": "A more vebose decription of tag"
+        "description": "A more verbose description of tag"
     },
     { "name": "Estimates Price" }
   ],
@@ -206,14 +206,14 @@ See [Configuration parameters](#configuration-parameters) for further informatio
 
 # The API explorer
 
-The Swaggerly in-page API explorer is similar in function to **swagger-ui**, as it allows users to try out API calls
+The Swaggerly in-page API explorer is similar in function to **swagger-ui**, as it allows user's to try out API calls
 from within the reference page, without needing to write any client code.
 
 The Swaggerly in-page API explorer detects when a method is configured as authenticated, and prompts for appropriate
 credentials to be supplied as part of the request being explored. These could be one of API key or an OAuth2 access token.
 
-If you have, or are building, a developer site that allows users to regiser for and manage their own API keys, you may want 
-Swaggerly to integrate with that site, so that a users API keys are automatically available to the explorer once the user has
+If you have, or are building, a developer site that allows users to register for and manage their own API keys, you may want 
+Swaggerly to integrate with that site, so that a user's API keys are automatically available to the explorer once the user has
 signed-in. Swaggerly provides a simple Javascript interface via which you can pass API keys to the explorer, through a piece
 of custom Javascript.
 
@@ -358,7 +358,7 @@ To have Swaggerly pick up your local assets, pass the `-assets-dir=<directory-pa
 
 ### Creating authored documentation pages
 
-Authored documentation pages are refered to as *guides*, and have their own directory within an assets structure. Guides may
+Authored documentation pages are referred to as *guides*, and have their own directory within an assets structure. Guides may
 be authored in HTML as `.tmpl` files, or as [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/). Writing guides as HTML `.tmpl` files will make those files dependant on the theme in use when they were written,
 and therefore not resistant to change. The flexible approach is to use Github Flavoured Markdown.
 
@@ -380,15 +380,15 @@ making them available as http://127.0.0.1:3123/guides/markdown and http://127.0.
 
 You may also note that the site navigation, located at the left hand side of each page, shows two entries:
 *A markdown example* and *A markdown example 2*. This insertion into the navigation tree has been activated and is
-controlled by some meta data contained within the GFM files. This is described in the section [Controlling guide behaviour with meta data](#controlling-guide-behaviour-with-meta-data).
+controlled by some metadata contained within the GFM files. This is described in the section [Controlling guide behaviour with metadata](#controlling-guide-behaviour-with-meta-data).
 
 **GFM support is a new feature, and so guides created using GFM are not currently styled correctly. Standard GFM HTML is generated which does not use the appropriate theme CSS. This being addressed in [issue #1](https://github.com/zxchris/swaggerly/issues/1)**
 
-#### Controlling guide behaviour with meta data
+#### Controlling guide behaviour with metadata
 
-Swaggerly allows the integration of guides to be controlled with some simple meta data. This meta data is added to the
-beginning of GFM files as a block of lines containing `key: value` pairs. If present, meta data ends at the first blank line.
-For example, the meta data contained within the example `example/markdown/assets/guides/markdown.md` is:
+Swaggerly allows the integration of guides to be controlled with some simple metadata. This metadata is added to the
+beginning of GFM files as a block of lines containing `key: value` pairs. If present, metadata ends at the first blank line.
+For example, the metadata contained within the example `example/markdown/assets/guides/markdown.md` is:
 
 ```http
 Title: Swaggerly Markdown Example
@@ -400,23 +400,23 @@ This page was written using Git Flavoured Markdown
 ==================================================
 ```
 
-#### Supported meta data
+#### Supported metadata
 
 ##### Navigation
 
-The Navigation meta data entry describes how the page is integrated into the site navigation. The navigation value is a
+The Navigation metadata entry describes how the page is integrated into the site navigation. The navigation value is a
 path that defines the page placement in the navigation tree. With the default theme, guides are placed *before* the
-reference documenation in the navigation.
+reference documentation in the navigation.
 
-For example, a page containing the meta data `Navigation: Examples/A markdown example` creates a navigation section called
-*Examples* and places that page beneigth it, with the description *A markdown example*.
+For example, a page containing the metadata `Navigation: Examples/A markdown example` creates a navigation section called
+*Examples* and places that page beneath it, with the description *A markdown example*.
 
 At present there are two limitations:
 
 1. Only two levels of navigation are supported.
 2. Navigation for guides are listed alphabetically. Work is in progress to give authors controll over this order - see [issue #2](https://github.com/zxchris/swaggerly/issues/2).
 
-Swaggerly currenly only recognises the `Navigation` entry, and will ignore other entries.
+Swaggerly currently only recognises the `Navigation` entry, and will ignore other entries.
 
 
 ## Versioning
