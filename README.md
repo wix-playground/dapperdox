@@ -449,7 +449,7 @@ To be completed.
 
 ### `go-swagger`
 
-Swaggerly depends on a fork of [go-swagger](https://github.com/zxchris/go-swagger) as it's specification parser. This
+Swaggerly depends on a fork of [go-swagger](https://github.com/zxchris/go-swagger) as its specification parser. This
 fork adds missing support for complex object response (arrays of objects), and the Swaggerly specific versioning scheme.
 Versioning is currently implemented on the `feature/swaggerly-versioning-extension` branch, and it is on this branch that
 Swaggerly depends.
