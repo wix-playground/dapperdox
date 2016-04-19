@@ -1,7 +1,8 @@
 <div class="col-sm-3 col-md-2 sidebar">
     <!-- Guides -->
+<ul class="nav nav-sidebar">
     [: if .NavigationGuides :]
-    <ul class="nav nav-sidebar">
+    <!-- <ul class="nav nav-sidebar"> -->
       [: range $nav := .NavigationGuides :]
         <li>
           <a href="[: $nav.Uri :]" [: if $nav.Child :]class="nav-toggle" data-toggle="collapse" data-target="#sub[: $nav.Id :]"[: end :]>[: $nav.Name :]</a>
@@ -14,11 +15,11 @@
           [: end :]
         </li>
       [: end :]
-    </ul>
+    <!-- </ul> -->
     [: end :]
 
     <!-- Reference -->
-    <ul class="nav nav-sidebar">
+    <!-- <ul class="nav nav-sidebar"> -->
         [: range $api := .APIs :]
           <li>
               <a href="/reference/[: $api.ID :]" class="nav-toggle" data-toggle="collapse" data-target="#sub[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
@@ -29,12 +30,13 @@
               </ul>
           </li>
         [: end :]
-    </ul>
+    <!-- </ul> -->
 
     [: if .APIVersions :]
     <!-- Reference - Other versions -->
         <a href="" class="nav-toggle" data-toggle="collapse" data-target="#older">Other Versions</a>
-        <ul class="nav nav-sidebar" id="older">
+        <!-- <ul class="nav nav-sidebar" id="older"> -->
+<div id="older">
             [: range $v, $versions := .APIVersions :]
             <li><a>[: $v :]</a>
                 <ul class="nav">
@@ -51,7 +53,8 @@
                 </ul>
             </li>
             [: end :]
-        </ul>
+</div>
+    <!-- </ul> -->
     [: end :]
-
+</ul>
 </div>

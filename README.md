@@ -1,7 +1,7 @@
 Swaggerly
 =========
 
-**BETA release**.
+**BETA release - features being added weekly**.
 
 > Themed documentation generator, server and API explorer for OpenAPI (Swagger) Specifications. Helps you build integrated, browsable reference documentation and guides. For example, the [Companies House Developer Hub](https://developer.companieshouse.gov.uk/api/docs/) built with the alpha version.
 
@@ -453,7 +453,7 @@ To create an integrated developer hub. Such resources could be:
 1. API key management tools
 2. Forum
 
-To be completed.
+**Coming soon!**
 
 ## Dependencies
 
