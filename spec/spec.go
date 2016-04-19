@@ -274,10 +274,15 @@ func getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathit
 	// Filter and sort by matching current top-level tag with the operation tags.
 	// If Tagging is not used by spec, then process each operation without filtering.
 	taglen := len(operation.Tags)
-	for _, t := range operation.Tags {
-		if taglen == 0 || tag.Name == "" || t == tag.Name {
-			method := processMethod(api, pathitem, operation, path, methodname, version)
-			*methods = append(*methods, *method)
+	if taglen == 0 {
+		method := processMethod(api, pathitem, operation, path, methodname, version)
+		*methods = append(*methods, *method)
+	} else {
+		for _, t := range operation.Tags {
+			if tag.Name == "" || t == tag.Name {
+				method := processMethod(api, pathitem, operation, path, methodname, version)
+				*methods = append(*methods, *method)
+			}
 		}
 	}
 }
