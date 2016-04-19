@@ -13,7 +13,7 @@
     "produces": [
     "application/json"
     ],
-  "tags": [
+  "x-tags": [
     { 
         "name":"Estimates Price",
         "description" : "Estimates of Price"
