@@ -68,6 +68,16 @@ See [Configuration parameters](#configuration-parameters) for further informatio
 Out of the box, Swaggerly will look for the OpenAPI specification `spec/swagger.json` under the directory specified by the
 command line option `-spec-dir`. To change this, you can supply the `-spec-filename` option to Swaggerly. For example,
 `-spec-filename=spec/swagger.json` does the same as the default.
+
+All JSON specification files found below the `-spec-dir` are served by Swaggerly, maintaining the directory structure.
+For the petstore example, which has its OpenAPI specification `swagger.json` stored in a `spec` subdirectory, the 
+URL to retrieve the specification is:
+
+```url
+http://127.0.0.1:3123/spec/swagger.json
+```
+
+
 See [Configuration parameters](#configuration-parameters) for further information on configuring Swaggerly.
 
 Multiple API specifications are not currently supported, but are on the feature list.
