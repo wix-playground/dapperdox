@@ -84,8 +84,11 @@ Multiple API specifications are not currently supported, but are on the feature 
 
 ## Specification requirements
 
-Swaggerly reads the top level Swagger object `tags` member, and only documents API operations where tags match. It will use the
-tag description or name in these cases as the API identifier in pages, navigation and URLs.
+Swaggerly will try and read read the top level specification object `tags` member, and if it finds one it will only documents
+API operations where tags match, and in the order they are listed. This allows you to control what reference documentation gets
+presented. In these cases, Swaggerly uses the tag `description` member, or tag `name` member as the API identifier in pages, navigation and URLs.
+
+If tags are not used, Swaggerly falls back to presenting all operations in the OpenAPI specification.
 
 ```json
 {
