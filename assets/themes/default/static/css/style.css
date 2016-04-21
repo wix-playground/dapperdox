@@ -69,16 +69,28 @@ body {
   margin-left: -20px;
 }
 .nav-sidebar > li > a {
+  padding-left: 14px;
   padding-right: 20px;
+}
+.nav-toggle {
+  margin-left: -14px;
+}
+.nav-selected {
+  font-weight: bold;
+}
+.nav-sidebar > li > span {
+  padding-left: 14px;
+}
+.nav-sidebar > li {
   padding-left: 20px;
 }
 .nav-sidebar > li > ul {
   padding: 0px;
-  padding-left: 40px;
+  padding-left: 30px; /* 40 */
   list-style: none;
 }
 .nav-sidebar > li > ul > li > ul {
-  padding-left: 20px;
+  /* padding-left: 20px; */
   list-style: none;
 }
 .nav-sidebar > .active > a,

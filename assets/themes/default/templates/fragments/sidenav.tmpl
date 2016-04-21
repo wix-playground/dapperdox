@@ -1,51 +1,75 @@
-<div class="col-sm-3 col-md-2 sidebar">
+<script>
+$(document).ready(function(){
+//$(function(){
+    $('.items').hide();
+    var $pagename=decodeURI( window.location.pathname );
+
+    var $element=$('ul[id="navigation"]').find('a[href$="'+$pagename+'"]');
+    console.log( $element );
+
+    var api_id = $element.data('outer');
+    var toggler = $("#toggle"+api_id);
+    var outerul = $("#ul"+api_id);
+
+    outerul.removeClass('collapse');
+    toggler.removeClass('collapsed');
+    $element.addClass('nav-selected');
+
+    $("#navigation").removeClass('hide');
+});
+</script>
+
+<div class="col-sm-3 col-md-2 sidebar" >
+<ul class="nav nav-sidebar hide" id="navigation">
     <!-- Guides -->
-<ul class="nav nav-sidebar">
     [: if .NavigationGuides :]
-    <!-- <ul class="nav nav-sidebar"> -->
       [: range $nav := .NavigationGuides :]
         <li>
-          <a href="[: $nav.Uri :]" [: if $nav.Child :]class="nav-toggle" data-toggle="collapse" data-target="#sub[: $nav.Id :]"[: end :]>[: $nav.Name :]</a>
           [: if $nav.Child :]
-            <ul class="nav" id="sub[: $nav.Id :]">
+            <a href="#[: $nav.Uri :]" id="toggle[: $nav.Id :]" [: if $nav.Child :]class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $nav.Id :]" [: end :]>[: $nav.Name :]</a>
+            <ul class="nav collapse" id="ul[: $nav.Id :]">
               [: range $child := $nav.Child :]
-                <li><a href="[: $child.Uri :]">[: $child.Name :]</a></li>
+                <li><a href="[: $child.Uri :]" data-outer="[: $nav.Id :]">[: $child.Name :]</a></li>
               [: end :]
             </ul>
+          [: else :]
+            <a href="[: $nav.Uri :]">[: $nav.Name :]</a>
           [: end :]
         </li>
       [: end :]
-    <!-- </ul> -->
     [: end :]
 
     <!-- Reference -->
-    <!-- <ul class="nav nav-sidebar"> -->
-        [: range $api := .APIs :]
-          <li>
-              <a href="/reference/[: $api.ID :]" class="nav-toggle" data-toggle="collapse" data-target="#sub[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
-              <ul class="nav" id="sub[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
-                [: range $method := .Methods :]
-                  <li><a href="/reference/[: $api.ID :]/[: $method.ID :]">[: $method.Method :]</a></li>
-                [: end :]
-              </ul>
-          </li>
-        [: end :]
-    <!-- </ul> -->
+    [: if .APIs :]
+      <li><span>API reference</span></li>
+      [: range $api := .APIs :]
+        <li>
+            <a href="#" id="toggle[: $api.ID :]" class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
+            <ul class="nav collapse" id="ul[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
+              <li><a data-outer="[: $api.ID :]" href="/reference/[: $api.ID :]">Summary</a></li>
+
+              [: range $method := .Methods :]
+                <li><a data-outer="[: $api.ID :]" href="/reference/[: $api.ID :]/[: $method.ID :]">[: $method.Method :]</a></li>
+              [: end :]
+            </ul>
+        </li>
+      [: end :]
+    [: end :]
 
     [: if .APIVersions :]
-    <!-- Reference - Other versions -->
-        <a href="" class="nav-toggle" data-toggle="collapse" data-target="#older">Other Versions</a>
-        <!-- <ul class="nav nav-sidebar" id="older"> -->
-<div id="older">
+        <!-- Reference - Other versions -->
+        <a href="#" class="nav-toggle" data-toggle="collapse" data-target="#older">Other versions</a> <!-- Todo need to expand this if URL matches page -->
+        <div id="older">
             [: range $v, $versions := .APIVersions :]
             <li><a>[: $v :]</a>
-                <ul class="nav">
+                <ul class="nav"> <!-- Todo need to expand this if URL matches page -->
                    <li>
                     [: range $vapi := $versions :]
-                      <a href="/reference/[: $vapi.ID :]?v=[: $v :]" class="nav-toggle" data-toggle="collapse" data-target="#sub[: $vapi.ID :]">[: $vapi.Name :]</a>
-                      <ul class="nav" id="sub[: $vapi.ID :]"> <!-- add collapse to collapse! WIP! -->
+                      <a href="#" class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $v :][: $vapi.ID :]">[: $vapi.Name :]</a>
+                      <ul class="nav collapse" id="ul[: $v :][: $vapi.ID :]">
+                        <li><a data-outer="[: $v :][: $vapi.ID :]" href="/reference/[: $vapi.ID :]?v=[: $v :]">Summary</a></li>
                         [: range $method := $vapi.Methods :]
-                          <li><a href="/reference/[: $vapi.ID :]/[: $method.ID :]?v=[: $v :]">[: $method.Method :]</a></li>
+                          <li><a href="/reference/[: $vapi.ID :]/[: $method.ID :]?v=[: $v :]" data-outer="[: $v :][: $vapi.ID :]">[: $method.Method :]</a></li>
                         [: end :]
                       </ul>
                     [: end :]
@@ -53,8 +77,8 @@
                 </ul>
             </li>
             [: end :]
-</div>
-    <!-- </ul> -->
+       </div>
     [: end :]
 </ul>
 </div>
+

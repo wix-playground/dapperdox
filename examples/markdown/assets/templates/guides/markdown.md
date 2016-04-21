@@ -8,10 +8,12 @@ This page was written using Git Flavoured Markdown
 ```some code can go here
 ```
 
+|What does this look like|
+
 - [ ] List item 1
 - [X] List item 2 (selected)
 
-This is a link to (Google)[http://www.google.com].
+This is a link to (http://www.google.com)[Google].
 
 > This is some quoted text
 
