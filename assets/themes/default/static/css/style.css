@@ -78,8 +78,10 @@ body {
 .nav-selected {
   font-weight: bold;
 }
-.nav-sidebar > li > span {
+.nav-sidebar > li > h4 {
+  font-size: 15px;
   padding-left: 14px;
+  margin-bottom: 0px;
 }
 .nav-sidebar > li {
   padding-left: 20px;

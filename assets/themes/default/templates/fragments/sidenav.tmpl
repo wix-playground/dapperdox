@@ -41,7 +41,7 @@ $(document).ready(function(){
 
     <!-- Reference -->
     [: if .APIs :]
-      <li><span>API reference</span></li>
+      <li><h4>API reference</h4></li>
       [: range $api := .APIs :]
         <li>
             <a href="#" id="toggle[: $api.ID :]" class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
