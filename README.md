@@ -439,14 +439,14 @@ This page was written using Git Flavoured Markdown - With metadata
 ==================================================================
 ```
 
-Whereas the example `example/metadata/assets/templates/guides/level2/level/3markdown2.md` which is *three*
+Whereas the example `example/metadata/assets/templates/guides/level2/level3/markdown2.md` which is *three*
 directory levels deep, contains navigation metadata of:
 
 ```http
 Navigation: Overview/Another example
 ```
 
-This builds a page side navigation of:
+This builds a page side navigation two levels deep:
 
 - Examples
   - A markdown example
@@ -467,10 +467,7 @@ reference documentation in the navigation.
 For example, a page containing the metadata `Navigation: Examples/A markdown example` creates a navigation section called
 *Examples* and places that page beneath it, with the description *A markdown example*.
 
-At present there are two limitations:
-
-1. Only two levels of navigation are supported.
-2. Navigation for guides are listed alphabetically. Work is in progress to give authors control over this order - see [issue #2](https://github.com/zxchris/swaggerly/issues/2).
+At present navigation for guides are listed alphabetically. Work is in progress to give authors control over this order - see [issue #2](https://github.com/zxchris/swaggerly/issues/2).
 
 Swaggerly currently only recognises the `Navigation` entry, and will ignore other entries.
 
@@ -505,6 +502,10 @@ will checkout the master branch. The supplied makefile ensures the correct `go-s
 If you wish to perform the build manually, the following steps should be carried out (as shown in the Makefile):
 
 ```bash
+go get github.com/go-swagger/go-swagger
+cd ../../go-swagger/go-swagger
+git checkout 4459770
+cd -
 go get github.com/zxchris/go-swagger
 cd ../go-swagger
 git checkout feature/swaggerly-versioning-extension
