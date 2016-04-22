@@ -26,7 +26,7 @@ $(document).ready(function(){
       [: range $nav := .NavigationGuides :]
         <li>
           [: if $nav.Child :]
-            <a href="#[: $nav.Uri :]" id="toggle[: $nav.Id :]" [: if $nav.Child :]class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $nav.Id :]" [: end :]>[: $nav.Name :]</a>
+            <a href="[: if $nav.Uri :][: $nav.Uri :][: else :]#[: end :]" id="toggle[: $nav.Id :]" [: if $nav.Child :]class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $nav.Id :]" data-outer="[: $nav.Id :]" [: end :]>[: $nav.Name :]</a>
             <ul class="nav collapse" id="ul[: $nav.Id :]">
               [: range $child := $nav.Child :]
                 <li><a href="[: $child.Uri :]" data-outer="[: $nav.Id :]">[: $child.Name :]</a></li>

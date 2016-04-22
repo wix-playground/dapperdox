@@ -150,11 +150,21 @@ func buildNavigation(filename string, base string, ext string) {
 			// Step into tree
 			current = current[id].Child
 		} else {
-			current[id] = &NavigationNode{
-				Id:   id,
-				Uri:  route,
-				Name: name,
+			if currentItem, ok := current[id]; !ok {
+				current[id] = &NavigationNode{
+					Id:    id,
+					Uri:   route,
+					Name:  name,
+					Child: make(map[string]*NavigationNode),
+				}
+			} else {
+				currentItem.Uri = route
 			}
+			//current[id] = &NavigationNode{
+			//	Id:   id,
+			//	Uri:  route,
+			//	Name: name,
+			//}
 		}
 	}
 
