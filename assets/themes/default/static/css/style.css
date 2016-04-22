@@ -95,6 +95,9 @@ body {
   /* padding-left: 20px; */
   list-style: none;
 }
+.nav-sidebar a {
+  cursor:pointer;
+}
 .nav-sidebar > .active > a,
 .nav-sidebar > .active > a:hover,
 .nav-sidebar > .active > a:focus {
