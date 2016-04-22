@@ -393,28 +393,41 @@ and therefore not resistant to change. The flexible approach is to use Github Fl
 Guides written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/) (GFM)
 have a file extension of `.md` and are stored within directory `assets/templates/guides/` of your [local assets](#creating-local-assets). You can organise your files in subdirectories within the `/guides/` directory.
 
-On startup, Swaggerly will locate and build pages for all of your guides, maintaining the directory structure if finds below
-the `/guides/` directory.
+On startup, Swaggerly will locate and build pages for all of your guides, maintaining the directory 
+structure if finds below the `/guides/` directory.
 
 For example, the Swaggerly assets example `example/markdown/assets/templates/` contains two guides:
 
 1. `guides/markdown.md`
 2. `guides/level2/markdown2.md`
 
-Passing Swaggerly the `-assets-dir=<Swaggerly-source-directory>/example/markdown/assets` will build these two guides,
-making them available as http://127.0.0.1:3123/guides/markdown and http://127.0.0.1:3123/guides/level2/markdown2
+Passing Swaggerly the `-assets-dir=<Swaggerly-source-directory>/example/markdown/assets` will build these 
+two guides, making them available as http://127.0.0.1:3123/guides/markdown and 
+http://127.0.0.1:3123/guides/level2/markdown2
 
-You may also note that the site navigation, located at the left hand side of each page, shows two entries:
-*A markdown example* and *A markdown example 2*. This insertion into the navigation tree has been activated and is
-controlled by some metadata contained within the GFM files. This is described in the section [Controlling guide behaviour with metadata](#controlling-guide-behaviour-with-meta-data).
+The navigation rendered at the side of the page will show two navigation entries:
+
+- level2
+  - markdown2
+- markdown
+
+By default, the side navigation will reproduce the directory structure beneath the `guides/` directory.
+As the navigation cannot be more than two levels deep, this restricts the depth of your directory structure.
+
+If you need a more elaborate directory structure, or have a file nameing convention that does not lend itself
+to navigation titles, you can take control of the side navigation through [metadata](#controlling-guide-behaviour-with-meta-data).
 
 **GFM support is a new feature, and so guides created using GFM are not currently styled correctly. Standard GFM HTML is generated which does not use the appropriate theme CSS. This being addressed in [issue #1](https://github.com/zxchris/swaggerly/issues/1)**
 
 #### Controlling guide behaviour with metadata
 
-Swaggerly allows the integration of guides to be controlled with some simple metadata. This metadata is added to the
-beginning of GFM files as a block of lines containing `key: value` pairs. If present, metadata ends at the first blank line.
-For example, the metadata contained within the example `example/markdown/assets/guides/markdown.md` is:
+Swaggerly allows the integration of guides to be controlled with some simple metadata. This metadata is added
+to the beginning of GFM files as a block of lines containing `key: value` pairs. If present, metadata ends at
+the first blank line.
+
+Through the metadata, you can control the side navigation hierarchy, grouping and page naming.
+
+For example, the metadata contained within the example `example/metadata/assets/templates/guides/markdown.md` is:
 
 ```http
 Title: Swaggerly Markdown Example
@@ -422,9 +435,26 @@ Author: Chris Smith
 Navigation: Examples/A markdown example
 Note: This top section is just MetaData and gets stripped to the first blank line.
 
-This page was written using Git Flavoured Markdown
-==================================================
+This page was written using Git Flavoured Markdown - With metadata
+==================================================================
 ```
+
+Whereas the example `example/metadata/assets/templates/guides/level2/level/3markdown2.md` which is *three*
+directory levels deep, contains navigation metadata of:
+
+```http
+Navigation: Overview/Another example
+```
+
+This builds a page side navigation of:
+
+- Examples
+  - A markdown example
+- Overview
+  - Another example
+
+By using metadata, the side navigation wording and structure is divorced from the underlying file naming
+convention, structure and depth.
 
 #### Supported metadata
 

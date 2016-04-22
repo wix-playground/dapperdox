@@ -107,47 +107,58 @@ func buildNavigation(filename string, base string, ext string) {
 
 	metafile := "assets/templates/" + strings.TrimPrefix(strings.TrimSuffix(filename, ext), base+"/") + ".tmpl"
 
+	// See if guide has been marked up with nagivation metadata...
 	hierarchy := asset.MetaData(metafile, "Navigation")
 	if len(hierarchy) > 0 {
 		logger.Tracef(nil, "Got Navigation metadata %s for file %s\n", hierarchy, filename)
+	} else {
+		// No Meta Data set on guide, so use the directory structure
+		hierarchy = strings.TrimPrefix(strings.TrimSuffix(filename, ext), base+"/guides/")
+		logger.Tracef(nil, "No navigation metadata for "+hierarchy+". Using path")
+	}
 
-		// Convert filename to route
-		route := FilenameToRoute(filename, base)
+	// Convert filename to route
+	route := FilenameToRoute(filename, base)
 
-		// Break hierarchy into bits
-		split := strings.Split(hierarchy, "/")
-		parts := len(split)
+	// Break hierarchy into bits
+	split := strings.Split(hierarchy, "/")
+	parts := len(split)
 
-		current := guidesNavigation
+	if parts > 2 {
+		logger.Errorf(nil, "Error: Guide '"+hierarchy+"' contains too many nagivation levels")
+		os.Exit(1)
 
-		// Build tree for this navigation item
-		for i := range split {
+	}
 
-			name := split[i]
-			id := strings.Replace(strings.ToLower(name), " ", "-", -1)
+	current := guidesNavigation
 
-			if i < parts-1 {
-				// Have we already created this navigation node?
-				if _, ok := current[id]; !ok {
-					current[id] = &NavigationNode{
-						Id:    id,
-						Name:  name,
-						Child: make(map[string]*NavigationNode),
-					}
-				}
-				// Step into tree
-				current = current[id].Child
-			} else {
+	// Build tree for this navigation item
+	for i := range split {
+
+		name := split[i]
+		id := strings.Replace(strings.ToLower(name), " ", "-", -1)
+
+		if i < parts-1 {
+			// Have we already created this navigation node?
+			if _, ok := current[id]; !ok {
 				current[id] = &NavigationNode{
-					Id:   id,
-					Uri:  route,
-					Name: name,
+					Id:    id,
+					Name:  name,
+					Child: make(map[string]*NavigationNode),
 				}
 			}
+			// Step into tree
+			current = current[id].Child
+		} else {
+			current[id] = &NavigationNode{
+				Id:   id,
+				Uri:  route,
+				Name: name,
+			}
 		}
-
-		// TODO SortOrder metadata, if not set, use sort 99999
 	}
+
+	// TODO SortOrder metadata, if not set, use sort 99999
 }
 
 // ---------------------------------------------------------------------------

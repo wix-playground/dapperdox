@@ -1,5 +1,10 @@
-This page was written using Git Flavoured Markdown
-==================================================
+Title: Swaggerly Markdown Example
+Author: Chris Smith
+Navigation: Examples/A markdown example
+Note: This top section is just MetaData and gets stripped at the first blank line.
+
+This page was written using Git Flavoured Markdown - With metadata
+==================================================================
 ```some code can go here
 ```
 
