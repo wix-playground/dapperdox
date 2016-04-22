@@ -150,6 +150,7 @@ func buildNavigation(filename string, base string, ext string) {
 			// Step into tree
 			current = current[id].Child
 		} else {
+			// If this is the leaf node for this hierarchy, we should set a route
 			if currentItem, ok := current[id]; !ok {
 				current[id] = &NavigationNode{
 					Id:    id,
@@ -160,11 +161,6 @@ func buildNavigation(filename string, base string, ext string) {
 			} else {
 				currentItem.Uri = route
 			}
-			//current[id] = &NavigationNode{
-			//	Id:   id,
-			//	Uri:  route,
-			//	Name: name,
-			//}
 		}
 	}
 
