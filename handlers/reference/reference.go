@@ -67,6 +67,11 @@ func Register(r *pat.Router) {
 			pathVersionResource[path][version] = resource
 		}
 	}
+
+	r.Path("/reference").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		render.HTML(w, http.StatusOK, "reference", render.DefaultVars(req, render.Vars{"Title": "API reference"}))
+	})
+
 }
 
 // ------------------------------------------------------------------------------------------------------------
