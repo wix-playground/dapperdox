@@ -9,6 +9,7 @@ import (
 	"github.com/unrolled/render"
 	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
+	"github.com/zxchris/swaggerly/navigation"
 	"github.com/zxchris/swaggerly/render/asset"
 	"github.com/zxchris/swaggerly/spec"
 )
@@ -16,7 +17,8 @@ import (
 // Render is a global instance of github.com/unrolled/render.Render
 var Render = New()
 
-var guides interface{}
+//var guides interface{}
+var guides *[]*navigation.NavigationNode
 
 // Vars is a map of variables
 type Vars map[string]interface{}
@@ -53,14 +55,15 @@ func New() *render.Render {
 		Delims:     render.Delims{Left: "[:", Right: ":]"},
 		Layout:     "layout",
 		Funcs: []template.FuncMap{template.FuncMap{
-			"map":      htmlform.Map,
-			"ext":      htmlform.Extend,
-			"fnn":      htmlform.FirstNotNil,
-			"arr":      htmlform.Arr,
-			"lc":       strings.ToLower,
-			"uc":       strings.ToUpper,
-			"join":     strings.Join,
-			"safehtml": func(s string) template.HTML { return template.HTML(s) },
+			"map":             htmlform.Map,
+			"ext":             htmlform.Extend,
+			"fnn":             htmlform.FirstNotNil,
+			"arr":             htmlform.Arr,
+			"lc":              strings.ToLower,
+			"uc":              strings.ToUpper,
+			"join":            strings.Join,
+			"safehtml":        func(s string) template.HTML { return template.HTML(s) },
+			"guideNavigation": func() interface{} { return guides },
 		}},
 	})
 }
@@ -91,6 +94,9 @@ func DefaultVars(req *http.Request, m Vars) map[string]interface{} {
 	return m
 }
 
-func SetGuidesNavigation(guidesnav interface{}) {
+//func SetGuidesNavigation(guidesnav interface{}) {
+//	guides = guidesnav
+//}
+func SetGuidesNavigation(guidesnav *[]*navigation.NavigationNode) {
 	guides = guidesnav
 }

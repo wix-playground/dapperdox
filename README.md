@@ -456,20 +456,45 @@ This builds a page side navigation two levels deep:
 By using metadata, the side navigation wording and structure is divorced from the underlying file naming
 convention, structure and depth.
 
+The ordering of pages within the page side navigation is also controllable with metadata, as described in [SortOrder](#sortorder) below.
+
 #### Supported metadata
+
+The following metadata is recognised by Swaggerly. All other metadata entries will be ignored.
 
 ##### Navigation
 
-The Navigation metadata entry describes how the page is integrated into the site navigation. The navigation value is a
+The `Navigation` metadata entry describes how the page is integrated into the site navigation. The navigation value is a
 path that defines the page placement in the navigation tree. With the default theme, guides are placed *before* the
 reference documentation in the navigation.
 
 For example, a page containing the metadata `Navigation: Examples/A markdown example` creates a navigation section called
 *Examples* and places that page beneath it, with the description *A markdown example*.
 
-At present navigation for guides are listed alphabetically. Work is in progress to give authors control over this order - see [issue #2](https://github.com/zxchris/swaggerly/issues/2).
+##### SortOrder
 
-Swaggerly currently only recognises the `Navigation` entry, and will ignore other entries.
+The order in which guides are listed in the page side navigation is controlled with `SortOrder` metadata.
+`SortOrder` can take any alphanumeric string, but may be clearer if numeric only values are used.
+Each page is assigned the sort order defined by the metadata, otherwise it is assigned the relative URI path
+(`/guides/.....`) as its sort order.
+
+Where pages are grouped by a parent section, the parent section receives the lowest sort order of its
+children, unless it is a page in its own right.
+Assigning a numeric sort order range per section makes it easy to manage the ordering of sections, 
+and the pages within a section. This can be illustrated by the following tree, where pages have been give 
+numeric `SortOrder` metadata entries, assigning blocks of 100 per section:
+
+- 100 Overview
+  - 100 - A page
+  - 150 - Another page
+- 210 Getting Started
+  - 210 - Getting started page one
+  - 250 - Getting started page two
+- 300 Examples
+  - 300 - Examples page one
+  - 350 - Examples page two
+- 400 Top level page one
+- 420 Top level page two
 
 
 ## Versioning

@@ -4,23 +4,31 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
+	//"github.com/davecgh/go-spew/spew"
 	"strings"
 
 	"github.com/gorilla/pat"
 	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
+	"github.com/zxchris/swaggerly/navigation"
 	"github.com/zxchris/swaggerly/render"
 	"github.com/zxchris/swaggerly/render/asset"
 )
 
-type NavigationNode struct {
-	Child map[string]*NavigationNode
-	Name  string
-	Id    string
-	Uri   string
-}
+var guidesNavigation navigation.NavigationNode
 
-var guidesNavigation map[string]*NavigationNode
+/*
+100 Overview
+110 - some section
+120 - another section
+200 Getting Started
+210 - Getting started one
+250 - Getting started two
+300 Examples
+310 - examples one
+320 - examples two
+*/
 
 // ---------------------------------------------------------------------------
 // Register routes for documentation pages
@@ -30,7 +38,7 @@ func Register(r *pat.Router) {
 	base := GetBasePath()
 	root := base + "/guides"
 
-	guidesNavigation = make(map[string]*NavigationNode)
+	guidesNavigation.ChildMap = make(map[string]*navigation.NavigationNode)
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, _ error) error {
 		if info == nil {
@@ -70,8 +78,35 @@ func Register(r *pat.Router) {
 	})
 	_ = err
 
+	sortNavigation()
+
 	// Register the guides navigation with the renderer
-	render.SetGuidesNavigation(&guidesNavigation)
+	render.SetGuidesNavigation(&guidesNavigation.Children)
+}
+
+// ---------------------------------------------------------------------------
+func sortNavigation() {
+	for i := range guidesNavigation.Children {
+		node := guidesNavigation.Children[i]
+
+		if len(node.Children) > 0 {
+			sort.Sort(navigation.ByOrder(node.Children))
+		}
+	}
+	sort.Sort(navigation.ByOrder(guidesNavigation.Children))
+}
+
+// ---------------------------------------------------------------------------
+func dumpit() {
+	for i := range guidesNavigation.Children {
+		node := guidesNavigation.Children[i]
+
+		logger.Tracef(nil, "Sorted name = %s\n", node.Name)
+		for j := range node.Children {
+			node2 := node.Children[j]
+			logger.Tracef(nil, "       name = %s\n", node2.Name)
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -109,6 +144,8 @@ func buildNavigation(filename string, base string, ext string) {
 
 	// See if guide has been marked up with nagivation metadata...
 	hierarchy := asset.MetaData(metafile, "Navigation")
+	sortOrder := asset.MetaData(metafile, "SortOrder")
+
 	if len(hierarchy) > 0 {
 		logger.Tracef(nil, "Got Navigation metadata %s for file %s\n", hierarchy, filename)
 	} else {
@@ -127,10 +164,14 @@ func buildNavigation(filename string, base string, ext string) {
 	if parts > 2 {
 		logger.Errorf(nil, "Error: Guide '"+hierarchy+"' contains too many nagivation levels")
 		os.Exit(1)
-
 	}
 
-	current := guidesNavigation
+	if sortOrder == "" {
+		sortOrder = route
+	}
+
+	current := guidesNavigation.ChildMap
+	currentList := &guidesNavigation.Children
 
 	// Build tree for this navigation item
 	for i := range split {
@@ -139,32 +180,52 @@ func buildNavigation(filename string, base string, ext string) {
 		id := strings.Replace(strings.ToLower(name), " ", "-", -1)
 
 		if i < parts-1 {
-			// Have we already created this navigation node?
-			if _, ok := current[id]; !ok {
-				current[id] = &NavigationNode{
-					Id:    id,
-					Name:  name,
-					Child: make(map[string]*NavigationNode),
+			// Have we already created this branch node?
+			if currentItem, ok := current[id]; !ok {
+				// create new branch node
+				current[id] = &navigation.NavigationNode{
+					Id:        id,
+					SortOrder: sortOrder,
+					Name:      name,
+					ChildMap:  make(map[string]*navigation.NavigationNode),
+					Children:  make([]*navigation.NavigationNode, 0),
+				}
+				*currentList = append(*currentList, current[id])
+				logger.Tracef(nil, "Adding %s = %s to branch\n", id, current[id].Name)
+			} else {
+				// Update the branch node sort order, if the leaf has a lower sort
+				if sortOrder < currentItem.SortOrder {
+					currentItem.SortOrder = sortOrder
 				}
 			}
-			// Step into tree
-			current = current[id].Child
+			// Step down branch
+			currentList = &current[id].Children // Get parent list before stepping into child
+
+			current = current[id].ChildMap
 		} else {
-			// If this is the leaf node for this hierarchy, we should set a route
+			// Leaf node
 			if currentItem, ok := current[id]; !ok {
-				current[id] = &NavigationNode{
-					Id:    id,
-					Uri:   route,
-					Name:  name,
-					Child: make(map[string]*NavigationNode),
+				current[id] = &navigation.NavigationNode{
+					Id:        id,
+					SortOrder: sortOrder,
+					Uri:       route,
+					Name:      name,
+					ChildMap:  make(map[string]*navigation.NavigationNode),
+					Children:  make([]*navigation.NavigationNode, 0),
 				}
+				*currentList = append(*currentList, current[id])
+				logger.Tracef(nil, "Adding %s = %s to leaf node [a] Sort %s\n", current[id].Uri, current[id].Name, sortOrder)
 			} else {
+				// The page is a leaf node, but sits at a branch node. This means that the branch
+				// node has content! Set the uri, and adjust the sort order, if necessary.
 				currentItem.Uri = route
+				if sortOrder < currentItem.SortOrder {
+					currentItem.SortOrder = sortOrder
+				}
+				logger.Tracef(nil, "Adding %s = %s to leaf node [b] Sort %s\n", currentItem.Uri, currentItem.Name, sortOrder)
 			}
 		}
 	}
-
-	// TODO SortOrder metadata, if not set, use sort 99999
 }
 
 // ---------------------------------------------------------------------------
