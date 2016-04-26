@@ -448,10 +448,10 @@ SortOrder: 110
 
 This builds a page side navigation two levels deep:
 
-- Examples
-  - A markdown example
 - Overview
   - Another example
+- Examples
+  - A markdown example
 
 By using metadata, the side navigation wording and structure is divorced from the underlying file naming
 convention, structure and depth.
