@@ -396,12 +396,12 @@ have a file extension of `.md` and are stored within directory `assets/templates
 On startup, Swaggerly will locate and build pages for all of your guides, maintaining the directory 
 structure if finds below the `/guides/` directory.
 
-For example, the Swaggerly assets example `example/markdown/assets/templates/` contains two guides:
+For example, the Swaggerly assets example `examples/markdown/assets/templates/` contains two guides:
 
 1. `guides/markdown.md`
 2. `guides/level2/markdown2.md`
 
-Passing Swaggerly the `-assets-dir=<Swaggerly-source-directory>/example/markdown/assets` will build these 
+Passing Swaggerly the `-assets-dir=<Swaggerly-source-directory>/examples/markdown/assets` will build these 
 two guides, making them available as http://127.0.0.1:3123/guides/markdown and 
 http://127.0.0.1:3123/guides/level2/markdown2
 
@@ -427,23 +427,23 @@ the first blank line.
 
 Through the metadata, you can control the side navigation hierarchy, grouping and page naming.
 
-For example, the metadata contained within the example `example/metadata/assets/templates/guides/markdown.md` is:
+For example, the metadata contained within the example `examples/metadata/assets/templates/guides/markdown.md` is:
 
 ```http
-Title: Swaggerly Markdown Example
-Author: Chris Smith
 Navigation: Examples/A markdown example
+SortOrder: 210
 Note: This top section is just MetaData and gets stripped to the first blank line.
 
 This page was written using Git Flavoured Markdown - With metadata
 ==================================================================
 ```
 
-Whereas the example `example/metadata/assets/templates/guides/level2/level3/markdown2.md` which is *three*
+Whereas the example `examples/metadata/assets/templates/guides/level2/level3/markdown2.md` which is *three*
 directory levels deep, contains navigation metadata of:
 
 ```http
 Navigation: Overview/Another example
+SortOrder: 110
 ```
 
 This builds a page side navigation two levels deep:
