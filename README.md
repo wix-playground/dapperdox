@@ -43,6 +43,7 @@ For an out-of-the-box example, execute the example run script. A description of 
 - [Customising the documentation](#customising-the-documentation)
   - [Creating local assets](#creating-local-assets)
   - [Creating authored documentation pages](#creating-authored-documentation-pages)
+  - [Customising the 'homepage'](#customising-the-homepage)
 - [Versioning](#versioning)
 - [Reverse proxying to other resources](#reverse-proxying-through-to-other-resources)
 - [Configuration parameters](#configuration-parameters)
@@ -497,7 +498,24 @@ numeric `SortOrder` metadata entries, assigning blocks of 100 per section:
 - 420 Top level page two
 
 
-## Versioning
+### Customising the 'homepage'
+
+By default, the homepage that Swaggerly presents is an API reference summary. You can create your own
+homepage by providing your own `assets/templates/index.tmpl` or `assets/templates/index.md` - with the
+recommendation being that you use markdown instead of HTML, for the reasons described in 
+[Creating authored documentation pages](#creating-authored-documentation-pages).
+
+An example of this is demonstrated by the metadata example, which provides its own custom `index.md` file:
+
+`examples/metadata/assets/templates/index.md`
+
+To run this example, pass Swaggerly the option 
+`-assets-dir=<Swaggerly-source-directory>/examples/metadata/assets`
+
+The API reference summary will always be available at the `/reference` endpoint.
+
+
+# Versioning
 
 To be completed.
 
