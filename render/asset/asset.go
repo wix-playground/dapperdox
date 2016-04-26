@@ -18,6 +18,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode"
 )
 
 var _bindata = map[string][]byte{}
@@ -155,12 +156,13 @@ func ProcessMarkdown(doc []byte) ([]byte, map[string]string) {
 	metaData := make(map[string]string)
 
 	for scanner.Scan() {
-		splitLine := strings.Split(scanner.Text(), ":")
+		line := scanner.Text()
+		splitLine := strings.Split(line, ":")
 
 		trimmed := strings.TrimSpace(splitLine[0])
-		if len(splitLine) < 2 { // Have we reached a non KEY: line? If so, we're done with the metadata.
-			if len(trimmed) > 0 { // If the line is not empty, keep the contents
-				newdoc = newdoc + trimmed + "\n"
+		if (len(splitLine) < 2) || (!unicode.IsLetter(rune(trimmed[0]))) { // Have we reached a non KEY: line? If so, we're done with the metadata.
+			if len(line) > 0 { // If the line is not empty, keep the contents
+				newdoc = newdoc + line + "\n"
 			}
 			// Gather up all remainging lines
 			for scanner.Scan() {
