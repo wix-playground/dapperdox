@@ -62,7 +62,7 @@ var _process = function(text, status, xhr, fullhost) {
         if( xhr.status == 0 )
         {
             $('#body_block').show();
-            $('#response_body').text( "Failure while contacting API. Some possible causes are connection problems or cross-origin resource sharing protection. Please check javascript domains registered against APIKey / OAuth2 registration." );
+            $('#response_body').text( "Failure while contacting API. This is usually a result of Cross-Origin Resource Sharing protection (CORS). Please check javascript domains registered against the authentication credentials you are using." );
         }
         else
         {
