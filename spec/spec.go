@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"os"
 	"strings"
 
 	//"github.com/davecgh/go-spew/spew"
@@ -275,6 +276,10 @@ func getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathit
 	// If Tagging is not used by spec, then process each operation without filtering.
 	taglen := len(operation.Tags)
 	if taglen == 0 {
+		if tag.Name != "" {
+			logger.Tracef(nil, "Skipping %s - Operation does not contain a tag member, and tagging is in use.", operation.Summary)
+			return
+		}
 		method := processMethod(api, pathitem, operation, path, methodname, version)
 		*methods = append(*methods, *method)
 	} else {
@@ -355,9 +360,8 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 	if api.Name == "" {
 		name := o.Summary
 		if name == "" {
-			logger.Errorf(nil, "Operation '%s' does not have an operationId or summary member.", id)
-			panic("aborting")
-
+			logger.Errorf(nil, "Error: Operation '%s' does not have an operationId or summary member.", id)
+			os.Exit(1)
 		}
 		api.Name = name
 		api.ID = titleToKebab(name)
@@ -666,7 +670,7 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	} else {
 		schema, err := json.MarshalIndent(json_representation, "", "    ")
 		if err != nil {
-			logger.Errorf(nil, "error encoding schema json: %s", err)
+			logger.Errorf(nil, "Error encoding schema json: %s", err)
 		}
 		r.Schema = string(schema)
 	}
