@@ -85,6 +85,8 @@ Multiple API specifications are not currently supported, but are on the feature 
 
 ## Specification requirements
 
+### Tags
+
 Swaggerly will try and read read the top level specification object `tags` member, and if it finds one it will only documents
 API operations where tags match, and in the order they are listed. This allows you to control what reference documentation gets
 presented. In these cases, Swaggerly uses the tag `description` member, or tag `name` member as the API identifier in pages, navigation and URLs.
@@ -170,6 +172,30 @@ level `tags` member. However, tags are the most flexible approach.
         }
     }
 }
+```
+
+### Response model title
+
+When processing model definitions, Swaggerly needs to know what to call the response schema (or model).
+The following snippet shows the API response model `Product`, explicitly named with the `title` member.
+
+```json
+"definitions": {
+    "Product": {
+        "title":"Product resource",
+        "properties": {
+            "product_id": {
+                "type": "string",
+                "description": "Unique identifier..."
+            }
+        }
+    }
+}
+```
+
+Even though `title` is optional in the OpenAPI specification, without it Swaggerly will generate an error:
+```
+Error: GET /estimates/price references a model definition that does not have a title member.
 ```
 
 

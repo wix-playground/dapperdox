@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -410,7 +410,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 				ResourceList[version] = make(map[string]*Resource)
 			}
 			var ok bool
-			r := resourceFromSchema(response.Schema, nil) // May be thrown away
+			r := resourceFromSchema(response.Schema, method, nil) // May be thrown away
 
 			// Look for a pre-declared resource with the response ID, and use that or create the first one...
 			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
@@ -435,7 +435,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 	}
 
 	if o.Responses.Default != nil {
-		r := resourceFromSchema(o.Responses.Default.Schema, nil)
+		r := resourceFromSchema(o.Responses.Default.Schema, method, nil)
 		if r != nil {
 			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
 			// Look for a pre-declared resource with the response ID, and use that or create the first one...
@@ -491,7 +491,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 
 // -----------------------------------------------------------------------------
 
-func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
+func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource {
 	if s == nil {
 		return nil
 	}
@@ -542,9 +542,15 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 		//spew.Dump(s)
 	}
 
-	myFQNS := append([]string{}, fqNS...)
 	id := titleToKebab(s.Title)
 
+	if len(fqNS) == 0 && id == "" {
+		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title memeber.", strings.ToUpper(method.Method), method.Path)
+		spew.Dump(method)
+		os.Exit(1)
+	}
+
+	myFQNS := append([]string{}, fqNS...)
 	var chopped bool
 
 	if len(id) == 0 && len(myFQNS) > 0 {
@@ -561,7 +567,6 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 		Properties:  make(map[string]*Resource),
 		FQNS:        myFQNS,
 	}
-	logger.Printf(nil, "Resource ID: %s  Title: %s\n", r.ID, r.Title)
 
 	if s.Example != nil {
 		example, err := json.MarshalIndent(&s.Example, "", "    ")
@@ -582,10 +587,10 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	required := make(map[string]bool)
 	json_representation := make(map[string]interface{})
 
-	compileproperties(s, r, id, required, json_representation, myFQNS, chopped)
+	compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped)
 
 	for allof := range s.AllOf {
-		compileproperties(&s.AllOf[allof], r, id, required, json_representation, myFQNS, chopped)
+		compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped)
 	}
 
 	// Build element of resource schema example
@@ -621,7 +626,7 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 // It uses the 'required' map to set when properties are required and builds a JSON
 // representation of the resource.
 //
-func compileproperties(s *spec.Schema, r *Resource, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
+func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
 
 	// First, grab the required members
 	for _, i := range s.Required {
@@ -637,8 +642,7 @@ func compileproperties(s *spec.Schema, r *Resource, id string, required map[stri
 		}
 		newFQNS = append(newFQNS, name)
 
-		// log.Printf("Recurse into resourceFromSchema for property name '%s'\n", name)
-		r.Properties[name] = resourceFromSchema(&property, newFQNS)
+		r.Properties[name] = resourceFromSchema(&property, method, newFQNS)
 
 		if _, ok := required[name]; ok {
 			r.Properties[name].Required = true
@@ -660,7 +664,7 @@ func compileproperties(s *spec.Schema, r *Resource, id string, required map[stri
 							xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
 						}
 
-						r.Properties[name] = resourceFromSchema(property.Items.Schema, xFQNS)
+						r.Properties[name] = resourceFromSchema(property.Items.Schema, method, xFQNS)
 
 						// log.Printf("Generated Properties:\n")
 						// spew.Dump(r.Properties[name])
