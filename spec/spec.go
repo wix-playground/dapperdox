@@ -516,7 +516,7 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	//  reseting our schema variable to items.schema.
 	//
 
-	//fmt.Printf("CHECK schema type and items\n")
+	//logger.Printf(nil, "CHECK schema type and items\n")
 	//spew.Dump(s)
 
 	if s.Type == nil {
@@ -526,7 +526,7 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	if s.Items != nil {
 		stringorarray := s.Type
 
-		// EEK This is officially icky! See the Activities model in petstore. It declares "items": [ { } ] !!
+		// EEK This is officially icky! See the Activities model in the uber spec. It declares "items": [ { } ] !!
 		//     with an ARRAY
 		if s.Items.Schema != nil {
 			s = s.Items.Schema
@@ -546,6 +546,7 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 	id := titleToKebab(s.Title)
 
 	var chopped bool
+
 	if len(id) == 0 && len(myFQNS) > 0 {
 		id = myFQNS[len(myFQNS)-1]
 		myFQNS = append([]string{}, myFQNS[0:len(myFQNS)-1]...)
@@ -560,6 +561,7 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 		Properties:  make(map[string]*Resource),
 		FQNS:        myFQNS,
 	}
+	logger.Printf(nil, "Resource ID: %s  Title: %s\n", r.ID, r.Title)
 
 	if s.Example != nil {
 		example, err := json.MarshalIndent(&s.Example, "", "    ")
@@ -582,9 +584,50 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 
 	json_representation := make(map[string]interface{})
 
-	//log.Printf("expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
-	//fmt.Printf("DUMP s.Properties\n")
+	logger.Tracef(nil, "expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
+	//logger.Printf(nil, "DUMP s.Properties\n")
 	//spew.Dump(s.Properties)
+
+	compileproperties(s, r, id, required, json_representation, myFQNS, chopped)
+
+	for allof := range s.AllOf {
+		compileproperties(&s.AllOf[allof], r, id, required, json_representation, myFQNS, chopped)
+	}
+
+	// Build element of resource schema example
+	// FIXME This *explodes* if there is no "type" member in the actual model definition - which is probably right
+	//       for setting type of array in the model is a bit restrictive - better if set in the response decl. to
+	//       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
+	//
+
+	//fmt.Printf("DUMP s.Type\n")
+	//spew.Dump(s.Type)
+	if strings.ToLower(r.Type[0]) != "object" {
+		if strings.ToLower(r.Type[0]) == "array" {
+			var array_obj []map[string]interface{}
+			array_obj = append(array_obj, json_representation)
+			schema, _ := json.MarshalIndent(array_obj, "", "    ")
+			r.Schema = string(schema)
+		} else {
+			r.Schema = r.Type[0]
+		}
+	} else {
+		schema, err := json.MarshalIndent(json_representation, "", "    ")
+		if err != nil {
+			logger.Errorf(nil, "Error encoding schema json: %s", err)
+		}
+		r.Schema = string(schema)
+	}
+
+	return r
+}
+
+// -----------------------------------------------------------------------------
+// Takes a Schema object and adds properties to the Resource object.
+// It uses the 'required' map to set when properties are required and builds a JSON
+// representation of the resource.
+//
+func compileproperties(s *spec.Schema, r *Resource, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
 
 	for name, property := range s.Properties {
 		//log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
@@ -601,7 +644,7 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 			r.Properties[name].Required = true
 		}
 
-		// FIXME this is as nasty as it looks...
+		// XXX This really is quite a juggle!
 		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
 			// Arrays of objects need to be handled as a special case
 			if strings.ToLower(r.Properties[name].Type[0]) == "array" {
@@ -634,48 +677,21 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 
 						var f interface{}
 						_ = json.Unmarshal([]byte("["+example_sch+"]"), &f)
-						json_representation[name] = f
+						json_rep[name] = f
 
 						// Override type to reflect it is an array
 						r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[0] + "]"
 					}
 				}
 			} else {
-				json_representation[name] = r.Properties[name].Schema
+				json_rep[name] = r.Properties[name].Schema
 			}
 		} else {
 			var f interface{}
 			_ = json.Unmarshal([]byte(r.Properties[name].Schema), &f)
-			json_representation[name] = f
+			json_rep[name] = f
 		}
 	}
-
-	// Build element of resource schema example
-	// FIXME This *explodes* if there is no "type" member in the actual model definition - which is probably right
-	//       for setting type of array in the model is a bit restrictive - better if set in the response decl. to
-	//       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
-	//
-
-	//fmt.Printf("DUMP s.Type\n")
-	//spew.Dump(s.Type)
-	if strings.ToLower(r.Type[0]) != "object" {
-		if strings.ToLower(r.Type[0]) == "array" {
-			var array_obj []map[string]interface{}
-			array_obj = append(array_obj, json_representation)
-			schema, _ := json.MarshalIndent(array_obj, "", "    ")
-			r.Schema = string(schema)
-		} else {
-			r.Schema = r.Type[0]
-		}
-	} else {
-		schema, err := json.MarshalIndent(json_representation, "", "    ")
-		if err != nil {
-			logger.Errorf(nil, "Error encoding schema json: %s", err)
-		}
-		r.Schema = string(schema)
-	}
-
-	return r
 }
 
 // -----------------------------------------------------------------------------
