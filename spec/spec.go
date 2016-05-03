@@ -577,16 +577,10 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 		}
 	}
 
-	required := make(map[string]bool)
-	for _, i := range s.Required {
-		required[i] = true
-	}
-
-	json_representation := make(map[string]interface{})
-
 	logger.Tracef(nil, "expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
-	//logger.Printf(nil, "DUMP s.Properties\n")
-	//spew.Dump(s.Properties)
+
+	required := make(map[string]bool)
+	json_representation := make(map[string]interface{})
 
 	compileproperties(s, r, id, required, json_representation, myFQNS, chopped)
 
@@ -629,6 +623,12 @@ func resourceFromSchema(s *spec.Schema, fqNS []string) *Resource {
 //
 func compileproperties(s *spec.Schema, r *Resource, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
 
+	// First, grab the required members
+	for _, i := range s.Required {
+		required[i] = true
+	}
+
+	// Now process the properties
 	for name, property := range s.Properties {
 		//log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
 		newFQNS := append([]string{}, myFQNS...)
