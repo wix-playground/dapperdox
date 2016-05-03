@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -546,7 +546,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 
 	if len(fqNS) == 0 && id == "" {
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title memeber.", strings.ToUpper(method.Method), method.Path)
-		spew.Dump(method)
+		//spew.Dump(method)
 		os.Exit(1)
 	}
 
