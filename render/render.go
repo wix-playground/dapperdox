@@ -15,13 +15,17 @@ import (
 )
 
 // Render is a global instance of github.com/unrolled/render.Render
-var Render = New()
+var Render *render.Render
 
 //var guides interface{}
 var guides *[]*navigation.NavigationNode
 
 // Vars is a map of variables
 type Vars map[string]interface{}
+
+func Register() {
+	Render = New()
+}
 
 // New creates a new instance of github.com/unrolled/render.Render
 func New() *render.Render {
@@ -94,9 +98,6 @@ func DefaultVars(req *http.Request, m Vars) map[string]interface{} {
 	return m
 }
 
-//func SetGuidesNavigation(guidesnav interface{}) {
-//	guides = guidesnav
-//}
 func SetGuidesNavigation(guidesnav *[]*navigation.NavigationNode) {
 	guides = guidesnav
 }

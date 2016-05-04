@@ -35,6 +35,8 @@ func main() {
 		log.Fatalf("error setting log level: %s", err)
 	}
 
+	render.Register()
+
 	router := pat.New()
 
 	chain := alice.New(logger.Handler /*, context.ClearHandler*/, timeoutHandler, withCsrf).Then(router)
