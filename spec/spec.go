@@ -582,7 +582,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 		}
 	}
 
-	logger.Tracef(nil, "expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
+	//logger.Tracef(nil, "expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
 
 	required := make(map[string]bool)
 	json_representation := make(map[string]interface{})

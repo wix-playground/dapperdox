@@ -13,7 +13,7 @@
     "produces": [
     "application/json"
     ],
-  "x-tags": [
+  "tags": [
     { 
         "name":"Estimates Price",
         "description" : "Estimates of Price"
@@ -25,7 +25,6 @@
   ],
     "paths": {
         "/products": {
-            "x-pathName" : "Types of product",
             "get": {
                 "summary": "Product Types",
                 "description": "The Products endpoint returns information about the Uber products offered at a given location. The response includes the display name and other details about each product, and lists the products in the proper display order.",
@@ -118,6 +117,12 @@
                             "items": {
                                 "$ref": "#/definitions/PriceEstimate"
                             }
+                        }
+                    },
+                    "201" : {
+                        "description": "A dog",
+                        "schema": {
+                            "$ref": "#/definitions/Dog"
                         }
                     },
                     "default": {
@@ -386,6 +391,75 @@
                     "type": "string"
                 }
             }
+        },
+    "Pet": {
+      "type": "object",
+      "discriminator": "petType",
+      "properties": {
+        "name": {
+          "description" : "The name of the animal",
+          "type": "string"
+        },
+        "petType": {
+          "description" : "The type of animal",
+          "type": "string"
         }
+      },
+      "required": [
+        "name",
+        "petType"
+      ]
+    },
+    "Cat": {
+      "description": "A representation of a cat",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Pet"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "huntingSkill": {
+              "type": "string",
+              "description": "The measured skill for hunting",
+              "default": "lazy",
+              "enum": [
+                "clueless",
+                "lazy",
+                "adventurous",
+                "aggressive"
+              ]
+            }
+          },
+          "required": [
+            "huntingSkill"
+          ]
+        }
+      ]
+    },
+    "Dog": {
+      "title": "A dog",
+      "description": "A representation of a dog",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Pet"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "packSize": {
+              "type": "integer",
+              "format": "int32",
+              "description": "the size of the pack the dog is from",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          "required": [
+            "packSize"
+          ]
+        }
+      ]
     }
+  }
 }
