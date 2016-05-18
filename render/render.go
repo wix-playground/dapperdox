@@ -1,10 +1,13 @@
 package render
 
 import (
+	"bufio"
+	"bytes"
 	"html/template"
 	"net/http"
 	"strings"
 
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/ian-kent/htmlform"
 	"github.com/unrolled/render"
 	"github.com/zxchris/swaggerly/config"
@@ -67,9 +70,50 @@ func New() *render.Render {
 			"uc":              strings.ToUpper,
 			"join":            strings.Join,
 			"safehtml":        func(s string) template.HTML { return template.HTML(s) },
+			"haveTemplate":    func(n string) *template.Template { return TemplateLookup(n) },
 			"guideNavigation": func() interface{} { return guides },
+			"fetch":           func(n string, d ...interface{}) template.HTML { return coreRender(n, d) },
 		}},
 	})
+}
+
+// -----------------------------
+type HTMLWriter struct {
+	w *bufio.Writer
+}
+
+func (w HTMLWriter) Header() http.Header {
+	return http.Header{}
+}
+
+func (w HTMLWriter) WriteHeader(int) {}
+func (w HTMLWriter) Flush() {
+	w.w.Flush()
+}
+
+func (w HTMLWriter) Write(data []byte) (int, error) {
+	logger.Printf(nil, "DATA:\n%s\n", string(data))
+	return w.w.Write(data)
+}
+
+// -----------------------------
+
+// FIXME WHY ARRAY  of DATA?
+func coreRender(name string, data []interface{}) template.HTML {
+
+	//logger.Printf(nil, "coreRender with data:\n")
+	//spew.Dump(data)
+
+	var b bytes.Buffer
+	writer := HTMLWriter{w: bufio.NewWriter(&b)}
+
+	// FIXME WHY ARRAY 0
+	Render.HTML(writer, http.StatusOK, name, data[0], render.HTMLOptions{Layout: ""})
+	writer.Flush()
+
+	logger.Printf(nil, "Returning:\n%s\n", b.String())
+
+	return template.HTML(b.String())
 }
 
 // HTML is an alias to github.com/unrolled/render.Render.HTML

@@ -2,6 +2,8 @@
 [[description]]
 This is GFM description text.
 
+Template name: [: current :]
+
 [[path-parameters]]
 This is GFM path text.
 

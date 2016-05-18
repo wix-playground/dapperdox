@@ -2,9 +2,13 @@
 
 <p>[: safehtml .Method.Description :]</p>
 
+<p>[: current :]</p>
+[: fetch "tryme" . :]
+
 <h2 class="sub-header">Request</h2>
 
 <pre>[: uc .Method.Method :] [: .API.URL :][: .Method.Path :]</pre>
+
 
 [: if .Method.PathParams :]
   <h2 class="sub-header">Path parameters</h2>
@@ -66,5 +70,14 @@
     [: end :]
   </tbody>
 </table>
+
+<!-- TODO Example to go here -->
+[: if haveTemplate "assets/templates/fred.tmpl" :]
+P HERE
+P DONE
+[: end :]
+
+<p>Current template [: current :]</p>
+[: partial "fred" :]
 
 [: template "fragments/explorer" . :]

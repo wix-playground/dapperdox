@@ -147,7 +147,7 @@ func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
 		versions := getAPIVersions(api)
 		methods := getVersionMethod(api, version)
 
-		tmpl := "default-api"
+		tmpl := "api"
 		customTmpl := "reference/" + api.ID
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
@@ -171,7 +171,7 @@ func MethodHandler(api spec.API, path string) func(w http.ResponseWriter, req *h
 		versions := getMethodVersions(api, pathVersionMethod[path])
 		method := pathVersionMethod[path][version]
 
-		tmpl := "default-method"
+		tmpl := "method"
 		customTmpl := "reference/" + api.ID + "/" + method.ID
 		if render.TemplateLookup(customTmpl) != nil {
 			tmpl = customTmpl
@@ -217,7 +217,7 @@ func GlobalResourceHandler(path string) func(w http.ResponseWriter, req *http.Re
 		resource := pathVersionResource[path][version]
 
 		logger.Printf(nil, "Render resource "+resource.ID)
-		tmpl := "default-resource"
+		tmpl := "resource"
 
 		customTmpl := "resources/" + resource.ID
 
