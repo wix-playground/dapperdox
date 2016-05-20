@@ -1,11 +1,10 @@
 [: template "fragments/reference/version_header" . :]
 
-<p>[: current :]</p>
+[: overlay "banner" . :]
 
 <p>[: safehtml .Method.Description :]</p>
 
 [: overlay "description" . :]
-[: overlay "tryme" . :]
 
 <h2 class="sub-header">Request</h2>
 
@@ -14,35 +13,42 @@
 
 [: if .Method.PathParams :]
   <h2 class="sub-header">Path parameters</h2>
+  [: overlay "path-parameters" . :]
   [: template "fragments/reference/params" .Method.PathParams :]
 [: end :]
 
 [: if .Method.QueryParams :]
   <h2 class="sub-header">Query parameters</h2>
+  [: overlay "query-parameters" . :]
   [: template "fragments/reference/params" .Method.QueryParams :]
 [: end :]
 
 [: if .Method.HeaderParams :]
   <h2 class="sub-header">Request headers</h2>
+  [: overlay "header-parameters" . :]
   [: template "fragments/reference/params" .Method.HeaderParams :]
 [: end :]
 
 [: if .Method.FormParams :]
   <h2 class="sub-header">Form parameters</h2>
+  [: overlay "form-parameters" . :]
   [: template "fragments/reference/params" .Method.FormParams :]
 [: end :]
 
 [: if .Method.BodyParam :]
   <h2 class="sub-header">Request body</h2>
+  [: overlay "body-parameters" . :]
   <p>TODO: ...</p>
 [: end :]
 
 [: if .Method.Security :]
   <h2 class="sub-header">Authorisation</h2>
+  [: overlay "security" . :]
   [: template "fragments/reference/authorisation" .Method.Security :]
 [: end :]
 
 <h2 class="sub-header">Response</h2>
+[: overlay "response" . :]
 <p>The following HTTP status codes may be returned, optionally with a response resource.</p>
 
 <div class="table-responsive">
@@ -74,4 +80,6 @@
 </table>
 
 <!-- TODO Example to go here -->
+[: overlay "example" . :]
+
 [: template "fragments/explorer" . :]

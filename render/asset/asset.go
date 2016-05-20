@@ -239,14 +239,16 @@ func splitOnSection(text string) ([]string, []string) {
 	headings := make([]string, len(indexes))
 
 	for i, element := range indexes {
-		headings[i] = text[element[0]+2 : element[1]-2] // +/- 2 removes the leading/trailing [[ ]]
 
 		if i > 0 {
 			sections[i-1] = text[last:element[0]]
 		}
 
+		headings[i] = text[element[0]+2 : element[1]-2] // +/- 2 removes the leading/trailing [[ ]]
+
 		last = element[1]
 	}
+	sections[len(indexes)-1] = text[last:len(text)]
 
 	return sections, headings
 }

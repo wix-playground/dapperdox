@@ -1,25 +1,31 @@
 Overlay: true
 
 [[description]]
-This is GFM description text.
+This is overlaid GFM description text.
 
 [[path-parameters]]
-This is GFM path text.
+This is overlaid GFM path text.
 
 [[query-parameters]]
-This is GFM query text.
+This is overlaid GFM query text.
 
 [[request-headers]]
-This is GFM headers text.
+This is overlaid GFM headers text.
 
 [[form-parameters]]
-This is GFM form text.
+This is overlaid GFM form text.
 
 [[body-parameters]]
-This is GFM body text.
+This is overlaid GFM body text.
 
 [[security]]
-This is GFM security text.
+This is overlaid GFM security text.
 
 [[response]]
-This is GFM response text.
+This is overlaid GFM response text.
+
+[[example]]
+### Example
+```
+This is overlaid GFM example text.
+```
