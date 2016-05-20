@@ -26,10 +26,13 @@ var guides *[]*navigation.NavigationNode
 // Vars is a map of variables
 type Vars map[string]interface{}
 
+// ----------------------------------------------------------------------------------------
+
 func Register() {
 	Render = New()
 }
 
+// ----------------------------------------------------------------------------------------
 // New creates a new instance of github.com/unrolled/render.Render
 func New() *render.Render {
 	logger.Tracef(nil, "creating instance of render.Render")
@@ -72,59 +75,68 @@ func New() *render.Render {
 			"safehtml":        func(s string) template.HTML { return template.HTML(s) },
 			"haveTemplate":    func(n string) *template.Template { return TemplateLookup(n) },
 			"guideNavigation": func() interface{} { return guides },
-			"fetch":           func(n string, d ...interface{}) template.HTML { return coreRender(n, d) },
+			"overlay":         func(n string, d ...interface{}) template.HTML { return overlay(n, d) },
 		}},
 	})
 }
 
-// -----------------------------
+// ----------------------------------------------------------------------------------------
 type HTMLWriter struct {
-	w *bufio.Writer
+	h *bufio.Writer
 }
 
-func (w HTMLWriter) Header() http.Header {
-	return http.Header{}
-}
+func (w HTMLWriter) Header() http.Header            { return http.Header{} }
+func (w HTMLWriter) WriteHeader(int)                {}
+func (w HTMLWriter) Write(data []byte) (int, error) { return w.h.Write(data) }
+func (w HTMLWriter) Flush()                         { w.h.Flush() }
 
-func (w HTMLWriter) WriteHeader(int) {}
-func (w HTMLWriter) Flush() {
-	w.w.Flush()
-}
-
-func (w HTMLWriter) Write(data []byte) (int, error) {
-	logger.Printf(nil, "DATA:\n%s\n", string(data))
-	return w.w.Write(data)
-}
-
-// -----------------------------
-
-// FIXME WHY ARRAY  of DATA?
-func coreRender(name string, data []interface{}) template.HTML {
+// XXX WHY ARRAY of DATA?
+func overlay(name string, data []interface{}) template.HTML {
 
 	//logger.Printf(nil, "coreRender with data:\n")
 	//spew.Dump(data)
 
+	datamap, _ := data[0].(map[string]interface{})
+
+	api := datamap["API"].(spec.API)
+	method := datamap["Method"].(spec.Method)
+
 	var b bytes.Buffer
-	writer := HTMLWriter{w: bufio.NewWriter(&b)}
 
-	// FIXME WHY ARRAY 0
-	Render.HTML(writer, http.StatusOK, name, data[0], render.HTMLOptions{Layout: ""})
-	writer.Flush()
+	// Find specific overlay for this api and method name
+	overlayName := "reference/" + api.ID + "/" + method.Method + "/" + name + "/overlay"
+	//logger.Tracef(nil, "Looking for overlay '%s'\n", overlayName)
 
-	logger.Printf(nil, "Returning:\n%s\n", b.String())
+	if TemplateLookup(overlayName) == nil {
+		// Fallback to overlay for this api and any method
+		overlayName = "reference/" + api.ID + "/method/" + name + "/overlay"
+		//logger.Tracef(nil, "Looking for overlay '%s'\n", overlayName)
+	}
+
+	if TemplateLookup(overlayName) != nil {
+		logger.Tracef(nil, "Applying overlay '%s'\n", overlayName)
+		writer := HTMLWriter{h: bufio.NewWriter(&b)}
+
+		// data is a single item array (though I've not figured out why yet!)
+		Render.HTML(writer, http.StatusOK, overlayName, data[0], render.HTMLOptions{Layout: ""})
+		writer.Flush()
+	}
 
 	return template.HTML(b.String())
 }
 
+// ----------------------------------------------------------------------------------------
 // HTML is an alias to github.com/unrolled/render.Render.HTML
 func HTML(w http.ResponseWriter, status int, name string, binding interface{}, htmlOpt ...render.HTMLOptions) {
 	Render.HTML(w, status, name, binding, htmlOpt...)
 }
 
+// ----------------------------------------------------------------------------------------
 func TemplateLookup(t string) *template.Template {
 	return Render.TemplateLookup(t)
 }
 
+// ----------------------------------------------------------------------------------------
 // DefaultVars adds the default vars (config, specs, others....) to the data map
 func DefaultVars(req *http.Request, m Vars) map[string]interface{} {
 	if m == nil {
@@ -142,6 +154,10 @@ func DefaultVars(req *http.Request, m Vars) map[string]interface{} {
 	return m
 }
 
+// ----------------------------------------------------------------------------------------
 func SetGuidesNavigation(guidesnav *[]*navigation.NavigationNode) {
 	guides = guidesnav
 }
+
+// ----------------------------------------------------------------------------------------
+// end

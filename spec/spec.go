@@ -187,7 +187,7 @@ func Load(host string) {
 			}
 
 			api := &API{
-				ID:   titleToKebab(name),
+				ID:   TitleToKebab(name),
 				Name: name,
 				URL:  u,
 				Info: &APIInfo,
@@ -341,7 +341,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 	}
 
 	method := &Method{
-		ID:          camelToKebab(id),
+		ID:          CamelToKebab(id),
 		Name:        o.Summary,
 		Description: o.Description,
 		Method:      methodname,
@@ -355,7 +355,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 	// First try the vendor extension x-pathName, falling back to summary if not set.
 	if pathname, ok := pathItem.Extensions["x-pathName"]; ok {
 		api.Name = pathname.(string)
-		api.ID = titleToKebab(api.Name)
+		api.ID = TitleToKebab(api.Name)
 	}
 	if api.Name == "" {
 		name := o.Summary
@@ -364,7 +364,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 			os.Exit(1)
 		}
 		api.Name = name
-		api.ID = titleToKebab(name)
+		api.ID = TitleToKebab(name)
 	}
 
 	if ResourceList == nil {
@@ -542,7 +542,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 		//spew.Dump(s)
 	}
 
-	id := titleToKebab(s.Title)
+	id := TitleToKebab(s.Title)
 
 	if len(fqNS) == 0 && id == "" {
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title memeber.", strings.ToUpper(method.Method), method.Path)
@@ -700,7 +700,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 
 // -----------------------------------------------------------------------------
 
-func titleToKebab(s string) string {
+func TitleToKebab(s string) string {
 	s = strings.ToLower(s)
 	s = strings.Replace(s, " ", "-", -1)
 	return s
@@ -708,7 +708,7 @@ func titleToKebab(s string) string {
 
 // -----------------------------------------------------------------------------
 
-func camelToKebab(s string) string {
+func CamelToKebab(s string) string {
 	s = snaker.CamelToSnake(s)
 	s = strings.Replace(s, "_", "-", -1)
 	return s

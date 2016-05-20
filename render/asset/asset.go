@@ -10,6 +10,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"regexp"
 	//"github.com/davecgh/go-spew/spew"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/swaggerly/config"
@@ -24,6 +25,9 @@ import (
 var _bindata = map[string][]byte{}
 var _metadata = map[string]map[string]string{}
 var guideReplacer *strings.Replacer
+
+//var sectionSplitRegex = regexp.MustCompile("\\[\\([\\w\\-]+\\)\\]")
+var sectionSplitRegex = regexp.MustCompile("\\[\\[[\\w\\-]+\\]\\]")
 
 func Asset(name string) ([]byte, error) {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
@@ -104,48 +108,83 @@ func Compile(dir string, prefix string) {
 			ext = filepath.Ext(path)
 		}
 
-		//if ext == ".tmpl" { // Removed as may be too restrictive. What about images, css?
 		buf, err := ioutil.ReadFile(path)
 		if err != nil {
 			panic(err)
 		}
 
-		rel, err := filepath.Rel(dir, path)
+		relative, err := filepath.Rel(dir, path)
 		if err != nil {
 			panic(err)
 		}
 
 		var meta map[string]string
 
-		// The file may be in GFM, so convert to HTML
+		// The file may be in GFM, so convert to HTML and process any embedded metadata
 		if ext == ".md" {
-			buf, meta = ProcessMarkdown(buf)
+			// Chop off the extension
+			mdname := strings.TrimSuffix(relative, ext)
 
-			// Now change extension to be .tmpl
-			md := strings.TrimSuffix(rel, ext)
-			rel = md + ".tmpl"
-		}
+			buf, meta = ProcessMetadata(buf)
 
-		newname := prefix + "/" + rel
+			// This resource may be metadata tagged as a page section overlay..
+			if overlay, ok := meta["overlay"]; ok && strings.ToLower(overlay) == "true" {
 
-		logger.Tracef(nil, "Import file as '%s'\n", newname)
+				// Chop markdown into sections
+				sections, headings := splitOnSection(string(buf))
 
-		if _, ok := _bindata[newname]; !ok {
-			// Store the template, doing and search/replaces on the way
-			_bindata[newname] = []byte(guideReplacer.Replace(string(buf)))
-			if len(meta) > 0 {
-				logger.Printf(nil, "Adding metadata for file %s\n", newname)
-				_metadata[newname] = meta
+				if sections == nil {
+					logger.Errorf(nil, "Error no sections defined in overlay file %s\n", relative)
+					os.Exit(1)
+				}
+
+				for i, heading := range headings {
+					buf = ProcessMarkdown([]byte(sections[i]))
+
+					relative = mdname + "/" + heading + "/overlay.tmpl"
+					storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
+				}
+			} else {
+				buf = ProcessMarkdown(buf) // Convert markdown into HTML
+
+				relative = mdname + ".tmpl"
+				storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
 			}
+		} else {
+			storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
 		}
+
 		return nil
 	})
 }
 
 // ---------------------------------------------------------------------------
-// Returns rendered metadata and mpa of metadata key/value pairs
-//
-func ProcessMarkdown(doc []byte) ([]byte, map[string]string) {
+
+func storeTemplate(prefix string, name string, template string, meta map[string]string) {
+
+	newname := prefix + "/" + name
+
+	if _, ok := _bindata[newname]; !ok {
+		logger.Tracef(nil, "Import file as '%s'\n", newname)
+		// Store the template, doing and search/replaces on the way
+		_bindata[newname] = []byte(template)
+		if len(meta) > 0 {
+			logger.Printf(nil, "Adding metadata for file %s\n", newname)
+			_metadata[newname] = meta
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Returns rendered markdown
+func ProcessMarkdown(doc []byte) []byte {
+
+	return github_flavored_markdown.Markdown([]byte(doc))
+}
+
+// ---------------------------------------------------------------------------
+// Strips and processed metadata from markdown document
+func ProcessMetadata(doc []byte) ([]byte, map[string]string) {
 
 	// Inspect the markdown src doc to see if it contains metadata
 	reader := bytes.NewReader(doc)
@@ -182,9 +221,34 @@ func ProcessMarkdown(doc []byte) ([]byte, map[string]string) {
 		metaData[metaKey] = metaValue
 	}
 
-	doc = github_flavored_markdown.Markdown([]byte(newdoc))
+	return []byte(newdoc), metaData
+}
 
-	return doc, metaData
+// ---------------------------------------------------------------------------
+
+func splitOnSection(text string) ([]string, []string) {
+
+	indexes := sectionSplitRegex.FindAllStringIndex(text, -1)
+
+	if indexes == nil {
+		return nil, nil
+	}
+
+	last := 0
+	sections := make([]string, len(indexes))
+	headings := make([]string, len(indexes))
+
+	for i, element := range indexes {
+		headings[i] = text[element[0]+2 : element[1]-2] // +/- 2 removes the leading/trailing [[ ]]
+
+		if i > 0 {
+			sections[i-1] = text[last:element[0]]
+		}
+
+		last = element[1]
+	}
+
+	return sections, headings
 }
 
 // ---------------------------------------------------------------------------
