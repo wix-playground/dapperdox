@@ -193,8 +193,8 @@ The following snippet shows the API response model `Product`, explicitly named w
 }
 ```
 
-Even though `title` is optional in the OpenAPI specification, without it Swaggerly will generate an error:
-```
+> Even though `title` is optional in the OpenAPI specification, without it Swaggerly will generate an error:
+> ```
 Error: GET /estimates/price references a model definition that does not have a title member.
 ```
 
@@ -370,7 +370,7 @@ the configuration parameter `-assets-dir`, passed to swaggerly when starting. Fo
 
 See [Creating local assets](#creating-local-assets) for further information about creating custom assets.
 
-## Customising the documentation
+# Customising the documentation
 Swaggerly presents two classes of documentation:
 
 1. API reference documentation, derived from Swagger specifications
@@ -386,7 +386,7 @@ to form a theme. To customise the documentation:
 In general, documentation should be written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/), which seamlessly integrates with the reference
 documentation generated from the OpenAPI specification.
 
-### Creating local assets
+## Creating local assets
 
 Swaggerly builds documentation for several sets of assets. The primary assets are those which make up the theme being used
 for presentation, however Swaggerly will also pick up local assets and serve them along with the reference documentation
@@ -409,13 +409,13 @@ structure with that provided by the theme:
 To have Swaggerly pick up your local assets, pass the `-assets-dir=<directory-path>` option to Swaggerly on start up. See
 [Configuration parameters](#configuration-parameters) for further information on configuring Swaggerly.
 
-### Creating authored documentation pages
+## Creating authored documentation pages
 
 Authored documentation pages are referred to as *guides*, and have their own directory within an assets structure. Guides may
 be authored in HTML as `.tmpl` files, or as [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/). Writing guides as HTML `.tmpl` files will make those files dependant on the theme in use when they were written,
 and therefore not resistant to change. The flexible approach is to use Github Flavoured Markdown.
 
-#### Github Flavoured Markdown
+### Github Flavoured Markdown
 
 Guides written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/) (GFM)
 have a file extension of `.md` and are stored within directory `assets/templates/guides/` of your [local assets](#creating-local-assets). You can organise your files in subdirectories within the `/guides/` directory.
@@ -446,7 +446,7 @@ to navigation titles, you can take control of the side navigation through [metad
 
 **GFM support is a new feature, and so guides created using GFM are not currently styled correctly. Standard GFM HTML is generated which does not use the appropriate theme CSS. This being addressed in [issue #1](https://github.com/zxchris/swaggerly/issues/1)**
 
-#### Controlling guide behaviour with metadata
+### Controlling guide behaviour with metadata
 
 Swaggerly allows the integration of guides to be controlled with some simple metadata. This metadata is added
 to the beginning of GFM files as a block of lines containing `key: value` pairs. If present, metadata ends at
@@ -485,11 +485,88 @@ convention, structure and depth.
 
 The ordering of pages within the page side navigation is also controllable with metadata, as described in [SortOrder](#sortorder) below.
 
-#### Supported metadata
+## Adding additional content to reference pages
+
+Additional content may be added to any Swaggerly generated reference pages by providing overlay files.
+These pages are authored in Github Flavoured Markdown (GFM) and contain special markdown references that
+target particular sections within API, Method or Resource pages.
+
+For example, the following GFM file adds additional content to the *request* and *response* sections
+of the **Estimates of price** `get` method:
+
+```
+<local assets>/assets/templates/reference/estimates-of-price/get.md
+```
+```gfm
+Overlay: true
+
+[[request]]
+It is important that this request be called with valid geo-location coordinates.
+
+[[response]]
+The response is always an array of response objects, if successful.
+```
+
+For a GFM page to be treated as an overlay, it must contain the metadata `Overlay: true` at the start
+of the file (see [Supported Metadata](#supported-metadata)).
+
+There are two ways to overlay a reference page, either globally or on a page-by-page basis. Swaggerly will
+look at the following file patterns to find any appropriate overlays.
+
+| Reference page | Overlay filename | Description |
+| -------------- | ---------------- | ----------- |
+| API      | `reference/<API name>.md`               | Overlay applied to a specific API page. |
+| API      | `reference/api.md`                      | Overlay applied to all API pages. |
+| Method   | `reference/<API name>/<method name>.md` | Overlay applied to a specific method page of a specific API. |
+| Method   | `reference/<API name>/method.md`        | Overlay applied to all method pages of a specific API. |
+| Method   | `reference/method.md`                   | Overlay applied to all method pages of all APIs.  |
+| Resource | `resource/<resource name>.md`           | Overlay applied to a specific resource page.  |
+| Resource | `resource/resource.md`                  | Overlay applied to all resource pages.  |
+
+Overlays for a specific page will take precedence over those applied to all pages.
+
+### Page section targets
+
+#### API page
+
+| GFM section reference | Page section |
+| --------------------- | ------------ |
+
+
+#### Method page
+
+| GFM section reference | Page section |
+| --------------------- | ------------ |
+| `[[banner]]`      | Inserts content at the start of the page, before the description header. |
+| `[[description]]` | Adds content after the method description. |
+| `[[request]]`     | Adds content before the method request URL. |
+| `[[path-parameters]]` | Adds content before the path parameters block. |
+| `[[query-parameters]]` | Adds content before the query parameters block. |
+| `[[header-parameters]]` | Adds content before the header parameters block. |
+| `[[form-parameters]]` | Adds content before the form parameters block. |
+| `[[body-parameters]]` | Adds content before the body parameters block. |
+| `[[security]]` | Adds content before the security section. |
+| `[[response]]` | Adds content before the response section. |
+| `[[example]]` | Inserts content before the API explorer. |
+
+
+#### Resource page
+
+| GFM section reference | Page section |
+| --------------------- | ------------ |
+| `[[description]]`      | Adds a description block to the start of the page. |
+| `[[methods]]`          | Inserts content before the methods list. |
+| `[[resource]]`         | Inserts content before the resource schema. |
+| `[[example]]`          | Adds content before the resource example, if it exists. |
+| `[[properties]]`       | Inserts content before the resource properties table. |
+| `[[additional]]`       | Inserts content at the end of the resource page. |
+
+
+## Supported metadata
 
 The following metadata is recognised by Swaggerly. All other metadata entries will be ignored.
 
-##### Navigation
+### Navigation
 
 The `Navigation` metadata entry describes how the page is integrated into the site navigation. The navigation value is a
 path that defines the page placement in the navigation tree. With the default theme, guides are placed *before* the
@@ -498,7 +575,7 @@ reference documentation in the navigation.
 For example, a page containing the metadata `Navigation: Examples/A markdown example` creates a navigation section called
 *Examples* and places that page beneath it, with the description *A markdown example*.
 
-##### SortOrder
+### SortOrder
 
 The order in which guides are listed in the page side navigation is controlled with `SortOrder` metadata.
 `SortOrder` can take any alphanumeric string, but may be clearer if numeric only values are used.
@@ -523,8 +600,18 @@ numeric `SortOrder` metadata entries, assigning blocks of 100 per section:
 - 400 Top level page one
 - 420 Top level page two
 
+### Overlay
 
-### Customising the 'homepage'
+You may provide Github Flavoured Markdown pages containing content to be overlaid on top of reference
+documentation generated by Swaggerly. These pages are marked as such with the boolean metadata entry
+`Overlay: true`.
+
+Special embedded tags within the GFM page target sections within API, method and resource pages, inserting
+the associated documentation at those sections.
+
+
+
+## Customising the 'homepage'
 
 By default, the homepage that Swaggerly presents is an API reference summary. You can create your own
 homepage by providing your own `assets/templates/index.tmpl` or `assets/templates/index.md` - with the

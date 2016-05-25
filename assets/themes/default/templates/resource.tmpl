@@ -1,6 +1,11 @@
 [: template "fragments/reference/version_header" . :]
 
+[: overlay "description" . :]
+
 <h2 class="sub-header">Methods</h2>
+
+[: overlay "methods" . :]
+
 <ul class="">
   [: range .Resource.Methods :]
     <li><a href="/reference/[: .API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method :]</a> - [: .Name :]</li>
@@ -9,15 +14,20 @@
 
 <h2 class="sub-header">Resource</h2>
 
+[: overlay "resource" . :]
+
 <pre><code>[: .Resource.Schema :]</code></pre>
 
 [: if .Resource.Example :]
 <h2 class="sub-header">Example</h2>
 
+[: overlay "example" . :]
 <pre><code>[: .Resource.Example :]</code></pre>
 [: end :]
 
 <h2 class="sub-header">Properties</h2>
+
+[: overlay "properties" . :]
 
 <div class="table-responsive">
   <table class="table table-striped">
@@ -34,3 +44,5 @@
     </tbody>
   </table>
 </div>
+
+[: overlay "additional" . :]

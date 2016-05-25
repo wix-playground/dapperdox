@@ -93,32 +93,59 @@ func (w HTMLWriter) Flush()                         { w.h.Flush() }
 // XXX WHY ARRAY of DATA?
 func overlay(name string, data []interface{}) template.HTML {
 
-	//logger.Printf(nil, "coreRender with data:\n")
-	//spew.Dump(data)
-
-	datamap, _ := data[0].(map[string]interface{})
-
-	api := datamap["API"].(spec.API)
-	method := datamap["Method"].(spec.Method)
-
-	var b bytes.Buffer
-
-	// Find specific overlay for this api and method name
-	overlayName := "reference/" + api.ID + "/" + method.Method + "/" + name + "/overlay"
-	//logger.Tracef(nil, "Looking for overlay '%s'\n", overlayName)
-
-	if TemplateLookup(overlayName) == nil {
-		// Fallback to overlay for this api and any method
-		overlayName = "reference/" + api.ID + "/method/" + name + "/overlay"
-		//logger.Tracef(nil, "Looking for overlay '%s'\n", overlayName)
+	if data == nil || data[0] == nil {
+		logger.Printf(nil, "Data nil\n")
+		return ""
 	}
 
-	if TemplateLookup(overlayName) != nil {
-		logger.Tracef(nil, "Applying overlay '%s'\n", overlayName)
+	datamap, ok := data[0].(map[string]interface{})
+
+	if !ok {
+		logger.Printf(nil, "datamap err\n")
+		return ""
+	}
+
+	var overlayName []string
+
+	// Use the passed in data structures to determine what type of "page" we are on:
+	// 1. Details of API, including all methods
+	// 2. An API method page
+	// 3. Resource
+	//
+	if api, ok := datamap["API"].(spec.API); ok {
+		if _, ok := datamap["Methods"].([]spec.Method); ok {
+			// API page
+			overlayName = append(overlayName, "reference/"+api.ID+"/"+name+"/overlay")
+			overlayName = append(overlayName, "reference/api/"+name+"overlay")
+		}
+		if method, ok := datamap["Method"].(spec.Method); ok {
+			// Method page
+			overlayName = append(overlayName, "reference/"+api.ID+"/"+method.Method+"/"+name+"/overlay")
+			overlayName = append(overlayName, "reference/"+api.ID+"/method/"+name+"/overlay")
+		}
+	}
+	if resource, ok := datamap["Resource"].(*spec.Resource); ok {
+		overlayName = append(overlayName, "resource/"+resource.ID+"/"+name+"/overlay")
+		overlayName = append(overlayName, "resource/resource/"+name+"/overlay")
+	}
+
+	var b bytes.Buffer
+	var overlay string
+
+	// Look for an overlay file in declaration order.... Highest priority is first.
+	for _, overlay = range overlayName {
+		if TemplateLookup(overlay) != nil {
+			break
+		}
+		overlay = ""
+	}
+
+	if overlay != "" {
+		logger.Tracef(nil, "Applying overlay '%s'\n", overlay)
 		writer := HTMLWriter{h: bufio.NewWriter(&b)}
 
 		// data is a single item array (though I've not figured out why yet!)
-		Render.HTML(writer, http.StatusOK, overlayName, data[0], render.HTMLOptions{Layout: ""})
+		Render.HTML(writer, http.StatusOK, overlay, data[0], render.HTMLOptions{Layout: ""})
 		writer.Flush()
 	}
 
