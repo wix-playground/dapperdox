@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -516,8 +516,8 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 	//  reseting our schema variable to items.schema.
 	//
 
-	//logger.Printf(nil, "CHECK schema type and items\n")
-	//spew.Dump(s)
+	logger.Printf(nil, "CHECK schema type and items\n")
+	spew.Dump(s)
 
 	if s.Type == nil {
 		s.Type = append(s.Type, "object")
@@ -534,10 +534,12 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 			s = &s.Items.Schemas[0]
 		}
 		if s.Type == nil {
-			s.Type = stringorarray
+			//s.Type = stringorarray
+	        s.Type = append(stringorarray, s.Title)  // Especially for an array of objects.. Perhaps this should be in COMPILE PROPERTIES??
 		} else if s.Type.Contains("array") {
 			s.Type = stringorarray
-		}
+        }
+//fmt.Printf("TYPE IS %s\n", s.Type[0] )
 		//fmt.Printf("REMAP SCHEMA\n")
 		//spew.Dump(s)
 	}
@@ -635,7 +637,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 
 	// Now process the properties
 	for name, property := range s.Properties {
-		//log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
+		log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
 		newFQNS := append([]string{}, myFQNS...)
 		if chopped && len(id) > 0 {
 			newFQNS = append(newFQNS, id)
@@ -652,10 +654,11 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
 			// Arrays of objects need to be handled as a special case
 			if strings.ToLower(r.Properties[name].Type[0]) == "array" {
+                log.Printf("Processing an array property %s", name)
 				if property.Items != nil {
 					if property.Items.Schema != nil {
 
-						//log.Printf("ARRAY PROCESS %s:\n", name)
+						log.Printf("ARRAY PROCESS %s:\n", name)
 						//spew.Dump(property.Items.Schema)
 
 						// Add [] to end of fully qualified name space
@@ -685,8 +688,20 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 
 						// Override type to reflect it is an array
 						r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[0] + "]"
-					}
-				}
+					} else {
+                    log.Printf("... and schema for %s is nil", name)
+                        // array object fixes
+						xFQNS := append([]string{}, newFQNS...)
+						if len(xFQNS) > 0 {
+							xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
+						}
+						r.Properties[name] = resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
+						r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[1] + "]" // XXX WATCH OUT FOR [1]
+				        json_rep[name] = r.Properties[name].Schema
+                    }
+				} else {
+                log.Printf("... and Items for %s are nil", name)
+                }
 			} else {
 				json_rep[name] = r.Properties[name].Schema
 			}
