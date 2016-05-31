@@ -49,7 +49,7 @@ func New() *render.Render {
 
 	if len(cfg.ThemesDir) != 0 {
 		logger.Infof(nil, "Picking up themes from directory: "+cfg.ThemesDir+"/"+cfg.Theme+"/assets")
-		asset.Compile(cfg.ThemesDir+"/"+cfg.Theme, "assets")
+		asset.Compile(cfg.ThemesDir+"/"+cfg.Theme+"/assets", "assets")
 	}
 	// Fallback to local themes directory
 	asset.Compile(cfg.DefaultAssetsDir+"/themes/"+cfg.Theme, "assets")
