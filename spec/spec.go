@@ -491,10 +491,42 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 
 // -----------------------------------------------------------------------------
 
+func checkPropertyType(s *spec.Schema) string {
+
+	ptype := "primitive"
+
+	if s.Type == nil {
+		ptype = "object"
+	}
+
+	if s.Items != nil {
+		ptype = "UNKNOWN"
+
+		if s.Items.Schema != nil {
+			s = s.Items.Schema
+		} else {
+			s = &s.Items.Schemas[0]
+		}
+
+		if s.Type == nil {
+			ptype = "array of objects"
+		} else if s.Type.Contains("array") {
+			ptype = "array of primitives"
+		}
+	}
+
+	return ptype
+}
+
+// -----------------------------------------------------------------------------
+
 func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource {
 	if s == nil {
 		return nil
 	}
+
+	stype := checkPropertyType(s)
+	log.Printf("Schema type: %s\n", stype)
 
 	// XXX This is a bit of a hack, as it is possible for a response to be an array of
 	//     objects, and it it possible to declare this in several ways:
@@ -530,16 +562,22 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 		//     with an ARRAY
 		if s.Items.Schema != nil {
 			s = s.Items.Schema
+			log.Printf("got s.Items.Schema for %s\n", s.Title)
 		} else {
 			s = &s.Items.Schemas[0]
+			log.Printf("got s.Items.Schemas[0] for %s\n", s.Title)
 		}
 		if s.Type == nil {
-			//s.Type = stringorarray
-	        s.Type = append(stringorarray, s.Title)  // Especially for an array of objects.. Perhaps this should be in COMPILE PROPERTIES??
-		} else if s.Type.Contains("array") {
+			log.Printf("Got array of objects? Name %s\n", s.Title)
+			//////s.Type = append(stringorarray, s.Title) // Especially for an array of objects.. Perhaps this should be in COMPILE PROPERTIES??
+			// Trying to fix issue/11
 			s.Type = stringorarray
-        }
-//fmt.Printf("TYPE IS %s\n", s.Type[0] )
+			// Trying to fix issue/11
+		} else if s.Type.Contains("array") {
+			log.Printf("Got array for %s\n", s.Title)
+			s.Type = stringorarray
+		}
+		//fmt.Printf("TYPE IS %s\n", s.Type[0] )
 		//fmt.Printf("REMAP SCHEMA\n")
 		//spew.Dump(s)
 	}
@@ -561,10 +599,21 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 		chopped = true
 	}
 
+	// If there is no description... the case where we have an array of objects. See issue/11
+	var description string
+	if s.Description != "" {
+		description = string(github_flavored_markdown.Markdown([]byte(s.Description)))
+	} else {
+		description = s.Title
+		if len(myFQNS) > 0 {
+			description = description + " - " + myFQNS[len(myFQNS)-1]
+		}
+	}
+
 	r := &Resource{
 		ID:          id,
 		Title:       s.Title,
-		Description: string(github_flavored_markdown.Markdown([]byte(s.Description))),
+		Description: description,
 		Type:        s.Type,
 		Properties:  make(map[string]*Resource),
 		FQNS:        myFQNS,
@@ -639,11 +688,18 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 	for name, property := range s.Properties {
 		log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
 		newFQNS := append([]string{}, myFQNS...)
+
 		if chopped && len(id) > 0 {
 			newFQNS = append(newFQNS, id)
 		}
-		newFQNS = append(newFQNS, name)
 
+		if s.Properties[name].Type[0] == "array" {
+			newFQNS = append(newFQNS, name+"[]")
+		} else {
+			newFQNS = append(newFQNS, name)
+		}
+
+		log.Printf("A call resourceFromSchema for property %s\n", name)
 		r.Properties[name] = resourceFromSchema(&property, method, newFQNS)
 
 		if _, ok := required[name]; ok {
@@ -654,7 +710,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
 			// Arrays of objects need to be handled as a special case
 			if strings.ToLower(r.Properties[name].Type[0]) == "array" {
-                log.Printf("Processing an array property %s", name)
+				log.Printf("Processing an array property %s", name)
 				if property.Items != nil {
 					if property.Items.Schema != nil {
 
@@ -667,6 +723,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 							xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
 						}
 
+						log.Printf("B call resourceFromSchema for property %s\n", name)
 						r.Properties[name] = resourceFromSchema(property.Items.Schema, method, xFQNS)
 
 						// log.Printf("Generated Properties:\n")
@@ -689,19 +746,38 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 						// Override type to reflect it is an array
 						r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[0] + "]"
 					} else {
-                    log.Printf("... and schema for %s is nil", name)
-                        // array object fixes
-						xFQNS := append([]string{}, newFQNS...)
-						if len(xFQNS) > 0 {
-							xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
+						log.Printf("... and schema for %s is nil", name)
+						//// array object fixes
+						//xFQNS := append([]string{}, newFQNS...)
+						//if len(xFQNS) > 0 {
+						//	xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
+						//}
+						//r.Properties[name] = resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
+						//r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[1] + "]" // XXX WATCH OUT FOR [1]
+						//json_rep[name] = r.Properties[name].Schema
+
+						// ----
+						var example_sch string
+						if strings.ToLower(r.Properties[name].Type[0]) == "object" {
+							example_sch = r.Properties[name].Schema // Untested in this context.
+						} else {
+							//example_sch = "\"" + r.Properties[name].Type[0] + "\""
+							//r.Properties[name].Description = property.Description
+							xFQNS := append([]string{}, newFQNS...)
+							if len(xFQNS) > 0 {
+								xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
+							}
+							g := resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
+							example_sch = g.Schema
 						}
-						r.Properties[name] = resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
-						r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[1] + "]" // XXX WATCH OUT FOR [1]
-				        json_rep[name] = r.Properties[name].Schema
-                    }
+
+						var f interface{}
+						_ = json.Unmarshal([]byte(example_sch), &f)
+						json_rep[name] = f
+					}
 				} else {
-                log.Printf("... and Items for %s are nil", name)
-                }
+					log.Printf("... and Items for %s are nil", name)
+				}
 			} else {
 				json_rep[name] = r.Properties[name].Schema
 			}
