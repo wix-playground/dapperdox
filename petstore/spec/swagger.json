@@ -7,47 +7,37 @@
     },
     "host": "api.uber.com",
     "schemes": [
-    "https"
+        "https"
     ],
     "basePath": "/v1",
     "produces": [
-    "application/json"
+        "application/json"
     ],
-  "tags": [
-    { 
-        "name":"Estimates Price",
-        "description" : "Estimates of Price"
-    },
-    { "name": "Products" },
-    { "name":"Estimates Time" },
-    { "name": "User Profile" },
-    { "name": "User Activity" }
-  ],
     "paths": {
         "/products": {
             "get": {
                 "summary": "Product Types",
                 "description": "The Products endpoint returns information about the Uber products offered at a given location. The response includes the display name and other details about each product, and lists the products in the proper display order.",
                 "parameters": [
-                {
-                    "name": "latitude",
-                    "in": "query",
-                    "description": "Latitude component of location.",
-                    "required": true,
-                    "type": "number",
-                    "format": "double"
-                },
-                {
-                    "name": "longitude",
-                    "in": "query",
-                    "description": "Longitude component of location.",
-                    "required": true,
-                    "type": "number",
-                    "format": "double"
-                }
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    }
                 ],
-                "x-tags": [
-                  "Products"
+                "tags": [
+                    "Products"
                 ],
                 "responses": {
                     "200": {
@@ -73,41 +63,41 @@
                 "summary": "Price Estimates",
                 "description": "The Price Estimates endpoint returns an estimated price range for each product offered at a given location. The price estimate is provided as a formatted string with the full price range and the localized currency symbol.<br><br>The response also includes low and high estimates, and the [ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code for situations requiring currency conversion. When surge is active for a particular product, its surge_multiplier will be greater than 1, but the price estimate already factors in this multiplier.",
                 "parameters": [
-                {
-                    "name": "start_latitude",
-                    "in": "query",
-                    "description": "Latitude component of start location.",
-                    "required": true,
-                    "type": "number",
-                    "format": "double"
-                },
-                {
-                    "name": "start_longitude",
-                    "in": "query",
-                    "description": "Longitude component of start location.",
-                    "required": true,
-                    "type": "number",
-                    "format": "double"
-                },
-                {
-                    "name": "end_latitude",
-                    "in": "query",
-                    "description": "Latitude component of end location.",
-                    "required": true,
-                    "type": "number",
-                    "format": "double"
-                },
-                {
-                    "name": "end_longitude",
-                    "in": "query",
-                    "description": "Longitude component of end location.",
-                    "required": true,
-                    "type": "number",
-                    "format": "double"
-                }
+                    {
+                        "name": "start_latitude",
+                        "in": "query",
+                        "description": "Latitude component of start location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "start_longitude",
+                        "in": "query",
+                        "description": "Longitude component of start location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "end_latitude",
+                        "in": "query",
+                        "description": "Latitude component of end location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "end_longitude",
+                        "in": "query",
+                        "description": "Longitude component of end location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    }
                 ],
                 "tags": [
-                "Estimates Price"
+                    "Estimates"
                 ],
                 "responses": {
                     "200": {
@@ -117,12 +107,6 @@
                             "items": {
                                 "$ref": "#/definitions/PriceEstimate"
                             }
-                        }
-                    },
-                    "201" : {
-                        "description": "A dog",
-                        "schema": {
-                            "$ref": "#/definitions/Dog"
                         }
                     },
                     "default": {
@@ -139,38 +123,38 @@
                 "summary": "Time Estimates",
                 "description": "The Time Estimates endpoint returns ETAs for all products offered at a given location, with the responses expressed as integers in seconds. We recommend that this endpoint be called every minute to provide the most accurate, up-to-date ETAs.",
                 "parameters": [
-                {
-                    "name": "start_latitude",
-                    "in": "query",
-                    "description": "Latitude component of start location.",
-                    "required": true,
-                    "type": "number",
-                    "format": "double"
-                },
-                {
-                    "name": "start_longitude",
-                    "in": "query",
-                    "description": "Longitude component of start location.",
-                    "required": true,
-                    "type": "number",
-                    "format": "double"
-                },
-                {
-                    "name": "customer_uuid",
-                    "in": "query",
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "Unique customer identifier to be used for experience customization."
-                },
-                {
-                    "name": "product_id",
-                    "in": "query",
-                    "type": "string",
-                    "description": "Unique identifier representing a specific product for a given latitude & longitude."
-                }
+                    {
+                        "name": "start_latitude",
+                        "in": "query",
+                        "description": "Latitude component of start location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "start_longitude",
+                        "in": "query",
+                        "description": "Longitude component of start location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "customer_uuid",
+                        "in": "query",
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique customer identifier to be used for experience customization."
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "type": "string",
+                        "description": "Unique identifier representing a specific product for a given latitude & longitude."
+                    }
                 ],
                 "tags": [
-                "Estimates Time"
+                    "Estimates"
                 ],
                 "responses": {
                     "200": {
@@ -196,7 +180,7 @@
                 "summary": "User Profile",
                 "description": "The User Profile endpoint returns information about the Uber user that has authorized with the application.",
                 "tags": [
-                "User Profile"
+                    "User"
                 ],
                 "responses": {
                     "200": {
@@ -219,23 +203,23 @@
                 "summary": "User Activity",
                 "description": "The User Activity endpoint returns data about a user's lifetime activity with Uber. The response will include pickup locations and times, dropoff locations and times, the distance of past requests, and information about which products were requested.<br><br>The history array in the response will have a maximum length based on the limit parameter. The response value count may exceed limit, therefore subsequent API requests may be necessary.",
                 "parameters": [
-                {
-                    "name": "offset",
-                    "in": "query",
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Offset the list of returned results by this amount. Default is zero."
-                },
-                {
-                    "name": "limit",
-                    "in": "query",
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Number of items to retrieve. Default is 5, maximum is 100."
-                }
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Offset the list of returned results by this amount. Default is zero."
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Number of items to retrieve. Default is 5, maximum is 100."
+                    }
                 ],
                 "tags": [
-                "User Activity"
+                    "User"
                 ],
                 "responses": {
                     "200": {
@@ -256,7 +240,7 @@
     },
     "definitions": {
         "Product": {
-            "title":"Product resource",
+            "title": "Product resource",
             "properties": {
                 "product_id": {
                     "type": "string",
@@ -281,8 +265,7 @@
             }
         },
         "PriceEstimate": {
-            "type":"array",
-            "title":"Price Estimate resource",
+            "title": "PriceEstimate resource",
             "properties": {
                 "product_id": {
                     "type": "string",
@@ -340,7 +323,7 @@
             }
         },
         "Activity": {
-            "title":"Activity resource",
+            "title": "Activity resource",
             "properties": {
                 "uuid": {
                     "type": "string",
@@ -349,7 +332,7 @@
             }
         },
         "Activities": {
-            "title":"Activities resource",
+            "title": "Activities resource",
             "properties": {
                 "offset": {
                     "type": "integer",
@@ -368,17 +351,15 @@
                 },
                 "history": {
                     "type": "array",
-                    "items": [
-                        {
-                            "$ref": "#/definitions/Activity"
-                        }
-                    ]
+                    "description" : "List of history items",
+                    "items": {
+                        "$ref": "#/definitions/Activity"
+                    }
                 }
             }
         },
         "Error": {
-            "type":"object",
-            "title":"Error resource",
+            "title": "Error resource",
             "properties": {
                 "code": {
                     "type": "integer",
@@ -391,75 +372,6 @@
                     "type": "string"
                 }
             }
-        },
-    "Pet": {
-      "type": "object",
-      "discriminator": "petType",
-      "properties": {
-        "name": {
-          "description" : "The name of the animal",
-          "type": "string"
-        },
-        "petType": {
-          "description" : "The type of animal",
-          "type": "string"
         }
-      },
-      "required": [
-        "name",
-        "petType"
-      ]
-    },
-    "Cat": {
-      "description": "A representation of a cat",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Pet"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "huntingSkill": {
-              "type": "string",
-              "description": "The measured skill for hunting",
-              "default": "lazy",
-              "enum": [
-                "clueless",
-                "lazy",
-                "adventurous",
-                "aggressive"
-              ]
-            }
-          },
-          "required": [
-            "huntingSkill"
-          ]
-        }
-      ]
-    },
-    "Dog": {
-      "title": "A dog",
-      "description": "A representation of a dog",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Pet"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "packSize": {
-              "type": "integer",
-              "format": "int32",
-              "description": "the size of the pack the dog is from",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          "required": [
-            "packSize"
-          ]
-        }
-      ]
     }
-  }
 }

@@ -505,7 +505,7 @@ func checkPropertyType(s *spec.Schema) string {
 		if s.Items.Schema != nil {
 			s = s.Items.Schema
 		} else {
-			s = &s.Items.Schemas[0]
+			s = &s.Items.Schemas[0] // - Main schema [1] = Additional properties? See online swagger editior.
 		}
 
 		if s.Type == nil {
@@ -528,6 +528,9 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 	stype := checkPropertyType(s)
 	log.Printf("Schema type: %s\n", stype)
 
+	logger.Printf(nil, "CHECK schema type and items\n")
+	spew.Dump(s)
+
 	// XXX This is a bit of a hack, as it is possible for a response to be an array of
 	//     objects, and it it possible to declare this in several ways:
 	// 1. As :
@@ -547,26 +550,21 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 	//  two cases is to keep the top level "type" in the second case, and apply it to items.schema.Type,
 	//  reseting our schema variable to items.schema.
 	//
-
-	logger.Printf(nil, "CHECK schema type and items\n")
-	spew.Dump(s)
-
+	// TODO Check if this is valid?? TODO
 	if s.Type == nil {
 		s.Type = append(s.Type, "object")
 	}
 
 	if s.Items != nil {
 		stringorarray := s.Type
-
-		// EEK This is officially icky! See the Activities model in the uber spec. It declares "items": [ { } ] !!
-		//     with an ARRAY
-		if s.Items.Schema != nil {
+		if s.Items.Schema != nil { // items: { properties: {} }
 			s = s.Items.Schema
 			log.Printf("got s.Items.Schema for %s\n", s.Title)
-		} else {
+		} else { // items: { $ref: "" }
 			s = &s.Items.Schemas[0]
 			log.Printf("got s.Items.Schemas[0] for %s\n", s.Title)
 		}
+
 		if s.Type == nil {
 			log.Printf("Got array of objects? Name %s\n", s.Title)
 			//////s.Type = append(stringorarray, s.Title) // Especially for an array of objects.. Perhaps this should be in COMPILE PROPERTIES??
@@ -583,6 +581,10 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 	}
 
 	id := TitleToKebab(s.Title)
+
+	if len(fqNS) > 0 && s.Type.Contains("array") {
+		id = ""
+	}
 
 	if len(fqNS) == 0 && id == "" {
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title memeber.", strings.ToUpper(method.Method), method.Path)
@@ -693,11 +695,12 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 			newFQNS = append(newFQNS, id)
 		}
 
-		if s.Properties[name].Type[0] == "array" {
-			newFQNS = append(newFQNS, name+"[]")
-		} else {
-			newFQNS = append(newFQNS, name)
-		}
+		//if s.Properties[name].Type[0] == "array" {
+		//	newFQNS = append(newFQNS, name+"[x]")
+		//} else {
+		//	newFQNS = append(newFQNS, name)
+		//}
+		newFQNS = append(newFQNS, name)
 
 		log.Printf("A call resourceFromSchema for property %s\n", name)
 		r.Properties[name] = resourceFromSchema(&property, method, newFQNS)
@@ -744,7 +747,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 						json_rep[name] = f
 
 						// Override type to reflect it is an array
-						r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[0] + "]"
+						//r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[0] + "]"
 					} else {
 						log.Printf("... and schema for %s is nil", name)
 						//// array object fixes
