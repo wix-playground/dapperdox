@@ -493,6 +493,22 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 
 func checkPropertyType(s *spec.Schema) string {
 
+	/*
+	   (string) (len=12) "string_array": (spec.Schema) {
+	    SchemaProps: (spec.SchemaProps) {
+	     Description: (string) (len=16) "Array of strings",
+	     Type: (spec.StringOrArray) (len=1 cap=1) { (string) (len=5) "array" },
+	     Items: (*spec.SchemaOrArray)(0xc8205bb000)({
+	      Schema: (*spec.Schema)(0xc820202480)({
+	       SchemaProps: (spec.SchemaProps) {
+	        Type: (spec.StringOrArray) (len=1 cap=1) { (string) (len=6) "string" },
+	       },
+	      }),
+	     }),
+	    },
+	   }
+	*/
+
 	ptype := "primitive"
 
 	if s.Type == nil {
@@ -510,6 +526,9 @@ func checkPropertyType(s *spec.Schema) string {
 
 		if s.Type == nil {
 			ptype = "array of objects"
+			if s.SchemaProps.Type != nil {
+				ptype = "array of SOMETHING"
+			}
 		} else if s.Type.Contains("array") {
 			ptype = "array of primitives"
 		}
@@ -729,15 +748,16 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 						log.Printf("B call resourceFromSchema for property %s\n", name)
 						r.Properties[name] = resourceFromSchema(property.Items.Schema, method, xFQNS)
 
-						// log.Printf("Generated Properties:\n")
-						// spew.Dump(r.Properties[name])
-
 						// Some outputs (example schema, member description) are generated differently
 						// if the array member references an object or a primitive type
 						var example_sch string
-						if strings.ToLower(r.Properties[name].Type[0]) == "object" {
+						switch strings.ToLower(r.Properties[name].Type[0]) {
+						case "object":
 							example_sch = r.Properties[name].Schema
-						} else {
+						case "array":
+							example_sch = r.Properties[name].Schema
+							r.Properties[name].Description = property.Description
+						default:
 							example_sch = "\"" + r.Properties[name].Type[0] + "\""
 							r.Properties[name].Description = property.Description
 						}
