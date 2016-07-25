@@ -763,7 +763,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 						}
 
 						var f interface{}
-						_ = json.Unmarshal([]byte("["+example_sch+"]"), &f)
+						_ = json.Unmarshal([]byte(example_sch), &f)
 						json_rep[name] = f
 
 						// Override type to reflect it is an array
