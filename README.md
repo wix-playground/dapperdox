@@ -527,12 +527,6 @@ Overlays for a specific page will take precedence over those applied to all page
 
 ### Page section targets
 
-#### API page
-
-| GFM section reference | Page section |
-| --------------------- | ------------ |
-
-
 #### Method page
 
 | GFM section reference | Page section |
@@ -554,12 +548,19 @@ Overlays for a specific page will take precedence over those applied to all page
 
 | GFM section reference | Page section |
 | --------------------- | ------------ |
+| `[[banner]]`           | Inserts banner content at the start of the page, before the description. |
 | `[[description]]`      | Adds a description block to the start of the page. |
 | `[[methods]]`          | Inserts content before the methods list. |
 | `[[resource]]`         | Inserts content before the resource schema. |
 | `[[example]]`          | Adds content before the resource example, if it exists. |
 | `[[properties]]`       | Inserts content before the resource properties table. |
 | `[[additional]]`       | Inserts content at the end of the resource page. |
+
+#### API page
+
+| GFM section reference | Page section |
+| --------------------- | ------------ |
+| `[[banner]]`      | Inserts content at the start of the page, before the API list. |
 
 
 ## Supported metadata
