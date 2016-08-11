@@ -16,19 +16,20 @@ import (
 	"github.com/zxchris/swaggerly/logger"
 )
 
-// APISet is a slice of API structs
-type APISet []API
+type APIContainer struct {
+	APIs    APISet // APIs represents the parsed APIs
+	APIInfo Info
 
-// APIs represents the parsed APIs
-var APIs APISet
-var APIInfo Info
-var SecurityDefinitions map[string]SecurityScheme
-var ResourceList map[string]map[string]*Resource // Version->ResourceName->Resource
-var APIVersions map[string]APISet                // Version->APISet
+	SecurityDefinitions map[string]SecurityScheme
+	ResourceList        map[string]map[string]*Resource // Version->ResourceName->Resource
+	APIVersions         map[string]APISet               // Version->APISet
+}
+
+var APISuite map[string]APIContainer
 
 // GetByName returns an API by name
-func (a APISet) GetByName(name string) *API {
-	for _, a := range APIs {
+func (c APIContainer) GetByName(name string) *API {
+	for _, a := range c.APIs {
 		if a.Name == name {
 			return &a
 		}
@@ -37,14 +38,16 @@ func (a APISet) GetByName(name string) *API {
 }
 
 // GetByID returns an API by ID
-func (a APISet) GetByID(id string) *API {
-	for _, a := range APIs {
+func (c *APIContainer) GetByID(id string) *API {
+	for _, a := range c.APIs {
 		if a.ID == id {
 			return &a
 		}
 	}
 	return nil
 }
+
+type APISet []API
 
 type Info struct {
 	Title       string
@@ -143,7 +146,7 @@ type Resource struct {
 // -----------------------------------------------------------------------------
 
 // Load loads API specs from the supplied host (usually local!)
-func Load(host string) {
+func (c *APIContainer) Load(host string) {
 
 	cfg, err := config.Get()
 	if err != nil {
@@ -165,10 +168,10 @@ func Load(host string) {
 		log.Fatal(err)
 	}
 
-	APIInfo.Title = swaggerdoc.Spec().Info.Title
-	APIInfo.Description = swaggerdoc.Spec().Info.Description
+	c.APIInfo.Title = swaggerdoc.Spec().Info.Title
+	c.APIInfo.Description = swaggerdoc.Spec().Info.Description
 
-	getSecurityDefinitions(swaggerdoc.Spec())
+	c.getSecurityDefinitions(swaggerdoc.Spec())
 
 	// Use the top level TAGS to order the API resources/endpoints
 	// If Tags: [] is not defined, or empty, then no filtering or ordering takes place,#
@@ -190,7 +193,7 @@ func Load(host string) {
 				ID:   TitleToKebab(name),
 				Name: name,
 				URL:  u,
-				Info: &APIInfo,
+				Info: &c.APIInfo,
 			}
 
 			if ver, ok = pathItem.Extensions["x-version"]; !ok {
@@ -198,27 +201,27 @@ func Load(host string) {
 			}
 			api.CurrentVersion = ver.(string)
 
-			getMethods(tag, api, &api.Methods, &pathItem, path, ver.(string)) // Current version
-			getVersions(tag, api, pathItem.Versions, path)                    // All versions
+			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver.(string)) // Current version
+			c.getVersions(tag, api, pathItem.Versions, path)                    // All versions
 
 			// If API was populated, add to set
 			if len(api.Methods) > 0 {
-				APIs = append(APIs, *api) // All APIs (versioned within)
+				c.APIs = append(c.APIs, *api) // All APIs (versioned within)
 			}
 		}
 	}
 
 	// Build a API map, grouping by version
-	for _, api := range APIs {
+	for _, api := range c.APIs {
 		for v, _ := range api.Versions {
-			if APIVersions == nil {
-				APIVersions = make(map[string]APISet)
+			if c.APIVersions == nil {
+				c.APIVersions = make(map[string]APISet)
 			}
 			// Create copy of API and set Methods array to be correct for the version we are building
 			napi := api
 			napi.Methods = napi.Versions[v]
 			napi.Versions = nil
-			APIVersions[v] = append(APIVersions[v], napi) // Group APIs by version
+			c.APIVersions[v] = append(c.APIVersions[v], napi) // Group APIs by version
 		}
 	}
 }
@@ -239,7 +242,7 @@ func getTags(specification *spec.Swagger) []spec.Tag {
 
 // -----------------------------------------------------------------------------
 
-func getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path string) {
+func (c *APIContainer) getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path string) {
 	if versions == nil {
 		return
 	}
@@ -248,27 +251,27 @@ func getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path
 	for v, pi := range versions {
 		logger.Tracef(nil, "Process version %s\n", v)
 		var method []Method
-		getMethods(tag, api, &method, &pi, path, v)
+		c.getMethods(tag, api, &method, &pi, path, v)
 		api.Versions[v] = method
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-func getMethods(tag spec.Tag, api *API, methods *[]Method, pi *spec.PathItem, path string, version string) {
+func (c *APIContainer) getMethods(tag spec.Tag, api *API, methods *[]Method, pi *spec.PathItem, path string, version string) {
 
-	getMethod(tag, api, methods, version, pi, pi.Get, path, "get")
-	getMethod(tag, api, methods, version, pi, pi.Post, path, "post")
-	getMethod(tag, api, methods, version, pi, pi.Put, path, "put")
-	getMethod(tag, api, methods, version, pi, pi.Delete, path, "delete")
-	getMethod(tag, api, methods, version, pi, pi.Head, path, "head")
-	getMethod(tag, api, methods, version, pi, pi.Options, path, "options")
-	getMethod(tag, api, methods, version, pi, pi.Patch, path, "patch")
+	c.getMethod(tag, api, methods, version, pi, pi.Get, path, "get")
+	c.getMethod(tag, api, methods, version, pi, pi.Post, path, "post")
+	c.getMethod(tag, api, methods, version, pi, pi.Put, path, "put")
+	c.getMethod(tag, api, methods, version, pi, pi.Delete, path, "delete")
+	c.getMethod(tag, api, methods, version, pi, pi.Head, path, "head")
+	c.getMethod(tag, api, methods, version, pi, pi.Options, path, "options")
+	c.getMethod(tag, api, methods, version, pi, pi.Patch, path, "patch")
 }
 
 // -----------------------------------------------------------------------------
 
-func getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
+func (c *APIContainer) getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
 	if operation == nil {
 		return
 	}
@@ -280,12 +283,12 @@ func getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathit
 			logger.Tracef(nil, "Skipping %s - Operation does not contain a tag member, and tagging is in use.", operation.Summary)
 			return
 		}
-		method := processMethod(api, pathitem, operation, path, methodname, version)
+		method := c.processMethod(api, pathitem, operation, path, methodname, version)
 		*methods = append(*methods, *method)
 	} else {
 		for _, t := range operation.Tags {
 			if tag.Name == "" || t == tag.Name {
-				method := processMethod(api, pathitem, operation, path, methodname, version)
+				method := c.processMethod(api, pathitem, operation, path, methodname, version)
 				*methods = append(*methods, *method)
 			}
 		}
@@ -294,10 +297,10 @@ func getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathit
 
 // -----------------------------------------------------------------------------
 
-func getSecurityDefinitions(spec *spec.Swagger) {
+func (c *APIContainer) getSecurityDefinitions(spec *spec.Swagger) {
 
-	if SecurityDefinitions == nil {
-		SecurityDefinitions = make(map[string]SecurityScheme)
+	if c.SecurityDefinitions == nil {
+		c.SecurityDefinitions = make(map[string]SecurityScheme)
 	}
 
 	for n, d := range spec.SecurityDefinitions {
@@ -327,13 +330,13 @@ func getSecurityDefinitions(spec *spec.Swagger) {
 			}
 		}
 
-		SecurityDefinitions[n] = *def
+		c.SecurityDefinitions[n] = *def
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
+func (c *APIContainer) processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
 
 	id := o.ID
 	if id == "" {
@@ -367,8 +370,8 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 		api.ID = TitleToKebab(name)
 	}
 
-	if ResourceList == nil {
-		ResourceList = make(map[string]map[string]*Resource)
+	if c.ResourceList == nil {
+		c.ResourceList = make(map[string]map[string]*Resource)
 	}
 
 	for _, param := range o.Parameters {
@@ -406,19 +409,19 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 		// Discover if the resource is already declared, and pick it up
 		// if it is (keyed on version number)
 		if response.Schema != nil {
-			if _, ok := ResourceList[version]; !ok {
-				ResourceList[version] = make(map[string]*Resource)
+			if _, ok := c.ResourceList[version]; !ok {
+				c.ResourceList[version] = make(map[string]*Resource)
 			}
 			var ok bool
-			r := resourceFromSchema(response.Schema, method, nil) // May be thrown away
+			r := c.resourceFromSchema(response.Schema, method, nil) // May be thrown away
 
 			// Look for a pre-declared resource with the response ID, and use that or create the first one...
 			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
-			if vres, ok = ResourceList[version][r.ID]; !ok {
+			if vres, ok = c.ResourceList[version][r.ID]; !ok {
 				logger.Tracef(nil, "   - Creating new resource\n")
 				vres = r
 			}
-			ResourceList[version][r.ID] = vres
+			c.ResourceList[version][r.ID] = vres
 
 			// Compile a list of the methods which use this resource
 			vres.Methods = append(vres.Methods, *method)
@@ -435,17 +438,17 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 	}
 
 	if o.Responses.Default != nil {
-		r := resourceFromSchema(o.Responses.Default.Schema, method, nil)
+		r := c.resourceFromSchema(o.Responses.Default.Schema, method, nil)
 		if r != nil {
 			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
 			// Look for a pre-declared resource with the response ID, and use that or create the first one...
 			var vres *Resource
 			var ok bool
-			if vres, ok = ResourceList[version][r.ID]; !ok {
+			if vres, ok = c.ResourceList[version][r.ID]; !ok {
 				logger.Tracef(nil, "   - Creating new resource\n")
 				vres = r
 			}
-			ResourceList[version][r.ID] = vres
+			c.ResourceList[version][r.ID] = vres
 
 			// Add to the compiled list of methods which use this resource
 			vres.Methods = append(vres.Methods, *method)
@@ -465,7 +468,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 	for _, sec := range o.Security {
 		for n, scopes := range sec {
 			// Lookup security name in definitions
-			if scheme, ok := SecurityDefinitions[n]; ok {
+			if scheme, ok := c.SecurityDefinitions[n]; ok {
 
 				// Add security to method
 				method.Security[n] = Security{
@@ -491,7 +494,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 
 // -----------------------------------------------------------------------------
 
-func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource {
+func (c *APIContainer) resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource {
 	if s == nil {
 		return nil
 	}
@@ -587,10 +590,10 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 	required := make(map[string]bool)
 	json_representation := make(map[string]interface{})
 
-	compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped)
+	c.compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped)
 
 	for allof := range s.AllOf {
-		compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped)
+		c.compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped)
 	}
 
 	// Build element of resource schema example
@@ -626,7 +629,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 // It uses the 'required' map to set when properties are required and builds a JSON
 // representation of the resource.
 //
-func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
+func (c *APIContainer) compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
 
 	// First, grab the required members
 	for _, i := range s.Required {
@@ -642,7 +645,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 		}
 		newFQNS = append(newFQNS, name)
 
-		r.Properties[name] = resourceFromSchema(&property, method, newFQNS)
+		r.Properties[name] = c.resourceFromSchema(&property, method, newFQNS)
 
 		if _, ok := required[name]; ok {
 			r.Properties[name].Required = true
@@ -664,7 +667,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 							xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
 						}
 
-						r.Properties[name] = resourceFromSchema(property.Items.Schema, method, xFQNS)
+						r.Properties[name] = c.resourceFromSchema(property.Items.Schema, method, xFQNS)
 
 						// log.Printf("Generated Properties:\n")
 						// spew.Dump(r.Properties[name])

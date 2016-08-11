@@ -17,6 +17,8 @@ import (
 	"github.com/zxchris/swaggerly/spec"
 )
 
+var Container *spec.APIContainer
+
 // Render is a global instance of github.com/unrolled/render.Render
 var Render *render.Render
 
@@ -172,10 +174,10 @@ func DefaultVars(req *http.Request, m Vars) map[string]interface{} {
 	}
 
 	m["Config"], _ = config.Get()
-	m["APIs"] = spec.APIs
-	m["APIVersions"] = spec.APIVersions
-	m["Resources"] = spec.ResourceList
-	m["Info"] = spec.APIInfo
+	m["APIs"] = Container.APIs
+	m["APIVersions"] = Container.APIVersions
+	m["Resources"] = Container.ResourceList
+	m["Info"] = Container.APIInfo
 	m["NavigationGuides"] = guides
 
 	return m

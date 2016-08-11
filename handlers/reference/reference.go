@@ -23,7 +23,7 @@ func Register(r *pat.Router) {
 	pathVersionMethod = make(map[string]versionedMethod)
 	pathVersionResource = make(map[string]versionedResource)
 
-	for _, api := range spec.APIs {
+	for _, api := range render.Container.APIs {
 		logger.Tracef(nil, "registering handler for %s api: %s", api.Name, api.ID)
 		r.Path("/reference/" + api.ID).Methods("GET").HandlerFunc(APIHandler(api))
 
@@ -55,7 +55,7 @@ func Register(r *pat.Router) {
 	}
 
 	logger.Tracef(nil, "Registering RESOURCES")
-	for version, resources := range spec.ResourceList {
+	for version, resources := range render.Container.ResourceList {
 		logger.Tracef(nil, "  - Version %s", version)
 		for id, resource := range resources {
 			logger.Tracef(nil, "    - resource %s", id)

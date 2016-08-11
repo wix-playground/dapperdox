@@ -66,7 +66,9 @@ func main() {
 	specs.Register(router)
 
 	// Now the spec routes have been registered, we're safe to import and parse the swagger (via the registered spec routes)
-	spec.Load(cfg.BindAddr)
+	render.Container = &spec.APIContainer{}
+
+	render.Container.Load(cfg.BindAddr)
 	reference.Register(router)
 
 	guides.Register(router)
