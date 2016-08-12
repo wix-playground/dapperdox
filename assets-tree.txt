@@ -1,5 +1,43 @@
 assets/
   |
+  +-- static/
+  |
+  +-- themes/
+  |
+  +-- templates/                                     -- Allows theme related aspects to be customised, and top level content.
+  |      |
+  |      +-- fragments/ 
+  |      |
+  |      +-- index.md                                -- Customise the "home" page of the entire specification suite
+  |      |
+  |      +-- guides/                                 -- General guides
+  | 
+  +-- sections/                                      -- API named site sections
+         |
+         +-- [specification-ID]/
+               |
+               +-- index.md                          -- Customise the "home" page of the [specification-ID] API spec
+               |
+               +-- guides/                           -- Guides for the [specification-ID] API spec
+               |
+               +-- reference/
+               |      |
+               |      +-- api.md                     -- Overlay applied to all API pages
+               |      +-- [api-name].md              -- Overlay applied to a specific API page
+               |      +-- [api-name]/
+               |              |
+               |              +-- method.md          -- Overlay applied to all methods of an API
+               |              +-- [method-name].md   -- Overlay applied to a specific method of an API
+               |
+               +-- resource/
+                      |
+                      +-- resource.md                -- Overlay applied to all resource pages
+                      +-- [resource-name[.md         -- Overlay applied to a specific resource pages
+
+== OR ==
+
+assets/
+  |
   +-- [specification-ID]/
   |     |
   |     +-- templates/
@@ -22,17 +60,13 @@ assets/
   |                    +-- resource.md                -- Overlay applied to all resource pages
   |                    +-- [resource-name[.md         -- Overlay applied to a specific resource pages
   |
-  +-- home/
-  |     |
-  |     +-- templates/
-  |             |
-  |             +-- index.md                          -- Customise the "home" page of the entire specification suite
-  |             |
-  |             +-- guides/                           -- General guides
-  |
   +-- templates/                                      -- Allows theme related aspects to be customised.
   |      |
   |      +-- fragments/ 
+  |      |
+  |      +-- index.md                                 -- Customise the "home" page of the entire specification suite
+  |      |  
+  |      +-- guides/                                  -- General guides
   |
   +-- static/
   |

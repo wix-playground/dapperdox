@@ -19,6 +19,7 @@ import (
 	"github.com/zxchris/swaggerly/handlers/timeout"
 	"github.com/zxchris/swaggerly/logger"
 	"github.com/zxchris/swaggerly/render"
+	"github.com/zxchris/swaggerly/render/asset"
 	"github.com/zxchris/swaggerly/spec"
 )
 
@@ -35,7 +36,7 @@ func main() {
 		log.Fatalf("error setting log level: %s", err)
 	}
 
-	render.Register()
+	//render.Register()
 
 	router := pat.New()
 
@@ -71,9 +72,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+	asset.Compile(cfg.AssetsDir+"/uber-api/templates", "assets/templates/uber-api") // FIXME
+	render.Register()
+
 	reference.Register(router)
 	guides.Register(router)
 	static.Register(router) // TODO - Static content should be capable of being CDN hosted
+
+	// Register the various home pages. The top level, and one for each of the specifications that have been loaded.
 	home.Register(router)
 
 	listener.Close()
