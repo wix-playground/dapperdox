@@ -1,0 +1,35 @@
+assets
+  |
+  +-- [specification-ID]
+  |     |
+  |     +-- templates/
+  |             |
+  |             +-- index.md                          -- Customise the "home" page of the [specification-ID] API spec
+  |             |
+  |             +-- guides/                           -- Guides for the [specification-ID] API spec
+  |             |
+  |             +-- reference/
+  |             |      |
+  |             |      +-- api.md                     -- Overlay applied to all API pages
+  |             |      +-- [api-name].md              -- Overlay applied to a specific API page
+  |             |      +-- [api-name]/
+  |             |              |
+  |             |              +-- method.md          -- Overlay applied to all methods of an API
+  |             |              +-- [method-name].md   -- Overlay applied to a specific method of an API
+  |             |
+  |             +-- resource/
+  |             |      |
+  |             |      +-- resource.md                -- Overlay applied to all resource pages
+  |             |      +-- [resource-name[.md         -- Overlay applied to a specific resource pages
+  |             |
+  |             +-- fragments/
+  |
+  +-- home
+  |     |
+  |     +-- templates/
+  |             |
+  |             +-- index.md                          -- Customise the "home" page of the entire specification suite
+  |             |
+  |             +-- guides/                           -- General guides
+  |             |
+  |             +-- fragments/                        -- Allows navigation and other theme related aspects to be customised.

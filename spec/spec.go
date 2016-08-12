@@ -16,7 +16,9 @@ import (
 	"github.com/zxchris/swaggerly/logger"
 )
 
-type APIContainer struct {
+var Specification *APISpecification
+
+type APISpecification struct {
 	APIs    APISet // APIs represents the parsed APIs
 	APIInfo Info
 
@@ -25,10 +27,10 @@ type APIContainer struct {
 	APIVersions         map[string]APISet               // Version->APISet
 }
 
-var APISuite map[string]APIContainer
+var APISuite map[string]APISpecification
 
 // GetByName returns an API by name
-func (c APIContainer) GetByName(name string) *API {
+func (c *APISpecification) GetByName(name string) *API {
 	for _, a := range c.APIs {
 		if a.Name == name {
 			return &a
@@ -38,7 +40,7 @@ func (c APIContainer) GetByName(name string) *API {
 }
 
 // GetByID returns an API by ID
-func (c *APIContainer) GetByID(id string) *API {
+func (c *APISpecification) GetByID(id string) *API {
 	for _, a := range c.APIs {
 		if a.ID == id {
 			return &a
@@ -52,6 +54,7 @@ type APISet []API
 type Info struct {
 	Title       string
 	Description string
+	ID          string
 }
 
 // API represents an API
@@ -146,7 +149,7 @@ type Resource struct {
 // -----------------------------------------------------------------------------
 
 // Load loads API specs from the supplied host (usually local!)
-func (c *APIContainer) Load(host string) {
+func (c *APISpecification) Load(host string) {
 
 	cfg, err := config.Get()
 	if err != nil {
@@ -169,6 +172,8 @@ func (c *APIContainer) Load(host string) {
 	}
 
 	c.APIInfo.Title = swaggerdoc.Spec().Info.Title
+	c.APIInfo.ID = TitleToKebab(c.APIInfo.Title)
+
 	c.APIInfo.Description = swaggerdoc.Spec().Info.Description
 
 	c.getSecurityDefinitions(swaggerdoc.Spec())
@@ -242,7 +247,7 @@ func getTags(specification *spec.Swagger) []spec.Tag {
 
 // -----------------------------------------------------------------------------
 
-func (c *APIContainer) getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path string) {
+func (c *APISpecification) getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path string) {
 	if versions == nil {
 		return
 	}
@@ -258,7 +263,7 @@ func (c *APIContainer) getVersions(tag spec.Tag, api *API, versions map[string]s
 
 // -----------------------------------------------------------------------------
 
-func (c *APIContainer) getMethods(tag spec.Tag, api *API, methods *[]Method, pi *spec.PathItem, path string, version string) {
+func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods *[]Method, pi *spec.PathItem, path string, version string) {
 
 	c.getMethod(tag, api, methods, version, pi, pi.Get, path, "get")
 	c.getMethod(tag, api, methods, version, pi, pi.Post, path, "post")
@@ -271,7 +276,7 @@ func (c *APIContainer) getMethods(tag spec.Tag, api *API, methods *[]Method, pi 
 
 // -----------------------------------------------------------------------------
 
-func (c *APIContainer) getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
+func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
 	if operation == nil {
 		return
 	}
@@ -297,7 +302,7 @@ func (c *APIContainer) getMethod(tag spec.Tag, api *API, methods *[]Method, vers
 
 // -----------------------------------------------------------------------------
 
-func (c *APIContainer) getSecurityDefinitions(spec *spec.Swagger) {
+func (c *APISpecification) getSecurityDefinitions(spec *spec.Swagger) {
 
 	if c.SecurityDefinitions == nil {
 		c.SecurityDefinitions = make(map[string]SecurityScheme)
@@ -336,7 +341,7 @@ func (c *APIContainer) getSecurityDefinitions(spec *spec.Swagger) {
 
 // -----------------------------------------------------------------------------
 
-func (c *APIContainer) processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
+func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
 
 	id := o.ID
 	if id == "" {
@@ -494,7 +499,7 @@ func (c *APIContainer) processMethod(api *API, pathItem *spec.PathItem, o *spec.
 
 // -----------------------------------------------------------------------------
 
-func (c *APIContainer) resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource {
+func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource {
 	if s == nil {
 		return nil
 	}
@@ -629,7 +634,7 @@ func (c *APIContainer) resourceFromSchema(s *spec.Schema, method *Method, fqNS [
 // It uses the 'required' map to set when properties are required and builds a JSON
 // representation of the resource.
 //
-func (c *APIContainer) compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
+func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
 
 	// First, grab the required members
 	for _, i := range s.Required {

@@ -17,13 +17,13 @@ import (
 	"github.com/zxchris/swaggerly/spec"
 )
 
-var Container *spec.APIContainer
-
 // Render is a global instance of github.com/unrolled/render.Render
 var Render *render.Render
 
 //var guides interface{}
-var guides *[]*navigation.NavigationNode
+type GuideType *[]*navigation.NavigationNode
+
+var guides GuideType // TODO guides will be per specification
 
 // Vars is a map of variables
 type Vars map[string]interface{}
@@ -76,8 +76,8 @@ func New() *render.Render {
 			"join":            strings.Join,
 			"safehtml":        func(s string) template.HTML { return template.HTML(s) },
 			"haveTemplate":    func(n string) *template.Template { return TemplateLookup(n) },
-			"guideNavigation": func() interface{} { return guides },
-			"overlay":         func(n string, d ...interface{}) template.HTML { return overlay(n, d) },
+			"guideNavigation": func() interface{} { return guides },                                    // TODO Will be specification specific
+			"overlay":         func(n string, d ...interface{}) template.HTML { return overlay(n, d) }, // TODO Will be specification specific
 		}},
 	})
 }
@@ -93,7 +93,7 @@ func (w HTMLWriter) Write(data []byte) (int, error) { return w.h.Write(data) }
 func (w HTMLWriter) Flush()                         { w.h.Flush() }
 
 // XXX WHY ARRAY of DATA?
-func overlay(name string, data []interface{}) template.HTML {
+func overlay(name string, data []interface{}) template.HTML { // TODO Will be specification specific
 
 	if data == nil || data[0] == nil {
 		logger.Printf(nil, "Data nil\n")
@@ -167,24 +167,27 @@ func TemplateLookup(t string) *template.Template {
 
 // ----------------------------------------------------------------------------------------
 // DefaultVars adds the default vars (config, specs, others....) to the data map
-func DefaultVars(req *http.Request, m Vars) map[string]interface{} {
+func DefaultVars(req *http.Request, api_spec *spec.APISpecification, m Vars) map[string]interface{} {
 	if m == nil {
 		logger.Traceln(req, "creating new template data map")
 		m = make(map[string]interface{})
 	}
 
 	m["Config"], _ = config.Get()
-	m["APIs"] = Container.APIs
-	m["APIVersions"] = Container.APIVersions
-	m["Resources"] = Container.ResourceList
-	m["Info"] = Container.APIInfo
+
+	// TODO guides will be per specification
 	m["NavigationGuides"] = guides
+
+	m["APIs"] = api_spec.APIs
+	m["APIVersions"] = api_spec.APIVersions
+	m["Resources"] = api_spec.ResourceList
+	m["Info"] = api_spec.APIInfo
 
 	return m
 }
 
 // ----------------------------------------------------------------------------------------
-func SetGuidesNavigation(guidesnav *[]*navigation.NavigationNode) {
+func SetGuidesNavigation(guidesnav *[]*navigation.NavigationNode) { // TODO Will be specification specific
 	guides = guidesnav
 }
 

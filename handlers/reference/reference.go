@@ -23,31 +23,35 @@ func Register(r *pat.Router) {
 	pathVersionMethod = make(map[string]versionedMethod)
 	pathVersionResource = make(map[string]versionedResource)
 
-	for _, api := range render.Container.APIs {
+	// TODO Here would be a loop for all APISpecification's in the APISuite
+
+	spec_id := "/" + spec.Specification.APIInfo.ID
+
+	for _, api := range spec.Specification.APIs {
 		logger.Tracef(nil, "registering handler for %s api: %s", api.Name, api.ID)
-		r.Path("/reference/" + api.ID).Methods("GET").HandlerFunc(APIHandler(api))
+		r.Path(spec_id + "/reference/" + api.ID).Methods("GET").HandlerFunc(APIHandler(spec_id, api))
 
 		version := api.CurrentVersion
 
 		for _, method := range api.Methods {
 			logger.Tracef(nil, "registering handler for %s api method %s: %s/%s", api.Name, method.Name, api.ID, method.ID)
 
-			path := "/reference/" + api.ID + "/" + method.ID
+			path := spec_id + "/reference/" + api.ID + "/" + method.ID
 			// Add version->method to pathVersionMethod
 			if _, ok := pathVersionMethod[path]; !ok {
 				pathVersionMethod[path] = make(versionedMethod)
-				r.Path(path).Methods("GET").HandlerFunc(MethodHandler(api, path))
+				r.Path(path).Methods("GET").HandlerFunc(MethodHandler(spec_id, api, path))
 			}
 			pathVersionMethod[path][version] = method
 		}
 		for version, methods := range api.Versions {
 			for _, method := range methods {
 				logger.Tracef(nil, "registering handler for %s api method %s: %s/%s Version %s", api.Name, method.Name, api.ID, method.ID, version)
-				path := "/reference/" + api.ID + "/" + method.ID
+				path := spec_id + "/reference/" + api.ID + "/" + method.ID
 				// Add version->resource to pathVersionResource
 				if _, ok := pathVersionMethod[path]; !ok {
 					pathVersionMethod[path] = make(versionedMethod)
-					r.Path(path).Methods("GET").HandlerFunc(MethodHandler(api, path))
+					r.Path(path).Methods("GET").HandlerFunc(MethodHandler(spec_id, api, path))
 				}
 				pathVersionMethod[path][version] = method
 			}
@@ -55,23 +59,22 @@ func Register(r *pat.Router) {
 	}
 
 	logger.Tracef(nil, "Registering RESOURCES")
-	for version, resources := range render.Container.ResourceList {
+	for version, resources := range spec.Specification.ResourceList {
 		logger.Tracef(nil, "  - Version %s", version)
 		for id, resource := range resources {
 			logger.Tracef(nil, "    - resource %s", id)
-			path := "/resources/" + id
+			path := spec_id + "/resources/" + id
 			if _, ok := pathVersionResource[path]; !ok {
 				pathVersionResource[path] = make(versionedResource)
-				r.Path(path).Methods("GET").HandlerFunc(GlobalResourceHandler(path))
+				r.Path(path).Methods("GET").HandlerFunc(GlobalResourceHandler(spec_id, path))
 			}
 			pathVersionResource[path][version] = resource
 		}
 	}
 
-	r.Path("/reference").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		render.HTML(w, http.StatusOK, "reference", render.DefaultVars(req, render.Vars{"Title": "API reference"}))
+	r.Path(spec_id + "/reference").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		render.HTML(w, http.StatusOK, "reference", render.DefaultVars(req, spec.Specification, render.Vars{"Title": "API reference"}))
 	})
-
 }
 
 // ------------------------------------------------------------------------------------------------------------
@@ -137,7 +140,7 @@ func getResourceVersions(api spec.API, versions versionedResource) []string {
 
 // ------------------------------------------------------------------------------------------------------------
 // APIHandler is a http.Handler for rendering API reference docs
-func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
+func APIHandler(spec_id string, api spec.API) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		version := req.FormValue("v") // Get the resource version
@@ -155,13 +158,13 @@ func APIHandler(api spec.API) func(w http.ResponseWriter, req *http.Request) {
 
 		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
 
-		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": api.Name, "API": api, "Methods": methods, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion}))
+		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, spec.Specification, render.Vars{"Title": api.Name, "API": api, "Methods": methods, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion}))
 	}
 }
 
 // ------------------------------------------------------------------------------------------------------------
 // MethodHandler is a http.Handler for rendering API method reference docs
-func MethodHandler(api spec.API, path string) func(w http.ResponseWriter, req *http.Request) {
+func MethodHandler(spec_id string, api spec.API, path string) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		version := req.FormValue("v") // Get the resource version
@@ -185,13 +188,13 @@ func MethodHandler(api spec.API, path string) func(w http.ResponseWriter, req *h
 		//logger.Printf(nil, "Method versions:\n")
 		//spew.Dump(versions)
 
-		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": method.Name, "API": api, "Method": method, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion}))
+		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, spec.Specification, render.Vars{"Title": method.Name, "API": api, "Method": method, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion}))
 	}
 }
 
 // ------------------------------------------------------------------------------------------------------------
 // ResourceHandler is a http.Handler for rendering API resource reference docs
-func GlobalResourceHandler(path string) func(w http.ResponseWriter, req *http.Request) {
+func GlobalResourceHandler(spec_id string, path string) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		version := req.FormValue("v") // Get the resource version - blank is the latest
@@ -227,7 +230,7 @@ func GlobalResourceHandler(path string) func(w http.ResponseWriter, req *http.Re
 
 		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
 
-		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, render.Vars{"Title": resource.Title, "Resource": resource, "Version": version, "Versions": versions}))
+		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, spec.Specification, render.Vars{"Title": resource.Title, "Resource": resource, "Version": version, "Versions": versions}))
 	}
 }
 

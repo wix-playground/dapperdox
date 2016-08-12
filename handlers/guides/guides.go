@@ -14,6 +14,7 @@ import (
 	"github.com/zxchris/swaggerly/navigation"
 	"github.com/zxchris/swaggerly/render"
 	"github.com/zxchris/swaggerly/render/asset"
+	"github.com/zxchris/swaggerly/spec"
 )
 
 var guidesNavigation navigation.NavigationNode
@@ -71,7 +72,7 @@ func Register(r *pat.Router) {
 			logger.Tracef(nil, ">> "+route)
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				render.HTML(w, http.StatusOK, resource, render.DefaultVars(req, render.Vars{}))
+				render.HTML(w, http.StatusOK, resource, render.DefaultVars(req, spec.Specification, render.Vars{}))
 			})
 		}
 		return nil

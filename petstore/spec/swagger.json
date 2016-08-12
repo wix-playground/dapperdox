@@ -3,7 +3,8 @@
     "info": {
         "title": "Uber API",
         "description": "Move your app forward with the Uber API",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "x-short-name": "uber"
     },
     "host": "api.uber.com",
     "schemes": [

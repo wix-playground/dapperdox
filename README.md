@@ -531,30 +531,30 @@ Overlays for a specific page will take precedence over those applied to all page
 
 | GFM section reference | Page section |
 | --------------------- | ------------ |
-| `[[banner]]`      | Inserts content at the start of the page, before the description header. |
-| `[[description]]` | Adds content after the method description. |
-| `[[request]]`     | Adds content before the method request URL. |
-| `[[path-parameters]]` | Adds content before the path parameters block. |
-| `[[query-parameters]]` | Adds content before the query parameters block. |
+| `[[banner]]`            | Inserts content at the start of the page, before the description header. |
+| `[[description]]`       | Adds content after the method description. |
+| `[[request]]`           | Adds content before the method request URL. |
+| `[[path-parameters]]`   | Adds content before the path parameters block. |
+| `[[query-parameters]]`  | Adds content before the query parameters block. |
 | `[[header-parameters]]` | Adds content before the header parameters block. |
-| `[[form-parameters]]` | Adds content before the form parameters block. |
-| `[[body-parameters]]` | Adds content before the body parameters block. |
-| `[[security]]` | Adds content before the security section. |
-| `[[response]]` | Adds content before the response section. |
-| `[[example]]` | Inserts content before the API explorer. |
+| `[[form-parameters]]`   | Adds content before the form parameters block. |
+| `[[body-parameters]]`   | Adds content before the body parameters block. |
+| `[[security]]`          | Adds content before the security section. |
+| `[[response]]`          | Adds content before the response section. |
+| `[[example]]`           | Inserts content before the API explorer. |
 
 
 #### Resource page
 
 | GFM section reference | Page section |
 | --------------------- | ------------ |
-| `[[banner]]`           | Inserts banner content at the start of the page, before the description. |
-| `[[description]]`      | Adds a description block to the start of the page. |
-| `[[methods]]`          | Inserts content before the methods list. |
-| `[[resource]]`         | Inserts content before the resource schema. |
-| `[[example]]`          | Adds content before the resource example, if it exists. |
-| `[[properties]]`       | Inserts content before the resource properties table. |
-| `[[additional]]`       | Inserts content at the end of the resource page. |
+| `[[banner]]`          | Inserts banner content at the start of the page, before the description. |
+| `[[description]]`     | Adds a description block to the start of the page. |
+| `[[methods]]`         | Inserts content before the methods list. |
+| `[[resource]]`        | Inserts content before the resource schema. |
+| `[[example]]`         | Adds content before the resource example, if it exists. |
+| `[[properties]]`      | Inserts content before the resource properties table. |
+| `[[additional]]`      | Inserts content at the end of the resource page. |
 
 #### API page
 

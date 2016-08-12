@@ -8,4 +8,4 @@ examples/metadata/assets/templates/index.md
 
 and demonstrates how you can provide your own "homepage".
 
-For a full description of the API, see the [API reference page](/reference) page.
+For a full description of this API, see the [API reference page](/reference) page.

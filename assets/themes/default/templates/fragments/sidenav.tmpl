@@ -47,10 +47,10 @@ $(document).ready(function(){
         <li>
             <a id="toggle[: $api.ID :]" class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
             <ul class="nav collapse" id="ul[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
-              <li><a data-outer="[: $api.ID :]" href="/reference/[: $api.ID :]">Summary</a></li>
+              <li><a data-outer="[: $api.ID :]" href="/[: $.Info.ID :]/reference/[: $api.ID :]">Summary</a></li>
 
               [: range $method := .Methods :]
-                <li><a data-outer="[: $api.ID :]" href="/reference/[: $api.ID :]/[: $method.ID :]">[: $method.Method :]</a></li>
+                <li><a data-outer="[: $api.ID :]" href="/[: $.Info.ID :]/reference/[: $api.ID :]/[: $method.ID :]">[: $method.Method :]</a></li>
               [: end :]
             </ul>
         </li>
@@ -68,9 +68,9 @@ $(document).ready(function(){
                     [: range $vapi := $versions :]
                       <a href="#" class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $v :][: $vapi.ID :]">[: $vapi.Name :]</a>
                       <ul class="nav collapse" id="ul[: $v :][: $vapi.ID :]">
-                        <li><a data-outer="[: $v :][: $vapi.ID :]" href="/reference/[: $vapi.ID :]?v=[: $v :]">Summary</a></li>
+                        <li><a data-outer="[: $v :][: $vapi.ID :]" href="/[: $.Info.ID :]/reference/[: $vapi.ID :]?v=[: $v :]">Summary</a></li>
                         [: range $method := $vapi.Methods :]
-                          <li><a href="/reference/[: $vapi.ID :]/[: $method.ID :]?v=[: $v :]" data-outer="[: $v :][: $vapi.ID :]">[: $method.Method :]</a></li>
+                          <li><a href="/[: $.Info.ID :]/reference/[: $vapi.ID :]/[: $method.ID :]?v=[: $v :]" data-outer="[: $v :][: $vapi.ID :]">[: $method.Method :]</a></li>
                         [: end :]
                       </ul>
                     [: end :]
