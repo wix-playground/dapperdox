@@ -65,12 +65,13 @@ func main() {
 	// Register the spec routes (Listener and server must be up and running by now)
 	specs.Register(router)
 
-	// Now the spec routes have been registered, we're safe to import and parse the swagger (via the registered spec routes)
-	spec.Specification = &spec.APISpecification{}
+	//spec.Specification.Load(cfg.BindAddr)
+	err = spec.LoadSpecifications(cfg.BindAddr)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	spec.Specification.Load(cfg.BindAddr)
 	reference.Register(router)
-
 	guides.Register(router)
 	static.Register(router) // TODO - Static content should be capable of being CDN hosted
 	home.Register(router)

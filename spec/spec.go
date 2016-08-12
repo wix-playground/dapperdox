@@ -3,7 +3,6 @@ package spec
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"strings"
@@ -19,6 +18,7 @@ import (
 var Specification *APISpecification
 
 type APISpecification struct {
+	ID      string
 	APIs    APISet // APIs represents the parsed APIs
 	APIInfo Info
 
@@ -27,7 +27,7 @@ type APISpecification struct {
 	APIVersions         map[string]APISet               // Version->APISet
 }
 
-var APISuite map[string]APISpecification
+var APISuite map[string]*APISpecification
 
 // GetByName returns an API by name
 func (c *APISpecification) GetByName(name string) *API {
@@ -54,7 +54,6 @@ type APISet []API
 type Info struct {
 	Title       string
 	Description string
-	ID          string
 }
 
 // API represents an API
@@ -148,33 +147,54 @@ type Resource struct {
 
 // -----------------------------------------------------------------------------
 
-// Load loads API specs from the supplied host (usually local!)
-func (c *APISpecification) Load(host string) {
+func LoadSpecifications(host string) error {
+
+	if APISuite == nil {
+		APISuite = make(map[string]*APISpecification)
+	}
 
 	cfg, err := config.Get()
 	if err != nil {
 		logger.Errorf(nil, "error configuring app: %s", err)
+		return err
 	}
 
-	fname := cfg.SpecFilename
-	if !strings.HasPrefix(fname, "/") {
-		fname = "/" + fname
+	for _, specFilename := range cfg.SpecFilename {
+
+		specification := &APISpecification{}
+
+		err = specification.Load(specFilename, host)
+
+		APISuite[specification.ID] = specification
+
+		Specification = specification // XXX TEMPORARY FIX UNTIL APISuite has been rolled out over codebase
 	}
 
-	swaggerdoc, err := loadSpec("http://" + host + fname)
+	return nil
+}
+
+// -----------------------------------------------------------------------------
+// Load loads API specs from the supplied host (usually local!)
+func (c *APISpecification) Load(specFilename string, host string) error {
+
+	if !strings.HasPrefix(specFilename, "/") {
+		specFilename = "/" + specFilename
+	}
+
+	swaggerdoc, err := loadSpec("http://" + host + specFilename) // XXX Is there a confusion here between SpecDir and SpecFilename
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	u, err := url.Parse(swaggerdoc.Spec().Schemes[0] + "://" + swaggerdoc.Spec().Host)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	c.APIInfo.Title = swaggerdoc.Spec().Info.Title
-	c.APIInfo.ID = TitleToKebab(c.APIInfo.Title)
-
 	c.APIInfo.Description = swaggerdoc.Spec().Info.Description
+	c.APIInfo.Title = swaggerdoc.Spec().Info.Title
+
+	c.ID = TitleToKebab(c.APIInfo.Title)
 
 	c.getSecurityDefinitions(swaggerdoc.Spec())
 
@@ -229,6 +249,8 @@ func (c *APISpecification) Load(host string) {
 			c.APIVersions[v] = append(c.APIVersions[v], napi) // Group APIs by version
 		}
 	}
+
+	return nil
 }
 
 // -----------------------------------------------------------------------------

@@ -167,7 +167,7 @@ func TemplateLookup(t string) *template.Template {
 
 // ----------------------------------------------------------------------------------------
 // DefaultVars adds the default vars (config, specs, others....) to the data map
-func DefaultVars(req *http.Request, api_spec *spec.APISpecification, m Vars) map[string]interface{} {
+func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[string]interface{} {
 	if m == nil {
 		logger.Traceln(req, "creating new template data map")
 		m = make(map[string]interface{})
@@ -178,10 +178,11 @@ func DefaultVars(req *http.Request, api_spec *spec.APISpecification, m Vars) map
 	// TODO guides will be per specification
 	m["NavigationGuides"] = guides
 
-	m["APIs"] = api_spec.APIs
-	m["APIVersions"] = api_spec.APIVersions
-	m["Resources"] = api_spec.ResourceList
-	m["Info"] = api_spec.APIInfo
+	m["ID"] = apiSpec.ID
+	m["APIs"] = apiSpec.APIs
+	m["APIVersions"] = apiSpec.APIVersions
+	m["Resources"] = apiSpec.ResourceList
+	m["Info"] = apiSpec.APIInfo
 
 	return m
 }

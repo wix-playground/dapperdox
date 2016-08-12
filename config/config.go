@@ -14,7 +14,7 @@ type config struct {
 	AssetsDir          string      `env:"ASSETS_DIR" flag:"assets-dir" flagDesc:"Assets to serve. Effectively the document root."`
 	DefaultAssetsDir   string      `env:"DEFAULT_ASSETS_DIR" flag:"default-assets-dir" flagDesc:"Default assets."`
 	SpecDir            string      `env:"SPEC_DIR" flag:"spec-dir" flagDesc:"OpenAPI specification (swagger) directory"`
-	SpecFilename       string      `env:"SPEC_FILENAME" flag:"spec-filename" flagDesc:"The filename of the OpenAPI specification file within the spec-dir. Defaults to spec/swagger.json"`
+	SpecFilename       []string    `env:"SPEC_FILENAME" flag:"spec-filename" flagDesc:"The filename of the OpenAPI specification file within the spec-dir. May be multiply defined. Defaults to spec/swagger.json"`
 	Theme              string      `env:"THEME" flag:"theme" flagDesc:"Theme to render documentation"`
 	ThemesDir          string      `env:"THEMES_DIR" flag:"themes-dir" flagDesc:"Directory containing installed themes"`
 	LogLevel           string      `env:"LOGLEVEL" flag:"log-level" flagDesc:"Log level"`
@@ -32,9 +32,9 @@ func Get() (*config, error) {
 	}
 
 	cfg = &config{
-		BindAddr:         "localhost:3123",
-		SpecDir:          "swagger",
-		SpecFilename:     "/spec/swagger.json",
+		BindAddr: "localhost:3123",
+		SpecDir:  "swagger",
+		//SpecFilename:     "/spec/swagger.json",
 		DefaultAssetsDir: "assets",
 		LogLevel:         "info",
 		Theme:            "default",
@@ -44,6 +44,10 @@ func Get() (*config, error) {
 	err := gofigure.Gofigure(cfg)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(cfg.SpecFilename) == 0 {
+		cfg.SpecFilename = append(cfg.SpecFilename, "/spec/swagger.json")
 	}
 
 	cfg.print()

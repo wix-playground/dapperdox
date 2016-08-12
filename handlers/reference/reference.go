@@ -25,7 +25,7 @@ func Register(r *pat.Router) {
 
 	// TODO Here would be a loop for all APISpecification's in the APISuite
 
-	spec_id := "/" + spec.Specification.APIInfo.ID
+	spec_id := "/" + spec.Specification.ID
 
 	for _, api := range spec.Specification.APIs {
 		logger.Tracef(nil, "registering handler for %s api: %s", api.Name, api.ID)
