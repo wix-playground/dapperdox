@@ -23,7 +23,7 @@ var Render *render.Render
 //var guides interface{}
 type GuideType *[]*navigation.NavigationNode
 
-var guides GuideType // TODO guides will be per specification
+var guides map[string]GuideType // Guides are per specification-id, or 'top-level'
 
 // Vars is a map of variables
 type Vars map[string]interface{}
@@ -40,6 +40,8 @@ func New() *render.Render {
 	logger.Tracef(nil, "creating instance of render.Render")
 
 	cfg, _ := config.Get()
+
+	guides = make(map[string]GuideType)
 
 	// XXX Order of directory inporting is IMPORTANT XXX
 	if len(cfg.AssetsDir) != 0 {
@@ -67,17 +69,17 @@ func New() *render.Render {
 		Delims:     render.Delims{Left: "[:", Right: ":]"},
 		Layout:     "layout",
 		Funcs: []template.FuncMap{template.FuncMap{
-			"map":             htmlform.Map,
-			"ext":             htmlform.Extend,
-			"fnn":             htmlform.FirstNotNil,
-			"arr":             htmlform.Arr,
-			"lc":              strings.ToLower,
-			"uc":              strings.ToUpper,
-			"join":            strings.Join,
-			"safehtml":        func(s string) template.HTML { return template.HTML(s) },
-			"haveTemplate":    func(n string) *template.Template { return TemplateLookup(n) },
-			"guideNavigation": func() interface{} { return guides },                                    // TODO Will be specification specific
-			"overlay":         func(n string, d ...interface{}) template.HTML { return overlay(n, d) }, // TODO Will be specification specific
+			"map":          htmlform.Map,
+			"ext":          htmlform.Extend,
+			"fnn":          htmlform.FirstNotNil,
+			"arr":          htmlform.Arr,
+			"lc":           strings.ToLower,
+			"uc":           strings.ToUpper,
+			"join":         strings.Join,
+			"safehtml":     func(s string) template.HTML { return template.HTML(s) },
+			"haveTemplate": func(n string) *template.Template { return TemplateLookup(n) },
+			//"guideNavigation": func() interface{} { return guides },                                    // TODO Will be specification specific
+			"overlay": func(n string, d ...interface{}) template.HTML { return overlay(n, d) }, // TODO Will be specification specific
 		}},
 	})
 }
@@ -175,8 +177,14 @@ func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[
 
 	m["Config"], _ = config.Get()
 
-	// TODO guides will be per specification
-	m["NavigationGuides"] = guides
+	if apiSpec == nil {
+		m["NavigationGuides"] = guides[""] // Top level guides
+
+		return m
+	}
+
+	// Per specification defaults
+	m["NavigationGuides"] = guides[apiSpec.ID]
 
 	m["ID"] = apiSpec.ID
 	m["APIs"] = apiSpec.APIs
@@ -188,8 +196,12 @@ func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[
 }
 
 // ----------------------------------------------------------------------------------------
-func SetGuidesNavigation(guidesnav *[]*navigation.NavigationNode) { // TODO Will be specification specific
-	guides = guidesnav
+func SetGuidesNavigation(apiSpec *spec.APISpecification, guidesnav *[]*navigation.NavigationNode) {
+	id := ""
+	if apiSpec != nil {
+		id = apiSpec.ID
+	}
+	guides[id] = guidesnav
 }
 
 // ----------------------------------------------------------------------------------------

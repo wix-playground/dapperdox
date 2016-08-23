@@ -1,11 +1,11 @@
 package guides
 
 import (
+	//"github.com/davecgh/go-spew/spew"
 	"net/http"
 	"os"
 	"path/filepath"
 	"sort"
-	//"github.com/davecgh/go-spew/spew"
 	"strings"
 
 	"github.com/gorilla/pat"
@@ -16,8 +16,6 @@ import (
 	"github.com/zxchris/swaggerly/render/asset"
 	"github.com/zxchris/swaggerly/spec"
 )
-
-var guidesNavigation navigation.NavigationNode
 
 /*
 100 Overview
@@ -32,14 +30,43 @@ var guidesNavigation navigation.NavigationNode
 */
 
 // ---------------------------------------------------------------------------
-// Register routes for documentation pages
+// Register routes for guide pages
 func Register(r *pat.Router) {
-	logger.Printf(nil, "Registering routes for guides")
 
 	base := GetBasePath()
-	root := base + "/guides"
 
+	logger.Debugf(nil, "Registering guides")
+
+	// Top level guides
+	logger.Debugf(nil, "- Root guides")
+	register(r, base+"/templates", nil)
+
+	// specification specific guides
+	for _, specification := range spec.APISuite {
+		logger.Debugf(nil, "- Specification guides for '%s'", specification.APIInfo.Title)
+		register(r, base+"/sections", specification)
+	}
+
+	logger.Debugf(nil, "\n")
+}
+
+// ---------------------------------------------------------------------------
+func register(r *pat.Router, base string, specification *spec.APISpecification) {
+
+	root_node := "/guides"
+	specID := ""
+	if specification != nil {
+		specID = specification.ID
+		root_node = "/" + specID + root_node
+	}
+
+	root := base + root_node
+
+	guidesNavigation := &navigation.NavigationNode{}
 	guidesNavigation.ChildMap = make(map[string]*navigation.NavigationNode)
+	guidesNavigation.Children = make([]*navigation.NavigationNode, 0)
+
+	logger.Tracef(nil, "  + Walk directory %s", root)
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, _ error) error {
 		if info == nil {
@@ -58,7 +85,7 @@ func Register(r *pat.Router) {
 
 		ext := filepath.Ext(path)
 
-		buildNavigation(path, base, ext)
+		buildNavigation(guidesNavigation, path, base, ext)
 
 		switch ext {
 		case ".html", ".tmpl", ".md":
@@ -72,35 +99,41 @@ func Register(r *pat.Router) {
 			logger.Tracef(nil, ">> "+route)
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				render.HTML(w, http.StatusOK, resource, render.DefaultVars(req, spec.Specification, render.Vars{}))
+				sid := "TOP LEVEL"
+				if specification != nil {
+					sid = specification.ID
+				}
+				logger.Tracef(nil, "Fetching guide from '%s' for spec ID %s\n", resource, sid)
+				render.HTML(w, http.StatusOK, resource, render.DefaultVars(req, specification, render.Vars{}))
 			})
 		}
 		return nil
 	})
 	_ = err
 
-	sortNavigation()
+	sortNavigation(guidesNavigation)
 
 	// Register the guides navigation with the renderer
-	render.SetGuidesNavigation(&guidesNavigation.Children)
+	render.SetGuidesNavigation(specification, &guidesNavigation.Children)
 }
 
 // ---------------------------------------------------------------------------
-func sortNavigation() {
-	for i := range guidesNavigation.Children {
-		node := guidesNavigation.Children[i]
+func sortNavigation(tree *navigation.NavigationNode) {
+
+	for i := range tree.Children {
+		node := tree.Children[i]
 
 		if len(node.Children) > 0 {
 			sort.Sort(navigation.ByOrder(node.Children))
 		}
 	}
-	sort.Sort(navigation.ByOrder(guidesNavigation.Children))
+	sort.Sort(navigation.ByOrder(tree.Children))
 }
 
 // ---------------------------------------------------------------------------
-func dumpit() {
-	for i := range guidesNavigation.Children {
-		node := guidesNavigation.Children[i]
+func dumpit(tree *navigation.NavigationNode) {
+	for i := range tree.Children {
+		node := tree.Children[i]
 
 		logger.Tracef(nil, "Sorted name = %s\n", node.Name)
 		for j := range node.Children {
@@ -122,8 +155,6 @@ func GetBasePath() string {
 	if err != nil {
 		logger.Errorf(nil, "Error forming guide template path: %s", err)
 	}
-	base = base + "/templates"
-
 	return base
 }
 
@@ -139,7 +170,7 @@ func FilenameToRoute(name string, basepath string) string {
 }
 
 // ---------------------------------------------------------------------------
-func buildNavigation(filename string, base string, ext string) {
+func buildNavigation(nav *navigation.NavigationNode, filename string, base string, ext string) {
 
 	metafile := "assets/templates/" + strings.TrimPrefix(strings.TrimSuffix(filename, ext), base+"/") + ".tmpl"
 
@@ -171,8 +202,8 @@ func buildNavigation(filename string, base string, ext string) {
 		sortOrder = route
 	}
 
-	current := guidesNavigation.ChildMap
-	currentList := &guidesNavigation.Children
+	current := nav.ChildMap
+	currentList := &nav.Children
 
 	// Build tree for this navigation item
 	for i := range split {

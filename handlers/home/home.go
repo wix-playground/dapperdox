@@ -30,7 +30,7 @@ func Register(r *pat.Router) {
 func topHandler(w http.ResponseWriter, req *http.Request) {
 	logger.Printf(nil, "Render HTML for top level index page")
 
-	render.HTML(w, http.StatusOK, "index", render.DefaultVars(req, spec.Specification, render.Vars{"Title": "API documentation"}))
+	render.HTML(w, http.StatusOK, "index", render.DefaultVars(req, nil, render.Vars{"Title": "API documentation"}))
 }
 
 // ----------------------------------------------------------------------------------------

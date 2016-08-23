@@ -45,7 +45,7 @@ func main() {
 	logger.Infof(nil, "listening on %s", cfg.BindAddr)
 	listener, err := net.Listen("tcp", cfg.BindAddr)
 	if err != nil {
-		logger.Errorf(nil, "error listening on %s: %s", cfg.BindAddr, err)
+		log.Fatal(err)
 	}
 
 	var wg sync.WaitGroup
@@ -72,6 +72,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Register the various home pages. The top level, and one for each of the specifications that have been loaded.
 	asset.Compile(cfg.AssetsDir+"/sections/uber-api", "assets/templates/uber-api") // FIXME
 	render.Register()
 
@@ -79,7 +80,6 @@ func main() {
 	guides.Register(router)
 	static.Register(router) // TODO - Static content should be capable of being CDN hosted
 
-	// Register the various home pages. The top level, and one for each of the specifications that have been loaded.
 	home.Register(router)
 
 	listener.Close()
