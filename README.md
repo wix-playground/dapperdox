@@ -685,6 +685,7 @@ go get && go build
 | `-spec-rewrite-url` | `SPEC_REWRITE_URL` | The URLs in the OpenAPI specifications to be rewritten as site-url, or to the `to` URL if the value given is of the form from=to. Applies to OpenAPI specification text, not asset files. |
 | `-theme` | `THEME` | Name of the theme to render documentation. |
 | `-themes-dir` | `THEMES_DIR` | Directory containing installed themes. |
+| `-force-root-page` | `FORCE_ROOT_PAGE` | When Swaggerly is serving a single OpenAPI specification, then by default Swaggerly will show the specification index page when serving the homepage. You can force Swaggerly to show the root index page with this option. Takes the value `true` or `false`. |
 
 ## Swaggerly start up example
 

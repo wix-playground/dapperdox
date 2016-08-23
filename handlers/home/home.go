@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/pat"
+	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
 	"github.com/zxchris/swaggerly/render"
 	"github.com/zxchris/swaggerly/spec"
@@ -14,14 +15,27 @@ import (
 func Register(r *pat.Router) {
 	logger.Debugln(nil, "registering handlers for home page")
 
-	r.Path("/").Methods("GET").HandlerFunc(topHandler) // Top level homepage
-
+	count := 0
 	// Homepages for each loaded specification
 	for _, specification := range spec.APISuite {
 
 		logger.Tracef(nil, "Build homepage route for specification '%s'", specification.ID)
 
 		r.Path("/" + specification.ID + "/").Methods("GET").HandlerFunc(specHomeHandler(specification))
+
+		count++
+	}
+
+	cfg, _ := config.Get()
+
+	if count == 1 && cfg.ForceRootPage == false {
+		// If there is only one specification loaded, then hotwire '/' to redirect to that index page
+		// unless Swaggerly is configured not to do that!
+		r.Path("/").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			http.Redirect(w, req, "/uber-api/", 302)
+		})
+	} else {
+		r.Path("/").Methods("GET").HandlerFunc(topHandler) // Top level homepage
 	}
 }
 
