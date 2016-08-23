@@ -6,7 +6,7 @@ assets/
   |
   +-- templates/                                     -- Allows theme related aspects to be customised, and top level content.
   |      |
-         +-- fragments/                              -- Theme override fragments. Should be GFM.
+         +-- fragments/                              -- Theme override fragments. Should not contain HTML as will limit theme switching.
   |      |
   |      +-- index.md                                -- Customise the "home" page of the entire specification suite
   |      |
@@ -29,7 +29,7 @@ assets/
                |
                +-- index.md                          -- Customise the "home" page of the [specification-ID] API spec
                |
-               +-- fragments/                        -- Theme override fragments. Should be GFM.
+               +-- fragments/                        -- Theme override fragments. Should not contain HTML as will limit theme switching.
                |
                +-- guides/                           -- Guides for the [specification-ID] API spec
                |
