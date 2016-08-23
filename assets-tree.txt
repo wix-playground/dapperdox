@@ -6,11 +6,22 @@ assets/
   |
   +-- templates/                                     -- Allows theme related aspects to be customised, and top level content.
   |      |
-  |      +-- fragments/ 
+         +-- fragments/                              -- Theme override fragments. Should be GFM.
   |      |
   |      +-- index.md                                -- Customise the "home" page of the entire specification suite
   |      |
   |      +-- guides/                                 -- General guides
+  |      |
+  |      +-- reference/
+  |      |      |
+  |      |      +-- api.md                           -- Overlay applied to all API pages. API priority 3.
+  |      |      |
+  |      |      +-- [method-name].md                 -- Overlay applied to a specific method of an API. Method priority 3.
+  |      |      +-- method.md                        -- Overlay applied to all methods of an API.       Method priority 4.
+  |      |
+  |      +-- resource/
+  |             |
+  |             +-- resource.md                      -- Overlay applied to all resource pages. Resource priority 3.
   | 
   +-- sections/                                      -- API named site sections
          |
@@ -18,57 +29,21 @@ assets/
                |
                +-- index.md                          -- Customise the "home" page of the [specification-ID] API spec
                |
+               +-- fragments/                        -- Theme override fragments. Should be GFM.
+               |
                +-- guides/                           -- Guides for the [specification-ID] API spec
                |
                +-- reference/
                |      |
-               |      +-- api.md                     -- Overlay applied to all API pages
-               |      +-- [api-name].md              -- Overlay applied to a specific API page
+               |      +-- api.md                     -- Overlay applied to all API pages.       API priority 2.
+               |      +-- [api-name].md              -- Overlay applied to a specific API page. API priority 1.
                |      +-- [api-name]/
                |              |
-               |              +-- method.md          -- Overlay applied to all methods of an API
-               |              +-- [method-name].md   -- Overlay applied to a specific method of an API
+               |              +-- [method-name].md   -- Overlay applied to a specific method of an API. Method priority 1.
+               |              +-- method.md          -- Overlay applied to all methods of an API.       Method priority 2.
                |
                +-- resource/
                       |
-                      +-- resource.md                -- Overlay applied to all resource pages
-                      +-- [resource-name[.md         -- Overlay applied to a specific resource pages
+                      +-- [resource-name].md         -- Overlay applied to a specific resource pages. Resource priority 1.
+                      +-- resource.md                -- Overlay applied to all resource pages.        Resource priority 2.
 
-== OR ==
-
-assets/
-  |
-  +-- static/
-  |
-  +-- themes/
-  |
-  +-- templates/                                      -- Allows theme related aspects to be customised.
-  |      |
-  |      +-- fragments/ 
-  |      |
-  |      +-- index.md                                 -- Customise the "home" page of the entire specification suite
-  |      |  
-  |      +-- guides/                                  -- General guides
-  |
-  |
-  +-- [specification-ID]/
-        |
-        +-- templates/
-                |
-                +-- index.md                          -- Customise the "home" page of the [specification-ID] API spec
-                |
-                +-- guides/                           -- Guides for the [specification-ID] API spec
-                |
-                +-- reference/
-                |      |
-                |      +-- api.md                     -- Overlay applied to all API pages
-                |      +-- [api-name].md              -- Overlay applied to a specific API page
-                |      +-- [api-name]/
-                |              |
-                |              +-- method.md          -- Overlay applied to all methods of an API
-                |              +-- [method-name].md   -- Overlay applied to a specific method of an API
-                |
-                +-- resource/
-                       |
-                       +-- resource.md                -- Overlay applied to all resource pages
-                       +-- [resource-name[.md         -- Overlay applied to a specific resource pages

@@ -78,8 +78,7 @@ func New() *render.Render {
 			"join":         strings.Join,
 			"safehtml":     func(s string) template.HTML { return template.HTML(s) },
 			"haveTemplate": func(n string) *template.Template { return TemplateLookup(n) },
-			//"guideNavigation": func() interface{} { return guides },                                    // TODO Will be specification specific
-			"overlay": func(n string, d ...interface{}) template.HTML { return overlay(n, d) }, // TODO Will be specification specific
+			"overlay":      func(n string, d ...interface{}) template.HTML { return overlay(n, d) }, // TODO Will be specification specific
 		}},
 	})
 }
@@ -119,17 +118,27 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 	if api, ok := datamap["API"].(spec.API); ok {
 		if _, ok := datamap["Methods"].([]spec.Method); ok {
 			// API page
-			overlayName = append(overlayName, "reference/"+api.ID+"/"+name+"/overlay")
+			if specid, ok := datamap["ID"].(string); ok {
+				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/reference/api/"+name+"overlay")
+			}
 			overlayName = append(overlayName, "reference/api/"+name+"overlay")
 		}
 		if method, ok := datamap["Method"].(spec.Method); ok {
 			// Method page
+			if specid, ok := datamap["ID"].(string); ok {
+				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/"+method.Method+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/method/"+name+"/overlay")
+			}
 			overlayName = append(overlayName, "reference/"+api.ID+"/"+method.Method+"/"+name+"/overlay")
 			overlayName = append(overlayName, "reference/"+api.ID+"/method/"+name+"/overlay")
 		}
 	}
 	if resource, ok := datamap["Resource"].(*spec.Resource); ok {
-		overlayName = append(overlayName, "resource/"+resource.ID+"/"+name+"/overlay")
+		if specid, ok := datamap["ID"].(string); ok {
+			overlayName = append(overlayName, specid+"/resource/"+resource.ID+"/"+name+"/overlay")
+			overlayName = append(overlayName, specid+"/resource/resource/"+name+"/overlay")
+		}
 		overlayName = append(overlayName, "resource/resource/"+name+"/overlay")
 	}
 
