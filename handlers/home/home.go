@@ -19,6 +19,8 @@ func Register(r *pat.Router) {
 	// Homepages for each loaded specification
 	for _, specification := range spec.APISuite {
 
+		logger.Tracef(nil, "Build homepage route for specification '%s'", specification.ID)
+
 		r.Path("/" + specification.ID + "/").Methods("GET").HandlerFunc(specHomeHandler(specification))
 	}
 }
@@ -33,9 +35,14 @@ func topHandler(w http.ResponseWriter, req *http.Request) {
 
 // ----------------------------------------------------------------------------------------
 func specHomeHandler(specification *spec.APISpecification) func(w http.ResponseWriter, req *http.Request) {
+
+	// The default "theme" level index page.
 	tmpl := "specindex"
 
-	customTmpl := specification.ID + "/" + tmpl
+	//customTmpl := specification.ID + "/" + tmpl
+	customTmpl := specification.ID + "/index" // The spec-level indexes are 'index.tmpl'
+
+	logger.Tracef(nil, "+ Test for template '%s'", customTmpl)
 
 	if render.TemplateLookup(customTmpl) != nil {
 		tmpl = customTmpl

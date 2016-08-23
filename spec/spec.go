@@ -164,6 +164,9 @@ func LoadSpecifications(host string) error {
 		specification := &APISpecification{}
 
 		err = specification.Load(specFilename, host)
+		if err != nil {
+			return err
+		}
 
 		APISuite[specification.ID] = specification
 
@@ -193,6 +196,8 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 
 	c.APIInfo.Description = swaggerdoc.Spec().Info.Description
 	c.APIInfo.Title = swaggerdoc.Spec().Info.Title
+
+	logger.Tracef(nil, "Parse OpenAPI specification '%s'\n", c.APIInfo.Title)
 
 	c.ID = TitleToKebab(c.APIInfo.Title)
 

@@ -47,7 +47,7 @@
                     "format": "double"
                 }
                 ],
-                "x-tags": [
+                "tags": [
                   "Products"
                 ],
                 "responses": {
@@ -464,3 +464,4 @@
     }
   }
 }
+

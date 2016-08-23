@@ -72,7 +72,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	asset.Compile(cfg.AssetsDir+"/uber-api/templates", "assets/templates/uber-api") // FIXME
+	asset.Compile(cfg.AssetsDir+"/sections/uber-api", "assets/templates/uber-api") // FIXME
 	render.Register()
 
 	reference.Register(router)
