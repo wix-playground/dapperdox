@@ -10,7 +10,7 @@
     "schemes": [
     "https"
     ],
-    "basePath": "/v1",
+    "basePath": "/",
     "produces": [
     "application/json"
     ],
@@ -28,12 +28,12 @@
         "/products": {
             "get": {
                 "summary": "Product Types",
-                "description": "The Products endpoint returns information about the Uber products offered at a given location. The response includes the display name and other details about each product, and lists the products in the proper display order.",
+                "description": "The **Products** endpoint returns information about the Uber products offered at a given location. The response includes the display name and other details about each product, and lists the products in the proper display order.",
                 "parameters": [
                 {
                     "name": "latitude",
                     "in": "query",
-                    "description": "Latitude component of location.",
+                    "description": "**Latitude** component of location.",
                     "required": true,
                     "type": "number",
                     "format": "double"

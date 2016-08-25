@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -207,17 +207,21 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 	// If Tags: [] is not defined, or empty, then no filtering or ordering takes place,#
 	// and all API paths will be documented..
 	for _, tag := range getTags(swaggerdoc.Spec()) {
+		logger.Tracef(nil, "  In tag loop...\n")
 		// Tag matching may not be as expected if multiple paths have the same TAG (which is technically permitted)
 		var ok bool
 		var ver interface{}
 
 		for path, pathItem := range swaggerdoc.AllPaths() {
+			logger.Tracef(nil, "    In path loop...\n")
 
 			var name string // Will only populate if Tagging used in spec. processMethod overrides if needed.
 			name = tag.Description
 			if name == "" {
 				name = tag.Name
 			}
+
+			logger.Tracef(nil, "    - %s\n", name)
 
 			api := &API{
 				ID:   TitleToKebab(name),
@@ -234,8 +238,9 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver.(string)) // Current version
 			c.getVersions(tag, api, pathItem.Versions, path)                    // All versions
 
-			// If API was populated, add to set
+			// If API was populated (will not be if tags do not match), add to set
 			if len(api.Methods) > 0 {
+				logger.Tracef(nil, "    + Adding %s\n", name)
 				c.APIs = append(c.APIs, *api) // All APIs (versioned within)
 			}
 		}
@@ -304,12 +309,14 @@ func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods *[]Method,
 // -----------------------------------------------------------------------------
 
 func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
+	logger.Tracef(nil, "  in getMethod")
 	if operation == nil {
 		return
 	}
 	// Filter and sort by matching current top-level tag with the operation tags.
 	// If Tagging is not used by spec, then process each operation without filtering.
 	taglen := len(operation.Tags)
+	logger.Tracef(nil, "  Operation tag length: %d", taglen)
 	if taglen == 0 {
 		if tag.Name != "" {
 			logger.Tracef(nil, "Skipping %s - Operation does not contain a tag member, and tagging is in use.", operation.Summary)
@@ -318,7 +325,9 @@ func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods *[]Method, 
 		method := c.processMethod(api, pathitem, operation, path, methodname, version)
 		*methods = append(*methods, *method)
 	} else {
+		logger.Tracef(nil, "    > Check tags")
 		for _, t := range operation.Tags {
+			logger.Tracef(nil, "      - Compare tag '%s' with '%s'\n", tag.Name, t)
 			if tag.Name == "" || t == tag.Name {
 				method := c.processMethod(api, pathitem, operation, path, methodname, version)
 				*methods = append(*methods, *method)
@@ -376,9 +385,10 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 	}
 
 	method := &Method{
-		ID:          CamelToKebab(id),
-		Name:        o.Summary,
-		Description: o.Description,
+		ID:   CamelToKebab(id),
+		Name: o.Summary,
+		//Description: o.Description,
+		Description: string(github_flavored_markdown.Markdown([]byte(o.Description))),
 		Method:      methodname,
 		Path:        path,
 		Responses:   make(map[int]Response),
@@ -581,7 +591,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 
 	if len(fqNS) == 0 && id == "" {
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title memeber.", strings.ToUpper(method.Method), method.Path)
-		//spew.Dump(method)
+		spew.Dump(s)
 		os.Exit(1)
 	}
 

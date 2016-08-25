@@ -10,7 +10,7 @@
 
 <ul class="">
   [: range .Resource.Methods :]
-    <li><a href="/reference/[: .API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method :]</a> - [: .Name :]</li>
+    <li><a href="/[: $.ID :]/reference/[: .API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method :]</a> - [: .Name :]</li>
   [: end :]
 </ul>
 

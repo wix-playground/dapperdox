@@ -62,8 +62,8 @@ func Register(r *pat.Router) {
 	for version, resources := range spec.Specification.ResourceList {
 		logger.Tracef(nil, "  - Version %s", version)
 		for id, resource := range resources {
-			logger.Tracef(nil, "    - resource %s", id)
 			path := spec_id + "/resources/" + id
+			logger.Tracef(nil, "    - resource %s", path)
 			if _, ok := pathVersionResource[path]; !ok {
 				pathVersionResource[path] = make(versionedResource)
 				r.Path(path).Methods("GET").HandlerFunc(GlobalResourceHandler(spec_id, path))
