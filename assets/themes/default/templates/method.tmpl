@@ -64,14 +64,14 @@
       [: range $status, $response := .Method.Responses :]
     <tr>
       <td class="type">[: $status :]</td>
-      <td class="hyphenate Hyphenator616hide">[: $response.Description :]</td>
+      <td class="hyphenate Hyphenator616hide">[: safehtml $response.Description :]</td>
       <td class="resource">[: if $response.Schema :]<a href="/[: $.ID :]/resources/[: $response.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: $response.Schema.Title :]</a>[: end :]</td>
     </tr>
     [: end :]
     [: if .Method.DefaultResponse :]
     <tr>
       <td class="type">default</td>
-      <td class="hyphenate Hyphenator616hide">[: .Method.DefaultResponse.Description :]</td>
+      <td class="hyphenate Hyphenator616hide">[: safehtml .Method.DefaultResponse.Description :]</td>
       <td class="resource">[: if .Method.DefaultResponse.Schema :]<a href="/[: $.ID :]/resources/[: .Method.DefaultResponse.Schema.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method.DefaultResponse.Schema.Title :]</a>[: end :]</td> 
     </tr>
     [: end :]

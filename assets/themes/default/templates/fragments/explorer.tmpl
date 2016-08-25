@@ -9,14 +9,14 @@
             <tr class="form-group" id="[: .Name :]-group">
                 <td>[: .Name :]</td>
                 <td>[: template "explorer_input" (map "Param" . "Section" "path") :]</td>
-                <td>[: .Description :]</td>
+                <td>[: safehtml .Description :]</td>
             <tr>
         [: end :]
         [: range .Method.QueryParams :]
             <tr class="form-group">
                 <td>[: .Name :]</td>
                 <td>[: template "explorer_input" (map "Param" . "Section" "query") :]</td>
-                <td>[: .Description :]</td>
+                <td>[: safehtml .Description :]</td>
             </tr>
         [: end :]
 [: if .Method.BodyParam :]
@@ -25,7 +25,7 @@
             <tr class="form-group">
                 <td>[: .Name :]</td>
                 <td>[: template "explorer_input" (map "Param" . "Section" "body") :]</td>
-                <td>[: .Description :]</td>
+                <td>[: safehtml .Description :]</td>
             </tr>
         [: end :]
 [: end :]
@@ -33,14 +33,14 @@
             <tr class="form-group">
                 <td>[: .Name :]</td>
                 <td>[: template "explorer_input" (map "Param" . "Section" "form") :]</td>
-                <td>[: .Description :]</td>
+                <td>[: safehtml .Description :]</td>
             </tr>
         [: end :]
         [: range .Method.HeaderParams :]
             <tr class="form-group">
                 <td>[: .Name :]</td>
                 <td>[: template "explorer_input" (map "Param" . "Section" "header") :]</td>
-                <td>[: .Description :]</td>
+                <td>[: safehtml .Description :]</td>
             </tr>
         [: end :]
         <!-- Some request bodies are blocks of JSON or XML. This is different to a body parameter

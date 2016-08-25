@@ -194,7 +194,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		return err
 	}
 
-	c.APIInfo.Description = swaggerdoc.Spec().Info.Description
+	c.APIInfo.Description = string(github_flavored_markdown.Markdown([]byte(swaggerdoc.Spec().Info.Description)))
 	c.APIInfo.Title = swaggerdoc.Spec().Info.Title
 
 	logger.Tracef(nil, "Parse OpenAPI specification '%s'\n", c.APIInfo.Title)
@@ -348,7 +348,7 @@ func (c *APISpecification) getSecurityDefinitions(spec *spec.Swagger) {
 		stype := d.Type
 
 		def := &SecurityScheme{
-			Description:   d.Description,
+			Description:   string(github_flavored_markdown.Markdown([]byte(d.Description))),
 			Type:          stype,  // basic, apiKey or oauth2
 			ParamName:     d.Name, // name of header to be used if ParamLocation is 'header'
 			ParamLocation: d.In,   // Either query or header
@@ -385,9 +385,8 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 	}
 
 	method := &Method{
-		ID:   CamelToKebab(id),
-		Name: o.Summary,
-		//Description: o.Description,
+		ID:          CamelToKebab(id),
+		Name:        o.Summary,
 		Description: string(github_flavored_markdown.Markdown([]byte(o.Description))),
 		Method:      methodname,
 		Path:        path,
@@ -420,7 +419,7 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 		p := Parameter{
 			Name:        param.Name,
 			In:          param.In,
-			Description: param.Description,
+			Description: string(github_flavored_markdown.Markdown([]byte(param.Description))),
 			Type:        param.Type,
 			Required:    param.Required,
 		}
@@ -474,7 +473,7 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 		}
 
 		method.Responses[status] = Response{
-			Description: response.Description,
+			Description: string(github_flavored_markdown.Markdown([]byte(response.Description))),
 			Schema:      vres,
 		}
 	}
@@ -497,7 +496,7 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 
 			// Set the default response
 			method.DefaultResponse = &Response{
-				Description: o.Responses.Default.Description,
+				Description: string(github_flavored_markdown.Markdown([]byte(o.Responses.Default.Description))),
 				Schema:      vres,
 			}
 		}
