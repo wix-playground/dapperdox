@@ -8,4 +8,9 @@ examples/metadata/assets/templates/index.md
 
 and demonstrates how you can provide your own "homepage".
 
-For a full description of this API, see the [API reference page](/reference) page.
+### Here is a list of the API's that are available:
+
+[: range $id, $spec := .APISuite :]
+#### [[:$spec.APIInfo.Title:]](/[:$id:]/)
+[: safehtml $spec.APIInfo.Description :] 
+[: end :]

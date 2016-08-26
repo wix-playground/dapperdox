@@ -186,6 +186,8 @@ func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[
 
 	m["Config"], _ = config.Get()
 
+	m["APISuite"] = spec.APISuite
+
 	if apiSpec == nil {
 		m["NavigationGuides"] = guides[""] // Top level guides
 

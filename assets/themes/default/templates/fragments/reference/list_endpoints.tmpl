@@ -1,0 +1,5 @@
+<!-- List all API endpoints for specification -->
+[: range $api := .APIs :]
+    <h3 class="heading-medium">[: .Name :]</h3>
+    [: template "fragments/reference/api-body" (map "SpecID" $.ID "API" . "Methods" .Methods) :]
+[: end :]

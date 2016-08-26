@@ -17,11 +17,18 @@ func Register(r *pat.Router) {
 
 	count := 0
 	// Homepages for each loaded specification
-	for _, specification := range spec.APISuite {
+	var specification *spec.APISpecification // Ends up being populated with the last spec processed
+
+	for _, specification = range spec.APISuite {
 
 		logger.Tracef(nil, "Build homepage route for specification '%s'", specification.ID)
 
 		r.Path("/" + specification.ID + "/").Methods("GET").HandlerFunc(specHomeHandler(specification))
+
+		// If missingh trailing slash, redirect
+		r.Path("/" + specification.ID).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			http.Redirect(w, req, "/"+specification.ID+"/", 302)
+		})
 
 		count++
 	}
@@ -32,7 +39,7 @@ func Register(r *pat.Router) {
 		// If there is only one specification loaded, then hotwire '/' to redirect to that index page
 		// unless Swaggerly is configured not to do that!
 		r.Path("/").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			http.Redirect(w, req, "/uber-api/", 302)
+			http.Redirect(w, req, "/"+specification.ID+"/", 302)
 		})
 	} else {
 		r.Path("/").Methods("GET").HandlerFunc(topHandler) // Top level homepage
@@ -50,11 +57,10 @@ func topHandler(w http.ResponseWriter, req *http.Request) {
 // ----------------------------------------------------------------------------------------
 func specHomeHandler(specification *spec.APISpecification) func(w http.ResponseWriter, req *http.Request) {
 
-	// The default "theme" level index page.
-	tmpl := "specindex"
+	// The default "theme" level reference index page.
+	tmpl := "reference"
 
-	//customTmpl := specification.ID + "/" + tmpl
-	customTmpl := specification.ID + "/index" // The spec-level indexes are 'index.tmpl'
+	customTmpl := specification.ID + "/index" // When customised at specification level, page is index
 
 	logger.Tracef(nil, "+ Test for template '%s'", customTmpl)
 

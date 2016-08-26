@@ -1,8 +1,0 @@
-<h2 class="heading-medium">[: .Info.Title :]</h2>
-
-<!-- List all API endpoints -->
-[: range .APIs :]
-    <h3 class="heading-medium">[: .Name :]</h3>
-    [: template "fragments/reference/api-body" (map "API" . "Methods" .Methods) :]
-[: end :]
-
