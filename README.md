@@ -491,11 +491,41 @@ Additional content may be added to any Swaggerly generated reference pages by pr
 These pages are authored in Github Flavoured Markdown (GFM) and contain special markdown references that
 target particular sections within API, Method or Resource pages.
 
+Additional directories are added to your `assets` directory to accomplish this. As Swaggerly can consume and serve
+multiple OpenAPI specifications, each is given its own section within Swaggerly, allowing you to provide guides and
+overlay documentation appropriate to an OpenAPI specification. 
+
+- `assets/`
+    - `static/`
+        - `css/` - Local stylesheets
+        - `js/` - Local javascript
+    - `templates/`
+        - `guides/` - Authored documentation presented when not viewing an OpenAPI specification section.
+        - `reference/` - Custom overlay GFM content.
+          - `api.md` - Overlay applied to all API pages.
+          - `[method-name].md` - Overlay applied to a specific HTTP method name (POST, GET etc).
+          - `method.md` - Overlay applied to all API methods.
+        - `resource/`
+          - `resource.md` - Overlay applied to all resource pages.
+    - `sections/` - Contains additional documentation and overlays appropriate to each OpenAPI specification.
+      - `[specification-ID]` - The kabab case of the OpenAPI `info.title` member.
+        - `guides/` - Directory containing guides for appropriate for the named OpenAPI specification.
+        - `reference/` - 
+          - `api.md` - Overlay applied to all API pages of this specification.
+          - `[api-name].md` - Overlay applied to a specific API page of this specification.
+          - `[api-name]/`
+                - `[method-name].md` - Overlay applied to a specific HTTP method name (POST, GET etc) for this named API.
+                - `method.md` - Overlay applied to all methods of this named API.
+          - `[method-name].md` - Overlay applied to a specific HTTP method name (POST, GET etc) for this API
+          - `method.md` - Overlay applied to all methods of this API.
+        - `resource/`
+          - `resource.md` - Overlay applied to all resource pages of this API.
+
 For example, the following GFM file adds additional content to the *request* and *response* sections
-of the **Estimates of price** `get` method:
+of the **Estimates of price** `get` method for the `Uber API` OpenAPI specification:
 
 ```
-<local assets>/assets/templates/reference/estimates-of-price/get.md
+<local assets>/assets/sections/uber-api/reference/estimates-of-price/get.md
 ```
 ```gfm
 Overlay: true
@@ -510,20 +540,24 @@ The response is always an array of response objects, if successful.
 For a GFM page to be treated as an overlay, it must contain the metadata `Overlay: true` at the start
 of the file (see [Supported Metadata](#supported-metadata)).
 
-There are two ways to overlay a reference page, either globally or on a page-by-page basis. Swaggerly will
-look at the following file patterns to find any appropriate overlays.
+There are two ways to overlay a reference page, globally, per-specification or on a page-by-page basis. Swaggerly will
+look at the following file patterns in the order defined below to find any appropriate overlays, and will stop once it finds one.
+For example `sections/[spec-ID]/reference/<API name>.md` takes precident over `sections/[spec-ID]/reference/api.md`.
 
 | Reference page | Overlay filename | Description |
 | -------------- | ---------------- | ----------- |
-| API      | `reference/<API name>.md`               | Overlay applied to a specific API page. |
-| API      | `reference/api.md`                      | Overlay applied to all API pages. |
-| Method   | `reference/<API name>/<method name>.md` | Overlay applied to a specific method page of a specific API. |
-| Method   | `reference/<API name>/method.md`        | Overlay applied to all method pages of a specific API. |
-| Method   | `reference/method.md`                   | Overlay applied to all method pages of all APIs.  |
-| Resource | `resource/<resource name>.md`           | Overlay applied to a specific resource page.  |
-| Resource | `resource/resource.md`                  | Overlay applied to all resource pages.  |
-
-Overlays for a specific page will take precedence over those applied to all pages.
+| API      | `sections/[spec-ID]/reference/<API name>.md`               | Overlay applied to a specific API page. |
+| API      | `sections/[spec-ID]/reference/api.md`                      | Overlay applied to all API pages for the named specification. |
+| API      | `templates/reference/api.md`                               | Overlay applied to all API pages. |
+| Method   | `sections/[spec-ID]/reference/<API name>/<method name>.md` | Overlay applied to a specific method page of a specific API. |
+| Method   | `sections/[spec-ID]/reference/<API name>/method.md`        | Overlay applied to all method pages of a specific API. |
+| Method   | `sections/[spec-ID]/reference/<method name>.md`            | Overlay applied to a specific method page of all APIs in a specification. |
+| Method   | `sections/[spec-ID]/reference/method.md`                   | Overlay applied to the specific method page of all APIs in a specification. |
+| Method   | `templates/reference/<method name>.md`                     | Overlay applied to all method pages of all APIs across all specifications.  |
+| Method   | `templates/reference/method.md`                            | Overlay applied to all method pages of all APIs.  |
+| Resource | `sections/[spec-ID]/resource/<resource name>.md`           | Overlay applied to a specific resource page of a specific API.  |
+| Resource | `sections/[spec-ID]/resource/resource.md`                  | Overlay applied to all resource pages of a specific API.  |
+| Resource | `templates/resource/resource.md`                           | Overlay applied to all resource pages of all APIs across all specifications.  |
 
 ### Page section targets
 

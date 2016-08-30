@@ -16,8 +16,8 @@ assets/
   |      |      |
   |      |      +-- api.md                           -- Overlay applied to all API pages. API priority 3.
   |      |      |
-  |      |      +-- [method-name].md                 -- Overlay applied to a specific method of an API. Method priority 3.
-  |      |      +-- method.md                        -- Overlay applied to all methods of an API.       Method priority 4.
+  |      |      +-- [method-name].md                 -- Overlay applied to a specific method of an API. Method priority 5.  (GET, POST, PUT, DELETE etc)
+  |      |      +-- method.md                        -- Overlay applied to all methods of an API.       Method priority 6.
   |      |
   |      +-- resource/
   |             |
@@ -38,9 +38,12 @@ assets/
                |      +-- api.md                     -- Overlay applied to all API pages.       API priority 2.
                |      +-- [api-name].md              -- Overlay applied to a specific API page. API priority 1.
                |      +-- [api-name]/
-               |              |
-               |              +-- [method-name].md   -- Overlay applied to a specific method of an API. Method priority 1.
-               |              +-- method.md          -- Overlay applied to all methods of an API.       Method priority 2.
+               |      |       |
+               |      |       +-- [method-name].md   -- Overlay applied to a specific method of an API. Method priority 1.  (GET, POST, PUT, DELETE etc)
+               |      |       +-- method.md          -- Overlay applied to all methods of an API.       Method priority 2.
+               |      |
+               |      +-- [method-name].md   -- Overlay applied to a specific method of an API. Method priority 3.  (GET, POST, PUT, DELETE etc)
+               |      +-- method.md          -- Overlay applied to all methods of an API.       Method priority 4.
                |
                +-- resource/
                       |
