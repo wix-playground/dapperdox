@@ -53,7 +53,7 @@ func main() {
 	sg.Add(1)
 
 	go func() {
-		logger.Traceln(nil, "Listen for and server swagger spec requests for start up")
+		logger.Traceln(nil, "Listen for and serve swagger spec requests for start up")
 		wg.Add(1)
 		sg.Done()
 		http.Serve(listener, chain)
@@ -67,7 +67,7 @@ func main() {
 	specs.Register(router)
 
 	//spec.Specification.Load(cfg.BindAddr)
-	err = spec.LoadSpecifications(cfg.BindAddr)
+	err = spec.LoadSpecifications(cfg.BindAddr, true)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -87,8 +87,8 @@ func main() {
 
 	home.Register(router)
 
-	listener.Close()
-	wg.Wait()
+	listener.Close() // Stop serving specs
+	wg.Wait()        // wait for go routine serving specs to terminate
 
 	logger.Infof(nil, "Listen and server on %s", cfg.BindAddr)
 	listener, err = net.Listen("tcp", cfg.BindAddr)

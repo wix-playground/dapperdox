@@ -50,6 +50,8 @@ func Register(r *pat.Router) {
 	}
 	root := base
 
+	logger.Tracef(nil, "Scanning root directory %s for specifications", root)
+
 	specMap = make(map[string][]byte)
 
 	err = filepath.Walk(root, func(path string, _ os.FileInfo, _ error) error {

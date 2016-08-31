@@ -25,7 +25,7 @@ func Register(r *pat.Router) {
 
 		r.Path("/" + specification.ID + "/").Methods("GET").HandlerFunc(specHomeHandler(specification))
 
-		// If missingh trailing slash, redirect
+		// If missingh trailing slash, redirect to add it
 		r.Path("/" + specification.ID).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			http.Redirect(w, req, "/"+specification.ID+"/", 302)
 		})

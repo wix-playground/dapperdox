@@ -37,15 +37,15 @@ func Register(r *pat.Router) {
 
 	logger.Debugf(nil, "Registering guides")
 
-	// Top level guides
-	logger.Debugf(nil, "- Root guides")
-	register(r, base+"/templates", nil)
-
 	// specification specific guides
 	for _, specification := range spec.APISuite {
 		logger.Debugf(nil, "- Specification guides for '%s'", specification.APIInfo.Title)
 		register(r, base+"/sections", specification)
 	}
+
+	// Top level guides
+	logger.Debugf(nil, "- Root guides")
+	register(r, base+"/templates", nil)
 
 	logger.Debugf(nil, "\n")
 }
@@ -54,19 +54,18 @@ func Register(r *pat.Router) {
 func register(r *pat.Router, base string, specification *spec.APISpecification) {
 
 	root_node := "/guides"
-	specID := ""
 	if specification != nil {
-		specID = specification.ID
-		root_node = "/" + specID + root_node
+		root_node = "/" + specification.ID + root_node
 	}
 
 	root := base + root_node
 
 	guidesNavigation := &navigation.NavigationNode{}
-	guidesNavigation.ChildMap = make(map[string]*navigation.NavigationNode)
-	guidesNavigation.Children = make([]*navigation.NavigationNode, 0)
 
-	logger.Tracef(nil, "  + Walk directory %s", root)
+	guidesNavigation.Children = make([]*navigation.NavigationNode, 0)
+	guidesNavigation.ChildMap = make(map[string]*navigation.NavigationNode)
+
+	logger.Tracef(nil, "  - Walk directory %s", root)
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, _ error) error {
 		if info == nil {
@@ -81,22 +80,19 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 			return nil
 		}
 
-		logger.Printf(nil, "-- guide: "+path)
-
 		ext := filepath.Ext(path)
-
-		buildNavigation(guidesNavigation, path, base, ext)
 
 		switch ext {
 		case ".html", ".tmpl", ".md":
-			logger.Printf(nil, "** "+path)
-			logger.Printf(nil, "base: "+base)
+			logger.Printf(nil, "    - File "+path)
 
 			// Convert path/filename to route
 			route := FilenameToRoute(path, base)
 			resource := strings.TrimPrefix(route, "/")
 
-			logger.Tracef(nil, ">> "+route)
+			logger.Tracef(nil, "      = URL  "+route)
+
+			buildNavigation(guidesNavigation, path, base, ext)
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				sid := "TOP LEVEL"
@@ -145,8 +141,8 @@ func dumpit(tree *navigation.NavigationNode) {
 
 // ---------------------------------------------------------------------------
 func GetBasePath() string {
-	cfg, _ := config.Get()
 
+	cfg, _ := config.Get()
 	if len(cfg.AssetsDir) == 0 {
 		return ""
 	}
@@ -160,9 +156,6 @@ func GetBasePath() string {
 
 // ---------------------------------------------------------------------------
 func FilenameToRoute(name string, basepath string) string {
-	//logger.Printf(nil, "** "+name)
-	//logger.Printf(nil, "base: "+basepath)
-
 	// Strip base path and file extension
 	route := strings.TrimSuffix(strings.TrimPrefix(name, basepath), filepath.Ext(name))
 
@@ -179,11 +172,11 @@ func buildNavigation(nav *navigation.NavigationNode, filename string, base strin
 	sortOrder := asset.MetaData(metafile, "SortOrder")
 
 	if len(hierarchy) > 0 {
-		logger.Tracef(nil, "Got Navigation metadata %s for file %s\n", hierarchy, filename)
+		logger.Tracef(nil, "      * Got navigation metadata %s for file %s\n", hierarchy, filename)
 	} else {
 		// No Meta Data set on guide, so use the directory structure
 		hierarchy = strings.TrimPrefix(strings.TrimSuffix(filename, ext), base+"/guides/")
-		logger.Tracef(nil, "No navigation metadata for "+hierarchy+". Using path")
+		logger.Tracef(nil, "      * No navigation metadata for "+hierarchy+". Using path")
 	}
 
 	// Convert filename to route
@@ -223,7 +216,7 @@ func buildNavigation(nav *navigation.NavigationNode, filename string, base strin
 					Children:  make([]*navigation.NavigationNode, 0),
 				}
 				*currentList = append(*currentList, current[id])
-				logger.Tracef(nil, "Adding %s = %s to branch\n", id, current[id].Name)
+				logger.Tracef(nil, "      + Adding %s = %s to branch\n", id, current[id].Name)
 			} else {
 				// Update the branch node sort order, if the leaf has a lower sort
 				if sortOrder < currentItem.SortOrder {
@@ -246,7 +239,7 @@ func buildNavigation(nav *navigation.NavigationNode, filename string, base strin
 					Children:  make([]*navigation.NavigationNode, 0),
 				}
 				*currentList = append(*currentList, current[id])
-				logger.Tracef(nil, "Adding %s = %s to leaf node [a] Sort %s\n", current[id].Uri, current[id].Name, sortOrder)
+				logger.Tracef(nil, "      + Adding %s = %s to leaf node [a] Sort %s\n", current[id].Uri, current[id].Name, sortOrder)
 			} else {
 				// The page is a leaf node, but sits at a branch node. This means that the branch
 				// node has content! Set the uri, and adjust the sort order, if necessary.
@@ -254,7 +247,7 @@ func buildNavigation(nav *navigation.NavigationNode, filename string, base strin
 				if sortOrder < currentItem.SortOrder {
 					currentItem.SortOrder = sortOrder
 				}
-				logger.Tracef(nil, "Adding %s = %s to leaf node [b] Sort %s\n", currentItem.Uri, currentItem.Name, sortOrder)
+				logger.Tracef(nil, "      + Adding %s = %s to leaf node [b] Sort %s\n", currentItem.Uri, currentItem.Name, sortOrder)
 			}
 		}
 	}

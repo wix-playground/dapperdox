@@ -190,6 +190,7 @@ func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[
 
 	if apiSpec == nil {
 		m["NavigationGuides"] = guides[""] // Top level guides
+		m["SpecPath"] = ""
 
 		return m
 	}
@@ -198,6 +199,7 @@ func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[
 	m["NavigationGuides"] = guides[apiSpec.ID]
 
 	m["ID"] = apiSpec.ID
+	m["SpecPath"] = "/" + apiSpec.ID
 	m["APIs"] = apiSpec.APIs
 	m["APIVersions"] = apiSpec.APIVersions
 	m["Resources"] = apiSpec.ResourceList

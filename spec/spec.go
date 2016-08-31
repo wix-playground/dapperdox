@@ -15,8 +15,6 @@ import (
 	"github.com/zxchris/swaggerly/logger"
 )
 
-var Specification *APISpecification
-
 type APISpecification struct {
 	ID      string
 	APIs    APISet // APIs represents the parsed APIs
@@ -147,7 +145,7 @@ type Resource struct {
 
 // -----------------------------------------------------------------------------
 
-func LoadSpecifications(host string) error {
+func LoadSpecifications(host string, collapse bool) error {
 
 	if APISuite == nil {
 		APISuite = make(map[string]*APISpecification)
@@ -161,16 +159,23 @@ func LoadSpecifications(host string) error {
 
 	for _, specFilename := range cfg.SpecFilename {
 
-		specification := &APISpecification{}
+		var ok bool
+		var specification *APISpecification
+
+		if specification, ok = APISuite[""]; !ok || !collapse {
+			specification = &APISpecification{}
+		}
 
 		err = specification.Load(specFilename, host)
 		if err != nil {
 			return err
 		}
 
-		APISuite[specification.ID] = specification
+		if collapse {
+			//specification.ID = "api"
+		}
 
-		Specification = specification // XXX TEMPORARY FIX UNTIL APISuite has been rolled out over codebase
+		APISuite[specification.ID] = specification
 	}
 
 	return nil
