@@ -184,9 +184,15 @@ func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[
 		m = make(map[string]interface{})
 	}
 
-	m["Config"], _ = config.Get()
-
+	cfg, _ := config.Get()
+	m["Config"] = cfg
 	m["APISuite"] = spec.APISuite
+
+	// If we have a multiple specifications or are forcing a parent "root" page for the single specification
+	// then set MultipleSpecs to true to enable navigation back to the root page.
+	if cfg.ForceRootPage || len(spec.APISuite) > 1 {
+		m["MultipleSpecs"] = true
+	}
 
 	if apiSpec == nil {
 		m["NavigationGuides"] = guides[""] // Top level guides

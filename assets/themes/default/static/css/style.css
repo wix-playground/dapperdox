@@ -7,6 +7,11 @@ body {
   padding-top: 50px;
 }
 
+.glyphicon {
+    width: 14px;
+    height: 14px;
+}
+
 
 /*
  * Global add-ons
@@ -56,9 +61,6 @@ body {
   }
 }
 
-.nav > li > a {
-    padding :0;
-}
 .nav > li {
     padding: 0 0 5px 0;
 }
@@ -69,8 +71,11 @@ body {
   margin-left: -20px;
 }
 .nav-sidebar > li > a {
-  padding-left: 14px;
-  padding-right: 20px;
+  padding: 0 20px 0 14px;
+}
+
+.nav-inner > li > a {
+    padding :0;
 }
 .nav-toggle {
   margin-left: -14px;

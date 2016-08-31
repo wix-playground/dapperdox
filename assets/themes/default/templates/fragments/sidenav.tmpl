@@ -27,7 +27,7 @@ $(document).ready(function(){
         <li>
           [: if $nav.Children :]
             <a [: if $nav.Uri :]href="[: $nav.Uri :]"[: end :] id="toggle[: $nav.Id :]" [: if $nav.Children :]class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $nav.Id :]" data-outer="[: $nav.Id :]" [: end :]>[: $nav.Name :]</a>
-            <ul class="nav collapse" id="ul[: $nav.Id :]">
+            <ul class="nav collapse nav-inner" id="ul[: $nav.Id :]">
               [: range $child := $nav.Children :]
                 <li>
                 <a href="[: $child.Uri :]" data-outer="[: $nav.Id :]">[: $child.Name :]</a></li>
@@ -46,7 +46,7 @@ $(document).ready(function(){
       [: range $api := .APIs :]
         <li>
             <a id="toggle[: $api.ID :]" class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
-            <ul class="nav collapse" id="ul[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
+            <ul class="nav collapse nav-inner" id="ul[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
               <li><a data-outer="[: $api.ID :]" href="[: $.SpecPath :]/reference/[: $api.ID :]">Summary</a></li>
 
               [: range $method := .Methods :]
@@ -67,7 +67,7 @@ $(document).ready(function(){
                    <li>
                     [: range $vapi := $versions :]
                       <a href="#" class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $v :][: $vapi.ID :]">[: $vapi.Name :]</a>
-                      <ul class="nav collapse" id="ul[: $v :][: $vapi.ID :]">
+                      <ul class="nav collapse nav-inner" id="ul[: $v :][: $vapi.ID :]">
                         <li><a data-outer="[: $v :][: $vapi.ID :]" href="[: $.SpecPath :]/reference/[: $vapi.ID :]?v=[: $v :]">Summary</a></li>
                         [: range $method := $vapi.Methods :]
                           <li><a href="[: $.SpecPath :]/reference/[: $vapi.ID :]/[: $method.ID :]?v=[: $v :]" data-outer="[: $v :][: $vapi.ID :]">[: $method.Method :]</a></li>
