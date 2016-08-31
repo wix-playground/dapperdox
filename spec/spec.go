@@ -325,7 +325,6 @@ func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods *[]Method,
 // -----------------------------------------------------------------------------
 
 func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
-	logger.Tracef(nil, "  in getMethod")
 	if operation == nil {
 		return
 	}

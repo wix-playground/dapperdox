@@ -78,6 +78,7 @@ func main() {
 	// FIXME FIXME TEST /sections/[spec-id]/reference/[api-name]/[method-name].md etc
 	// FIXME FIXME ALSO FIX EXAMPLES. SEE OVERLAY SECTION IN README.md price-estimates...
 	// Register the various home pages. The top level, and one for each of the specifications that have been loaded.
+	logger.Printf(nil, "Compile assets")
 	asset.Compile(cfg.AssetsDir+"/sections/uber-api", "assets/templates/uber-api") // FIXME MOVE THIS AND LOOP OVER ALL SPECS!
 	render.Register()
 

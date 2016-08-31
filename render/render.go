@@ -52,7 +52,7 @@ func New() *render.Render {
 	// TODO only import the theme specified instead of all installed themes that will not be used!
 
 	if len(cfg.ThemesDir) != 0 {
-		logger.Infof(nil, "Picking up themes from directory: "+cfg.ThemesDir+"/"+cfg.Theme+"/assets")
+		logger.Infof(nil, "  - Picking up themes from directory: "+cfg.ThemesDir+"/"+cfg.Theme+"/assets")
 		asset.Compile(cfg.ThemesDir+"/"+cfg.Theme+"/assets", "assets")
 	}
 	// Fallback to local themes directory

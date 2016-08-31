@@ -23,6 +23,8 @@ func Register(r *pat.Router) {
 		logger.Errorf(nil, "error configuring app: %s", err)
 	}
 
+	logger.Printf(nil, "Registering specifications")
+
 	// Build a replacer to search/replace specification URLs
 	if specReplacer == nil {
 		var replacements []string
@@ -50,12 +52,12 @@ func Register(r *pat.Router) {
 	}
 	root := base
 
-	logger.Tracef(nil, "Scanning root directory %s for specifications", root)
+	logger.Printf(nil, "- Scanning root directory %s", root)
 
 	specMap = make(map[string][]byte)
 
 	err = filepath.Walk(root, func(path string, _ os.FileInfo, _ error) error {
-		logger.Tracef(nil, "-- %s", path)
+		logger.Tracef(nil, "  - %s", path)
 
 		ext := filepath.Ext(path)
 
@@ -64,8 +66,8 @@ func Register(r *pat.Router) {
 			// Strip base path and file extension
 			route := strings.TrimPrefix(path, base)
 
-			logger.Tracef(nil, "Path: %s", path)
-			logger.Tracef(nil, "Uri : %s", route)
+			logger.Printf(nil, "    = URL : %s", route)
+			logger.Tracef(nil, "    + File: %s", path)
 
 			specMap[route], _ = ioutil.ReadFile(path)
 

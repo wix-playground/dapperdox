@@ -18,7 +18,7 @@ var pathVersionResource map[string]versionedResource // Key is path
 
 // Register creates routes for specification resource
 func Register(r *pat.Router) {
-	logger.Debugln(nil, "registering handlers for reference package")
+	logger.Printf(nil, "Registering reference documentation")
 
 	pathVersionMethod = make(map[string]versionedMethod)
 	pathVersionResource = make(map[string]versionedResource)
@@ -28,16 +28,20 @@ func Register(r *pat.Router) {
 
 		spec_id := "/" + specification.ID
 
+		logger.Printf(nil, "Registering reference for OpenAPI specification '%s'", specification.APIInfo.Title)
+
 		for _, api := range specification.APIs {
-			logger.Tracef(nil, "registering handler for %s api: %s", api.Name, api.ID)
+			logger.Printf(nil, "  - Scanning API [%s] %s", api.ID, api.Name)
 			r.Path(spec_id + "/reference/" + api.ID).Methods("GET").HandlerFunc(APIHandler(specification, api))
 
 			version := api.CurrentVersion
 
 			for _, method := range api.Methods {
-				logger.Tracef(nil, "registering handler for %s api method %s: %s/%s", api.Name, method.Name, api.ID, method.ID)
+				basepath := spec_id + "/reference/" + api.ID
+				path := basepath + "/" + method.ID
 
-				path := spec_id + "/reference/" + api.ID + "/" + method.ID
+				logger.Printf(nil, "    + method %s [%s]", path, method.Name)
+
 				// Add version->method to pathVersionMethod
 				if _, ok := pathVersionMethod[path]; !ok {
 					pathVersionMethod[path] = make(versionedMethod)
@@ -47,7 +51,7 @@ func Register(r *pat.Router) {
 			}
 			for version, methods := range api.Versions {
 				for _, method := range methods {
-					logger.Tracef(nil, "registering handler for %s api method %s: %s/%s Version %s", api.Name, method.Name, api.ID, method.ID, version)
+					logger.Printf(nil, "    + %s %s", method.ID, method.Name)
 					path := spec_id + "/reference/" + api.ID + "/" + method.ID
 					// Add version->resource to pathVersionResource
 					if _, ok := pathVersionMethod[path]; !ok {
@@ -59,12 +63,12 @@ func Register(r *pat.Router) {
 			}
 		}
 
-		logger.Tracef(nil, "Registering RESOURCES")
+		logger.Printf(nil, "  - Registering resources")
 		for version, resources := range specification.ResourceList {
-			logger.Tracef(nil, "  - Version %s", version)
+			logger.Tracef(nil, "    - Version %s", version)
 			for id, resource := range resources {
 				path := spec_id + "/resources/" + id
-				logger.Tracef(nil, "    - resource %s", path)
+				logger.Printf(nil, "      + resource %s", id)
 				if _, ok := pathVersionResource[path]; !ok {
 					pathVersionResource[path] = make(versionedResource)
 					r.Path(path).Methods("GET").HandlerFunc(GlobalResourceHandler(specification, path))
@@ -72,12 +76,8 @@ func Register(r *pat.Router) {
 				pathVersionResource[path][version] = resource
 			}
 		}
-
-		// We no longer hang anything off the /reference/ endpoint
-		//r.Path(spec_id + "/reference/").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		//	render.HTML(w, http.StatusOK, "reference", render.DefaultVars(req, specification, render.Vars{"Title": "API reference"}))
-		//})
 	}
+	logger.Printf(nil, "\n")
 }
 
 // ------------------------------------------------------------------------------------------------------------

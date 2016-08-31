@@ -90,6 +90,8 @@ func Compile(dir string, prefix string) {
 		logger.Errorf(nil, "Error forming absolute path: %s", err)
 	}
 
+	logger.Printf(nil, "- Scanning directory %s", dir)
+
 	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info == nil {
 			return nil
@@ -134,7 +136,7 @@ func Compile(dir string, prefix string) {
 				sections, headings := splitOnSection(string(buf))
 
 				if sections == nil {
-					logger.Errorf(nil, "Error no sections defined in overlay file %s\n", relative)
+					logger.Errorf(nil, "  * Error no sections defined in overlay file %s\n", relative)
 					os.Exit(1)
 				}
 
@@ -165,11 +167,11 @@ func storeTemplate(prefix string, name string, template string, meta map[string]
 	newname := prefix + "/" + name
 
 	if _, ok := _bindata[newname]; !ok {
-		logger.Tracef(nil, "Import file as '%s'\n", newname)
+		logger.Printf(nil, "  + Import %s", newname)
 		// Store the template, doing and search/replaces on the way
 		_bindata[newname] = []byte(template)
 		if len(meta) > 0 {
-			logger.Printf(nil, "Adding metadata for file %s\n", newname)
+			logger.Tracef(nil, "    + Adding metadata")
 			_metadata[newname] = meta
 		}
 	}
