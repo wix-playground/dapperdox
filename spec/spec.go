@@ -189,6 +189,13 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		return err
 	}
 
+	basePath := swaggerdoc.Spec().BasePath
+	basePathLen := len(basePath)
+	// Ignore basepath if it is a single '/'
+	if basePathLen == 1 && basePath[0] == '/' {
+		basePathLen = 0
+	}
+
 	u, err := url.Parse(swaggerdoc.Spec().Schemes[0] + "://" + swaggerdoc.Spec().Host)
 	if err != nil {
 		return err
@@ -214,6 +221,10 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 
 		for path, pathItem := range swaggerdoc.AllPaths() {
 			logger.Tracef(nil, "    In path loop...\n")
+
+			if basePathLen > 0 {
+				path = basePath + path
+			}
 
 			var name string // Will only populate if Tagging used in spec. processMethod overrides if needed.
 			name = tag.Description
