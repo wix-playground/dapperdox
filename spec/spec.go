@@ -448,7 +448,7 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 		case "path":
 			method.PathParams = append(method.PathParams, p)
 		case "body":
-			p.Resource = resourceFromSchema(param.Schema, method, nil)
+			p.Resource = c.resourceFromSchema(param.Schema, method, nil)
 			method.BodyParam = &p
 		case "header":
 			method.HeaderParams = append(method.HeaderParams, p)
