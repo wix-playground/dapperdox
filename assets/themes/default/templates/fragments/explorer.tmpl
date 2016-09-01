@@ -19,16 +19,13 @@
                 <td>[: safehtml .Description :]</td>
             </tr>
         [: end :]
-[: if .Method.BodyParam :]
-<!-- THIS IS TODO -->
-        [: range .Method.BodyParam :]
+        [: if .Method.BodyParam :]
             <tr class="form-group">
-                <td>[: .Name :]</td>
-                <td>[: template "explorer_input" (map "Param" . "Section" "body") :]</td>
-                <td>[: safehtml .Description :]</td>
+                <td>[: .Method.BodyParam.Name :]</td>
+                <td>[: template "explorer_input" (map "Param" .Method.BodyParam "Section" "body") :]<span id="jsonerror" class="jsonerror" style="display: none;"></span></td>
+                <td>[: safehtml .Method.BodyParam.Description :]</td>
             </tr>
         [: end :]
-[: end :]
         [: range .Method.FormParams :]
             <tr class="form-group">
                 <td>[: .Name :]</td>
