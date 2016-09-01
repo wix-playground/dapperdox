@@ -38,7 +38,7 @@
 [: if .Method.BodyParam :]
   <h2 class="sub-header">Request body</h2>
   [: overlay "body-parameters" . :]
-  <p>TODO: ...</p>
+  [: template "fragments/reference/request_body" .Method.BodyParam :]
 [: end :]
 
 [: if .Method.Security :]
@@ -79,7 +79,6 @@
   </tbody>
 </table>
 
-<!-- TODO Example to go here -->
 [: overlay "example" . :]
 
 [: template "fragments/explorer" . :]

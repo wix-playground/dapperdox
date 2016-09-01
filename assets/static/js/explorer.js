@@ -194,15 +194,21 @@ apiExplorer.go = function( method, url ){
             //fobj[name] = val;
             //$.extend(body, fobj);
         }
+        //if( type=='body' && val ) {
+        //    var fobj = {};
+        //    fobj[name] = val;
+        //    $.extend(body, fobj);
+        //    gotjson = true;
+        //}
         if( type=='body' && val ) {
-            var fobj = {};
-            fobj[name] = val;
-            $.extend(body, fobj);
-            gotjson = true;
-        }
-        if( type=='model' && val ) {
             // Parse might fail
-            $.extend(body, JSON.parse(val));
+            try {
+                $.extend(body, JSON.parse(val));
+            } catch(e) {
+                errors.push( $input );
+                $('#jsonerror').html( e );
+                $('#jsonerror').show();
+            }
             gotjson = true;
         }
     });
@@ -223,6 +229,7 @@ apiExplorer.go = function( method, url ){
     var body_text;
 
     $('#request_body').hide();
+    $('#jsonerror').hide();
 
     if( gotjson )
     {

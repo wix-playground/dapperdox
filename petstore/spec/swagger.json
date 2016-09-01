@@ -21,7 +21,8 @@
     { "name": "Products" },
     { "name":"Estimates Time" },
     { "name": "User Profile" },
-    { "name": "User Activity" }
+    { "name": "User Activity" },
+    { "name": "Creator" }
   ],
     "paths": {
         "/products": {
@@ -252,6 +253,40 @@
                     }
                 }
             }
+        },
+        "/creator": {
+            "post": {
+                "summary": "Create resource",
+                "description": "Creates a resource - just testing request body object handling.",
+                "parameters": [
+                    {
+                        "name": "request",
+                        "in": "body",
+                        "description": "The cat to create",
+                        "required": true,
+                        "schema" :  {
+                            "$ref": "#/definitions/Cat"
+                        }
+                    }
+                ],
+                "tags": [
+                  "Creator"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns a pet",
+                        "schema": {
+                            "$ref": "#/definitions/Pet"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -393,6 +428,7 @@
             }
         },
     "Pet": {
+      "title": "A pet",
       "type": "object",
       "discriminator": "petType",
       "properties": {
@@ -411,6 +447,7 @@
       ]
     },
     "Cat": {
+      "title": "A Cat",
       "description": "A representation of a cat",
       "allOf": [
         {

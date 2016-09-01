@@ -112,11 +112,12 @@ type Method struct {
 // Parameter represents an API method parameter
 type Parameter struct {
 	Name        string
+	Description string
 	In          string
 	Required    bool
-	Description string
 	Type        string
 	Enum        []string
+	Resource    *Resource // For "in body" parameters
 }
 
 // Response represents an API method response
@@ -177,6 +178,9 @@ func Load(host string) {
 		// Tag matching may not be as expected if multiple paths have the same TAG (which is technically permitted)
 		var ok bool
 		var ver interface{}
+
+		//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
+		//spew.Dump(swaggerdoc)
 
 		for path, pathItem := range swaggerdoc.AllPaths() {
 
@@ -385,6 +389,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 		case "path":
 			method.PathParams = append(method.PathParams, p)
 		case "body":
+			p.Resource = c.resourceFromSchema(param.Schema, method, nil)
 			method.BodyParam = &p
 		case "header":
 			method.HeaderParams = append(method.HeaderParams, p)
@@ -601,6 +606,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 
 	//fmt.Printf("DUMP s.Type\n")
 	//spew.Dump(s.Type)
+
 	if strings.ToLower(r.Type[0]) != "object" {
 		if strings.ToLower(r.Type[0]) == "array" {
 			var array_obj []map[string]interface{}

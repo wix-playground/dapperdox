@@ -14,37 +14,12 @@
   [: end :]
 </ul>
 
-<h2 class="sub-header">Resource</h2>
-
-[: overlay "resource" . :]
-
-<pre><code>[: .Resource.Schema :]</code></pre>
+[: template "fragments/reference/resource_body" . :]
 
 [: if .Resource.Example :]
 <h2 class="sub-header">Example</h2>
-
 [: overlay "example" . :]
 <pre><code>[: .Resource.Example :]</code></pre>
 [: end :]
-
-<h2 class="sub-header">Properties</h2>
-
-[: overlay "properties" . :]
-
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Additional</th>
-      </tr>
-    </thead>
-    <tbody>
-      [: template "fragments/reference/properties" .Resource :]
-    </tbody>
-  </table>
-</div>
 
 [: overlay "additional" . :]

@@ -8,6 +8,11 @@ body {
 }
 
 
+.jsonerror {
+    display: block;
+    color: #800000;
+}
+
 /*
  * Global add-ons
  */
@@ -20,7 +25,7 @@ body {
 .sub-sub-header {
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: bold;
 }
 
