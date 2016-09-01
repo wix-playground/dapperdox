@@ -551,10 +551,10 @@ For example `sections/[spec-ID]/reference/<API name>.md` takes precident over `s
 | API      | `templates/reference/api.md`                               | Overlay applied to all API pages. |
 | Method   | `sections/[spec-ID]/reference/<API name>/<method name>.md` | Overlay applied to a specific method page of a specific API. |
 | Method   | `sections/[spec-ID]/reference/<API name>/method.md`        | Overlay applied to all method pages of a specific API. |
-| Method   | `sections/[spec-ID]/reference/<method name>.md`            | Overlay applied to a specific method page of all APIs in a specification. |
-| Method   | `sections/[spec-ID]/reference/method.md`                   | Overlay applied to the specific method page of all APIs in a specification. |
-| Method   | `templates/reference/<method name>.md`                     | Overlay applied to all method pages of all APIs across all specifications.  |
-| Method   | `templates/reference/method.md`                            | Overlay applied to all method pages of all APIs.  |
+| Method   | `sections/[spec-ID]/reference/<method name>.md`            | Overlay applied to all method pages of <method name> across all APIs in a specification. |
+| Method   | `sections/[spec-ID]/reference/method.md`                   | Overlay applied to all method pages of all APIs in a particular specification. |
+| Method   | `templates/reference/<method name>.md`                     | Overlay applied to the <method name> method page of all APIs across all specifications.  |
+| Method   | `templates/reference/method.md`                            | Overlay applied to all method pages of all APIs across all specifications.  |
 | Resource | `sections/[spec-ID]/resource/<resource name>.md`           | Overlay applied to a specific resource page of a specific API.  |
 | Resource | `sections/[spec-ID]/resource/resource.md`                  | Overlay applied to all resource pages of a specific API.  |
 | Resource | `templates/resource/resource.md`                           | Overlay applied to all resource pages of all APIs across all specifications.  |

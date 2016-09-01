@@ -129,9 +129,12 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 			if specid, ok := datamap["ID"].(string); ok {
 				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/"+method.Method+"/"+name+"/overlay")
 				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/method/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/reference/"+method.Method+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/reference/method/"+name+"/overlay")
 			}
-			overlayName = append(overlayName, "reference/"+api.ID+"/"+method.Method+"/"+name+"/overlay")
-			overlayName = append(overlayName, "reference/"+api.ID+"/method/"+name+"/overlay")
+
+			overlayName = append(overlayName, "reference/"+method.Method+"/"+name+"/overlay")
+			overlayName = append(overlayName, "reference/method/"+name+"/overlay")
 		}
 	}
 	if resource, ok := datamap["Resource"].(*spec.Resource); ok {
