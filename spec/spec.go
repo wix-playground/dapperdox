@@ -15,17 +15,19 @@ import (
 	"github.com/zxchris/swaggerly/logger"
 )
 
+type APISuiteMap map[string]*APISpecification
+
+var APISuite APISuiteMap
+
 type APISpecification struct {
-	ID      string
-	APIs    APISet // APIs represents the parsed APIs
-	APIInfo Info
-
+	ID                  string
+	Hash                uint64 `hash:"ignore"`
+	APIs                APISet
+	APIInfo             Info
 	SecurityDefinitions map[string]SecurityScheme
-	ResourceList        map[string]map[string]*Resource // Version->ResourceName->Resource
-	APIVersions         map[string]APISet               // Version->APISet
+	ResourceList        map[string]map[string]*Resource `hash:"ignore"` // Version->ResourceName->Resource
+	APIVersions         map[string]APISet               `hash:"ignore"` // Version->APISet
 }
-
-var APISuite map[string]*APISpecification
 
 // GetByName returns an API by name
 func (c *APISpecification) GetByName(name string) *API {
@@ -59,7 +61,7 @@ type API struct {
 	ID             string
 	Name           string
 	URL            *url.URL
-	Versions       map[string][]Method // All versions, keyed by version string.
+	Versions       map[string][]Method `hash:"ignore"` // All versions, keyed by version string.
 	Methods        []Method            // The current version
 	CurrentVersion string              // The latest version in operation for the API
 	Info           *Info
@@ -109,7 +111,7 @@ type Method struct {
 	DefaultResponse *Response
 	Resources       []*Resource
 	Security        map[string]Security
-	API             *API
+	API             *API `hash:"ignore"`
 }
 
 // Parameter represents an API method parameter
@@ -140,7 +142,7 @@ type Resource struct {
 	Type        []string
 	Properties  map[string]*Resource
 	Required    bool
-	Methods     []Method
+	Methods     []Method `hash:"ignore"`
 	Enum        []string
 }
 
@@ -176,7 +178,11 @@ func LoadSpecifications(host string, collapse bool) error {
 			//specification.ID = "api"
 		}
 
-		APISuite[specification.ID] = specification
+		//APISuite[specification.ID] = specification
+		err = APISuite.Merge(specification)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -793,6 +799,11 @@ func loadSpec(url string) (*spec.Document, error) {
 	}
 
 	return spec, err
+}
+
+// -----------------------------------------------------------------------------
+//
+func mergeSpecs() {
 }
 
 // -----------------------------------------------------------------------------

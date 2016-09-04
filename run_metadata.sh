@@ -2,7 +2,7 @@
     #-swagger-dir=../../companieshouse/developer.ch.gov.uk-poc/swagger \
 ./swaggerly \
     --force-root-page=false \
-    -spec-dir=petstore \
+    -spec-dir=examples/specifications/petstore \
     -bind-addr=0.0.0.0:3123 \
     -spec-rewrite-url=http://localhost:4242/swagger-2.0 \
     -document-rewrite-url=www.google.com=www.google.co.uk \
