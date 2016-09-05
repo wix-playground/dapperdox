@@ -56,21 +56,22 @@ type Info struct {
 	Description string
 }
 
-// API represents an API
+// API represents an API endpoint
 type API struct {
-	ID             string
-	Name           string
-	URL            *url.URL
-	Versions       map[string][]Method `hash:"ignore"` // All versions, keyed by version string.
-	Methods        []Method            // The current version
-	CurrentVersion string              // The latest version in operation for the API
+	ID       string
+	Name     string
+	URL      *url.URL
+	Versions map[string]map[string]Method `hash:"ignore"` // All versions, keyed by version string.
+	//Methods        []Method            // The current version
+	Methods        map[string]Method // The current version
+	CurrentVersion string            // The latest version in operation for the API
 	Info           *Info
 }
 
-type Version struct {
-	Version string
-	Methods []Method
-}
+//type Version struct {
+//	Version string
+//	Methods []Method
+//}
 
 type OAuth2Scheme struct {
 	OAuth2Flow       string
@@ -263,8 +264,10 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 			}
 			api.CurrentVersion = ver.(string)
 
-			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver.(string)) // Current version
-			c.getVersions(tag, api, pathItem.Versions, path)                    // All versions
+			api.Methods = make(map[string]Method)
+
+			c.getMethods(tag, api, api.Methods, &pathItem, path, ver.(string)) // Current version
+			c.getVersions(tag, api, pathItem.Versions, path)                   // All versions
 
 			// If API was populated (will not be if tags do not match), add to set
 			if len(api.Methods) > 0 {
@@ -311,19 +314,19 @@ func (c *APISpecification) getVersions(tag spec.Tag, api *API, versions map[stri
 	if versions == nil {
 		return
 	}
-	api.Versions = make(map[string][]Method)
+	api.Versions = make(map[string]map[string]Method)
 
 	for v, pi := range versions {
 		logger.Tracef(nil, "Process version %s\n", v)
-		var method []Method
-		c.getMethods(tag, api, &method, &pi, path, v)
+		method := make(map[string]Method)
+		c.getMethods(tag, api, method, &pi, path, v)
 		api.Versions[v] = method
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods *[]Method, pi *spec.PathItem, path string, version string) {
+func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods map[string]Method, pi *spec.PathItem, path string, version string) {
 
 	c.getMethod(tag, api, methods, version, pi, pi.Get, path, "get")
 	c.getMethod(tag, api, methods, version, pi, pi.Post, path, "post")
@@ -336,7 +339,7 @@ func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods *[]Method,
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
+func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods map[string]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
 	if operation == nil {
 		return
 	}
@@ -350,14 +353,16 @@ func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods *[]Method, 
 			return
 		}
 		method := c.processMethod(api, pathitem, operation, path, methodname, version)
-		*methods = append(*methods, *method)
+		//*methods = append(*methods, *method)
+		methods[method.Name] = *method
 	} else {
 		logger.Tracef(nil, "    > Check tags")
 		for _, t := range operation.Tags {
 			logger.Tracef(nil, "      - Compare tag '%s' with '%s'\n", tag.Name, t)
 			if tag.Name == "" || t == tag.Name {
 				method := c.processMethod(api, pathitem, operation, path, methodname, version)
-				*methods = append(*methods, *method)
+				//*methods = append(*methods, *method)
+				methods[method.Name] = *method
 			}
 		}
 	}
@@ -492,7 +497,7 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 			}
 			c.ResourceList[version][r.ID] = vres
 
-			// Compile a list of the methods which use this resource
+			// Add to the  list of methods which use this resource
 			vres.Methods = append(vres.Methods, *method)
 
 			// Add the resource to the method which uses it

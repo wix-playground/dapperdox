@@ -82,15 +82,15 @@ func Register(r *pat.Router) {
 
 // ------------------------------------------------------------------------------------------------------------
 
-func getVersionMethod(api spec.API, version string) *[]spec.Method {
+func getVersionMethod(api spec.API, version string) map[string]spec.Method {
 
-	var methods []spec.Method
+	var methods map[string]spec.Method
 	var ok bool
 
 	if methods, ok = api.Versions[version]; !ok {
 		methods = api.Methods
 	}
-	return &methods
+	return methods
 }
 
 // ------------------------------------------------------------------------------------------------------------
