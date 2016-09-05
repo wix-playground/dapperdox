@@ -49,7 +49,7 @@ func (c *APISpecification) GetByID(id string) *API {
 	return nil
 }
 
-type APISet []API
+type APISet map[string]API
 
 type Info struct {
 	Title       string
@@ -58,20 +58,14 @@ type Info struct {
 
 // API represents an API endpoint
 type API struct {
-	ID       string
-	Name     string
-	URL      *url.URL
-	Versions map[string]map[string]Method `hash:"ignore"` // All versions, keyed by version string.
-	//Methods        []Method            // The current version
-	Methods        map[string]Method // The current version
-	CurrentVersion string            // The latest version in operation for the API
+	ID             string
+	Name           string
+	URL            *url.URL
+	Versions       map[string]map[string]Method `hash:"ignore"` // All versions, keyed by version string.
+	Methods        map[string]Method            // The current version
+	CurrentVersion string                       // The latest version in operation for the API
 	Info           *Info
 }
-
-//type Version struct {
-//	Version string
-//	Methods []Method
-//}
 
 type OAuth2Scheme struct {
 	OAuth2Flow       string
@@ -216,6 +210,10 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		return err
 	}
 
+	if c.APIs == nil {
+		c.APIs = make(APISet)
+	}
+
 	c.APIInfo.Description = string(github_flavored_markdown.Markdown([]byte(swaggerdoc.Spec().Info.Description)))
 	c.APIInfo.Title = swaggerdoc.Spec().Info.Title
 
@@ -272,7 +270,8 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 			// If API was populated (will not be if tags do not match), add to set
 			if len(api.Methods) > 0 {
 				logger.Tracef(nil, "    + Adding %s\n", name)
-				c.APIs = append(c.APIs, *api) // All APIs (versioned within)
+				//c.APIs = append(c.APIs, *api) // All APIs (versioned within)
+				c.APIs[api.ID] = *api // All APIs (versioned within)
 			}
 		}
 	}
@@ -287,7 +286,8 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 			napi := api
 			napi.Methods = napi.Versions[v]
 			napi.Versions = nil
-			c.APIVersions[v] = append(c.APIVersions[v], napi) // Group APIs by version
+			//c.APIVersions[v] = append(c.APIVersions[v], napi) // Group APIs by version
+			c.APIVersions[v][napi.ID] = napi // Group APIs by version
 		}
 	}
 

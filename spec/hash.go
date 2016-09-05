@@ -52,5 +52,4 @@ func (i *APISuiteMap) FoldVersions(s *APISpecification) error {
 	return nil
 }
 
-
 // end
