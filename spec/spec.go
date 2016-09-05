@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -179,10 +179,12 @@ func LoadSpecifications(host string, collapse bool) error {
 		}
 
 		//APISuite[specification.ID] = specification
+		APISuite.FoldVersions(specification)
 		err = APISuite.Merge(specification)
 		if err != nil {
 			return err
 		}
+		//spew.Dump(specification)
 	}
 
 	return nil
@@ -616,7 +618,6 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 
 	if len(fqNS) == 0 && id == "" {
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title memeber.", strings.ToUpper(method.Method), method.Path)
-		spew.Dump(s)
 		os.Exit(1)
 	}
 
@@ -799,11 +800,6 @@ func loadSpec(url string) (*spec.Document, error) {
 	}
 
 	return spec, err
-}
-
-// -----------------------------------------------------------------------------
-//
-func mergeSpecs() {
 }
 
 // -----------------------------------------------------------------------------
