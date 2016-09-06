@@ -4,6 +4,6 @@
 
 [: range $id, $spec := .APISuite :]
 
-#### [[:$spec.APIInfo.Title:]](/[:$id:]/)
+#### [<span class="glyphicon glyphicon-th"></span>&nbsp; [:$spec.APIInfo.Title:]](/[:$id:]/)
 [: safehtml $spec.APIInfo.Description :]
 [: end :]
