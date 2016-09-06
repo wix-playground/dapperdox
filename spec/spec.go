@@ -29,42 +29,27 @@ type APISpecification struct {
 	APIVersions         map[string]APISet               `hash:"ignore"` // Version->APISet
 }
 
-// GetByName returns an API by name
-func (c *APISpecification) GetByName(name string) *API {
-	for _, a := range c.APIs {
-		if a.Name == name {
-			return &a
-		}
-	}
-	return nil
-}
-
-// GetByID returns an API by ID
-func (c *APISpecification) GetByID(id string) *API {
-	for _, a := range c.APIs {
-		if a.ID == id {
-			return &a
-		}
-	}
-	return nil
-}
-
-type APISet map[string]API
+type APISet []API
 
 type Info struct {
 	Title       string
 	Description string
 }
 
-// API represents an API endpoint
+// API represents an API
 type API struct {
 	ID             string
 	Name           string
 	URL            *url.URL
-	Versions       map[string]map[string]Method `hash:"ignore"` // All versions, keyed by version string.
-	Methods        map[string]Method            // The current version
-	CurrentVersion string                       // The latest version in operation for the API
+	Versions       map[string][]Method `hash:"ignore"` // All versions, keyed by version string.
+	Methods        []Method            // The current version
+	CurrentVersion string              // The latest version in operation for the API
 	Info           *Info
+}
+
+type Version struct {
+	Version string
+	Methods []Method
 }
 
 type OAuth2Scheme struct {
@@ -141,6 +126,24 @@ type Resource struct {
 	Enum        []string
 }
 
+func (c *APISpecification) GetByID(id string) *API {
+	for _, a := range c.APIs {
+		if a.ID == id {
+			return &a
+		}
+	}
+	return nil
+}
+
+func (a *API) GetByID(id string) *Method {
+	for _, m := range a.Methods {
+		if m.ID == id {
+			return &m
+		}
+	}
+	return nil
+}
+
 // -----------------------------------------------------------------------------
 
 func LoadSpecifications(host string, collapse bool) error {
@@ -210,10 +213,6 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		return err
 	}
 
-	if c.APIs == nil {
-		c.APIs = make(APISet)
-	}
-
 	c.APIInfo.Description = string(github_flavored_markdown.Markdown([]byte(swaggerdoc.Spec().Info.Description)))
 	c.APIInfo.Title = swaggerdoc.Spec().Info.Title
 
@@ -262,16 +261,13 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 			}
 			api.CurrentVersion = ver.(string)
 
-			api.Methods = make(map[string]Method)
-
-			c.getMethods(tag, api, api.Methods, &pathItem, path, ver.(string)) // Current version
-			c.getVersions(tag, api, pathItem.Versions, path)                   // All versions
+			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver.(string)) // Current version
+			c.getVersions(tag, api, pathItem.Versions, path)                    // All versions
 
 			// If API was populated (will not be if tags do not match), add to set
 			if len(api.Methods) > 0 {
 				logger.Tracef(nil, "    + Adding %s\n", name)
-				//c.APIs = append(c.APIs, *api) // All APIs (versioned within)
-				c.APIs[api.ID] = *api // All APIs (versioned within)
+				c.APIs = append(c.APIs, *api) // All APIs (versioned within)
 			}
 		}
 	}
@@ -286,8 +282,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 			napi := api
 			napi.Methods = napi.Versions[v]
 			napi.Versions = nil
-			//c.APIVersions[v] = append(c.APIVersions[v], napi) // Group APIs by version
-			c.APIVersions[v][napi.ID] = napi // Group APIs by version
+			c.APIVersions[v] = append(c.APIVersions[v], napi) // Group APIs by version
 		}
 	}
 
@@ -314,19 +309,19 @@ func (c *APISpecification) getVersions(tag spec.Tag, api *API, versions map[stri
 	if versions == nil {
 		return
 	}
-	api.Versions = make(map[string]map[string]Method)
+	api.Versions = make(map[string][]Method)
 
 	for v, pi := range versions {
 		logger.Tracef(nil, "Process version %s\n", v)
-		method := make(map[string]Method)
-		c.getMethods(tag, api, method, &pi, path, v)
+		var method []Method
+		c.getMethods(tag, api, &method, &pi, path, v)
 		api.Versions[v] = method
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods map[string]Method, pi *spec.PathItem, path string, version string) {
+func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods *[]Method, pi *spec.PathItem, path string, version string) {
 
 	c.getMethod(tag, api, methods, version, pi, pi.Get, path, "get")
 	c.getMethod(tag, api, methods, version, pi, pi.Post, path, "post")
@@ -339,7 +334,7 @@ func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods map[string
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods map[string]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
+func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
 	if operation == nil {
 		return
 	}
@@ -353,16 +348,14 @@ func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods map[string]
 			return
 		}
 		method := c.processMethod(api, pathitem, operation, path, methodname, version)
-		//*methods = append(*methods, *method)
-		methods[method.Name] = *method
+		*methods = append(*methods, *method)
 	} else {
 		logger.Tracef(nil, "    > Check tags")
 		for _, t := range operation.Tags {
 			logger.Tracef(nil, "      - Compare tag '%s' with '%s'\n", tag.Name, t)
 			if tag.Name == "" || t == tag.Name {
 				method := c.processMethod(api, pathitem, operation, path, methodname, version)
-				//*methods = append(*methods, *method)
-				methods[method.Name] = *method
+				*methods = append(*methods, *method)
 			}
 		}
 	}
@@ -497,7 +490,7 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 			}
 			c.ResourceList[version][r.ID] = vres
 
-			// Add to the  list of methods which use this resource
+			// Compile a list of the methods which use this resource
 			vres.Methods = append(vres.Methods, *method)
 
 			// Add the resource to the method which uses it
