@@ -178,6 +178,7 @@ func LoadSpecifications(host string, collapse bool) error {
 
 		//APISuite[specification.ID] = specification
 		APISuite.FoldVersions(specification)
+
 		err = APISuite.Merge(specification)
 		if err != nil {
 			return err
@@ -234,6 +235,30 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
 		//spew.Dump(swaggerdoc)
 
+		var api *API
+		groupingByTag := false
+
+		if tag.Name != "" {
+			groupingByTag = true
+		}
+
+		var name string // Will only populate if Tagging used in spec. processMethod overrides if needed.
+		name = tag.Description
+		if name == "" {
+			name = tag.Name
+		}
+		logger.Tracef(nil, "    - %s\n", name)
+
+		// If we're grouping by TAGs, then build the API at the tag level
+		if groupingByTag {
+			api = &API{
+				ID:   TitleToKebab(name),
+				Name: name,
+				URL:  u,
+				Info: &c.APIInfo,
+			}
+		}
+
 		for path, pathItem := range swaggerdoc.AllPaths() {
 			logger.Tracef(nil, "    In path loop...\n")
 
@@ -241,19 +266,13 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 				path = basePath + path
 			}
 
-			var name string // Will only populate if Tagging used in spec. processMethod overrides if needed.
-			name = tag.Description
-			if name == "" {
-				name = tag.Name
-			}
-
-			logger.Tracef(nil, "    - %s\n", name)
-
-			api := &API{
-				ID:   TitleToKebab(name),
-				Name: name,
-				URL:  u,
-				Info: &c.APIInfo,
+			if !groupingByTag {
+				api = &API{
+					ID:   TitleToKebab(name),
+					Name: name,
+					URL:  u,
+					Info: &c.APIInfo,
+				}
 			}
 
 			if ver, ok = pathItem.Extensions["x-version"]; !ok {
@@ -265,10 +284,15 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 			c.getVersions(tag, api, pathItem.Versions, path)                    // All versions
 
 			// If API was populated (will not be if tags do not match), add to set
-			if len(api.Methods) > 0 {
+			if !groupingByTag && len(api.Methods) > 0 {
 				logger.Tracef(nil, "    + Adding %s\n", name)
 				c.APIs = append(c.APIs, *api) // All APIs (versioned within)
 			}
+		}
+
+		if groupingByTag && len(api.Methods) > 0 {
+			logger.Tracef(nil, "    + Adding %s\n", name)
+			c.APIs = append(c.APIs, *api) // All APIs (versioned within)
 		}
 	}
 
@@ -419,7 +443,7 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 		API:         api,
 	}
 
-	// If Tagging is not used by spec to select and order API paths to document, then
+	// If Tagging is not used by spec to select, group and order API paths to document, then
 	// complete the missing names.
 	// First try the vendor extension x-pathName, falling back to summary if not set.
 	if pathname, ok := pathItem.Extensions["x-pathName"]; ok {
