@@ -38,13 +38,14 @@ type Info struct {
 
 // API represents an API
 type API struct {
-	ID             string
-	Name           string
-	URL            *url.URL
-	Versions       map[string][]Method `hash:"ignore"` // All versions, keyed by version string.
-	Methods        []Method            // The current version
-	CurrentVersion string              // The latest version in operation for the API
-	Info           *Info
+	ID                     string
+	Name                   string
+	URL                    *url.URL
+	MethodNavigationByType bool
+	Versions               map[string][]Method `hash:"ignore"` // All versions, keyed by version string.
+	Methods                []Method            // The current version
+	CurrentVersion         string              // The latest version in operation for the API
+	Info                   *Info
 }
 
 type Version struct {
@@ -81,6 +82,7 @@ type Method struct {
 	Name            string
 	Description     string
 	Method          string
+	NavigationName  string
 	Path            string
 	PathParams      []Parameter
 	QueryParams     []Parameter
@@ -223,6 +225,13 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 
 	c.getSecurityDefinitions(swaggerdoc.Spec())
 
+	methodNavByType := false // Should methods in the navigation be presented by type (GET, POST) or name (string)?
+	if byname, ok := swaggerdoc.Spec().Extensions["x-methods-by-type"]; ok {
+		if byname.(bool) {
+			methodNavByType = true
+		}
+	}
+
 	// Use the top level TAGS to order the API resources/endpoints
 	// If Tags: [] is not defined, or empty, then no filtering or ordering takes place,#
 	// and all API paths will be documented..
@@ -256,6 +265,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 				Name: name,
 				URL:  u,
 				Info: &c.APIInfo,
+				MethodNavigationByType: methodNavByType,
 			}
 		}
 
@@ -272,6 +282,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 					Name: name,
 					URL:  u,
 					Info: &c.APIInfo,
+					MethodNavigationByType: methodNavByType,
 				}
 			}
 
@@ -441,6 +452,16 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 		Path:        path,
 		Responses:   make(map[int]Response),
 		API:         api,
+	}
+
+	if navname, ok := o.Extensions["x-navigation-name"]; ok {
+		method.NavigationName = navname.(string)
+	} else {
+		if api.MethodNavigationByType {
+			method.NavigationName = method.Method
+		} else {
+			method.NavigationName = method.Name
+		}
 	}
 
 	// If Tagging is not used by spec to select, group and order API paths to document, then
