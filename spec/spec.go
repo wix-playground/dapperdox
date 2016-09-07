@@ -1,4 +1,4 @@
-	package spec
+package spec
 
 import (
 	"encoding/json"
@@ -544,10 +544,10 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 	}
 
 	stype := checkPropertyType(s)
-	log.Printf("Schema type: %s\n", stype)
+	log.Printf("resourceFromSchema: Schema type: %s\n", stype)
 
 	logger.Printf(nil, "CHECK schema type and items\n")
-	spew.Dump(s)
+	//spew.Dump(s)
 
 	// XXX This is a bit of a hack, as it is possible for a response to be an array of
 	//     objects, and it it possible to declare this in several ways:
@@ -596,8 +596,8 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 			s.Type = spec.StringOrArray([]string{"[" + string(s.Type[0]) + "]"})
 		}
 		//fmt.Printf("TYPE IS %s\n", s.Type[0] )
-		//fmt.Printf("REMAP SCHEMA\n")
-		//spew.Dump(s)
+		log.Printf("REMAP SCHEMA\n")
+		spew.Dump(s)
 	}
 
 	id := TitleToKebab(s.Title)
@@ -610,6 +610,12 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title member.", strings.ToUpper(method.Method), method.Path)
 		//spew.Dump(method)
 		os.Exit(1)
+	}
+
+	if strings.ToLower(s.Type[0]) != "object" {
+		if strings.ToLower(s.Type[0]) == "array" {
+			fqNS = append(fqNS[0:len(fqNS)-1], fqNS[len(fqNS)-1]+"[]")
+		}
 	}
 
 	myFQNS := append([]string{}, fqNS...)
@@ -627,11 +633,12 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 		description = string(github_flavored_markdown.Markdown([]byte(s.Description)))
 	} else {
 		description = s.Title
-		if len(myFQNS) > 0 {
-			description = description + " - " + myFQNS[len(myFQNS)-1]
-		}
+		//if len(myFQNS) > 0 {
+		//	description = description + " - " + myFQNS[len(myFQNS)-1]
+		//}
 	}
 
+	log.Printf("Create resource %s\n", id)
 	r := &Resource{
 		ID:          id,
 		Title:       s.Title,
@@ -660,6 +667,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 	required := make(map[string]bool)
 	json_representation := make(map[string]interface{}) // FIXME This is TOO restrictive. What about arrays?
 
+	log.Printf("Call compileproperties...\n")
 	compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped)
 
 	for allof := range s.AllOf {
@@ -672,6 +680,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 	//       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
 	//
 
+	log.Printf("Build resource schema example...\n")
 	if strings.ToLower(r.Type[0]) != "object" {
 		if strings.ToLower(r.Type[0]) == "array" {
 			var array_obj []map[string]interface{}
@@ -681,7 +690,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 				logger.Errorf(nil, "Error encoding schema json: %s", err)
 			}
 			r.Schema = string(schema)
-		}else {
+		} else {
 			r.Schema = r.Type[0]
 		}
 	} else {
@@ -691,7 +700,9 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 		}
 		r.Schema = string(schema)
 	}
+	log.Printf("... %s\n", r.Schema)
 
+	log.Printf("resourceFromSchema done\n")
 	return r
 }
 
@@ -716,11 +727,6 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 			newFQNS = append(newFQNS, id)
 		}
 
-		//if s.Properties[name].Type[0] == "array" {
-		//	newFQNS = append(newFQNS, name+"[x]")
-		//} else {
-		//	newFQNS = append(newFQNS, name)
-		//}
 		newFQNS = append(newFQNS, name)
 
 		log.Printf("A call resourceFromSchema for property %s\n", name)
@@ -739,16 +745,6 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 					if property.Items.Schema != nil {
 
 						log.Printf("ARRAY PROCESS %s:\n", name)
-						//spew.Dump(property.Items.Schema)
-
-						// Add [] to end of fully qualified name space
-						xFQNS := append([]string{}, newFQNS...)
-						if len(xFQNS) > 0 {
-							xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
-						}
-
-						log.Printf("B call resourceFromSchema for property %s\n", name)
-						r.Properties[name] = resourceFromSchema(property.Items.Schema, method, xFQNS)
 
 						// Some outputs (example schema, member description) are generated differently
 						// if the array member references an object or a primitive type
@@ -767,21 +763,8 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 						var f interface{}
 						_ = json.Unmarshal([]byte(example_sch), &f)
 						json_rep[name] = f
-
-						// Override type to reflect it is an array
-						//r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[0] + "]"
 					} else {
 						log.Printf("... and schema for %s is nil", name)
-						//// array object fixes
-						//xFQNS := append([]string{}, newFQNS...)
-						//if len(xFQNS) > 0 {
-						//	xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
-						//}
-						//r.Properties[name] = resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
-						//r.Properties[name].Type[0] = "array[" + r.Properties[name].Type[1] + "]" // XXX WATCH OUT FOR [1]
-						//json_rep[name] = r.Properties[name].Schema
-
-						// ----
 						var example_sch string
 						if strings.ToLower(r.Properties[name].Type[0]) == "object" {
 							example_sch = r.Properties[name].Schema // Untested in this context.

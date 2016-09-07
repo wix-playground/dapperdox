@@ -44,6 +44,12 @@
                             "$ref": "#/definitions/Activities"
                         }
                     },
+                    "201": {
+                        "description": "History information for the given user",
+                        "schema": {
+                            "$ref": "#/definitions/ArrayOfObject"
+                        }
+                    },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
@@ -58,7 +64,7 @@
         "Activities": {
             "title": "Activities resource",
             "properties": {
-                "string_array": {
+                "dave_outer": {
                     "type": "array",
                     "description" : "Array of strings",
                     "items" : {
@@ -70,13 +76,34 @@
         "temp" : {
           "title" : "test",
           "properties" : {
-            "dave": {
+            "dave_inner": {
               "type":"array",
               "items" : {
                 "type":"string"
               }
             }
           }
+        },
+        "ArrayOfObject": {
+            "title": "ArrayOfObject resource",
+            "properties": {
+                "chris_outer": {
+                    "type": "array",
+                    "description" : "Array of objects",
+                    "items" : {
+                      "$ref": "#/definitions/SimpleObject"
+                    }
+                }
+            }
+        },
+        "SimpleObject": {
+            "title": "SimpleObject resource",
+            "properties": {
+                "chris_inner": {
+                    "description": "Just a plain old string",
+                    "type": "string"
+                }
+            }
         },
         "Error": {
             "title": "Error resource",
