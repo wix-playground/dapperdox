@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -612,9 +612,9 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 			log.Printf("Got array for %s\n", s.Title)
 			s.Type = stringorarray
 		} else if stringorarray.Contains("array") && len(s.Properties) == 0 {
-			//if we get here then we can assume the type is supposed to be an array of primitives
-			s.Type = spec.StringOrArray([]string{"[" + string(s.Type[0]) + "]"})
-			//s.Type = spec.StringOrArray([]string{"array", s.Type[0]})
+			// if we get here then we can assume the type is supposed to be an array of primitives
+			// Store the actual primitive type in the second element of the Type array.
+			s.Type = spec.StringOrArray([]string{"array", s.Type[0]})
 		}
 		log.Printf("REMAP SCHEMA\n")
 	}
@@ -726,8 +726,8 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 		if _, ok := required[name]; ok {
 			r.Properties[name].Required = true
 		}
+		log.Printf("resource property %s type: %s\n", name, r.Properties[name].Type[0])
 
-		// XXX This really is quite a juggle!
 		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
 			// Arrays of objects need to be handled as a special case
 			if strings.ToLower(r.Properties[name].Type[0]) == "array" {
@@ -739,28 +739,29 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 
 						// Some outputs (example schema, member description) are generated differently
 						// if the array member references an object or a primitive type
-						//var example_sch string
-						switch strings.ToLower(r.Properties[name].Type[0]) {
-						case "object":
-							//example_sch = r.Properties[name].Schema
-						case "array":
-							//example_sch = r.Properties[name].Schema
-							r.Properties[name].Description = property.Description
-							log.Printf("XXX %s XXX\n", name)
-						default:
-							//example_sch = "\"" + r.Properties[name].Type[0] + "\""
-							r.Properties[name].Description = property.Description
-						}
+						r.Properties[name].Description = property.Description
 
-						var array_obj []map[string]interface{}
-						array_obj = append(array_obj, json_resource)
-						json_rep[name] = array_obj
-					} else {
+						// If here, we have no json_resource returned from resourceFromSchema, then the property
+						// is an array of primitive, so construct either an array of string or array of object
+						// as appropriate.
+						if len(json_resource) > 0 {
+							var array_obj []map[string]interface{}
+							array_obj = append(array_obj, json_resource)
+							json_rep[name] = array_obj
+						} else {
+							var array_obj []string
+							// We stored the real type of the primitive in Type array index 1 (see the note in
+							// resourceFromSchema).
+							array_obj = append(array_obj, r.Properties[name].Type[1])
+							json_rep[name] = array_obj
+						}
+					} else { // property.Items.Schema is NIL
 						log.Printf("... and schema for %s is nil", name)
 						//var example_sch string
 						if strings.ToLower(r.Properties[name].Type[0]) == "object" {
 							//example_sch = r.Properties[name].Schema // Untested in this context.
 						} else {
+							// FIXME FIXME FIXME TEST THIS FIXME FIXME FIXME
 							xFQNS := append([]string{}, newFQNS...)
 							if len(xFQNS) > 0 {
 								xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
@@ -769,6 +770,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 							g, jr := resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
 							_ = g
 							json_resource = jr // XXX EEK - This overrides the json_resource - TEST THIS XXX
+							// FIXME FIXME FIXME TEST THIS FIXME FIXME FIXME
 						}
 
 						var array_obj []map[string]interface{}
