@@ -621,7 +621,10 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 
 	if strings.ToLower(s.Type[0]) != "object" {
 		if strings.ToLower(s.Type[0]) == "array" {
-			fqNS = append(fqNS[0:len(fqNS)-1], fqNS[len(fqNS)-1]+"[]")
+			fqNSlen := len(fqNS)
+			if fqNSlen > 0 {
+				fqNS = append(fqNS[0:fqNSlen-1], fqNS[fqNSlen-1]+"[]")
+			}
 		}
 	}
 
@@ -800,7 +803,9 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 						//var f interface{}
 						// _ = json.Unmarshal([]byte(example_sch), &f)
 						// json_rep[name] = f
-						json_rep[name] = json_resource
+						var array_obj []map[string]interface{}
+						array_obj = append(array_obj, json_resource)
+						json_rep[name] = array_obj
 					}
 				} else {
 					log.Printf("... and Items for %s are nil", name)
