@@ -410,7 +410,11 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 				ResourceList[version] = make(map[string]*Resource)
 			}
 			var ok bool
-			r := resourceFromSchema(response.Schema, method, nil) // May be thrown away
+			r, example_json := resourceFromSchema(response.Schema, method, nil) // May be thrown away
+
+			spew.Dump(example_json)
+			example, _ := json.MarshalIndent(example_json, "", "    ")
+			r.Schema = string(example)
 
 			// Look for a pre-declared resource with the response ID, and use that or create the first one...
 			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
@@ -435,8 +439,11 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 	}
 
 	if o.Responses.Default != nil {
-		r := resourceFromSchema(o.Responses.Default.Schema, method, nil)
+		r, json := resourceFromSchema(o.Responses.Default.Schema, method, nil)
 		if r != nil {
+
+			spew.Dump(json)
+
 			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
 			// Look for a pre-declared resource with the response ID, and use that or create the first one...
 			var vres *Resource
@@ -538,9 +545,9 @@ func checkPropertyType(s *spec.Schema) string {
 
 // -----------------------------------------------------------------------------
 
-func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource {
+func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resource, map[string]interface{}) {
 	if s == nil {
-		return nil
+		return nil, nil
 	}
 
 	stype := checkPropertyType(s)
@@ -597,7 +604,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 		}
 		//fmt.Printf("TYPE IS %s\n", s.Type[0] )
 		log.Printf("REMAP SCHEMA\n")
-		spew.Dump(s)
+		//spew.Dump(s)
 	}
 
 	id := TitleToKebab(s.Title)
@@ -680,30 +687,31 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) *Resource
 	//       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
 	//
 
-	log.Printf("Build resource schema example...\n")
-	if strings.ToLower(r.Type[0]) != "object" {
-		if strings.ToLower(r.Type[0]) == "array" {
-			var array_obj []map[string]interface{}
-			array_obj = append(array_obj, json_representation)
-			schema, err := json.MarshalIndent(array_obj, "", "    ")
-			if err != nil {
-				logger.Errorf(nil, "Error encoding schema json: %s", err)
-			}
-			r.Schema = string(schema)
-		} else {
-			r.Schema = r.Type[0]
-		}
-	} else {
-		schema, err := json.MarshalIndent(json_representation, "", "    ")
-		if err != nil {
-			logger.Errorf(nil, "Error encoding schema json: %s", err)
-		}
-		r.Schema = string(schema)
-	}
-	log.Printf("... %s\n", r.Schema)
+	//log.Printf("Build resource schema example...\n")
+	//if strings.ToLower(r.Type[0]) != "object" {
+	//	if strings.ToLower(r.Type[0]) == "array" {
+	//		var array_obj []map[string]interface{}
+	//		array_obj = append(array_obj, json_representation)
+	//		schema, err := json.MarshalIndent(array_obj, "", "    ")
+	//		if err != nil {
+	//			logger.Errorf(nil, "Error encoding schema json: %s", err)
+	//		}
+	//		r.Schema = string(schema)
+	//	} else {
+	//		r.Schema = r.Type[0]
+	//	}
+	//} else {
+	//	schema, err := json.MarshalIndent(json_representation, "", "    ")
+	//	if err != nil {
+	//		logger.Errorf(nil, "Error encoding schema json: %s", err)
+	//	}
+	//	r.Schema = string(schema)
+	//}
+	//log.Printf("... %s\n", r.Schema)
 
 	log.Printf("resourceFromSchema done\n")
-	return r
+
+	return r, json_representation
 }
 
 // -----------------------------------------------------------------------------
@@ -729,8 +737,10 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 
 		newFQNS = append(newFQNS, name)
 
+		var json_resource map[string]interface{}
+
 		log.Printf("A call resourceFromSchema for property %s\n", name)
-		r.Properties[name] = resourceFromSchema(&property, method, newFQNS)
+		r.Properties[name], json_resource = resourceFromSchema(&property, method, newFQNS)
 
 		if _, ok := required[name]; ok {
 			r.Properties[name].Required = true
@@ -760,14 +770,19 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 							r.Properties[name].Description = property.Description
 						}
 
-						var f interface{}
-						_ = json.Unmarshal([]byte(example_sch), &f)
-						json_rep[name] = f
+						_ = example_sch // FIXME
+
+						//var f interface{}
+						//_ = json.Unmarshal([]byte(example_sch), &f)
+						//json_rep[name] = f
+						var array_obj []map[string]interface{}
+						array_obj = append(array_obj, json_resource)
+						json_rep[name] = array_obj
 					} else {
 						log.Printf("... and schema for %s is nil", name)
-						var example_sch string
+						//var example_sch string
 						if strings.ToLower(r.Properties[name].Type[0]) == "object" {
-							example_sch = r.Properties[name].Schema // Untested in this context.
+							//example_sch = r.Properties[name].Schema // Untested in this context.
 						} else {
 							//example_sch = "\"" + r.Properties[name].Type[0] + "\""
 							//r.Properties[name].Description = property.Description
@@ -775,24 +790,30 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 							if len(xFQNS) > 0 {
 								xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
 							}
-							g := resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
-							example_sch = g.Schema
+
+							g, jr := resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
+							_ = g
+							//example_sch = g.Schema
+							json_resource = jr // XXX EEK - This overrides the json_resource - TEST THIS XXX
 						}
 
-						var f interface{}
-						_ = json.Unmarshal([]byte(example_sch), &f)
-						json_rep[name] = f
+						//var f interface{}
+						// _ = json.Unmarshal([]byte(example_sch), &f)
+						// json_rep[name] = f
+						json_rep[name] = json_resource
 					}
 				} else {
 					log.Printf("... and Items for %s are nil", name)
 				}
 			} else {
-				json_rep[name] = r.Properties[name].Schema
+				json_rep[name] = r.Properties[name].Type[0]
+				//json_rep[name] = json_resource
 			}
 		} else {
-			var f interface{}
-			_ = json.Unmarshal([]byte(r.Properties[name].Schema), &f)
-			json_rep[name] = f
+			//var f interface{}
+			//_ = json.Unmarshal([]byte(r.Properties[name].Schema), &f)
+			// json_rep[name] = f
+			json_rep[name] = json_resource
 		}
 	}
 }
