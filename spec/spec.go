@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -412,9 +412,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 			var ok bool
 			r, example_json := resourceFromSchema(response.Schema, method, nil) // May be thrown away
 
-			spew.Dump(example_json)
-			example, _ := json.MarshalIndent(example_json, "", "    ")
-			r.Schema = string(example)
+			r.Schema = jsonResourceToString(example_json, r.Type[0])
 
 			// Look for a pre-declared resource with the response ID, and use that or create the first one...
 			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
@@ -439,10 +437,10 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 	}
 
 	if o.Responses.Default != nil {
-		r, json := resourceFromSchema(o.Responses.Default.Schema, method, nil)
+		r, example_json := resourceFromSchema(o.Responses.Default.Schema, method, nil)
 		if r != nil {
 
-			spew.Dump(json)
+			r.Schema = jsonResourceToString(example_json, r.Type[0])
 
 			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
 			// Look for a pre-declared resource with the response ID, and use that or create the first one...
@@ -494,6 +492,22 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 	//spew.Dump(method.Security)
 
 	return method
+}
+
+// -----------------------------------------------------------------------------
+
+func jsonResourceToString(jsonres map[string]interface{}, restype string) string {
+
+	// If the resource is an array, then append json object to outer array, else serialise the object.
+	var example []byte
+	if strings.ToLower(restype) == "array" {
+		var array_obj []map[string]interface{}
+		array_obj = append(array_obj, jsonres)
+		example, _ = json.MarshalIndent(array_obj, "", "    ")
+	} else {
+		example, _ = json.MarshalIndent(jsonres, "", "    ")
+	}
+	return string(example)
 }
 
 // -----------------------------------------------------------------------------
@@ -591,7 +605,6 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 		}
 		if s.Type == nil {
 			log.Printf("Got array of objects? Name %s\n", s.Title)
-			//////s.Type = append(stringorarray, s.Title) // Especially for an array of objects.. Perhaps this should be in COMPILE PROPERTIES??
 			// Trying to fix issue/11
 			s.Type = stringorarray
 			// Trying to fix issue/11
@@ -601,10 +614,9 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 		} else if stringorarray.Contains("array") && len(s.Properties) == 0 {
 			//if we get here then we can assume the type is supposed to be an array of primitives
 			s.Type = spec.StringOrArray([]string{"[" + string(s.Type[0]) + "]"})
+			//s.Type = spec.StringOrArray([]string{"array", s.Type[0]})
 		}
-		//fmt.Printf("TYPE IS %s\n", s.Type[0] )
 		log.Printf("REMAP SCHEMA\n")
-		//spew.Dump(s)
 	}
 
 	id := TitleToKebab(s.Title)
@@ -615,7 +627,6 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 
 	if len(fqNS) == 0 && id == "" {
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title member.", strings.ToUpper(method.Method), method.Path)
-		//spew.Dump(method)
 		os.Exit(1)
 	}
 
@@ -643,9 +654,6 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 		description = string(github_flavored_markdown.Markdown([]byte(s.Description)))
 	} else {
 		description = s.Title
-		//if len(myFQNS) > 0 {
-		//	description = description + " - " + myFQNS[len(myFQNS)-1]
-		//}
 	}
 
 	log.Printf("Create resource %s\n", id)
@@ -672,10 +680,8 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 		}
 	}
 
-	//logger.Tracef(nil, "expandSchema Type %s FQNS '%s'\n", s.Type, strings.Join(myFQNS, "."))
-
 	required := make(map[string]bool)
-	json_representation := make(map[string]interface{}) // FIXME This is TOO restrictive. What about arrays?
+	json_representation := make(map[string]interface{})
 
 	log.Printf("Call compileproperties...\n")
 	compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped)
@@ -683,34 +689,6 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 	for allof := range s.AllOf {
 		compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped)
 	}
-
-	// Build element of resource schema example
-	// FIXME This *explodes* if there is no "type" member in the actual model definition - which is probably right
-	//       for setting type of array in the model is a bit restrictive - better if set in the response decl. to
-	//       say that the response for a status code is { "type":"array", "schema" : { "$ref": model } }
-	//
-
-	//log.Printf("Build resource schema example...\n")
-	//if strings.ToLower(r.Type[0]) != "object" {
-	//	if strings.ToLower(r.Type[0]) == "array" {
-	//		var array_obj []map[string]interface{}
-	//		array_obj = append(array_obj, json_representation)
-	//		schema, err := json.MarshalIndent(array_obj, "", "    ")
-	//		if err != nil {
-	//			logger.Errorf(nil, "Error encoding schema json: %s", err)
-	//		}
-	//		r.Schema = string(schema)
-	//	} else {
-	//		r.Schema = r.Type[0]
-	//	}
-	//} else {
-	//	schema, err := json.MarshalIndent(json_representation, "", "    ")
-	//	if err != nil {
-	//		logger.Errorf(nil, "Error encoding schema json: %s", err)
-	//	}
-	//	r.Schema = string(schema)
-	//}
-	//log.Printf("... %s\n", r.Schema)
 
 	log.Printf("resourceFromSchema done\n")
 
@@ -761,23 +739,19 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 
 						// Some outputs (example schema, member description) are generated differently
 						// if the array member references an object or a primitive type
-						var example_sch string
+						//var example_sch string
 						switch strings.ToLower(r.Properties[name].Type[0]) {
 						case "object":
-							example_sch = r.Properties[name].Schema
+							//example_sch = r.Properties[name].Schema
 						case "array":
-							example_sch = r.Properties[name].Schema
+							//example_sch = r.Properties[name].Schema
 							r.Properties[name].Description = property.Description
+							log.Printf("XXX %s XXX\n", name)
 						default:
-							example_sch = "\"" + r.Properties[name].Type[0] + "\""
+							//example_sch = "\"" + r.Properties[name].Type[0] + "\""
 							r.Properties[name].Description = property.Description
 						}
 
-						_ = example_sch // FIXME
-
-						//var f interface{}
-						//_ = json.Unmarshal([]byte(example_sch), &f)
-						//json_rep[name] = f
 						var array_obj []map[string]interface{}
 						array_obj = append(array_obj, json_resource)
 						json_rep[name] = array_obj
@@ -787,8 +761,6 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 						if strings.ToLower(r.Properties[name].Type[0]) == "object" {
 							//example_sch = r.Properties[name].Schema // Untested in this context.
 						} else {
-							//example_sch = "\"" + r.Properties[name].Type[0] + "\""
-							//r.Properties[name].Description = property.Description
 							xFQNS := append([]string{}, newFQNS...)
 							if len(xFQNS) > 0 {
 								xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
@@ -796,13 +768,9 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 
 							g, jr := resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
 							_ = g
-							//example_sch = g.Schema
 							json_resource = jr // XXX EEK - This overrides the json_resource - TEST THIS XXX
 						}
 
-						//var f interface{}
-						// _ = json.Unmarshal([]byte(example_sch), &f)
-						// json_rep[name] = f
 						var array_obj []map[string]interface{}
 						array_obj = append(array_obj, json_resource)
 						json_rep[name] = array_obj
@@ -812,12 +780,8 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 				}
 			} else {
 				json_rep[name] = r.Properties[name].Type[0]
-				//json_rep[name] = json_resource
 			}
 		} else {
-			//var f interface{}
-			//_ = json.Unmarshal([]byte(r.Properties[name].Schema), &f)
-			// json_rep[name] = f
 			json_rep[name] = json_resource
 		}
 	}
