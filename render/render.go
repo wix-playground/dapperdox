@@ -97,14 +97,14 @@ func (w HTMLWriter) Flush()                         { w.h.Flush() }
 func overlay(name string, data []interface{}) template.HTML { // TODO Will be specification specific
 
 	if data == nil || data[0] == nil {
-		logger.Printf(nil, "Data nil\n")
+		logger.Tracef(nil, "Data nil\n")
 		return ""
 	}
 
 	datamap, ok := data[0].(map[string]interface{})
 
 	if !ok {
-		logger.Printf(nil, "datamap err\n")
+		logger.Error(nil, "datamap err\n")
 		return ""
 	}
 
