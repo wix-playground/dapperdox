@@ -1,1 +1,10 @@
-<h2 class="heading-medium">[: .error :]</h2>
+[: if eq .status "404" :]
+
+<h2 class="heading-medium">[: .status :] Page not found</h2>
+<p>The requested page [: .URL :] was not found at this site.</p>
+
+[: else :]
+
+<h2 class="heading-medium">[: .status :] [: .error :]</h2>
+
+[: end :]

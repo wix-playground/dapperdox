@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	//"github.com/zxchris/swaggerly/assets"
 	"github.com/gorilla/pat"
 	"github.com/zxchris/swaggerly/logger"
 	"github.com/zxchris/swaggerly/render"
@@ -17,7 +16,7 @@ func Register(r *pat.Router) {
 	logger.Debugln(nil, "registering not found handler in static package")
 
 	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		render.HTML(w, http.StatusNotFound, "error", render.DefaultVars(req, nil, map[string]interface{}{"error": "Page not found"}))
+		render.HTML(w, http.StatusNotFound, "error", render.DefaultVars(req, nil, map[string]interface{}{"status": "404", "error": "Page not found", "URL": req.URL.Path}))
 	})
 
 	logger.Debugln(nil, "registering static content handlers for static package")
