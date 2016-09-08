@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -122,7 +122,7 @@ type Parameter struct {
 // Response represents an API method response
 type Response struct {
 	Description string
-	Schema      *Resource // FIXME rename as Resource?
+	Resource    *Resource // FIXME rename as Resource?
 }
 
 // Resource represents an API resource
@@ -432,7 +432,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 
 		method.Responses[status] = Response{
 			Description: response.Description,
-			Schema:      vres,
+			Resource:    vres,
 		}
 	}
 
@@ -458,7 +458,7 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 			// Set the default response
 			method.DefaultResponse = &Response{
 				Description: o.Responses.Default.Description,
-				Schema:      vres,
+				Resource:    vres,
 			}
 		}
 	}
@@ -487,9 +487,6 @@ func processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, m
 			}
 		}
 	}
-
-	//fmt.Printf("DUMPING Method Security\n")
-	//spew.Dump(method.Security)
 
 	return method
 }
@@ -565,9 +562,8 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 	}
 
 	stype := checkPropertyType(s)
-	log.Printf("resourceFromSchema: Schema type: %s\n", stype)
-
-	logger.Printf(nil, "CHECK schema type and items\n")
+	logger.Tracef(nil, "resourceFromSchema: Schema type: %s\n", stype)
+	logger.Tracef(nil, "CHECK schema type and items\n")
 	//spew.Dump(s)
 
 	// XXX This is a bit of a hack, as it is possible for a response to be an array of
@@ -596,27 +592,30 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 
 	if s.Items != nil {
 		stringorarray := s.Type
+
+		// Jump to nearest schema for items, depending on how it was declared
 		if s.Items.Schema != nil { // items: { properties: {} }
 			s = s.Items.Schema
-			log.Printf("got s.Items.Schema for %s\n", s.Title)
+			logger.Tracef(nil, "got s.Items.Schema for %s\n", s.Title)
 		} else { // items: { $ref: "" }
 			s = &s.Items.Schemas[0]
-			log.Printf("got s.Items.Schemas[0] for %s\n", s.Title)
+			logger.Tracef(nil, "got s.Items.Schemas[0] for %s\n", s.Title)
 		}
+
 		if s.Type == nil {
-			log.Printf("Got array of objects? Name %s\n", s.Title)
+			logger.Tracef(nil, "Got array of objects? Name %s\n", s.Title)
 			// Trying to fix issue/11
 			s.Type = stringorarray
 			// Trying to fix issue/11
 		} else if s.Type.Contains("array") {
-			log.Printf("Got array for %s\n", s.Title)
+			logger.Tracef(nil, "Got array for %s\n", s.Title)
 			s.Type = stringorarray
 		} else if stringorarray.Contains("array") && len(s.Properties) == 0 {
 			// if we get here then we can assume the type is supposed to be an array of primitives
 			// Store the actual primitive type in the second element of the Type array.
 			s.Type = spec.StringOrArray([]string{"array", s.Type[0]})
 		}
-		log.Printf("REMAP SCHEMA\n")
+		logger.Tracef(nil, "REMAP SCHEMA\n")
 	}
 
 	id := TitleToKebab(s.Title)
@@ -656,7 +655,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 		description = s.Title
 	}
 
-	log.Printf("Create resource %s\n", id)
+	logger.Tracef(nil, "Create resource %s\n", id)
 	r := &Resource{
 		ID:          id,
 		Title:       s.Title,
@@ -683,14 +682,14 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 	required := make(map[string]bool)
 	json_representation := make(map[string]interface{})
 
-	log.Printf("Call compileproperties...\n")
+	logger.Tracef(nil, "Call compileproperties...\n")
 	compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped)
 
 	for allof := range s.AllOf {
 		compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped)
 	}
 
-	log.Printf("resourceFromSchema done\n")
+	logger.Tracef(nil, "resourceFromSchema done\n")
 
 	return r, json_representation
 }
@@ -709,7 +708,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 
 	// Now process the properties
 	for name, property := range s.Properties {
-		log.Printf("Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
+		logger.Tracef(nil, "Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
 		newFQNS := append([]string{}, myFQNS...)
 
 		if chopped && len(id) > 0 {
@@ -720,22 +719,22 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 
 		var json_resource map[string]interface{}
 
-		log.Printf("A call resourceFromSchema for property %s\n", name)
+		logger.Tracef(nil, "A call resourceFromSchema for property %s\n", name)
 		r.Properties[name], json_resource = resourceFromSchema(&property, method, newFQNS)
 
 		if _, ok := required[name]; ok {
 			r.Properties[name].Required = true
 		}
-		log.Printf("resource property %s type: %s\n", name, r.Properties[name].Type[0])
+		logger.Tracef(nil, "resource property %s type: %s\n", name, r.Properties[name].Type[0])
 
 		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
 			// Arrays of objects need to be handled as a special case
 			if strings.ToLower(r.Properties[name].Type[0]) == "array" {
-				log.Printf("Processing an array property %s", name)
+				logger.Tracef(nil, "Processing an array property %s", name)
 				if property.Items != nil {
 					if property.Items.Schema != nil {
 
-						log.Printf("ARRAY PROCESS %s:\n", name)
+						logger.Tracef(nil, "ARRAY PROCESS %s:\n", name)
 
 						// Some outputs (example schema, member description) are generated differently
 						// if the array member references an object or a primitive type
@@ -756,29 +755,11 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 							json_rep[name] = array_obj
 						}
 					} else { // property.Items.Schema is NIL
-						log.Printf("... and schema for %s is nil", name)
-						//var example_sch string
-						if strings.ToLower(r.Properties[name].Type[0]) == "object" {
-							//example_sch = r.Properties[name].Schema // Untested in this context.
-						} else {
-							// FIXME FIXME FIXME TEST THIS FIXME FIXME FIXME
-							xFQNS := append([]string{}, newFQNS...)
-							if len(xFQNS) > 0 {
-								xFQNS = append(newFQNS[0:len(newFQNS)-1], newFQNS[len(newFQNS)-1]+"[]")
-							}
-
-							g, jr := resourceFromSchema(&property.Items.Schemas[0], method, xFQNS)
-							_ = g
-							json_resource = jr // XXX EEK - This overrides the json_resource - TEST THIS XXX
-							// FIXME FIXME FIXME TEST THIS FIXME FIXME FIXME
-						}
-
-						var array_obj []map[string]interface{}
-						array_obj = append(array_obj, json_resource)
-						json_rep[name] = array_obj
+						// Pretty sure this can never happen, due to the schema manipulation that
+						// occurs in resourceFromSchema
 					}
 				} else {
-					log.Printf("... and Items for %s are nil", name)
+					logger.Tracef(nil, "... and Items for %s are nil", name)
 				}
 			} else {
 				json_rep[name] = r.Properties[name].Type[0]
