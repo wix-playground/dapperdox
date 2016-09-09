@@ -90,18 +90,37 @@
             "properties": {
                 "chris_outer": {
                     "type": "array",
-                    "description" : "Array of objects",
+                    "description" : "description on chris_outer",
                     "items" : {
+                      "$ref": "#/definitions/SimpleObject"
+                    }
+                },
+                "chris_partner": {
+                    "description" : "description on chris_partner",
+                    "items" : {
+                      "$ref": "#/definitions/WrapperObject"
+                    }
+                }
+            }
+        },
+        "WrapperObject": {
+            "title": "WrapperObjectResource",
+            "description": "description of WrapperObject",
+            "properties": {
+                "chris_wrapper": {
+                    "description": "description on chris_wrapper property",
+                    "items": {
                       "$ref": "#/definitions/SimpleObject"
                     }
                 }
             }
         },
         "SimpleObject": {
-            "title": "SimpleObject resource",
+            "title": "SimpleObjectResource",
+            "description": "description of SimpleObject",
             "properties": {
                 "chris_inner": {
-                    "description": "Just a plain old string",
+                    "description": "description on chris_inner property",
                     "type": "string"
                 }
             }
@@ -110,6 +129,7 @@
             "title": "Error resource",
             "properties": {
                 "code": {
+                    "description" : "The error code",
                     "type": "integer",
                     "format": "int32"
                 },

@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -535,19 +535,24 @@ func checkPropertyType(s *spec.Schema) string {
 	if s.Items != nil {
 		ptype = "UNKNOWN"
 
-		if s.Items.Schema != nil {
-			s = s.Items.Schema
-		} else {
-			s = &s.Items.Schemas[0] // - Main schema [1] = Additional properties? See online swagger editior.
-		}
+		if s.Type.Contains("array") {
 
-		if s.Type == nil {
-			ptype = "array of objects"
-			if s.SchemaProps.Type != nil {
-				ptype = "array of SOMETHING"
+			if s.Items.Schema != nil {
+				s = s.Items.Schema
+			} else {
+				s = &s.Items.Schemas[0] // - Main schema [1] = Additional properties? See online swagger editior.
 			}
-		} else if s.Type.Contains("array") {
-			ptype = "array of primitives"
+
+			if s.Type == nil {
+				ptype = "array of objects"
+				if s.SchemaProps.Type != nil {
+					ptype = "array of SOMETHING"
+				}
+			} else if s.Type.Contains("array") {
+				ptype = "array of primitives"
+			}
+		} else {
+			ptype = "Some object"
 		}
 	}
 
@@ -563,8 +568,9 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 
 	stype := checkPropertyType(s)
 	logger.Tracef(nil, "resourceFromSchema: Schema type: %s\n", stype)
+	logger.Tracef(nil, "FQNS: %s\n", fqNS)
 	logger.Tracef(nil, "CHECK schema type and items\n")
-	//spew.Dump(s)
+	spew.Dump(s)
 
 	// XXX This is a bit of a hack, as it is possible for a response to be an array of
 	//     objects, and it it possible to declare this in several ways:
@@ -587,9 +593,11 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 	//
 	// TODO Check if this is valid?? TODO
 	if s.Type == nil {
+		logger.Tracef(nil, "WOOO OBJECT\n")
 		s.Type = append(s.Type, "object")
 	}
 
+	original_s := s
 	if s.Items != nil {
 		stringorarray := s.Type
 
@@ -601,44 +609,40 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 			s = &s.Items.Schemas[0]
 			logger.Tracef(nil, "got s.Items.Schemas[0] for %s\n", s.Title)
 		}
-
 		if s.Type == nil {
-			logger.Tracef(nil, "Got array of objects? Name %s\n", s.Title)
-			// Trying to fix issue/11
-			s.Type = stringorarray
-			// Trying to fix issue/11
+			logger.Tracef(nil, "Got array of objects or object. Name %s\n", s.Title)
+			s.Type = stringorarray // Put back original type
 		} else if s.Type.Contains("array") {
 			logger.Tracef(nil, "Got array for %s\n", s.Title)
-			s.Type = stringorarray
+			s.Type = stringorarray // Put back original type
 		} else if stringorarray.Contains("array") && len(s.Properties) == 0 {
 			// if we get here then we can assume the type is supposed to be an array of primitives
 			// Store the actual primitive type in the second element of the Type array.
 			s.Type = spec.StringOrArray([]string{"array", s.Type[0]})
 		}
-		logger.Tracef(nil, "REMAP SCHEMA\n")
+		logger.Tracef(nil, "REMAP SCHEMA (Type is now %s)\n", s.Type)
 	}
 
 	id := TitleToKebab(s.Title)
-
-	if len(fqNS) > 0 && s.Type.Contains("array") {
-		id = ""
-	}
 
 	if len(fqNS) == 0 && id == "" {
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title member.", strings.ToUpper(method.Method), method.Path)
 		os.Exit(1)
 	}
 
-	if strings.ToLower(s.Type[0]) != "object" {
-		if strings.ToLower(s.Type[0]) == "array" {
-			fqNSlen := len(fqNS)
-			if fqNSlen > 0 {
-				fqNS = append(fqNS[0:fqNSlen-1], fqNS[fqNSlen-1]+"[]")
-			}
+	if len(fqNS) > 0 && s.Type.Contains("array") {
+		id = ""
+	}
+
+	if strings.ToLower(s.Type[0]) == "array" {
+		fqNSlen := len(fqNS)
+		if fqNSlen > 0 {
+			fqNS = append(fqNS[0:fqNSlen-1], fqNS[fqNSlen-1]+"[]")
 		}
 	}
 
-	myFQNS := append([]string{}, fqNS...)
+	//myFQNS := append([]string{}, fqNS...)
+	myFQNS := fqNS
 	var chopped bool
 
 	if len(id) == 0 && len(myFQNS) > 0 {
@@ -647,12 +651,22 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 		chopped = true
 	}
 
+	resourceFQNS := myFQNS
+	// If we are dealing with an object, then adjust the resource FQNS and id
+	// so that the last element of the FQNS is chopped off and used as the ID
+	if s.Type.Contains("object") {
+		if len(resourceFQNS) > 0 {
+			id = resourceFQNS[len(resourceFQNS)-1]
+			resourceFQNS = resourceFQNS[:len(resourceFQNS)-1]
+		}
+	}
+
 	// If there is no description... the case where we have an array of objects. See issue/11
 	var description string
-	if s.Description != "" {
-		description = string(github_flavored_markdown.Markdown([]byte(s.Description)))
+	if original_s.Description != "" {
+		description = string(github_flavored_markdown.Markdown([]byte(original_s.Description)))
 	} else {
-		description = s.Title
+		description = original_s.Title
 	}
 
 	logger.Tracef(nil, "Create resource %s\n", id)
@@ -662,7 +676,7 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 		Description: description,
 		Type:        s.Type,
 		Properties:  make(map[string]*Resource),
-		FQNS:        myFQNS,
+		FQNS:        resourceFQNS,
 	}
 
 	if s.Example != nil {
@@ -712,6 +726,7 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 		newFQNS := append([]string{}, myFQNS...)
 
 		if chopped && len(id) > 0 {
+			logger.Tracef(nil, "Append ID onto newFQNZ '%s'", id)
 			newFQNS = append(newFQNS, id)
 		}
 
@@ -734,8 +749,6 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 				if property.Items != nil {
 					if property.Items.Schema != nil {
 
-						logger.Tracef(nil, "ARRAY PROCESS %s:\n", name)
-
 						// Some outputs (example schema, member description) are generated differently
 						// if the array member references an object or a primitive type
 						r.Properties[name].Description = property.Description
@@ -755,11 +768,11 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 							json_rep[name] = array_obj
 						}
 					} else { // property.Items.Schema is NIL
-						// Pretty sure this can never happen, due to the schema manipulation that
-						// occurs in resourceFromSchema
+						logger.Tracef(nil, "**** property.Items.Schema is NIL\n")
+						json_rep[name] = json_resource
 					}
 				} else {
-					logger.Tracef(nil, "... and Items for %s are nil", name)
+					logger.Tracef(nil, "**** Items for %s are nil", name)
 				}
 			} else {
 				json_rep[name] = r.Properties[name].Type[0]
