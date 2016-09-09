@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/go-swagger/spec"
@@ -570,9 +570,9 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 	logger.Tracef(nil, "resourceFromSchema: Schema type: %s\n", stype)
 	logger.Tracef(nil, "FQNS: %s\n", fqNS)
 	logger.Tracef(nil, "CHECK schema type and items\n")
-	spew.Dump(s)
+	//spew.Dump(s)
 
-	// XXX This is a bit of a hack, as it is possible for a response to be an array of
+	// It is possible for a response to be an array of
 	//     objects, and it it possible to declare this in several ways:
 	// 1. As :
 	//      "schema": {
@@ -590,10 +590,8 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 	//  In the second version, "items" points to a schema. So what we have done to align these
 	//  two cases is to keep the top level "type" in the second case, and apply it to items.schema.Type,
 	//  reseting our schema variable to items.schema.
-	//
-	// TODO Check if this is valid?? TODO
+
 	if s.Type == nil {
-		logger.Tracef(nil, "WOOO OBJECT\n")
 		s.Type = append(s.Type, "object")
 	}
 
@@ -621,6 +619,10 @@ func resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resourc
 			s.Type = spec.StringOrArray([]string{"array", s.Type[0]})
 		}
 		logger.Tracef(nil, "REMAP SCHEMA (Type is now %s)\n", s.Type)
+	}
+
+	if len(s.Format) > 0 {
+		s.Type[len(s.Type)-1] = s.Format
 	}
 
 	id := TitleToKebab(s.Title)
@@ -741,6 +743,8 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 			r.Properties[name].Required = true
 		}
 		logger.Tracef(nil, "resource property %s type: %s\n", name, r.Properties[name].Type[0])
+
+		json_rep[name] = json_resource
 
 		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
 			// Arrays of objects need to be handled as a special case
