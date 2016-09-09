@@ -492,7 +492,9 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 		case "path":
 			method.PathParams = append(method.PathParams, p)
 		case "body":
-			p.Resource, _ = c.resourceFromSchema(param.Schema, method, nil)
+			var body map[string]interface{}
+			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil)
+			p.Resource.Schema = jsonResourceToString(body, "")
 			method.BodyParam = &p
 		case "header":
 			method.HeaderParams = append(method.HeaderParams, p)
