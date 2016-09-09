@@ -3,7 +3,8 @@
     <td class="resource">
       [: if $property.FQNS :]<span class="object">[: join $property.FQNS "." :]</span>.[: end :][: $property.ID :]
     </td>
-    <td class="type">[: index $property.Type 0 :]</td>
+    <!-- <td class="type">[: index $property.Type 0 :]</td> -->
+    <td class="type">[: join $property.Type " of " :]</td>
     <td>
       [: safehtml $property.Description :]
       [: if $property.Enum :]
