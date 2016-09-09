@@ -771,17 +771,22 @@ func compileproperties(s *spec.Schema, r *Resource, method *Method, id string, r
 							array_obj = append(array_obj, r.Properties[name].Type[1])
 							json_rep[name] = array_obj
 						}
-					} else { // property.Items.Schema is NIL
-						logger.Tracef(nil, "**** property.Items.Schema is NIL\n")
-						json_rep[name] = json_resource
+					} else { // array and property.Items.Schema is NIL
+						var array_obj []map[string]interface{}
+						array_obj = append(array_obj, json_resource)
+						json_rep[name] = array_obj
 					}
-				} else {
-					logger.Tracef(nil, "**** Items for %s are nil", name)
+				} else { // array and Items are nil
+					var array_obj []map[string]interface{}
+					array_obj = append(array_obj, json_resource)
+					json_rep[name] = array_obj
 				}
 			} else {
+				// We're NOT an array (or object, so a primitive)
 				json_rep[name] = r.Properties[name].Type[0]
 			}
 		} else {
+			// We're an object
 			json_rep[name] = json_resource
 		}
 	}
