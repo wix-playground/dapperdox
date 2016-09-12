@@ -26,8 +26,6 @@ For an out-of-the-box example, execute the example run script. A description of 
 ./run_example.sh
 ```
 
-*See the section [Why a makefile and not go build?](#why-a-makefile-and-not-go-build) to understand why a makefile is necessary.*
-
 ## Guide Contents
 - [Next steps](#next-steps)
 - [Configuring the address of the server](#specifying-the-address-of-the-server)
@@ -46,7 +44,6 @@ For an out-of-the-box example, execute the example run script. A description of 
 - [Reverse proxying to other resources](#reverse-proxying-through-to-other-resources)
 - [Configuration parameters](#configuration-parameters)
 - [Swaggerly start up example](#swaggerly-start-up-example)
-- [Why a makefile and not go build?](#why-a-makefile-and-not-go-build)
 
 ## Next steps
 While simply running Swaggerly and pointing it at your swagger specifications will give you some documentation quickly, there
