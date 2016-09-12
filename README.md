@@ -8,9 +8,7 @@ Swaggerly
 ## Quickstart
 
 First build swaggerly (this assumes that you have your golang environment configured correctly):
-```bash
-make
-```
+```go get && go build```
 
 Then start up Swaggerly, pointing it to your OpenAPI 2.0 specification file:
 ```
@@ -675,34 +673,6 @@ To create an integrated developer hub. Such resources could be:
 2. Forum
 
 **Coming soon!**
-
-## Dependencies
-
-### `go-swagger`
-
-Swaggerly depends on a fork of [go-swagger](https://github.com/zxchris/go-swagger) as its specification parser. This
-fork adds missing support for complex object response (arrays of objects), and the Swaggerly specific versioning scheme.
-Versioning is currently implemented on the `feature/swaggerly-versioning-extension` branch, and it is on this branch that
-Swaggerly depends.
-
-## Why a makefile and not go build?
-
-As described in [Dependencies](#dependencies), Swaggerly requires a particular branch of `go-swagger` and `go get`, by default,
-will checkout the master branch. The supplied makefile ensures the correct `go-swagger` branch is checked out and built.
-
-If you wish to perform the build manually, the following steps should be carried out (as shown in the Makefile):
-
-```bash
-go get github.com/go-swagger/go-swagger
-cd ../../go-swagger/go-swagger
-git checkout 4459770
-cd -
-go get github.com/zxchris/go-swagger
-cd ../go-swagger
-git checkout feature/swaggerly-versioning-extension
-cd ../swaggerly
-go get && go build
-```
 
 ## Configuration parameters
 
