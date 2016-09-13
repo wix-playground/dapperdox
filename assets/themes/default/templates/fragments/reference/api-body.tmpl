@@ -2,7 +2,7 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Method</th>
+        <th>Operation</th>
         <th>HTTP Request</th>
         <th>Description</th>
       </tr>
@@ -11,7 +11,7 @@
     [: range .Methods :]
     <tr>
       <td>
-        <a id="[: .ID :]" href="[:$.SpecPath:]/reference/[: $.API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method :]</a>
+        <a id="[: .ID :]" href="[:$.SpecPath:]/reference/[: $.API.ID :]/[: .ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .OperationName :]</a>
       </td>
       <td>
         <pre>[: uc .Method :]&nbsp;[: .Path :]</pre></td>

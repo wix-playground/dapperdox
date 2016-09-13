@@ -61,7 +61,7 @@ type API struct {
 	ID                     string
 	Name                   string
 	URL                    *url.URL
-	MethodNavigationByType bool
+	MethodNavigationByName bool
 	Versions               map[string][]Method // All versions, keyed by version string.
 	Methods                []Method            // The current version
 	CurrentVersion         string              // The latest version in operation for the API
@@ -102,6 +102,7 @@ type Method struct {
 	Name            string
 	Description     string
 	Method          string
+	OperationName   string
 	NavigationName  string
 	Path            string
 	PathParams      []Parameter
@@ -222,10 +223,10 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 
 	c.getSecurityDefinitions(apispec)
 
-	methodNavByType := false // Should methods in the navigation be presented by type (GET, POST) or name (string)?
-	if byname, ok := apispec.Extensions["x-methods-by-type"]; ok {
+	methodNavByName := false // Should methods in the navigation be presented by type (GET, POST) or name (string)?
+	if byname, ok := apispec.Extensions["x-navigate-methods-by-name"]; ok {
 		if byname.(bool) {
-			methodNavByType = true
+			methodNavByName = true
 		}
 	}
 
@@ -264,7 +265,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 				Name: name,
 				URL:  u,
 				Info: &c.APIInfo,
-				MethodNavigationByType: methodNavByType,
+				MethodNavigationByName: methodNavByName,
 			}
 		}
 
@@ -281,7 +282,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 					Name: name,
 					URL:  u,
 					Info: &c.APIInfo,
-					MethodNavigationByType: methodNavByType,
+					MethodNavigationByName: methodNavByName,
 				}
 			}
 
@@ -438,29 +439,34 @@ func (c *APISpecification) getSecurityDefinitions(spec *spec.Swagger) {
 
 func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
 
-	id := o.ID
+	id := o.ID // OperationID
 	if id == "" {
-		id = methodname
+		id = TitleToKebab(o.Summary) // Summary
+		if id == "" {
+			id = methodname // Last chance. Method name.
+		}
+	}
+
+	operationName := methodname
+	if opname, ok := o.Extensions["x-operation-name"]; ok {
+		operationName = opname.(string)
+	}
+
+	navigationName := operationName
+	if api.MethodNavigationByName {
+		navigationName = o.Summary
 	}
 
 	method := &Method{
-		ID:          CamelToKebab(id),
-		Name:        o.Summary,
-		Description: string(github_flavored_markdown.Markdown([]byte(o.Description))),
-		Method:      methodname,
-		Path:        path,
-		Responses:   make(map[int]Response),
-		API:         api,
-	}
-
-	if navname, ok := o.Extensions["x-navigation-name"]; ok {
-		method.NavigationName = navname.(string)
-	} else {
-		if api.MethodNavigationByType {
-			method.NavigationName = method.Method
-		} else {
-			method.NavigationName = method.Name
-		}
+		ID:             CamelToKebab(id),
+		Name:           o.Summary,
+		Description:    string(github_flavored_markdown.Markdown([]byte(o.Description))),
+		Method:         methodname,
+		Path:           path,
+		Responses:      make(map[int]Response),
+		NavigationName: navigationName,
+		OperationName:  operationName,
+		API:            api,
 	}
 
 	// If Tagging is not used by spec to select, group and order API paths to document, then
@@ -520,7 +526,7 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 		var vres *Resource
 
 		logger.Tracef(nil, "Response for status %d", status)
-		spew.Dump(response)
+		//spew.Dump(response)
 
 		// Discover if the resource is already declared, and pick it up
 		// if it is (keyed on version number)
@@ -689,7 +695,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	logger.Tracef(nil, "resourceFromSchema: Schema type: %s\n", stype)
 	logger.Tracef(nil, "FQNS: %s\n", fqNS)
 	logger.Tracef(nil, "CHECK schema type and items\n")
-	spew.Dump(s)
+	//spew.Dump(s)
 
 	// It is possible for a response to be an array of
 	//     objects, and it it possible to declare this in several ways:
@@ -938,6 +944,8 @@ func loadSpec(url string) (*loads.Document, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	//spew.Dump(document.OrigSpec().Definitions)
 
 	return document, nil
 }
