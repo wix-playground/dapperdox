@@ -7,10 +7,12 @@ import (
 	"os"
 	"strings"
 
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
-	"github.com/zxchris/go-swagger/spec"
+	//"github.com/zxchris/go-swagger/spec"
+	"github.com/go-openapi/loads"
+	"github.com/go-openapi/spec"
 	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
 )
@@ -192,50 +194,54 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		specFilename = "/" + specFilename
 	}
 
-	swaggerdoc, err := loadSpec("http://" + host + specFilename) // XXX Is there a confusion here between SpecDir and SpecFilename
+	document, err := loadSpec("http://" + host + specFilename) // XXX Is there a confusion here between SpecDir and SpecFilename
 	if err != nil {
 		return err
 	}
 
-	basePath := swaggerdoc.Spec().BasePath
+	apispec := document.Spec()
+
+	basePath := apispec.BasePath
 	basePathLen := len(basePath)
 	// Ignore basepath if it is a single '/'
 	if basePathLen == 1 && basePath[0] == '/' {
 		basePathLen = 0
 	}
 
-	u, err := url.Parse(swaggerdoc.Spec().Schemes[0] + "://" + swaggerdoc.Spec().Host)
+	u, err := url.Parse(apispec.Schemes[0] + "://" + apispec.Host)
 	if err != nil {
 		return err
 	}
 
-	c.APIInfo.Description = string(github_flavored_markdown.Markdown([]byte(swaggerdoc.Spec().Info.Description)))
-	c.APIInfo.Title = swaggerdoc.Spec().Info.Title
+	c.APIInfo.Description = string(github_flavored_markdown.Markdown([]byte(apispec.Info.Description)))
+	c.APIInfo.Title = apispec.Info.Title
 
 	logger.Tracef(nil, "Parse OpenAPI specification '%s'\n", c.APIInfo.Title)
 
 	c.ID = TitleToKebab(c.APIInfo.Title)
 
-	c.getSecurityDefinitions(swaggerdoc.Spec())
+	c.getSecurityDefinitions(apispec)
 
 	methodNavByType := false // Should methods in the navigation be presented by type (GET, POST) or name (string)?
-	if byname, ok := swaggerdoc.Spec().Extensions["x-methods-by-type"]; ok {
+	if byname, ok := apispec.Extensions["x-methods-by-type"]; ok {
 		if byname.(bool) {
 			methodNavByType = true
 		}
 	}
 
+	//spew.Dump(document)
+
 	// Use the top level TAGS to order the API resources/endpoints
 	// If Tags: [] is not defined, or empty, then no filtering or ordering takes place,#
 	// and all API paths will be documented..
-	for _, tag := range getTags(swaggerdoc.Spec()) {
+	for _, tag := range getTags(apispec) {
 		logger.Tracef(nil, "  In tag loop...\n")
 		// Tag matching may not be as expected if multiple paths have the same TAG (which is technically permitted)
 		var ok bool
 		var ver interface{}
 
 		//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
-		//spew.Dump(swaggerdoc)
+		//spew.Dump(document)
 
 		var api *API
 		groupingByTag := false
@@ -262,7 +268,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 			}
 		}
 
-		for path, pathItem := range swaggerdoc.AllPaths() {
+		for path, pathItem := range document.Analyzer.AllPaths() {
 			logger.Tracef(nil, "    In path loop...\n")
 
 			if basePathLen > 0 {
@@ -285,7 +291,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 			api.CurrentVersion = ver.(string)
 
 			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver.(string)) // Current version
-			c.getVersions(tag, api, pathItem.Versions, path)                    // All versions
+			//c.getVersions(tag, api, pathItem.Versions, path)                    // All versions
 
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
@@ -513,6 +519,9 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 	for status, response := range o.Responses.StatusCodeResponses {
 		var vres *Resource
 
+		logger.Tracef(nil, "Response for status %d", status)
+		spew.Dump(response)
+
 		// Discover if the resource is already declared, and pick it up
 		// if it is (keyed on version number)
 		if response.Schema != nil {
@@ -680,7 +689,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	logger.Tracef(nil, "resourceFromSchema: Schema type: %s\n", stype)
 	logger.Tracef(nil, "FQNS: %s\n", fqNS)
 	logger.Tracef(nil, "CHECK schema type and items\n")
-	//spew.Dump(s)
+	spew.Dump(s)
 
 	// It is possible for a response to be an array of
 	//     objects, and it it possible to declare this in several ways:
@@ -919,18 +928,18 @@ func CamelToKebab(s string) string {
 
 // -----------------------------------------------------------------------------
 
-func loadSpec(url string) (*spec.Document, error) {
-	spec, err := spec.Load(url)
+func loadSpec(url string) (*loads.Document, error) {
+	document, err := loads.Spec(url)
 	if err != nil {
 		return nil, err
 	}
 
-	spec, err = spec.Expanded()
+	err = spec.ExpandSpec(document.Spec())
 	if err != nil {
 		return nil, err
 	}
 
-	return spec, err
+	return document, nil
 }
 
 // -----------------------------------------------------------------------------
