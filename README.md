@@ -84,7 +84,8 @@ Multiple API specifications are not currently supported, but are on the feature 
 
 Swaggerly will try and read read the top level specification object `tags` member, and if it finds one it will only documents
 API operations where tags match, and in the order they are listed. This allows you to control what reference documentation gets
-presented. In these cases, Swaggerly uses the tag `description` member, or tag `name` member as the API identifier in pages, navigation and URLs.
+presented. In these cases, Swaggerly uses the tag `description` member, or tag `name` member as the API identifier in pages, 
+navigation and URLs. It will also group together in the navigation, all methods that have the same tag.
 
 If tags are not used, Swaggerly falls back to presenting all operations in the OpenAPI specification.
 
@@ -490,6 +491,9 @@ Additional directories are added to your `assets` directory to accomplish this. 
 multiple OpenAPI specifications, each is given its own section within Swaggerly, allowing you to provide guides and
 overlay documentation appropriate to an OpenAPI specification. 
 
+See [Controlling method names](#controlling-method-names) for a discussion on what an *operation* name is, and how it differs
+from an HTTP method name.
+
 - `assets/`
     - `static/`
         - `css/` - Local stylesheets
@@ -498,7 +502,7 @@ overlay documentation appropriate to an OpenAPI specification.
         - `guides/` - Authored documentation presented when not viewing an OpenAPI specification section.
         - `reference/` - Custom overlay GFM content.
           - `api.md` - Overlay applied to all API pages.
-          - `[method-name].md` - Overlay applied to a specific HTTP method name (POST, GET etc).
+          - `[operation-name].md` - Overlay applied to a specific method, identified by operation, for all APIs in all specifications.
           - `method.md` - Overlay applied to all API methods.
         - `resource/`
           - `resource.md` - Overlay applied to all resource pages.
@@ -509,10 +513,10 @@ overlay documentation appropriate to an OpenAPI specification.
           - `api.md` - Overlay applied to all API pages of this specification.
           - `[api-name].md` - Overlay applied to a specific API page of this specification.
           - `[api-name]/`
-                - `[method-name].md` - Overlay applied to a specific HTTP method name (POST, GET etc) for this named API.
+                - `[operation-name].md` - Overlay applied to a specific method, identified by operation, for this named API.
                 - `method.md` - Overlay applied to all methods of this named API.
-          - `[method-name].md` - Overlay applied to a specific HTTP method name (POST, GET etc) for this API
-          - `method.md` - Overlay applied to all methods of this API.
+          - `[operation-name].md` - Overlay applied to all methods with the given operation name, for all APIs in the specification.
+          - `method.md` - Overlay applied to all methods of all APIs in the specification.
         - `resource/`
           - `resource.md` - Overlay applied to all resource pages of this API.
 
@@ -544,11 +548,11 @@ For example `sections/[spec-ID]/reference/<API name>.md` takes precident over `s
 | API      | `sections/[spec-ID]/reference/<API name>.md`               | Overlay applied to a specific API page. |
 | API      | `sections/[spec-ID]/reference/api.md`                      | Overlay applied to all API pages for the named specification. |
 | API      | `templates/reference/api.md`                               | Overlay applied to all API pages. |
-| Method   | `sections/[spec-ID]/reference/<API name>/<method name>.md` | Overlay applied to a specific method page of a specific API. |
+| Method   | `sections/[spec-ID]/reference/<API name>/<operation name>.md` | Overlay applied to a specific method page of a specific API of a specific openAPI specification. |
 | Method   | `sections/[spec-ID]/reference/<API name>/method.md`        | Overlay applied to all method pages of a specific API. |
-| Method   | `sections/[spec-ID]/reference/<method name>.md`            | Overlay applied to all method pages of <method name> across all APIs in a specification. |
+| Method   | `sections/[spec-ID]/reference/<operation name>.md`         | Overlay applied to all method pages for <operation name> across all APIs in a specification. |
 | Method   | `sections/[spec-ID]/reference/method.md`                   | Overlay applied to all method pages of all APIs in a particular specification. |
-| Method   | `templates/reference/<method name>.md`                     | Overlay applied to the <method name> method page of all APIs across all specifications.  |
+| Method   | `templates/reference/<operation name>.md`                  | Overlay applied to the all methods of <operation name> of all APIs across all specifications.  |
 | Method   | `templates/reference/method.md`                            | Overlay applied to all method pages of all APIs across all specifications.  |
 | Resource | `sections/[spec-ID]/resource/<resource name>.md`           | Overlay applied to a specific resource page of a specific API.  |
 | Resource | `sections/[spec-ID]/resource/resource.md`                  | Overlay applied to all resource pages of a specific API.  |
@@ -639,13 +643,98 @@ documentation generated by Swaggerly. These pages are marked as such with the bo
 Special embedded tags within the GFM page target sections within API, method and resource pages, inserting
 the associated documentation at those sections.
 
+## Controlling method names
 
+### Methods and operations
 
-## Customising the 'homepage'
+Swaggerly allows you to control the name of each method operation, and how methods are represented in the navigation.
 
-By default, the homepage that Swaggerly presents is an API reference summary. You can create your own
-homepage by providing your own `assets/templates/index.tmpl` or `assets/templates/index.md` - with the
-recommendation being that you use markdown instead of HTML, for the reasons described in 
+By default the HTTP method is used (GET, POST, PUT etc), as is usual for RESTful API specifications. Even so, it is
+often the case that a resource will be given two GET methods, one which returns a single resource, and one that
+returns a list. This is clearly confusing for the reader, so in the latter case it would be clearer for the list method
+to be identified as such.
+
+To do this, Swaggerly introduces the concept of a method **operation**, which usually has the same value as the
+HTTP method, but may be overridden on a per-method basis by the `x-operation-name` extension:
+
+```json
+{
+    "paths": {
+        "/products": {
+            "get": {
+                "x-operation-name": "list",
+                "summary": "List products",
+                "description": "Returns a list of products"
+                "tags": ["Products"],
+            },
+            "post": {
+                "summary": "Get product",
+                "description": "Create product types"
+                "tags": ["Products"],
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "summary": "Get a product",
+                "description": "Returns a products"
+                "tags": ["Products"],
+            }
+        }
+    }
+}
+```
+
+The methods in the above example would be grouped together because they are similarly tagged, and the confusion between
+the two `GET` methods resolved by giving one the operation name of `list`. Thus, the three methods would be described in the
+navigation and API list page as being `list`, `post` and `get`. The HTTP methods assigned to each (get, post and get) remain unchanged.
+
+This technique can also be used to override `GET` to `fetch`, `POST` to `create`, `PUT` to `update` and so on.
+
+### Navigating by method name
+
+Where an openAPI specification is describing a non-RESTful set of APIs, they are often grouped together and sharing the same
+HTTP method. For example, two `get` methods having respective `summary` texts of `lookup product by ID` and `lookup product by barcode` 
+would probably be listed together, both being product APIs. As they are both `get` methods, the reader would be unable to tell them
+apart if they are both referred to as `get` operations in the API navigation. By adding the `"x-navigate-methods-by-name" : true` 
+extension to the top level openAPI specification, you can force Swaggerly to describe each method in the navigation using its 
+`summary` text instead of its operation name or HTTP method. The methods will continue to be referred to by operation name or
+HTTP method in API pages.
+
+```json
+{
+    "swagger": "2.0",
+    "x-navigate-methods-by-name": true,
+    "info": {
+        "title": "Example API",
+        "description": "The only way is up",
+        "version": "1.0.0"
+    }
+}
+```
+
+## Customising homepages
+
+If you are documenting multiple openAPI specifications with Swaggerly, then you will have several homepages. The first is
+a top level page which describes all of the API specifications that are available:
+
+- `assets/`
+    - `templates/`
+        - `index.tmpl` - Custom 'available specifications' page, in HTML or
+        - `index.md`   - Custom 'available specifications' page, in GFM
+
+The other homepages are provided for each specification, viewed when an openAPI specification has been navigated to:
+
+- `assets/`
+   - `sections/`
+     - `[specification-ID]` - The kabab case of the OpenAPI `info.title` member.
+       - `index.tmpl` - Custom API specification page, in HTML or
+       - `index.md`   - Custom API specification page, in GFM
+
+If you are documenting a single openAPI specification, Swaggerly will automatically show the openAPI specification page
+and skip the top level 'available specifications' page. If you do not want this behaviour, then start Swaggerly with the
+`-force-root-page=true` option (see [Configuration parameters](#configuration-parameters)).
+
+The recommendation is that you use markdown instead of HTML, for the reasons described in
 [Creating authored documentation pages](#creating-authored-documentation-pages).
 
 An example of this is demonstrated by the metadata example, which provides its own custom `index.md` file:
@@ -653,10 +742,7 @@ An example of this is demonstrated by the metadata example, which provides its o
 `examples/metadata/assets/templates/index.md`
 
 To run this example, pass Swaggerly the option 
-`-assets-dir=<Swaggerly-source-directory>/examples/metadata/assets`
-
-The API reference summary will always be available at the `/reference` endpoint.
-
+`-assets-dir=<Swaggerly-source-directory>/examples/metadata/assets -force-root-page=true`
 
 # Versioning
 
@@ -703,6 +789,6 @@ This start up script can be found as `run_example.sh` in the swaggerly source di
     -spec-rewrite-url=api.uber.com=API.UBER.COM \
     -document-rewrite-url=www.google.com=www.google.co.uk \
     -site-url=http://127.0.0.1:3123 \
-    -assets-dir=./examples/markdown/assets \
-    -log-level=trace
+    oassets-dir=./examples/markdown/assets \
+    -lcg-level=trace
 ```

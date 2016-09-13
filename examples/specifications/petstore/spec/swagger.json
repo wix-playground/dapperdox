@@ -325,7 +325,7 @@
                         "description": "successful operation",
                         "schema": {
                             "type": "object",
-                            "title":"FRED",
+                            "title":"Quantities",
                             "additionalProperties": {
                                 "type": "integer",
                                 "format": "int32"
