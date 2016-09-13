@@ -46,6 +46,7 @@ func New() *render.Render {
 	// XXX Order of directory inporting is IMPORTANT XXX
 	if len(cfg.AssetsDir) != 0 {
 		asset.Compile(cfg.AssetsDir+"/templates", "assets/templates")
+		asset.Compile(cfg.AssetsDir+"/sections", "assets/templates")
 		asset.Compile(cfg.AssetsDir+"/static", "assets/static")
 		asset.Compile(cfg.AssetsDir+"/themes/"+cfg.Theme, "assets")
 	}
@@ -127,13 +128,13 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 		if method, ok := datamap["Method"].(spec.Method); ok {
 			// Method page
 			if specid, ok := datamap["ID"].(string); ok {
-				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/"+method.Method+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/"+method.OperationName+"/"+name+"/overlay")
 				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/method/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/reference/"+method.Method+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/reference/"+method.OperationName+"/"+name+"/overlay")
 				overlayName = append(overlayName, specid+"/reference/method/"+name+"/overlay")
 			}
 
-			overlayName = append(overlayName, "reference/"+method.Method+"/"+name+"/overlay")
+			overlayName = append(overlayName, "reference/"+method.OperationName+"/"+name+"/overlay")
 			overlayName = append(overlayName, "reference/method/"+name+"/overlay")
 		}
 	}
