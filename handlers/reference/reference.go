@@ -82,7 +82,7 @@ func Register(r *pat.Router) {
 
 // ------------------------------------------------------------------------------------------------------------
 
-func getVersionMethod(api spec.API, version string) *[]spec.Method {
+func getVersionMethod(api spec.APIGroup, version string) *[]spec.Method {
 
 	var methods []spec.Method
 	var ok bool
@@ -95,7 +95,7 @@ func getVersionMethod(api spec.API, version string) *[]spec.Method {
 
 // ------------------------------------------------------------------------------------------------------------
 
-func getMethodVersions(api spec.API, versions versionedMethod) []string {
+func getMethodVersions(api spec.APIGroup, versions versionedMethod) []string {
 	// See how many versions there are accross the whole API. If 1, then version selection is not required.
 	if len(api.Versions) < 2 {
 		return nil
@@ -111,7 +111,7 @@ func getMethodVersions(api spec.API, versions versionedMethod) []string {
 
 // ------------------------------------------------------------------------------------------------------------
 
-func getAPIVersions(api spec.API) []string {
+func getAPIVersions(api spec.APIGroup) []string {
 	count := len(api.Versions)
 	if count < 2 {
 		return nil // There is only one version defined
@@ -127,7 +127,7 @@ func getAPIVersions(api spec.API) []string {
 
 // ------------------------------------------------------------------------------------------------------------
 
-func getResourceVersions(api spec.API, versions versionedResource) []string {
+func getResourceVersions(api spec.APIGroup, versions versionedResource) []string {
 	// See how many versions there are accross the whole API. If 1, then version selection is not required.
 	if len(api.Versions) < 2 {
 		return nil
@@ -143,7 +143,7 @@ func getResourceVersions(api spec.API, versions versionedResource) []string {
 
 // ------------------------------------------------------------------------------------------------------------
 // APIHandler is a http.Handler for rendering API reference docs
-func APIHandler(specification *spec.APISpecification, api spec.API) func(w http.ResponseWriter, req *http.Request) {
+func APIHandler(specification *spec.APISpecification, api spec.APIGroup) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		version := req.FormValue("v") // Get the resource version
@@ -167,7 +167,7 @@ func APIHandler(specification *spec.APISpecification, api spec.API) func(w http.
 
 // ------------------------------------------------------------------------------------------------------------
 // MethodHandler is a http.Handler for rendering API method reference docs
-func MethodHandler(specification *spec.APISpecification, api spec.API, path string) func(w http.ResponseWriter, req *http.Request) {
+func MethodHandler(specification *spec.APISpecification, api spec.APIGroup, path string) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		version := req.FormValue("v") // Get the resource version

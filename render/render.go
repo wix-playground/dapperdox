@@ -116,7 +116,7 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 	// 2. An API method page
 	// 3. Resource
 	//
-	if api, ok := datamap["API"].(spec.API); ok {
+	if api, ok := datamap["API"].(spec.APIGroup); ok {
 		if _, ok := datamap["Methods"].([]spec.Method); ok {
 			// API page
 			if specid, ok := datamap["ID"].(string); ok {
