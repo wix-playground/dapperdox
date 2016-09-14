@@ -471,6 +471,8 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	// If Tagging is not used by spec to select, group and order API paths to document, then
 	// complete the missing names.
 	// First try the vendor extension x-pathName, falling back to summary if not set.
+	// XXX Note, that the APIGroup will get the last pathName set on the path methods added to the group (by tag).
+	//
 	if pathname, ok := pathItem.Extensions["x-pathName"]; ok {
 		api.Name = pathname.(string)
 		api.ID = TitleToKebab(api.Name)

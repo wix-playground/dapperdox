@@ -135,7 +135,7 @@ the case.
 
 To force the group name of all operations declared for a path, the Swaggerly specific `x-pathName` member may be specified
 in the Path Item object. This will always take effect, and will even override the description or name inherited from the top
-level `tags` member. However, tags are the most flexible approach.
+level `tags` member. However, tags are the most flexible approach to name method groups.
 
 ```json
 {
@@ -373,11 +373,12 @@ Swaggerly presents two classes of documentation:
 2. Guides and other authored documentation
 
 Documentation is built from assets, which mostly consist of styles, page templates and template fragments, grouped together
-to form a theme. To customise the documentation: 
+to form a theme. To customise the documentation you have several options:
 
 1. Alternative themes may be used to change the look and feel.
-2. Additional assets may be provided to extend the generated documentation, such as guides
-3. Parts of a theme may be overridden (advanced topic)
+2. Additional assets may be provided to extend the generated documentation, such as guides and other authored documentation.
+3. Authored content may be overlaid on top of the specification generated reference documentation.
+3. Parts of a theme may be overridden.
 
 In general, documentation should be written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/), which seamlessly integrates with the reference
 documentation generated from the OpenAPI specification.
