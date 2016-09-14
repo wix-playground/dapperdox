@@ -230,6 +230,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		}
 	}
 
+	//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
 	//spew.Dump(document)
 
 	// Use the top level TAGS to order the API resources/endpoints
@@ -240,9 +241,6 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		// Tag matching may not be as expected if multiple paths have the same TAG (which is technically permitted)
 		var ok bool
 		var ver interface{}
-
-		//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
-		//spew.Dump(document)
 
 		var api *API
 		groupingByTag := false
@@ -944,8 +942,6 @@ func loadSpec(url string) (*loads.Document, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	//spew.Dump(document.OrigSpec().Definitions)
 
 	return document, nil
 }

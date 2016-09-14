@@ -92,7 +92,7 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 
 			logger.Tracef(nil, "      = URL  "+route)
 
-			buildNavigation(guidesNavigation, path, base, ext)
+			buildNavigation(guidesNavigation, path, root, base, ext)
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				sid := "TOP LEVEL"
@@ -163,7 +163,7 @@ func FilenameToRoute(name string, basepath string) string {
 }
 
 // ---------------------------------------------------------------------------
-func buildNavigation(nav *navigation.NavigationNode, filename string, base string, ext string) {
+func buildNavigation(nav *navigation.NavigationNode, filename string, root string, base string, ext string) {
 
 	metafile := "assets/templates/" + strings.TrimPrefix(strings.TrimSuffix(filename, ext), base+"/") + ".tmpl"
 
@@ -175,7 +175,7 @@ func buildNavigation(nav *navigation.NavigationNode, filename string, base strin
 		logger.Tracef(nil, "      * Got navigation metadata %s for file %s\n", hierarchy, filename)
 	} else {
 		// No Meta Data set on guide, so use the directory structure
-		hierarchy = strings.TrimPrefix(strings.TrimSuffix(filename, ext), base+"/guides/")
+		hierarchy = strings.TrimPrefix(strings.TrimSuffix(filename, ext), root+"/")
 		logger.Tracef(nil, "      * No navigation metadata for "+hierarchy+". Using path")
 	}
 
@@ -187,7 +187,7 @@ func buildNavigation(nav *navigation.NavigationNode, filename string, base strin
 	parts := len(split)
 
 	if parts > 2 {
-		logger.Errorf(nil, "Error: Guide '"+hierarchy+"' contains too many nagivation levels")
+		logger.Errorf(nil, "Error: Guide '"+hierarchy+"' contains too many nagivation levels (%d)", parts)
 		os.Exit(1)
 	}
 
