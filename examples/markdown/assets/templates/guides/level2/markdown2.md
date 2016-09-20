@@ -1,6 +1,0 @@
-## level2/markdown2
-
-### This is a second level GFM guide
-
-## Nothing to see here...
-### Move along...
