@@ -176,7 +176,7 @@ html {
 }
 .nav-toggle:not(.collapsed):before {
     content: "▾"; /* down caret */
-    margin-right: 5px;
+    margin-right: 3px;
 }
 
 /*
