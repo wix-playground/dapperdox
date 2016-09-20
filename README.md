@@ -266,7 +266,6 @@ Swaggerly to integrate with that site, so that a user's API keys are automatical
 signed-in. Swaggerly provides a simple Javascript interface via which you can pass API keys to the explorer, through a piece
 of custom Javascript.
 
-
 ## Customising authentication credential capture
 
 The `apiExplorer` javascript object provides a method to add API keys to an internal list, and a method to inject those
@@ -758,7 +757,7 @@ To create an integrated developer hub. Such resources could be:
 
 **Coming soon!**
 
-## Configuration parameters
+# Configuration parameters
 
 | Option | Environment variable | Description |
 | ------ | -------------------- | ----------- |
@@ -775,7 +774,7 @@ To create an integrated developer hub. Such resources could be:
 | `-themes-dir` | `THEMES_DIR` | Directory containing installed themes. |
 | `-force-root-page` | `FORCE_ROOT_PAGE` | When Swaggerly is serving a single OpenAPI specification, then by default Swaggerly will show the specification index page when serving the homepage. You can force Swaggerly to show the root index page with this option. Takes the value `true` or `false`. |
 
-## Swaggerly start up example
+# Swaggerly start up example
 
 The following command line will start Swaggerly serving the petshop OpenAPI specification, rewriting the API host URL
 of the petstore specification from api.uber.com to API.UBER.COM, and picking up the local assets `examples/markdown/assets` 

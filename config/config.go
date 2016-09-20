@@ -22,6 +22,7 @@ type config struct {
 	SpecRewriteURL     []string    `env:"SPEC_REWRITE_URL" flag:"spec-rewrite-url" flagDesc:"The URLs in the swagger specifications to be rewritten as site-url"`
 	DocumentRewriteURL []string    `env:"DOCUMENT_REWRITE_URL" flag:"document-rewrite-url" flagDesc:"Specify a document URL that is to be rewritten. May be multiply defined. Format is from=to."`
 	ForceRootPage      bool        `env:"FORCE_ROOT_PAGE" flag:"force-root-page" flagDesc:"Always show the top level landing page. The default when serving a single OpenAPI specification is to hide the root page."`
+	ShowAssets         bool        `env:"AUTHOR_SHOW_ASSETS" flag:"author-show-assets" flagDesc:"Display at the foot of each page the overlay asset paths, in priority order, that Swaggerly will check before rendering."`
 }
 
 var cfg *config
@@ -40,7 +41,7 @@ func Get() (*config, error) {
 		LogLevel:         "info",
 		Theme:            "default",
 		SiteURL:          "http://localhost:3123/",
-		ForceRootPage:    false,
+		ShowAssets:       false,
 	}
 
 	err := gofigure.Gofigure(cfg)

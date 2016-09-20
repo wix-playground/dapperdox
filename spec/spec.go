@@ -8,11 +8,10 @@ import (
 	"strings"
 
 	//"github.com/davecgh/go-spew/spew"
-	"github.com/serenize/snaker"
-	"github.com/shurcooL/github_flavored_markdown"
-	//"github.com/zxchris/go-swagger/spec"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/spec"
+	"github.com/serenize/snaker"
+	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
 )

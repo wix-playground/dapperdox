@@ -100,7 +100,7 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 					sid = specification.ID
 				}
 				logger.Tracef(nil, "Fetching guide from '%s' for spec ID %s\n", resource, sid)
-				render.HTML(w, http.StatusOK, resource, render.DefaultVars(req, specification, render.Vars{}))
+				render.HTML(w, http.StatusOK, resource, render.DefaultVars(req, specification, render.Vars{"Guide": resource}))
 			})
 		}
 		return nil

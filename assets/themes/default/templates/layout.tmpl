@@ -41,22 +41,26 @@
 
     <title>[: .Info.Title :]Documentation</title>
   </head>
-  <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        [: template "fragments/header" . :]
-    </nav>
+<body [: if .Config.ShowAssets :][: if not .Guide :] class="debug_body" [: end :] [: end :]>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+      [: template "fragments/header" . :]
+  </nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        [: template "fragments/sidenav" . :]
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-
-          [: yield :]
-
-        </div>
+  <div class="container-fluid">
+    <div class="row">
+      [: template "fragments/sidenav" . :]
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        [: yield :]
       </div>
     </div>
+  </div>
+  <div id="footer" class="footer">
+    <div class="container-fluid">
+    [: template "fragments/author_debug" . :]
+    [: template "fragments/footer" . :]
+    </div>
+  </div>
 
     [: template "fragments/scripts" . :]
   </body>

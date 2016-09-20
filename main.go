@@ -19,11 +19,17 @@ import (
 	"github.com/zxchris/swaggerly/handlers/timeout"
 	"github.com/zxchris/swaggerly/logger"
 	"github.com/zxchris/swaggerly/render"
-	"github.com/zxchris/swaggerly/render/asset"
 	"github.com/zxchris/swaggerly/spec"
 )
 
+var VERSION string
+
 func main() {
+
+	VERSION = "1.0.4" // TODO build with doxc to control version number?
+
+	log.Printf("Swaggerly server version %s starting\n", VERSION)
+
 	cfg, err := config.Get()
 	if err != nil {
 		log.Fatalf("error configuring app: %s", err)
@@ -36,10 +42,7 @@ func main() {
 		log.Fatalf("error setting log level: %s", err)
 	}
 
-	//render.Register()
-
 	router := pat.New()
-
 	chain := alice.New(logger.Handler /*, context.ClearHandler*/, timeoutHandler, withCsrf).Then(router)
 
 	logger.Infof(nil, "listening on %s", cfg.BindAddr)
@@ -66,21 +69,14 @@ func main() {
 	// Register the spec routes (Listener and server must be up and running by now)
 	specs.Register(router)
 
-	//spec.Specification.Load(cfg.BindAddr)
 	err = spec.LoadSpecifications(cfg.BindAddr, true)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// FIXME FIXME TEST /sections/[spec-id]/reference/[method-name].md
-	// FIXME FIXME TEST /sections/[spec-id]/reference/method.md
-	// FIXME FIXME as well as
-	// FIXME FIXME TEST /sections/[spec-id]/reference/[api-name]/[method-name].md etc
-	// FIXME FIXME ALSO FIX EXAMPLES. SEE OVERLAY SECTION IN README.md price-estimates...
-	// Register the various home pages. The top level, and one for each of the specifications that have been loaded.
-	logger.Printf(nil, "Compile assets")
-	asset.Compile(cfg.AssetsDir+"/sections/uber-api", "assets/templates/uber-api") // FIXME MOVE THIS AND LOOP OVER ALL SPECS!
 	render.Register()
+
+	render.DumpAssetPaths()
 
 	reference.Register(router)
 	guides.Register(router)
