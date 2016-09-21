@@ -537,7 +537,7 @@ The response is always an array of response objects, if successful.
 For a GFM page to be treated as an overlay, it must contain the metadata `Overlay: true` at the start
 of the file (see [Supported Metadata](#supported-metadata)).
 
-There are two ways to overlay a reference page, globally, per-specification or on a page-by-page basis. Swaggerly will
+There are three ways to overlay a reference page, globally, per-specification or on a page-by-page basis. Swaggerly will
 look at the following file patterns in the order defined below to find any appropriate overlays, and will stop once it finds one.
 For example `sections/[spec-ID]/reference/<API name>.md` takes precident over `sections/[spec-ID]/reference/api.md`.
 
@@ -669,19 +669,19 @@ HTTP method, but may be overridden on a per-method basis by the `x-operation-nam
                 "x-operation-name": "list",
                 "summary": "List products",
                 "description": "Returns a list of products"
-                "tags": ["Products"],
+                "tags": ["Products"]
             },
             "post": {
                 "summary": "Get product",
                 "description": "Create product types"
-                "tags": ["Products"],
+                "tags": ["Products"]
             }
         },
         "/products/{id}": {
             "get": {
                 "summary": "Get a product",
                 "description": "Returns a products"
-                "tags": ["Products"],
+                "tags": ["Products"]
             }
         }
     }
