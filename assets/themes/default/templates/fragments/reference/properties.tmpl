@@ -16,7 +16,8 @@
       </ul>
       [: end :]
     </td>
-    <td>[: if not $property.Required :]Optional[: end :]</td>
+    <td>[: if not $property.Required :]Optional[: if $property.ReadOnly :], read only.[: end :]
+        [: else :][: if $property.ReadOnly :]Read only.[: end :][: end :]</td>
   </tr>
   [: template "fragments/reference/properties" $property :]
 [: end :]

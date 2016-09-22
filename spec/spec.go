@@ -144,6 +144,7 @@ type Resource struct {
 	Type        []string
 	Properties  map[string]*Resource
 	Required    bool
+	ReadOnly    bool
 	Methods     []Method
 	Enum        []string
 }
@@ -821,6 +822,8 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 		}
 	}
 
+	r.ReadOnly = s.ReadOnly
+
 	required := make(map[string]bool)
 	json_representation := make(map[string]interface{})
 
@@ -844,9 +847,14 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
 
 	// First, grab the required members
-	for _, i := range s.Required {
-		required[i] = true
+	for _, n := range s.Required {
+		required[n] = true
 	}
+	//if mod, ok := s.Extensions["x-modifiable"]; ok {
+	//	for _, n := range mod.([]interface{}) {
+	//		modifiable[n.(string)] = true
+	//	}
+	//}
 
 	// Now process the properties
 	for name, property := range s.Properties {
@@ -868,6 +876,9 @@ func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method
 		if _, ok := required[name]; ok {
 			r.Properties[name].Required = true
 		}
+		//if _, ok := readonly[name]; ok {
+		//	r.Properties[name].ReadOnly = true
+		//}
 		logger.Tracef(nil, "resource property %s type: %s\n", name, r.Properties[name].Type[0])
 
 		json_rep[name] = json_resource

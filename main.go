@@ -76,7 +76,7 @@ func main() {
 
 	render.Register()
 
-	render.DumpAssetPaths()
+	//render.DumpAssetPaths()
 
 	reference.Register(router)
 	guides.Register(router)
