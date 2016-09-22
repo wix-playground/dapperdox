@@ -522,6 +522,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	}
 
 	// Compile resources from response declaration
+	// FIXME - Dies if there are no responses...
 	for status, response := range o.Responses.StatusCodeResponses {
 		var vres *Resource
 
