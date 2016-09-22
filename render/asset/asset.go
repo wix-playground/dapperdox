@@ -25,10 +25,12 @@ import (
 var _bindata = map[string][]byte{}
 var _metadata = map[string]map[string]string{}
 var guideReplacer *strings.Replacer
+var gfmReplace []*gfmReplacer
 
-//var sectionSplitRegex = regexp.MustCompile("\\[\\([\\w\\-]+\\)\\]")
 var sectionSplitRegex = regexp.MustCompile("\\[\\[[\\w\\-]+\\]\\]")
+var gfmMapSplit = regexp.MustCompile(":")
 
+// ---------------------------------------------------------------------------
 func Asset(name string) ([]byte, error) {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	if a, ok := _bindata[cannonicalName]; ok {
@@ -37,6 +39,7 @@ func Asset(name string) ([]byte, error) {
 	return nil, fmt.Errorf("Asset %s not found", name)
 }
 
+// ---------------------------------------------------------------------------
 func AssetNames() []string {
 	names := make([]string, 0, len(_bindata))
 	for name := range _bindata {
@@ -45,6 +48,7 @@ func AssetNames() []string {
 	return names
 }
 
+// ---------------------------------------------------------------------------
 func MetaData(filename string, name string) string {
 	if md, ok := _metadata[filename]; ok {
 		if val, ok := md[strings.ToLower(name)]; ok {
@@ -54,6 +58,7 @@ func MetaData(filename string, name string) string {
 	return ""
 }
 
+// ---------------------------------------------------------------------------
 func MetaDataFileList() []string {
 	files := make([]string, len(_metadata))
 	ix := 0
@@ -64,6 +69,7 @@ func MetaDataFileList() []string {
 	return files
 }
 
+// ---------------------------------------------------------------------------
 func Compile(dir string, prefix string) {
 
 	cfg, _ := config.Get()
@@ -181,7 +187,12 @@ func storeTemplate(prefix string, name string, template string, meta map[string]
 // Returns rendered markdown
 func ProcessMarkdown(doc []byte) []byte {
 
-	return github_flavored_markdown.Markdown([]byte(doc))
+	html := github_flavored_markdown.Markdown([]byte(doc))
+	// Apply any HTML substitutions
+	for _, rep := range gfmReplace {
+		html = rep.Regexp.ReplaceAll(html, rep.Replace)
+	}
+	return html
 }
 
 // ---------------------------------------------------------------------------
@@ -253,6 +264,83 @@ func splitOnSection(text string) ([]string, []string) {
 	sections[len(indexes)-1] = text[last:len(text)]
 
 	return sections, headings
+}
+
+// ---------------------------------------------------------------------------
+
+func CompileGFMMap() {
+
+	var mapfile string
+
+	cfg, _ := config.Get()
+
+	if len(cfg.AssetsDir) != 0 {
+		mapfile = cfg.AssetsDir + "/gfm.map"
+		logger.Tracef(nil, "Looking in assets dir for %s\n", mapfile)
+		if _, err := os.Stat(mapfile); os.IsNotExist(err) {
+			mapfile = ""
+		}
+	}
+	if len(mapfile) == 0 && len(cfg.ThemesDir) != 0 {
+		mapfile = cfg.ThemesDir + "/" + cfg.Theme + "/gfm.map"
+		logger.Tracef(nil, "Looking in theme dir for %s\n", mapfile)
+		if _, err := os.Stat(mapfile); os.IsNotExist(err) {
+			mapfile = ""
+		}
+	}
+	if len(mapfile) == 0 {
+		mapfile = cfg.DefaultAssetsDir + "/themes/" + cfg.Theme + "/gfm.map"
+		logger.Tracef(nil, "Looking in default theme dir for %s\n", mapfile)
+		if _, err := os.Stat(mapfile); os.IsNotExist(err) {
+			mapfile = ""
+		}
+	}
+
+	if len(mapfile) == 0 {
+		return
+	}
+	logger.Tracef(nil, "Processing GFM HTML mapfile: %s\n", mapfile)
+	file, err := os.Open(mapfile)
+
+	if err != nil {
+		logger.Errorf(nil, "Error: %s", err)
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		rep := &gfmReplacer{}
+		if rep.Parse(line) != nil {
+			logger.Tracef(nil, "GFM replace %s with %s\n", rep.Regexp, rep.Replace)
+			gfmReplace = append(gfmReplace, rep)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		logger.Errorf(nil, "Error: %s", err)
+	}
+}
+
+// ---------------------------------------------------------------------------
+type gfmReplacer struct {
+	Regexp  *regexp.Regexp
+	Replace []byte
+}
+
+// ---------------------------------------------------------------------------
+func (g *gfmReplacer) Parse(line string) *string {
+	indexes := gfmMapSplit.FindStringIndex(line)
+	if indexes == nil {
+		return nil
+	}
+	g.Regexp = regexp.MustCompile(line[0 : indexes[1]-1])
+	g.Replace = []byte(line[indexes[1]:])
+
+	return &line
 }
 
 // ---------------------------------------------------------------------------

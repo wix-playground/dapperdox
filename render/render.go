@@ -3,6 +3,7 @@ package render
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -43,7 +44,9 @@ func New() *render.Render {
 
 	guides = make(map[string]GuideType)
 
-	// XXX Order of directory inporting is IMPORTANT XXX
+	asset.CompileGFMMap()
+
+	// XXX Order of directory importing is IMPORTANT XXX
 	if len(cfg.AssetsDir) != 0 {
 		asset.Compile(cfg.AssetsDir+"/templates", "assets/templates")
 		asset.Compile(cfg.AssetsDir+"/sections", "assets/templates")
@@ -53,8 +56,8 @@ func New() *render.Render {
 	// TODO only import the theme specified instead of all installed themes that will not be used!
 
 	if len(cfg.ThemesDir) != 0 {
-		logger.Infof(nil, "  - Picking up themes from directory: "+cfg.ThemesDir+"/"+cfg.Theme+"/assets")
-		asset.Compile(cfg.ThemesDir+"/"+cfg.Theme+"/assets", "assets")
+		logger.Infof(nil, "  - Picking up themes from directory: "+cfg.ThemesDir+"/"+cfg.Theme)
+		asset.Compile(cfg.ThemesDir+"/"+cfg.Theme, "assets")
 	}
 	// Fallback to local themes directory
 	asset.Compile(cfg.DefaultAssetsDir+"/themes/"+cfg.Theme, "assets")
@@ -70,16 +73,17 @@ func New() *render.Render {
 		Delims:     render.Delims{Left: "[:", Right: ":]"},
 		Layout:     "layout",
 		Funcs: []template.FuncMap{template.FuncMap{
-			"map":          htmlform.Map,
-			"ext":          htmlform.Extend,
-			"fnn":          htmlform.FirstNotNil,
-			"arr":          htmlform.Arr,
-			"lc":           strings.ToLower,
-			"uc":           strings.ToUpper,
-			"join":         strings.Join,
-			"safehtml":     func(s string) template.HTML { return template.HTML(s) },
-			"haveTemplate": func(n string) *template.Template { return TemplateLookup(n) },
-			"overlay":      func(n string, d ...interface{}) template.HTML { return overlay(n, d) }, // TODO Will be specification specific
+			"map":           htmlform.Map,
+			"ext":           htmlform.Extend,
+			"fnn":           htmlform.FirstNotNil,
+			"arr":           htmlform.Arr,
+			"lc":            strings.ToLower,
+			"uc":            strings.ToUpper,
+			"join":          strings.Join,
+			"safehtml":      func(s string) template.HTML { return template.HTML(s) },
+			"haveTemplate":  func(n string) *template.Template { return TemplateLookup(n) },
+			"overlay":       func(n string, d ...interface{}) template.HTML { return overlay(n, d) },
+			"getAssetPaths": func(s string, d ...interface{}) []string { return getAssetPaths(s, d) },
 		}},
 	})
 }
@@ -109,6 +113,35 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 		return ""
 	}
 
+	overlayName := overlayPaths(name, datamap)
+
+	var b bytes.Buffer
+	var overlay string
+
+	// Look for an overlay file in declaration order.... Highest priority is first.
+	for _, overlay = range overlayName {
+		if TemplateLookup(overlay) != nil {
+			break
+		}
+		overlay = ""
+	}
+
+	if overlay != "" {
+		logger.Tracef(nil, "Applying overlay '%s'\n", overlay)
+		writer := HTMLWriter{h: bufio.NewWriter(&b)}
+
+		// data is a single item array (though I've not figured out why yet!)
+		Render.HTML(writer, http.StatusOK, overlay, data[0], render.HTMLOptions{Layout: ""})
+		writer.Flush()
+	}
+
+	return template.HTML(b.String())
+}
+
+// ----------------------------------------------------------------------------------------
+
+func overlayPaths(name string, datamap map[string]interface{}) []string {
+
 	var overlayName []string
 
 	// Use the passed in data structures to determine what type of "page" we are on:
@@ -116,7 +149,7 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 	// 2. An API method page
 	// 3. Resource
 	//
-	if api, ok := datamap["API"].(spec.API); ok {
+	if api, ok := datamap["API"].(spec.APIGroup); ok {
 		if _, ok := datamap["Methods"].([]spec.Method); ok {
 			// API page
 			if specid, ok := datamap["ID"].(string); ok {
@@ -146,27 +179,7 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 		overlayName = append(overlayName, "resource/resource/"+name+"/overlay")
 	}
 
-	var b bytes.Buffer
-	var overlay string
-
-	// Look for an overlay file in declaration order.... Highest priority is first.
-	for _, overlay = range overlayName {
-		if TemplateLookup(overlay) != nil {
-			break
-		}
-		overlay = ""
-	}
-
-	if overlay != "" {
-		logger.Tracef(nil, "Applying overlay '%s'\n", overlay)
-		writer := HTMLWriter{h: bufio.NewWriter(&b)}
-
-		// data is a single item array (though I've not figured out why yet!)
-		Render.HTML(writer, http.StatusOK, overlay, data[0], render.HTMLOptions{Layout: ""})
-		writer.Flush()
-	}
-
-	return template.HTML(b.String())
+	return overlayName
 }
 
 // ----------------------------------------------------------------------------------------
@@ -225,6 +238,128 @@ func SetGuidesNavigation(apiSpec *spec.APISpecification, guidesnav *[]*navigatio
 		id = apiSpec.ID
 	}
 	guides[id] = guidesnav
+}
+
+// ----------------------------------------------------------------------------------------
+
+func DumpAssetPaths() {
+	operations := make(map[string]string)
+
+	for specid, spec := range spec.APISuite {
+		fmt.Printf("\nAsset paths for openAPI specification '%s'\n", specid)
+
+		for _, api := range spec.APIs {
+			fmt.Printf("   API group '%s'\n", api.ID)
+
+			for _, method := range api.Methods {
+				fmt.Printf("      %s %s (%s)\n", strings.ToUpper(method.Method), method.Path, method.Name) //, method.OperationName)
+
+				fmt.Printf("         assets/sections/%s/reference/%s/%s.md\n", spec.ID, api.ID, method.OperationName)
+				fmt.Printf("         assets/sections/%s/reference/%s.md\n\n", spec.ID, method.OperationName)
+
+				operations[method.OperationName] = method.OperationName
+			}
+			fmt.Printf("         assets/sections/%s/reference/method.md\n\n", spec.ID)
+		}
+	}
+	for op, _ := range operations {
+		fmt.Printf("assets/templates/reference/%s.md\n", op)
+	}
+	fmt.Printf("assets/templates/reference/method.md\n")
+
+	for specid, spec := range spec.APISuite {
+		fmt.Printf("Spec ID: %s\n", specid)
+
+		for _, api := range spec.APIs {
+			fmt.Printf("   API ID: %s\n", api.ID)
+			for _, method := range api.Methods {
+				for status, response := range method.Responses {
+					_ = status
+					if response.Resource != nil {
+						fmt.Printf("            assets/sections/%s/resource/%s.md\n", spec.ID, response.Resource.Title)
+					}
+				}
+			}
+		}
+		fmt.Printf("   assets/sections/%s/resource/resource.md\n", spec.ID)
+	}
+	fmt.Printf("assets/templates/resource/resource.md\n")
+
+	for specid, spec := range spec.APISuite {
+		fmt.Printf("Spec ID: %s\n", specid)
+
+		for _, api := range spec.APIs {
+			fmt.Printf("      assets/sections/reference/%s.md\n", api.ID)
+		}
+		fmt.Printf("   assets/sections/reference/api.md\n")
+	}
+	fmt.Printf("assets/templates/reference/api.md\n")
+}
+
+// ----------------------------------------------------------------------------------------
+
+func getAssetPaths(name string, data []interface{}) []string {
+	datamap := data[0].(map[string]interface{})
+
+	if _, ok := datamap["API"]; ok {
+		if _, ok := datamap["Methods"]; ok {
+			return getAPIAssetPaths(datamap) // API page
+		}
+	}
+	if _, ok := datamap["Method"]; ok {
+		return getMethodAssetPaths(datamap) // Method page
+	}
+	if _, ok := datamap["Resource"]; ok {
+		return getResourceAssetPaths(datamap) // Method page
+	}
+
+	return nil
+}
+
+func getMethodAssetPaths(datamap map[string]interface{}) []string {
+
+	method := datamap["Method"].(spec.Method)
+	apiID := method.APIGroup.ID
+	specID := datamap["ID"].(string)
+
+	var paths []string
+	paths = append(paths, "assets/sections/"+specID+"/reference/"+apiID+"/"+method.OperationName+".md")
+	paths = append(paths, "assets/sections/"+specID+"/reference/"+method.OperationName+".md")
+	paths = append(paths, "assets/sections/"+specID+"/reference/method.md")
+	paths = append(paths, "assets/templates/reference/"+method.OperationName+".md")
+	paths = append(paths, "assets/templates/reference/method.md")
+
+	return paths
+}
+
+// ----------------------------------------------------------------------------------------
+
+func getAPIAssetPaths(datamap map[string]interface{}) []string {
+
+	apiID := datamap["API"].(spec.APIGroup).ID
+	specID := datamap["ID"].(string)
+
+	var paths []string
+	paths = append(paths, "assets/sections/"+specID+"/reference/"+apiID+".md")
+	paths = append(paths, "assets/sections/"+specID+"/reference/api.md")
+	paths = append(paths, "assets/templates/reference/api.md")
+
+	return paths
+}
+
+// ----------------------------------------------------------------------------------------
+
+func getResourceAssetPaths(datamap map[string]interface{}) []string {
+
+	resID := datamap["Resource"].(*spec.Resource).ID
+	specID := datamap["ID"].(string)
+
+	var paths []string
+	paths = append(paths, "assets/sections/"+specID+"/resource/"+resID+".md")
+	paths = append(paths, "assets/sections/"+specID+"/reference/resource.md")
+	paths = append(paths, "assets/templates/resource/resource.md")
+
+	return paths
 }
 
 // ----------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 Swaggerly
 =========
 
-**BETA release - features being added weekly**.
+**Beautiful, integrated, OpenAPI documentation.**
 
 > Themed documentation generator, server and API explorer for OpenAPI (Swagger) Specifications. Helps you build integrated, browsable reference documentation and guides. For example, the [Companies House Developer Hub](https://developer.companieshouse.gov.uk/api/docs/) built with the alpha version.
 
@@ -135,7 +135,7 @@ the case.
 
 To force the group name of all operations declared for a path, the Swaggerly specific `x-pathName` member may be specified
 in the Path Item object. This will always take effect, and will even override the description or name inherited from the top
-level `tags` member. However, tags are the most flexible approach.
+level `tags` member. However, tags are the most flexible approach to name method groups.
 
 ```json
 {
@@ -266,7 +266,6 @@ Swaggerly to integrate with that site, so that a user's API keys are automatical
 signed-in. Swaggerly provides a simple Javascript interface via which you can pass API keys to the explorer, through a piece
 of custom Javascript.
 
-
 ## Customising authentication credential capture
 
 The `apiExplorer` javascript object provides a method to add API keys to an internal list, and a method to inject those
@@ -373,11 +372,12 @@ Swaggerly presents two classes of documentation:
 2. Guides and other authored documentation
 
 Documentation is built from assets, which mostly consist of styles, page templates and template fragments, grouped together
-to form a theme. To customise the documentation: 
+to form a theme. To customise the documentation you have several options:
 
 1. Alternative themes may be used to change the look and feel.
-2. Additional assets may be provided to extend the generated documentation, such as guides
-3. Parts of a theme may be overridden (advanced topic)
+2. Additional assets may be provided to extend the generated documentation, such as guides and other authored documentation.
+3. Authored content may be overlaid on top of the specification generated reference documentation.
+3. Parts of a theme may be overridden.
 
 In general, documentation should be written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/), which seamlessly integrates with the reference
 documentation generated from the OpenAPI specification.
@@ -439,8 +439,6 @@ As the navigation cannot be more than two levels deep, this restricts the depth 
 
 If you need a more elaborate directory structure, or have a file nameing convention that does not lend itself
 to navigation titles, you can take control of the side navigation through [metadata](#controlling-guide-behaviour-with-meta-data).
-
-**GFM support is a new feature, and so guides created using GFM are not currently styled correctly. Standard GFM HTML is generated which does not use the appropriate theme CSS. This being addressed in [issue #1](https://github.com/zxchris/swaggerly/issues/1)**
 
 ### Controlling guide behaviour with metadata
 
@@ -539,7 +537,7 @@ The response is always an array of response objects, if successful.
 For a GFM page to be treated as an overlay, it must contain the metadata `Overlay: true` at the start
 of the file (see [Supported Metadata](#supported-metadata)).
 
-There are two ways to overlay a reference page, globally, per-specification or on a page-by-page basis. Swaggerly will
+There are three ways to overlay a reference page, globally, per-specification or on a page-by-page basis. Swaggerly will
 look at the following file patterns in the order defined below to find any appropriate overlays, and will stop once it finds one.
 For example `sections/[spec-ID]/reference/<API name>.md` takes precident over `sections/[spec-ID]/reference/api.md`.
 
@@ -558,7 +556,19 @@ For example `sections/[spec-ID]/reference/<API name>.md` takes precident over `s
 | Resource | `sections/[spec-ID]/resource/resource.md`                  | Overlay applied to all resource pages of a specific API.  |
 | Resource | `templates/resource/resource.md`                           | Overlay applied to all resource pages of all APIs across all specifications.  |
 
-### Page section targets
+### Enabling author debug mode
+
+By passing swaggerly the configuration parameter `-author-show-assets`, swaggerly will display an overlay search path pane at the foot
+of each API reference page. This helps you see exactly the path and filename you need to use to overlay content onto the page you are
+viewing (see [Configuration parameters](#configuration-parameters)).
+
+### Table of page overlay targets
+
+#### API page
+
+| GFM section reference | Page section |
+| --------------------- | ------------ |
+| `[[banner]]`      | Inserts content at the start of the page, before the API list. |
 
 #### Method page
 
@@ -588,12 +598,6 @@ For example `sections/[spec-ID]/reference/<API name>.md` takes precident over `s
 | `[[example]]`         | Adds content before the resource example, if it exists. |
 | `[[properties]]`      | Inserts content before the resource properties table. |
 | `[[additional]]`      | Inserts content at the end of the resource page. |
-
-#### API page
-
-| GFM section reference | Page section |
-| --------------------- | ------------ |
-| `[[banner]]`      | Inserts content at the start of the page, before the API list. |
 
 
 ## Supported metadata
@@ -665,19 +669,19 @@ HTTP method, but may be overridden on a per-method basis by the `x-operation-nam
                 "x-operation-name": "list",
                 "summary": "List products",
                 "description": "Returns a list of products"
-                "tags": ["Products"],
+                "tags": ["Products"]
             },
             "post": {
                 "summary": "Get product",
                 "description": "Create product types"
-                "tags": ["Products"],
+                "tags": ["Products"]
             }
         },
         "/products/{id}": {
             "get": {
                 "summary": "Get a product",
                 "description": "Returns a products"
-                "tags": ["Products"],
+                "tags": ["Products"]
             }
         }
     }
@@ -727,8 +731,8 @@ The other homepages are provided for each specification, viewed when an openAPI 
 - `assets/`
    - `sections/`
      - `[specification-ID]` - The kabab case of the OpenAPI `info.title` member.
-       - `index.tmpl` - Custom API specification page, in HTML or
-       - `index.md`   - Custom API specification page, in GFM
+            - `index.tmpl` - Custom API specification page, in HTML or
+            - `index.md`   - Custom API specification page, in GFM
 
 If you are documenting a single openAPI specification, Swaggerly will automatically show the openAPI specification page
 and skip the top level 'available specifications' page. If you do not want this behaviour, then start Swaggerly with the
@@ -744,20 +748,7 @@ An example of this is demonstrated by the metadata example, which provides its o
 To run this example, pass Swaggerly the option 
 `-assets-dir=<Swaggerly-source-directory>/examples/metadata/assets -force-root-page=true`
 
-# Versioning
-
-To be completed.
-
-## Reverse proxying through to other resources
-
-To create an integrated developer hub. Such resources could be:
-
-1. API key management tools
-2. Forum
-
-**Coming soon!**
-
-## Configuration parameters
+# Configuration parameters
 
 | Option | Environment variable | Description |
 | ------ | -------------------- | ----------- |
@@ -773,8 +764,12 @@ To create an integrated developer hub. Such resources could be:
 | `-theme` | `THEME` | Name of the theme to render documentation. |
 | `-themes-dir` | `THEMES_DIR` | Directory containing installed themes. |
 | `-force-root-page` | `FORCE_ROOT_PAGE` | When Swaggerly is serving a single OpenAPI specification, then by default Swaggerly will show the specification index page when serving the homepage. You can force Swaggerly to show the root index page with this option. Takes the value `true` or `false`. |
+| `-author-show-assets` | `AUTHOR_SHOW_ASSETS` | Setting this value to `true` will enable an *assets search path* pane at the foot of every API reference page. This shows the path order that Swaggerly will scan to find GFM content overlay or replacement files. Takes the value `true` or `false`. |
 
-## Swaggerly start up example
+Some configuration parameters can take multiple values, either by specifying the parameter multiple times on the command lines, or by
+comma seperating multiple values when using environment variables.
+
+# Swaggerly start up example
 
 The following command line will start Swaggerly serving the petshop OpenAPI specification, rewriting the API host URL
 of the petstore specification from api.uber.com to API.UBER.COM, and picking up the local assets `examples/markdown/assets` 
@@ -784,11 +779,11 @@ This start up script can be found as `run_example.sh` in the swaggerly source di
 
 ```bash
 ./swaggerly \
-    -spec-dir=petstore \
+    -spec-dir=examples/specifications/petstore/ \
     -bind-addr=0.0.0.0:3123 \
-    -spec-rewrite-url=api.uber.com=API.UBER.COM \
+    -spec-rewrite-url=petstore.swagger.io=PETSTORE.swagger.io \
     -document-rewrite-url=www.google.com=www.google.co.uk \
     -site-url=http://127.0.0.1:3123 \
-    oassets-dir=./examples/markdown/assets \
-    -lcg-level=trace
+    -assets-dir=examples/markdown/assets \
+    -log-level=trace
 ```

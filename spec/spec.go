@@ -8,11 +8,10 @@ import (
 	"strings"
 
 	//"github.com/davecgh/go-spew/spew"
-	"github.com/serenize/snaker"
-	"github.com/shurcooL/github_flavored_markdown"
-	//"github.com/zxchris/go-swagger/spec"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/spec"
+	"github.com/serenize/snaker"
+	"github.com/shurcooL/github_flavored_markdown"
 	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
 )
@@ -30,7 +29,7 @@ type APISpecification struct {
 var APISuite map[string]*APISpecification
 
 // GetByName returns an API by name
-func (c *APISpecification) GetByName(name string) *API {
+func (c *APISpecification) GetByName(name string) *APIGroup {
 	for _, a := range c.APIs {
 		if a.Name == name {
 			return &a
@@ -40,7 +39,7 @@ func (c *APISpecification) GetByName(name string) *API {
 }
 
 // GetByID returns an API by ID
-func (c *APISpecification) GetByID(id string) *API {
+func (c *APISpecification) GetByID(id string) *APIGroup {
 	for _, a := range c.APIs {
 		if a.ID == id {
 			return &a
@@ -49,15 +48,15 @@ func (c *APISpecification) GetByID(id string) *API {
 	return nil
 }
 
-type APISet []API
+type APISet []APIGroup
 
 type Info struct {
 	Title       string
 	Description string
 }
 
-// API represents an API
-type API struct {
+// APIGroup parents all grouped API methods (Grouping controlled by tagging, if used, or by method path otherwise)
+type APIGroup struct {
 	ID                     string
 	Name                   string
 	URL                    *url.URL
@@ -114,7 +113,7 @@ type Method struct {
 	DefaultResponse *Response
 	Resources       []*Resource
 	Security        map[string]Security
-	API             *API
+	APIGroup        *APIGroup
 }
 
 // Parameter represents an API method parameter
@@ -242,7 +241,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		var ok bool
 		var ver interface{}
 
-		var api *API
+		var api *APIGroup
 		groupingByTag := false
 
 		if tag.Name != "" {
@@ -258,7 +257,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 
 		// If we're grouping by TAGs, then build the API at the tag level
 		if groupingByTag {
-			api = &API{
+			api = &APIGroup{
 				ID:   TitleToKebab(name),
 				Name: name,
 				URL:  u,
@@ -274,8 +273,9 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 				path = basePath + path
 			}
 
+			// If not grouping by tag, then build the API at the path level
 			if !groupingByTag {
-				api = &API{
+				api = &APIGroup{
 					ID:   TitleToKebab(name),
 					Name: name,
 					URL:  u,
@@ -338,7 +338,7 @@ func getTags(specification *spec.Swagger) []spec.Tag {
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) getVersions(tag spec.Tag, api *API, versions map[string]spec.PathItem, path string) {
+func (c *APISpecification) getVersions(tag spec.Tag, api *APIGroup, versions map[string]spec.PathItem, path string) {
 	if versions == nil {
 		return
 	}
@@ -354,7 +354,7 @@ func (c *APISpecification) getVersions(tag spec.Tag, api *API, versions map[stri
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods *[]Method, pi *spec.PathItem, path string, version string) {
+func (c *APISpecification) getMethods(tag spec.Tag, api *APIGroup, methods *[]Method, pi *spec.PathItem, path string, version string) {
 
 	c.getMethod(tag, api, methods, version, pi, pi.Get, path, "get")
 	c.getMethod(tag, api, methods, version, pi, pi.Post, path, "post")
@@ -367,7 +367,7 @@ func (c *APISpecification) getMethods(tag spec.Tag, api *API, methods *[]Method,
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) getMethod(tag spec.Tag, api *API, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
+func (c *APISpecification) getMethod(tag spec.Tag, api *APIGroup, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
 	if operation == nil {
 		return
 	}
@@ -435,7 +435,7 @@ func (c *APISpecification) getSecurityDefinitions(spec *spec.Swagger) {
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
+func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
 
 	id := o.ID // OperationID
 	if id == "" {
@@ -464,12 +464,14 @@ func (c *APISpecification) processMethod(api *API, pathItem *spec.PathItem, o *s
 		Responses:      make(map[int]Response),
 		NavigationName: navigationName,
 		OperationName:  operationName,
-		API:            api,
+		APIGroup:       api,
 	}
 
 	// If Tagging is not used by spec to select, group and order API paths to document, then
 	// complete the missing names.
 	// First try the vendor extension x-pathName, falling back to summary if not set.
+	// XXX Note, that the APIGroup will get the last pathName set on the path methods added to the group (by tag).
+	//
 	if pathname, ok := pathItem.Extensions["x-pathName"]; ok {
 		api.Name = pathname.(string)
 		api.ID = TitleToKebab(api.Name)
