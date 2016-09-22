@@ -18,7 +18,7 @@ var pathVersionResource map[string]versionedResource // Key is path
 
 // Register creates routes for specification resource
 func Register(r *pat.Router) {
-	logger.Printf(nil, "Registering reference documentation")
+	logger.Infof(nil, "Registering reference documentation")
 
 	pathVersionMethod = make(map[string]versionedMethod)
 	pathVersionResource = make(map[string]versionedResource)
@@ -28,10 +28,10 @@ func Register(r *pat.Router) {
 
 		spec_id := "/" + specification.ID
 
-		logger.Printf(nil, "Registering reference for OpenAPI specification '%s'", specification.APIInfo.Title)
+		logger.Debugf(nil, "Registering reference for OpenAPI specification '%s'", specification.APIInfo.Title)
 
 		for _, api := range specification.APIs {
-			logger.Printf(nil, "  - Scanning API [%s] %s", api.ID, api.Name)
+			logger.Debugf(nil, "  - Scanning API [%s] %s", api.ID, api.Name)
 			r.Path(spec_id + "/reference/" + api.ID).Methods("GET").HandlerFunc(APIHandler(specification, api))
 
 			version := api.CurrentVersion
@@ -40,7 +40,7 @@ func Register(r *pat.Router) {
 				basepath := spec_id + "/reference/" + api.ID
 				path := basepath + "/" + method.ID
 
-				logger.Printf(nil, "    + method %s [%s]", path, method.Name)
+				logger.Debugf(nil, "    + method %s [%s]", path, method.Name)
 
 				// Add version->method to pathVersionMethod
 				if _, ok := pathVersionMethod[path]; !ok {
@@ -51,7 +51,7 @@ func Register(r *pat.Router) {
 			}
 			for version, methods := range api.Versions {
 				for _, method := range methods {
-					logger.Printf(nil, "    + %s %s", method.ID, method.Name)
+					logger.Debugf(nil, "    + %s %s", method.ID, method.Name)
 					path := spec_id + "/reference/" + api.ID + "/" + method.ID
 					// Add version->resource to pathVersionResource
 					if _, ok := pathVersionMethod[path]; !ok {
@@ -63,12 +63,12 @@ func Register(r *pat.Router) {
 			}
 		}
 
-		logger.Printf(nil, "  - Registering resources")
+		logger.Debugf(nil, "  - Registering resources")
 		for version, resources := range specification.ResourceList {
-			logger.Tracef(nil, "    - Version %s", version)
+			logger.Debugf(nil, "    - Version %s", version)
 			for id, resource := range resources {
 				path := spec_id + "/resources/" + id
-				logger.Printf(nil, "      + resource %s", id)
+				logger.Debugf(nil, "      + resource %s", id)
 				if _, ok := pathVersionResource[path]; !ok {
 					pathVersionResource[path] = make(versionedResource)
 					r.Path(path).Methods("GET").HandlerFunc(GlobalResourceHandler(specification, path))
@@ -77,7 +77,7 @@ func Register(r *pat.Router) {
 			}
 		}
 	}
-	logger.Printf(nil, "\n")
+	logger.Debugf(nil, "\n")
 }
 
 // ------------------------------------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ func APIHandler(specification *spec.APISpecification, api spec.APIGroup) func(w 
 			tmpl = customTmpl
 		}
 
-		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
+		logger.Tracef(nil, "-- template: %s  Version %s", tmpl, version)
 
 		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, specification, render.Vars{"Title": api.Name, "API": api, "Methods": methods, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion}))
 	}
@@ -183,12 +183,12 @@ func MethodHandler(specification *spec.APISpecification, api spec.APIGroup, path
 			tmpl = customTmpl
 		}
 
-		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
+		logger.Tracef(nil, "-- template: %s  Version %s", tmpl, version)
 
 		// TODO default to latest if version not found, or 404 ?
 		method = pathVersionMethod[path][version]
 
-		//logger.Printf(nil, "Method versions:\n")
+		//logger.Debugf(nil, "Method versions:\n")
 		//spew.Dump(versions)
 
 		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, specification, render.Vars{"Title": method.Name, "API": api, "Method": method, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion}))
@@ -222,7 +222,7 @@ func GlobalResourceHandler(specification *spec.APISpecification, path string) fu
 
 		resource := pathVersionResource[path][version]
 
-		logger.Printf(nil, "Render resource "+resource.ID)
+		logger.Debugf(nil, "Render resource "+resource.ID)
 		tmpl := "resource"
 
 		customTmpl := "resources/" + resource.ID
@@ -231,7 +231,7 @@ func GlobalResourceHandler(specification *spec.APISpecification, path string) fu
 			tmpl = customTmpl
 		}
 
-		logger.Printf(nil, "-- template: %s  Version %s", tmpl, version)
+		logger.Tracef(nil, "-- template: %s  Version %s", tmpl, version)
 
 		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, specification, render.Vars{"Title": resource.Title, "Resource": resource, "Version": version, "Versions": versions}))
 	}

@@ -84,7 +84,7 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 
 		switch ext {
 		case ".html", ".tmpl", ".md":
-			logger.Printf(nil, "    - File "+path)
+			logger.Debugf(nil, "    - File "+path)
 
 			// Convert path/filename to route
 			route := FilenameToRoute(path, base)
