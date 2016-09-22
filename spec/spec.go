@@ -506,7 +506,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 			method.PathParams = append(method.PathParams, p)
 		case "body":
 			var body map[string]interface{}
-			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil)
+			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil, true)
 			p.Resource.Schema = jsonResourceToString(body, "")
 			method.BodyParam = &p
 		case "header":
@@ -537,7 +537,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 				c.ResourceList[version] = make(map[string]*Resource)
 			}
 			var ok bool
-			r, example_json := c.resourceFromSchema(response.Schema, method, nil) // May be thrown away
+			r, example_json := c.resourceFromSchema(response.Schema, method, nil, false) // May be thrown away
 
 			r.Schema = jsonResourceToString(example_json, r.Type[0])
 
@@ -564,7 +564,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	}
 
 	if o.Responses.Default != nil {
-		r, example_json := c.resourceFromSchema(o.Responses.Default.Schema, method, nil)
+		r, example_json := c.resourceFromSchema(o.Responses.Default.Schema, method, nil, false)
 		if r != nil {
 
 			r.Schema = jsonResourceToString(example_json, r.Type[0])
@@ -688,7 +688,7 @@ func checkPropertyType(s *spec.Schema) string {
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fqNS []string) (*Resource, map[string]interface{}) {
+func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fqNS []string, onlyIsWritable bool) (*Resource, map[string]interface{}) {
 	if s == nil {
 		return nil, nil
 	}
@@ -828,10 +828,10 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	json_representation := make(map[string]interface{})
 
 	logger.Tracef(nil, "Call compileproperties...\n")
-	c.compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped)
+	c.compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped, onlyIsWritable)
 
 	for allof := range s.AllOf {
-		c.compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped)
+		c.compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped, onlyIsWritable)
 	}
 
 	logger.Tracef(nil, "resourceFromSchema done\n")
@@ -844,7 +844,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 // It uses the 'required' map to set when properties are required and builds a JSON
 // representation of the resource.
 //
-func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool) {
+func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool, onlyIsWritable bool) {
 
 	// First, grab the required members
 	for _, n := range s.Required {
@@ -869,19 +869,22 @@ func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method
 		newFQNS = append(newFQNS, name)
 
 		var json_resource map[string]interface{}
+		var resource *Resource
 
 		logger.Tracef(nil, "A call resourceFromSchema for property %s\n", name)
-		r.Properties[name], json_resource = c.resourceFromSchema(&property, method, newFQNS)
+		resource, json_resource = c.resourceFromSchema(&property, method, newFQNS, onlyIsWritable)
+
+		if onlyIsWritable && resource.ReadOnly {
+			continue
+		}
+
+		r.Properties[name] = resource
+		json_rep[name] = json_resource
 
 		if _, ok := required[name]; ok {
 			r.Properties[name].Required = true
 		}
-		//if _, ok := readonly[name]; ok {
-		//	r.Properties[name].ReadOnly = true
-		//}
 		logger.Tracef(nil, "resource property %s type: %s\n", name, r.Properties[name].Type[0])
-
-		json_rep[name] = json_resource
 
 		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
 			// Arrays of objects need to be handled as a special case
