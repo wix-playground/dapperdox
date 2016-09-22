@@ -25,7 +25,7 @@
 
 [: if .Method.HeaderParams :]
   <h2 class="sub-header">Request headers</h2>
-  [: overlay "header-parameters" . :]
+  [: overlay "request-headers" . :]
   [: template "fragments/reference/params" .Method.HeaderParams :]
 [: end :]
 
@@ -37,7 +37,7 @@
 
 [: if .Method.BodyParam :]
   <h2 class="sub-header">Request body</h2>
-  [: overlay "body-parameters" . :]
+  [: overlay "request-body" . :]
   [: template "fragments/reference/request_body" .Method.BodyParam :]
 [: end :]
 

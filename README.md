@@ -579,9 +579,9 @@ viewing (see [Configuration parameters](#configuration-parameters)).
 | `[[request]]`           | Adds content before the method request URL. |
 | `[[path-parameters]]`   | Adds content before the path parameters block. |
 | `[[query-parameters]]`  | Adds content before the query parameters block. |
-| `[[header-parameters]]` | Adds content before the header parameters block. |
+| `[[request-headers]]`   | Adds content before the header parameters block. |
 | `[[form-parameters]]`   | Adds content before the form parameters block. |
-| `[[body-parameters]]`   | Adds content before the body parameters block. |
+| `[[request-body]]`      | Adds content before the body block. |
 | `[[security]]`          | Adds content before the security section. |
 | `[[response]]`          | Adds content before the response section. |
 | `[[example]]`           | Inserts content before the API explorer. |
