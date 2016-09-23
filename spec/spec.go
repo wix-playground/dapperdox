@@ -821,7 +821,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 		}
 	}
 
-	r.ReadOnly = s.ReadOnly
+	r.ReadOnly = original_s.ReadOnly
 	if ops, ok := original_s.Extensions["x-excludeFromOperations"].([]interface{}); ok {
 		// Mark resource property as being excluded from operations with this name.
 		// This filtering only takes effect in a request body, just like readOnly.
