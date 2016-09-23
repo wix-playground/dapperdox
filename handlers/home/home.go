@@ -49,7 +49,7 @@ func Register(r *pat.Router) {
 // ----------------------------------------------------------------------------------------
 // Handler is a http.Handler for the home page
 func topHandler(w http.ResponseWriter, req *http.Request) {
-	logger.Printf(nil, "Render HTML for top level index page")
+	logger.Tracef(nil, "Render HTML for top level index page")
 
 	render.HTML(w, http.StatusOK, "index", render.DefaultVars(req, nil, render.Vars{"Title": "API documentation"}))
 }

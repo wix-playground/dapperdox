@@ -35,7 +35,7 @@ func Register(r *pat.Router) {
 
 	base := GetBasePath()
 
-	logger.Debugf(nil, "Registering guides")
+	logger.Infof(nil, "Registering guides")
 
 	// specification specific guides
 	for _, specification := range spec.APISuite {
@@ -84,7 +84,7 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 
 		switch ext {
 		case ".html", ".tmpl", ".md":
-			logger.Printf(nil, "    - File "+path)
+			logger.Debugf(nil, "    - File "+path)
 
 			// Convert path/filename to route
 			route := FilenameToRoute(path, base)

@@ -96,7 +96,7 @@ func Compile(dir string, prefix string) {
 		logger.Errorf(nil, "Error forming absolute path: %s", err)
 	}
 
-	logger.Printf(nil, "- Scanning directory %s", dir)
+	logger.Debugf(nil, "- Scanning directory %s", dir)
 
 	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info == nil {
@@ -173,7 +173,7 @@ func storeTemplate(prefix string, name string, template string, meta map[string]
 	newname := prefix + "/" + name
 
 	if _, ok := _bindata[newname]; !ok {
-		logger.Printf(nil, "  + Import %s", newname)
+		logger.Debugf(nil, "  + Import %s", newname)
 		// Store the template, doing and search/replaces on the way
 		_bindata[newname] = []byte(template)
 		if len(meta) > 0 {
