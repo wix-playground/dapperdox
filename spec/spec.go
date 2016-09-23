@@ -135,18 +135,19 @@ type Response struct {
 
 // Resource represents an API resource
 type Resource struct {
-	ID          string
-	FQNS        []string
-	Title       string
-	Description string
-	Example     string
-	Schema      string
-	Type        []string
-	Properties  map[string]*Resource
-	Required    bool
-	ReadOnly    bool
-	Methods     []Method
-	Enum        []string
+	ID                    string
+	FQNS                  []string
+	Title                 string
+	Description           string
+	Example               string
+	Schema                string
+	Type                  []string
+	Properties            map[string]*Resource
+	Required              bool
+	ReadOnly              bool
+	ExcludeFromOperations []string
+	Methods               []Method
+	Enum                  []string
 }
 
 // -----------------------------------------------------------------------------
@@ -224,10 +225,8 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 	c.getSecurityDefinitions(apispec)
 
 	methodNavByName := false // Should methods in the navigation be presented by type (GET, POST) or name (string)?
-	if byname, ok := apispec.Extensions["x-navigate-methods-by-name"]; ok {
-		if byname.(bool) {
-			methodNavByName = true
-		}
+	if byname, ok := apispec.Extensions["x-navigateMethodsByName"].(bool); ok {
+		methodNavByName = byname
 	}
 
 	//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
@@ -240,7 +239,6 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		logger.Tracef(nil, "  In tag loop...\n")
 		// Tag matching may not be as expected if multiple paths have the same TAG (which is technically permitted)
 		var ok bool
-		var ver interface{}
 
 		var api *APIGroup
 		groupingByTag := false
@@ -285,13 +283,14 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 				}
 			}
 
-			if ver, ok = pathItem.Extensions["x-version"]; !ok {
+			var ver string
+			if ver, ok = pathItem.Extensions["x-version"].(string); !ok {
 				ver = "latest"
 			}
-			api.CurrentVersion = ver.(string)
+			api.CurrentVersion = ver
 
-			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver.(string)) // Current version
-			//c.getVersions(tag, api, pathItem.Versions, path)                    // All versions
+			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver) // Current version
+			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
 
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
@@ -447,8 +446,8 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	}
 
 	operationName := methodname
-	if opname, ok := o.Extensions["x-operation-name"]; ok {
-		operationName = opname.(string)
+	if opname, ok := o.Extensions["x-operationName"].(string); ok {
+		operationName = opname
 	}
 
 	navigationName := operationName
@@ -473,8 +472,8 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	// First try the vendor extension x-pathName, falling back to summary if not set.
 	// XXX Note, that the APIGroup will get the last pathName set on the path methods added to the group (by tag).
 	//
-	if pathname, ok := pathItem.Extensions["x-pathName"]; ok {
-		api.Name = pathname.(string)
+	if pathname, ok := pathItem.Extensions["x-pathName"].(string); ok {
+		api.Name = pathname
 		api.ID = TitleToKebab(api.Name)
 	}
 	if api.Name == "" {
@@ -823,6 +822,15 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	}
 
 	r.ReadOnly = s.ReadOnly
+	if ops, ok := original_s.Extensions["x-excludeFromOperations"].([]interface{}); ok {
+		// Mark resource property as being excluded from operations with this name.
+		// This filtering only takes effect in a request body, just like readOnly.
+		for _, op := range ops {
+			if c, ok := op.(string); ok {
+				r.ExcludeFromOperations = append(r.ExcludeFromOperations, c)
+			}
+		}
+	}
 
 	required := make(map[string]bool)
 	json_representation := make(map[string]interface{})
@@ -850,11 +858,6 @@ func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method
 	for _, n := range s.Required {
 		required[n] = true
 	}
-	//if mod, ok := s.Extensions["x-modifiable"]; ok {
-	//	for _, n := range mod.([]interface{}) {
-	//		modifiable[n.(string)] = true
-	//	}
-	//}
 
 	// Now process the properties
 	for name, property := range s.Properties {
@@ -874,7 +877,16 @@ func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method
 		logger.Tracef(nil, "A call resourceFromSchema for property %s\n", name)
 		resource, json_resource = c.resourceFromSchema(&property, method, newFQNS, onlyIsWritable)
 
-		if onlyIsWritable && resource.ReadOnly {
+		skip := onlyIsWritable && resource.ReadOnly
+		if !skip && resource.ExcludeFromOperations != nil {
+			for _, opname := range resource.ExcludeFromOperations {
+				if opname == method.OperationName {
+					skip = true
+					break
+				}
+			}
+		}
+		if skip {
 			continue
 		}
 

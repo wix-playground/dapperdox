@@ -659,14 +659,14 @@ returns a list. This is clearly confusing for the reader, so in the latter case 
 to be identified as such.
 
 To do this, Swaggerly introduces the concept of a method **operation**, which usually has the same value as the
-HTTP method, but may be overridden on a per-method basis by the `x-operation-name` extension:
+HTTP method, but may be overridden on a per-method basis by the `x-operationName` extension:
 
 ```json
 {
     "paths": {
         "/products": {
             "get": {
-                "x-operation-name": "list",
+                "x-operationName": "list",
                 "summary": "List products",
                 "description": "Returns a list of products"
                 "tags": ["Products"]
@@ -699,7 +699,7 @@ This technique can also be used to override `GET` to `fetch`, `POST` to `create`
 Where an openAPI specification is describing a non-RESTful set of APIs, they are often grouped together and sharing the same
 HTTP method. For example, two `get` methods having respective `summary` texts of `lookup product by ID` and `lookup product by barcode` 
 would probably be listed together, both being product APIs. As they are both `get` methods, the reader would be unable to tell them
-apart if they are both referred to as `get` operations in the API navigation. By adding the `"x-navigate-methods-by-name" : true` 
+apart if they are both referred to as `get` operations in the API navigation. By adding the `"x-navigateMethodsByName" : true` 
 extension to the top level openAPI specification, you can force Swaggerly to describe each method in the navigation using its 
 `summary` text instead of its operation name or HTTP method. The methods will continue to be referred to by operation name or
 HTTP method in API pages.
@@ -707,7 +707,7 @@ HTTP method in API pages.
 ```json
 {
     "swagger": "2.0",
-    "x-navigate-methods-by-name": true,
+    "x-navigateMethodsByName": true,
     "info": {
         "title": "Example API",
         "description": "The only way is up",

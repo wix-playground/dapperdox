@@ -106,10 +106,10 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 		return ""
 	}
 
-	datamap, ok := data[0].(map[string]interface{})
-
-	if !ok {
-		logger.Printf(nil, "datamap err\n")
+	var datamap map[string]interface{}
+	var ok bool
+	if datamap, ok = data[0].(map[string]interface{}); !ok {
+		logger.Tracef(nil, "Overlay: type convert of data[0] to map[string]interface{} failed. Not an expected type.")
 		return ""
 	}
 
