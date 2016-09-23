@@ -822,7 +822,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 		}
 	}
 
-	r.ReadOnly = s.ReadOnly
+	r.ReadOnly = original_s.ReadOnly
 
 	required := make(map[string]bool)
 	json_representation := make(map[string]interface{})
