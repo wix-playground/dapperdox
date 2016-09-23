@@ -777,15 +777,17 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 		id = myFQNS[len(myFQNS)-1]
 		myFQNS = append([]string{}, myFQNS[0:len(myFQNS)-1]...)
 		chopped = true
+		logger.Tracef(nil, "Chopped %s from myFQNS leaving %s\n", id, myFQNS)
 	}
 
 	resourceFQNS := myFQNS
 	// If we are dealing with an object, then adjust the resource FQNS and id
 	// so that the last element of the FQNS is chopped off and used as the ID
-	if s.Type.Contains("object") {
+	if !chopped && s.Type.Contains("object") {
 		if len(resourceFQNS) > 0 {
 			id = resourceFQNS[len(resourceFQNS)-1]
 			resourceFQNS = resourceFQNS[:len(resourceFQNS)-1]
+			logger.Tracef(nil, "Got an object, so slicing %s from resourceFQNS leaving %s\n", id, myFQNS)
 		}
 	}
 
@@ -865,7 +867,7 @@ func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method
 		newFQNS := append([]string{}, myFQNS...)
 
 		if chopped && len(id) > 0 {
-			logger.Tracef(nil, "Append ID onto newFQNZ '%s'", id)
+			logger.Tracef(nil, "Append ID onto newFQNZ %s + '%s'", newFQNS, id)
 			newFQNS = append(newFQNS, id)
 		}
 
