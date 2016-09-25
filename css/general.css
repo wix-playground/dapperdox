@@ -239,7 +239,7 @@ color: #ECEBEB;
 .navbar-brand {
 	/* font-family: arvo; */
 	font-family: muli;
-	letter-spacing: 3px;
+	letter-spacing: 0px;
 	font-weight: 400 !important;
 }
 
