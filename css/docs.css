@@ -59,12 +59,12 @@ pre code {
   }
 @media (min-width: 768px) {
     .sidebar {
-        top: 128px;
+        top: 123px;
     }
 }
 @media (min-width: 992px) {
     .sidebar {
-        top: 67px;
+        top: 62px;
     }
 }
 
@@ -89,6 +89,7 @@ pre code {
 }
 .nav-selected {
   font-weight: bold;
+  color: #000000;
 }
 .nav-sidebar > li > h4 {
   font-size: 15px;
@@ -96,7 +97,7 @@ pre code {
   margin-bottom: 0px;
 }
 .nav-sidebar > li {
-  padding-left: 20px;
+  padding: 5px 0 10px 20px;
 }
 .nav-sidebar > li > ul {
   padding: 0px;

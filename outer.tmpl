@@ -87,16 +87,7 @@
             <div class="row">
 
             <div class="col-sm-3 col-md-2 sidebar" >
-              <ul class="nav nav-sidebar hide" id="navigation">
-                 <li>
-                     <a id="toggleIntro" class="nav-toggle collapsed" data-toggle="collapse" data-target="#ulIntro">Introduction</a>
-                     <ul class="nav collapse nav-inner" id="ulIntro">
-                         <li><a href="/docs//overview" data-outer="Intro">Overview</a></li>
-                         <li><a href="/docs/quickstart.html" data-outer="Intro">Quickstart</a></li>
-                         <li><a href="/docs/getting-started.html" data-outer="Intro">Getting started</a></li>
-                     </ul>
-                 </li>
-              </ul>
+              [: template "sidenav" :]
             </div>
 
             <!-- <div class="col-md-6 col-md-offset-3 text-center wrap_title"> -->
@@ -128,7 +119,8 @@
     var toggler = $("#toggle"+api_id);
     var outerul = $("#ul"+api_id);
 
-    outerul.removeClass('collapse');
+    //outerul.removeClass('collapse');
+    outerul.addClass('in');
     toggler.removeClass('collapsed');
     $element.addClass('nav-selected');
 
