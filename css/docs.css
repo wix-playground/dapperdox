@@ -12,19 +12,30 @@ h1,
 }
 h2,
 .h2 {
-  font-size: 28px;
+  font-size: 25px;
   padding-bottom: 18px;
 }
 h3,
 .h3 {
-  font-size: 22px;
+  font-size: 20px;
   padding-bottom: 14px;
 }
 h4,
 .h4 {
-  font-size: 18px;
+  font-size: 15px;
   padding-bottom: 10px;
 }
+
+pre code {
+    /* darker red */
+    /* color: #B52248; */
+    /* kinda red */
+    color: #c7254e; 
+}
+
+.main a:link    {color: #0000EE;}
+.main a:visited {color: #0000EE;}
+.main a:hover   {color: #60a0ff;}
 
 /*
  * Sidebar
