@@ -107,24 +107,31 @@
 	<script type="text/javascript">
 	  jQuery(function($) {
 		$(document).ready( function() {
-		  $('.navbar-default').stickUp();
+		    //$('.navbar-default').stickUp();
+            $('.items').hide();
+            var $pagename=decodeURI( window.location.pathname );
 
-    $('.items').hide();
-    var $pagename=decodeURI( window.location.pathname );
+            var $parent=$('ul[id="navigation"]')
+            var $element=$parent.find('a[href$="'+$pagename+'"]');
+            //console.log( $element );
 
-    var $element=$('ul[id="navigation"]').find('a[href$="'+$pagename+'"]');
-    console.log( $element );
+            var api_id = $element.data('outer');
+            var toggler = $("#toggle"+api_id);
+            var outerul = $("#ul"+api_id);
 
-    var api_id = $element.data('outer');
-    var toggler = $("#toggle"+api_id);
-    var outerul = $("#ul"+api_id);
+            outerul.addClass('in');
+            toggler.removeClass('collapsed');
+            $element.addClass('nav-selected');
 
-    //outerul.removeClass('collapse');
-    outerul.addClass('in');
-    toggler.removeClass('collapsed');
-    $element.addClass('nav-selected');
+            $parent.removeClass('hide');
 
-    $("#navigation").removeClass('hide');
+            // Close last open navigation (if there is one)
+            //var oldouterul = $("#ul"+$parent.data('open'));
+            //oldouterul.removeClass('in');
+
+            //// Remember which navigation is now open
+            //$parent.data('open', api_id)
+            ////console.log( api_id );
 		});
 	  });
 	
