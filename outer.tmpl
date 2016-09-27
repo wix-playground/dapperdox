@@ -26,11 +26,13 @@
     <link href="/css/general.css" rel="stylesheet">
 	
 	 <!-- Owl-Carousel -->
+     <!--
     <link href="/css/custom.css" rel="stylesheet">
 	<link href="/css/owl.carousel.css" rel="stylesheet">
     <link href="/css/owl.theme.css" rel="stylesheet">
-	<link href="/css/style.css" rel="stylesheet">
 	<link href="/css/animate.css" rel="stylesheet">
+-->
+	<link href="/css/style.css" rel="stylesheet">
 	<link href="/css/docs.css" rel="stylesheet">
 	
 	<!-- Magnific Popup core CSS file -->
@@ -51,14 +53,28 @@
     <!--[if lt IE 9]>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.ie.min.css" />
         <![endif]-->
+
+        <!-- <script src='/js/highlight.pack.js'   type='text/javascript'></script> -->
+        <!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/github-gist.min.css"> -->
+        <link href="/css/hilight-swaggerly.css" rel="stylesheet">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
 </head>
 
-<body id="home">
+<body id="home" style="overflow: visible">
 
-	<!-- NavBar-->
+	<!-- 
 	<nav class="navbar-default" role="navigation">
 		<div class="container">
 			<div class="navbar-header">
+    -->
+
+    <header>
+      <div class="container">
+        <div class="row">
+          <nav class="navbar-default" role="navigation">
+             <div class="navbar-header">
+
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
 					<span class="sr-only">Toggle navigation</span>
 					<span class="icon-bar"></span>
@@ -77,25 +93,27 @@
 					<li class="menuItem"><a href="#documentation">Documentation</a></li>
 				</ul>
 			</div>
+          </nav>
+        </div>
+      </div>
+    </header>
 		   
+    <!--
 		</div>
 	</nav> 
+    -->
 	
-	<!-- What is Swaggerly -->
-    <!--<div id="whatis" class="content-section-b" style="border-top: 0"> -->
-		<div class="container-fluid">
-            <div class="row">
+	<div class="container">
+      <div class="row">
+        <div class="col-lg-2 col-md-3 col-sm-3">
+          [: template "sidenav" :]
+        </div>
 
-            <div class="col-sm-3 col-md-2 sidebar" >
-              [: template "sidenav" :]
-            </div>
-
-            <!-- <div class="col-md-6 col-md-offset-3 text-center wrap_title"> -->
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                [: yield :]
-			</div>
+        <div class="col-lg-10 col-md-9 col-sm-9 main">
+            [: yield :]
 		</div>
-        <!-- </div> -->
+      </div>
+	</div>
 	
     <!-- JavaScript -->
     <script src="/js/jquery-1.10.2.js"></script>
@@ -103,7 +121,7 @@
 	<script src="/js/owl.carousel.js"></script>
 	<script src="/js/script.js"></script>
 	<!-- StikyMenu -->
-	<script src="/js/stickUp.min.js"></script>
+	<!-- <script src="/js/stickUp.min.js"></script> -->
 	<script type="text/javascript">
 	  jQuery(function($) {
 		$(document).ready( function() {
@@ -120,6 +138,7 @@
             var outerul = $("#ul"+api_id);
 
             outerul.addClass('in');
+            toggler.addClass('open');
             toggler.removeClass('collapsed');
             $element.addClass('nav-selected');
 

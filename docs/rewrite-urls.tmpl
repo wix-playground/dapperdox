@@ -1,0 +1,48 @@
+<h1>Rewriting URLs</h1>
+
+<h2>Specification URLs</h2>
+
+<p>If your swagger specification is split over multiple files, and therefore contain absolute <code>$ref:</code> object
+references, these references will not be followed correctly unless they resolve to the running Swaggerly instance serving
+the files.</p>
+
+<p>For example, if the swagger specification uses the absolute references of <code>http://mydomain.com/swagger-2.0/....</code>, and
+Swagger is serving content from <code>http://localhost:3123</code>, then the additional configuration parameters to pass to Swaggerly
+to correct this would be:</p>
+
+<pre><code>-spec-rewrite-url=http://mydomain.com/swagger-2.0 \
+-site-url=http://localhost:3123</code></pre>
+
+<p>Sometimes you will want to map a specification URL to one that is not the <code>site url</code>, for example changing the URL that the
+API is served from to be live instead of test. To do this, supply <code>-spec-rewrite-url</code> with a <code>from=to</code> pair. </p>
+
+<pre><code>-spec-rewrite-url=http://api.test.domain.com=http://api.live.domain.com</code></pre>
+
+<p>You may pass multiple <code>-spec-rewrite-url</code> parameters to Swaggerly, to have it replace multiple URLs or placeholders. See <a href="/doc/configuration-guide.html">Configuration parameters</a> for further information on configuring Swaggerly.</p>
+
+<h2>Documentation URLs</h2>
+<p>The swagger specification often does not contain API or resource URLs that are correct for the environment being documented.
+For example, the swagger specifications may contain the production URLs, which are not appropriate when the specification and
+documentation is being served up in a development or test environment.</p>
+
+<p>Swaggerly allows you to rewrite URLs on the fly, so that they match the environment they are being served from. To do this,
+you specify the URL pattern that should be rewritten *from* and *to*, by passing the <code>-document-rewrite-url</code> configuration
+parameter. The parameter takes a <code>from=to</code> pair, such as</p>
+
+<pre><code>-document-rewrite-url=domain.name.from=domain.name.to</code></pre>
+
+<p>You may also choose to use placeholders in your documentation, instead of real URLs, so that you replace the placeholder with
+a valid URL:</p>
+
+<pre><code>&lt;a href="@MY_DOMAIN/some/document.html"&gt;Some document</a></code></pre>
+
+<p>which would be rewritten with:</p>
+
+<pre><code>-document-rewrite-url=@MY_DOMAIN=http://www.mysite.com</code></pre>
+
+<p>There is nothing special about the @ in the above example, it is merely a convention. You can use any expansion syntax you want.</p>
+
+<p>You may pass multiple <code>-document-rewrite-url</code> parameters to Swaggerly, to have it replace multiple URLs or placeholders,
+particularly useful if you additionally need to configure URLs such as CDN location.</p>
+
+<p>See <a href="/doc/configuration-guide.html">Configuration parameters</a> for further information on configuring Swaggerly.</p>

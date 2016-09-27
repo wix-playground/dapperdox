@@ -1,0 +1,99 @@
+<h1>Customising authentication credential capture</h2>
+
+<p>The <code>apiExplorer</code> javascript object provides a method to add API keys to an internal list, and a method to inject those
+API keys into the explorer page, so that the user can select the key from a dropdown menu instead of having to type it in.</p>
+
+<h2>apiExplorer methods</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <th>Method</th>
+            <th>Description</th>
+        </thead>
+        <tbody>
+            <tr><td><code><span class="hljs-object">apiExplorer</span><span class="hljs-keyword">.addApiKey(<span class="hljs-params">name</span>, <span class="hljs-params">key</span>)</span></code> </td><td> This method adds the named key to the internal list.</td></tr>
+            <tr><td><code><span class="hljs-object">apiExplorer</span><span class="hljs-keyword">.listApiKeys()</span></code></td><td> Returns an array of key names.</td></tr>
+            <tr><td><code><span class="hljs-object">apiExplorer</span><span class="hljs-keyword">.getApiKey( <span class="hljs-params">name</span> )</span></code> </td><td> Returns the key associated with name <code class="hljs-params">name</code>.</td></tr>
+            <tr><td><code><span class="hljs-object">apiExplorer</span><span class="hljs-keyword">.injectApiKeysIntoPage()</span></code></td><td> Injects the named API keys into the explorer, building a pulldown menu that can be selected from by the user.</td></tr>
+        </tbody>
+    </table>
+</div>
+
+
+<p>It would be usual for the template fragment <code>assets/themes/default/templates/fragments/scripts.tmpl</code> to be overridden, so
+that it can build a list of valid API keys to be used and inject them into the explorer page. Generally the keys would be
+fetched from some ajax endpoint that you provide, once the user as gone though some sign-in process.</p>
+
+<p>The supplied example, <code>examples/apikey_injection/assets/templates/fragments/scripts.tmpl</code> demonstrates the addition of an
+API key (hardcoded for the benefit of this example), and injects the list of one into the explorer page.</p>
+
+<p>To run this example, Swaggerly needs to be told about the example assets directory for it to pick up the override. 
+This is achieved through the configuration parameter <code>-assets-dir</code>, passed to swaggerly when starting: </p>
+
+<pre><code>-assets-dir=examples/apikey_injection/assets</code></pre>
+
+
+<h2>Controlling authentication credential passing</h2>
+
+<p>By default, Swaggerly will automatically attach the API key if supplied, to the request URL as a <code>key=</code> query parameter.
+This behaviour can be customised to satisfy the authentication requirements of your API.</p>
+
+<p>The template fragment <code>assets/themes/default/templates/fragments/scripts.tmpl</code>, which is included at the end of the common
+page template <code>layout.tmpl</code> contains the following javascript snippet:</p>
+
+<pre><code>&lt;!-- Additional scripts to be loaded at end of page -->
+&lt;!-- This should be overridden to take control of the authorisation process (adding keys to the explorer request). -->
+&lt;script>
+    $(document).ready(function(){
+        // Register callback to add authorisation parameters to request before it is sent
+        apiExplorer.setBeforeSendCallback( function( request ) {
+            var apiKey = apiExplorer.readApiKey(); // Read API key from explorer input
+            request.params = {key: apiKey};
+        });
+    });
+&lt;/script></code></pre>
+
+<p>The above snippet registers a callback with the <code>apiExplorer</code> object which gets invoked while the explorer is building the 
+request to send to the API. This callback will be receive an empty object which has two properties that can be set as needed,
+<code>request.headers</code> - items that are sent as request HTTP headers,  and <code>request.params</code> - items that are sent as query parameters:</p>
+
+<pre><code class="JavaScript">{
+    <span class="hljs-attr">headers</span>: <span class="hljs-value">{}</span>,
+    <span class="hljs-attr">params</span>: <span class="hljs-value">{}</span>
+}</code></pre>
+
+<p>Both the <code>headers</code> and <code>params</code> objects contain zero or more name/value pairs:</p>
+
+<pre><code class="JavaScript">{
+    <span class="hljs-attr">key1</span>: <span class="hljs-string">value</span>,
+    ..
+    ..
+    <span class="hljs-attr">key_n</span>: <span class="hljs-string">value_n</span>
+}</code></pre>
+
+<p>For example:</p>
+
+<pre><code class="JavaScript">request.headers = { header: "value" };
+request.headers = { header1: "value1", header2: "value2" }</code></pre>
+
+<p>To put this into practice, if you wanted to change the authentication credential passing mechanism to instead supply the API key
+as an Authorization header, then create a <code>scripts.tmpl</code> within your own assets directory to override this. For example, the
+Swaggerly example file <code>examples/apikey_injection/assets/templates/fragments/scripts.tmpl</code> passes the API key in the 
+Authorization header using BASIC authentication:</p>
+
+<pre><code>$(document).ready(function(){
+    // ... other code cut from here ...
+
+    // Register callback to add authorisation parameters to request before it is sent
+    apiExplorer.setBeforeSendCallback( function( request ) {
+        var apiKey = apiExplorer.readApiKey(); // Read API key from explorer input
+        request.headers = {Authorization:"Basic " + btoa(apiKey + ":")};
+    });
+});</code></pre>
+
+<p>Swaggerly then needs to be told about this local assets directory for it to pick up the override, which is achieved through
+the configuration parameter <code>-assets-dir</code>, passed to swaggerly when starting. For example, to pick up the example above, use
+<code>-assets-dir=examples/apikey_injection/assets</code>.</p>
+
+<p>See [Creating local assets](#creating-local-assets) for further information about creating custom assets.</p>
