@@ -14,17 +14,17 @@ h1,
 }
 h2,
 .h2 {
-  font-size: 25px;
+  font-size: 22px;
   padding-bottom: 18px;
 }
 h3,
 .h3 {
-  font-size: 20px;
+  font-size: 18px;
   padding-bottom: 14px;
 }
 h4,
 .h4 {
-  font-size: 15px;
+  font-size: 14px;
   padding-bottom: 10px;
 }
 
@@ -45,15 +45,27 @@ p code {
     color: #008000;
 }
 
-.main a:link    {color: #0000EE;}
-.main a:visited {color: #0000EE;}
-.main a:hover   {color: #60a0ff;}
+.main a:link    {color: #337ab7;}
+.main a:visited {color: #337ab7;}
+.main a:hover   {color: #337ab7;
+    text-decoration: underline;
+}
 
 /*
  * Sidebar
  */
-/* Hide for mobile, show later */
 /* Sidebar navigation */
+.panel {
+    /* The panel class is necessary to get accordion expand/collapse to work (bootstrap bug)
+     * This class override nulls the panel style
+     */
+    margin-bottom: 0px;
+    border: 0;
+    border-radius: 0px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
 .nav-sidebar {
   list-style: none;
   margin: 2em 0 0 0;

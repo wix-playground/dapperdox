@@ -58,10 +58,9 @@
         <!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/github-gist.min.css"> -->
         <link href="/css/hilight-swaggerly.css" rel="stylesheet">
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script>
 </head>
 
-<body id="home" style="overflow: visible">
+<body id="home" class="hide" style="overflow: visible">
 
 	<!-- 
 	<nav class="navbar-default" role="navigation">
@@ -105,11 +104,11 @@
 	
 	<div class="container">
       <div class="row">
-        <div class="col-lg-2 col-md-3 col-sm-3">
+        <div class="col-lg-3 col-md-3 col-sm-3">
           [: template "sidenav" :]
         </div>
 
-        <div class="col-lg-10 col-md-9 col-sm-9 main">
+        <div class="col-lg-9 col-md-9 col-sm-9 main">
             [: yield :]
 		</div>
       </div>
@@ -122,6 +121,7 @@
 	<script src="/js/script.js"></script>
 	<!-- StikyMenu -->
 	<!-- <script src="/js/stickUp.min.js"></script> -->
+
 	<script type="text/javascript">
 	  jQuery(function($) {
 		$(document).ready( function() {
@@ -143,17 +143,9 @@
             $element.addClass('nav-selected');
 
             $parent.removeClass('hide');
-
-            // Close last open navigation (if there is one)
-            //var oldouterul = $("#ul"+$parent.data('open'));
-            //oldouterul.removeClass('in');
-
-            //// Remember which navigation is now open
-            //$parent.data('open', api_id)
-            ////console.log( api_id );
+            $('body').removeClass('hide');
 		});
 	  });
-	
 	</script>
 	<!-- Smoothscroll -->
 	<script type="text/javascript" src="/js/jquery.corner.js"></script> 
