@@ -22,6 +22,7 @@ type APISpecification struct {
 	APIInfo Info
 
 	SecurityDefinitions map[string]SecurityScheme
+	DefaultSecurity     map[string]Security
 	ResourceList        map[string]map[string]*Resource // Version->ResourceName->Resource
 	APIVersions         map[string]APISet               // Version->APISet
 }
@@ -223,6 +224,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 	c.ID = TitleToKebab(c.APIInfo.Title)
 
 	c.getSecurityDefinitions(apispec)
+	c.getDefaultSecurity(apispec)
 
 	methodNavByName := false // Should methods in the navigation be presented by type (GET, POST) or name (string)?
 	if byname, ok := apispec.Extensions["x-navigateMethodsByName"].(bool); ok {
@@ -435,6 +437,13 @@ func (c *APISpecification) getSecurityDefinitions(spec *spec.Swagger) {
 
 // -----------------------------------------------------------------------------
 
+func (c *APISpecification) getDefaultSecurity(spec *spec.Swagger) {
+	c.DefaultSecurity = make(map[string]Security)
+	c.processSecurity(spec.Security, c.DefaultSecurity)
+}
+
+// -----------------------------------------------------------------------------
+
 func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
 
 	id := o.ID // OperationID
@@ -592,14 +601,49 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	// TODO FIXME If no Security given from operation, then the global defaults are appled. CHECK THIS IS TRUE!
 
 	method.Security = make(map[string]Security)
+	if c.processSecurity(o.Security, method.Security) == false {
+		method.Security = c.DefaultSecurity
+	}
 
-	for _, sec := range o.Security {
+	//method.Security = make(map[string]Security)
+
+	//for _, sec := range o.Security {
+	//	for n, scopes := range sec {
+	//		// Lookup security name in definitions
+	//		if scheme, ok := c.SecurityDefinitions[n]; ok {
+
+	//			// Add security to method
+	//			method.Security[n] = Security{
+	//				Scheme: &scheme,
+	//				Scopes: make(map[string]string),
+	//			}
+
+	//			// Populate method specific scopes by cross referencing SecurityDefinitions
+	//			for _, scope := range scopes {
+	//				if scope_desc, ok := scheme.Scopes[scope]; ok {
+	//					method.Security[n].Scopes[scope] = scope_desc
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+
+	return method
+}
+
+// -----------------------------------------------------------------------------
+
+func (c *APISpecification) processSecurity(s []map[string][]string, security map[string]Security) bool {
+
+	count := 0
+	for _, sec := range s {
 		for n, scopes := range sec {
 			// Lookup security name in definitions
 			if scheme, ok := c.SecurityDefinitions[n]; ok {
+				count++
 
-				// Add security to method
-				method.Security[n] = Security{
+				// Add security
+				security[n] = Security{
 					Scheme: &scheme,
 					Scopes: make(map[string]string),
 				}
@@ -607,14 +651,13 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 				// Populate method specific scopes by cross referencing SecurityDefinitions
 				for _, scope := range scopes {
 					if scope_desc, ok := scheme.Scopes[scope]; ok {
-						method.Security[n].Scopes[scope] = scope_desc
+						security[n].Scopes[scope] = scope_desc
 					}
 				}
 			}
 		}
 	}
-
-	return method
+	return count != 0
 }
 
 // -----------------------------------------------------------------------------
