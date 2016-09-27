@@ -1,16 +1,20 @@
+body {
+    font-weight: 300;
+}
 header {
   background: #ecf0f1;
 }
 p {
-    font-weight: 320;
-    font-size: 1.1em;
+    font-size: 1.08em;
 }
 
 h1,
 .h1 {
   margin-top: 28px;
   font-size: 33px;
-  padding-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 12px;
 }
 h2,
 .h2 {
@@ -77,10 +81,10 @@ p code {
 
 .nav-inner > li > a {
     padding :0;
+    font-size: 0.98em;
 }
 .nav-toggle {
-  /*margin-left: -14px;*/
-font-size: 1.1em;
+font-size: 1.08em;
 }
 .nav-toggle.open {
     /* color: green; */

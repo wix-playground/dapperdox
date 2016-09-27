@@ -1,16 +1,14 @@
 Swaggerly
 =========
 
-**BETA release - features being added weekly**.
+**Beautiful, integrated, OpenAPI documentation.**
 
 > Themed documentation generator, server and API explorer for OpenAPI (Swagger) Specifications. Helps you build integrated, browsable reference documentation and guides. For example, the [Companies House Developer Hub](https://developer.companieshouse.gov.uk/api/docs/) built with the alpha version.
 
 ## Quickstart
 
 First build swaggerly (this assumes that you have your golang environment configured correctly):
-```bash
-make
-```
+```go get && go build```
 
 Then start up Swaggerly, pointing it to your OpenAPI 2.0 specification file:
 ```
@@ -27,8 +25,6 @@ For an out-of-the-box example, execute the example run script. A description of 
 ```bash
 ./run_example.sh
 ```
-
-*See the section [Why a makefile and not go build?](#why-a-makefile-and-not-go-build) to understand why a makefile is necessary.*
 
 ## Guide Contents
 - [Next steps](#next-steps)
@@ -48,7 +44,6 @@ For an out-of-the-box example, execute the example run script. A description of 
 - [Reverse proxying to other resources](#reverse-proxying-through-to-other-resources)
 - [Configuration parameters](#configuration-parameters)
 - [Swaggerly start up example](#swaggerly-start-up-example)
-- [Why a makefile and not go build?](#why-a-makefile-and-not-go-build)
 
 ## Next steps
 While simply running Swaggerly and pointing it at your swagger specifications will give you some documentation quickly, there
@@ -89,7 +84,8 @@ Multiple API specifications are not currently supported, but are on the feature 
 
 Swaggerly will try and read read the top level specification object `tags` member, and if it finds one it will only documents
 API operations where tags match, and in the order they are listed. This allows you to control what reference documentation gets
-presented. In these cases, Swaggerly uses the tag `description` member, or tag `name` member as the API identifier in pages, navigation and URLs.
+presented. In these cases, Swaggerly uses the tag `description` member, or tag `name` member as the API identifier in pages, 
+navigation and URLs. It will also group together in the navigation, all methods that have the same tag.
 
 If tags are not used, Swaggerly falls back to presenting all operations in the OpenAPI specification.
 
@@ -139,7 +135,7 @@ the case.
 
 To force the group name of all operations declared for a path, the Swaggerly specific `x-pathName` member may be specified
 in the Path Item object. This will always take effect, and will even override the description or name inherited from the top
-level `tags` member. However, tags are the most flexible approach.
+level `tags` member. However, tags are the most flexible approach to name method groups.
 
 ```json
 {
@@ -270,7 +266,6 @@ Swaggerly to integrate with that site, so that a user's API keys are automatical
 signed-in. Swaggerly provides a simple Javascript interface via which you can pass API keys to the explorer, through a piece
 of custom Javascript.
 
-
 ## Customising authentication credential capture
 
 The `apiExplorer` javascript object provides a method to add API keys to an internal list, and a method to inject those
@@ -377,11 +372,12 @@ Swaggerly presents two classes of documentation:
 2. Guides and other authored documentation
 
 Documentation is built from assets, which mostly consist of styles, page templates and template fragments, grouped together
-to form a theme. To customise the documentation: 
+to form a theme. To customise the documentation you have several options:
 
 1. Alternative themes may be used to change the look and feel.
-2. Additional assets may be provided to extend the generated documentation, such as guides
-3. Parts of a theme may be overridden (advanced topic)
+2. Additional assets may be provided to extend the generated documentation, such as guides and other authored documentation.
+3. Authored content may be overlaid on top of the specification generated reference documentation.
+3. Parts of a theme may be overridden.
 
 In general, documentation should be written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/), which seamlessly integrates with the reference
 documentation generated from the OpenAPI specification.
@@ -444,8 +440,6 @@ As the navigation cannot be more than two levels deep, this restricts the depth 
 If you need a more elaborate directory structure, or have a file nameing convention that does not lend itself
 to navigation titles, you can take control of the side navigation through [metadata](#controlling-guide-behaviour-with-meta-data).
 
-**GFM support is a new feature, and so guides created using GFM are not currently styled correctly. Standard GFM HTML is generated which does not use the appropriate theme CSS. This being addressed in [issue #1](https://github.com/zxchris/swaggerly/issues/1)**
-
 ### Controlling guide behaviour with metadata
 
 Swaggerly allows the integration of guides to be controlled with some simple metadata. This metadata is added
@@ -491,11 +485,44 @@ Additional content may be added to any Swaggerly generated reference pages by pr
 These pages are authored in Github Flavoured Markdown (GFM) and contain special markdown references that
 target particular sections within API, Method or Resource pages.
 
+Additional directories are added to your `assets` directory to accomplish this. As Swaggerly can consume and serve
+multiple OpenAPI specifications, each is given its own section within Swaggerly, allowing you to provide guides and
+overlay documentation appropriate to an OpenAPI specification. 
+
+See [Controlling method names](#controlling-method-names) for a discussion on what an *operation* name is, and how it differs
+from an HTTP method name.
+
+- `assets/`
+    - `static/`
+        - `css/` - Local stylesheets
+        - `js/` - Local javascript
+    - `templates/`
+        - `guides/` - Authored documentation presented when not viewing an OpenAPI specification section.
+        - `reference/` - Custom overlay GFM content.
+          - `api.md` - Overlay applied to all API pages.
+          - `[operation-name].md` - Overlay applied to a specific method, identified by operation, for all APIs in all specifications.
+          - `method.md` - Overlay applied to all API methods.
+        - `resource/`
+          - `resource.md` - Overlay applied to all resource pages.
+    - `sections/` - Contains additional documentation and overlays appropriate to each OpenAPI specification.
+      - `[specification-ID]` - The kabab case of the OpenAPI `info.title` member.
+        - `guides/` - Directory containing guides for appropriate for the named OpenAPI specification.
+        - `reference/` - 
+          - `api.md` - Overlay applied to all API pages of this specification.
+          - `[api-name].md` - Overlay applied to a specific API page of this specification.
+          - `[api-name]/`
+                - `[operation-name].md` - Overlay applied to a specific method, identified by operation, for this named API.
+                - `method.md` - Overlay applied to all methods of this named API.
+          - `[operation-name].md` - Overlay applied to all methods with the given operation name, for all APIs in the specification.
+          - `method.md` - Overlay applied to all methods of all APIs in the specification.
+        - `resource/`
+          - `resource.md` - Overlay applied to all resource pages of this API.
+
 For example, the following GFM file adds additional content to the *request* and *response* sections
-of the **Estimates of price** `get` method:
+of the **Estimates of price** `get` method for the `Uber API` OpenAPI specification:
 
 ```
-<local assets>/assets/templates/reference/estimates-of-price/get.md
+<local assets>/assets/sections/uber-api/reference/estimates-of-price/get.md
 ```
 ```gfm
 Overlay: true
@@ -510,57 +537,67 @@ The response is always an array of response objects, if successful.
 For a GFM page to be treated as an overlay, it must contain the metadata `Overlay: true` at the start
 of the file (see [Supported Metadata](#supported-metadata)).
 
-There are two ways to overlay a reference page, either globally or on a page-by-page basis. Swaggerly will
-look at the following file patterns to find any appropriate overlays.
+There are three ways to overlay a reference page, globally, per-specification or on a page-by-page basis. Swaggerly will
+look at the following file patterns in the order defined below to find any appropriate overlays, and will stop once it finds one.
+For example `sections/[spec-ID]/reference/<API name>.md` takes precident over `sections/[spec-ID]/reference/api.md`.
 
 | Reference page | Overlay filename | Description |
 | -------------- | ---------------- | ----------- |
-| API      | `reference/<API name>.md`               | Overlay applied to a specific API page. |
-| API      | `reference/api.md`                      | Overlay applied to all API pages. |
-| Method   | `reference/<API name>/<method name>.md` | Overlay applied to a specific method page of a specific API. |
-| Method   | `reference/<API name>/method.md`        | Overlay applied to all method pages of a specific API. |
-| Method   | `reference/method.md`                   | Overlay applied to all method pages of all APIs.  |
-| Resource | `resource/<resource name>.md`           | Overlay applied to a specific resource page.  |
-| Resource | `resource/resource.md`                  | Overlay applied to all resource pages.  |
+| API      | `sections/[spec-ID]/reference/<API name>.md`               | Overlay applied to a specific API page. |
+| API      | `sections/[spec-ID]/reference/api.md`                      | Overlay applied to all API pages for the named specification. |
+| API      | `templates/reference/api.md`                               | Overlay applied to all API pages. |
+| Method   | `sections/[spec-ID]/reference/<API name>/<operation name>.md` | Overlay applied to a specific method page of a specific API of a specific openAPI specification. |
+| Method   | `sections/[spec-ID]/reference/<API name>/method.md`        | Overlay applied to all method pages of a specific API. |
+| Method   | `sections/[spec-ID]/reference/<operation name>.md`         | Overlay applied to all method pages for <operation name> across all APIs in a specification. |
+| Method   | `sections/[spec-ID]/reference/method.md`                   | Overlay applied to all method pages of all APIs in a particular specification. |
+| Method   | `templates/reference/<operation name>.md`                  | Overlay applied to the all methods of <operation name> of all APIs across all specifications.  |
+| Method   | `templates/reference/method.md`                            | Overlay applied to all method pages of all APIs across all specifications.  |
+| Resource | `sections/[spec-ID]/resource/<resource name>.md`           | Overlay applied to a specific resource page of a specific API.  |
+| Resource | `sections/[spec-ID]/resource/resource.md`                  | Overlay applied to all resource pages of a specific API.  |
+| Resource | `templates/resource/resource.md`                           | Overlay applied to all resource pages of all APIs across all specifications.  |
 
-Overlays for a specific page will take precedence over those applied to all pages.
+### Enabling author debug mode
 
-### Page section targets
+By passing swaggerly the configuration parameter `-author-show-assets`, swaggerly will display an overlay search path pane at the foot
+of each API reference page. This helps you see exactly the path and filename you need to use to overlay content onto the page you are
+viewing (see [Configuration parameters](#configuration-parameters)).
 
-#### Method page
-
-| GFM section reference | Page section |
-| --------------------- | ------------ |
-| `[[banner]]`      | Inserts content at the start of the page, before the description header. |
-| `[[description]]` | Adds content after the method description. |
-| `[[request]]`     | Adds content before the method request URL. |
-| `[[path-parameters]]` | Adds content before the path parameters block. |
-| `[[query-parameters]]` | Adds content before the query parameters block. |
-| `[[header-parameters]]` | Adds content before the header parameters block. |
-| `[[form-parameters]]` | Adds content before the form parameters block. |
-| `[[body-parameters]]` | Adds content before the body parameters block. |
-| `[[security]]` | Adds content before the security section. |
-| `[[response]]` | Adds content before the response section. |
-| `[[example]]` | Inserts content before the API explorer. |
-
-
-#### Resource page
-
-| GFM section reference | Page section |
-| --------------------- | ------------ |
-| `[[banner]]`           | Inserts banner content at the start of the page, before the description. |
-| `[[description]]`      | Adds a description block to the start of the page. |
-| `[[methods]]`          | Inserts content before the methods list. |
-| `[[resource]]`         | Inserts content before the resource schema. |
-| `[[example]]`          | Adds content before the resource example, if it exists. |
-| `[[properties]]`       | Inserts content before the resource properties table. |
-| `[[additional]]`       | Inserts content at the end of the resource page. |
+### Table of page overlay targets
 
 #### API page
 
 | GFM section reference | Page section |
 | --------------------- | ------------ |
 | `[[banner]]`      | Inserts content at the start of the page, before the API list. |
+
+#### Method page
+
+| GFM section reference | Page section |
+| --------------------- | ------------ |
+| `[[banner]]`            | Inserts content at the start of the page, before the description header. |
+| `[[description]]`       | Adds content after the method description. |
+| `[[request]]`           | Adds content before the method request URL. |
+| `[[path-parameters]]`   | Adds content before the path parameters block. |
+| `[[query-parameters]]`  | Adds content before the query parameters block. |
+| `[[request-headers]]`   | Adds content before the header parameters block. |
+| `[[form-parameters]]`   | Adds content before the form parameters block. |
+| `[[request-body]]`      | Adds content before the body block. |
+| `[[security]]`          | Adds content before the security section. |
+| `[[response]]`          | Adds content before the response section. |
+| `[[example]]`           | Inserts content before the API explorer. |
+
+
+#### Resource page
+
+| GFM section reference | Page section |
+| --------------------- | ------------ |
+| `[[banner]]`          | Inserts banner content at the start of the page, before the description. |
+| `[[description]]`     | Adds a description block to the start of the page. |
+| `[[methods]]`         | Inserts content before the methods list. |
+| `[[resource]]`        | Inserts content before the resource schema. |
+| `[[example]]`         | Adds content before the resource example, if it exists. |
+| `[[properties]]`      | Inserts content before the resource properties table. |
+| `[[additional]]`      | Inserts content at the end of the resource page. |
 
 
 ## Supported metadata
@@ -610,13 +647,98 @@ documentation generated by Swaggerly. These pages are marked as such with the bo
 Special embedded tags within the GFM page target sections within API, method and resource pages, inserting
 the associated documentation at those sections.
 
+## Controlling method names
 
+### Methods and operations
 
-## Customising the 'homepage'
+Swaggerly allows you to control the name of each method operation, and how methods are represented in the navigation.
 
-By default, the homepage that Swaggerly presents is an API reference summary. You can create your own
-homepage by providing your own `assets/templates/index.tmpl` or `assets/templates/index.md` - with the
-recommendation being that you use markdown instead of HTML, for the reasons described in 
+By default the HTTP method is used (GET, POST, PUT etc), as is usual for RESTful API specifications. Even so, it is
+often the case that a resource will be given two GET methods, one which returns a single resource, and one that
+returns a list. This is clearly confusing for the reader, so in the latter case it would be clearer for the list method
+to be identified as such.
+
+To do this, Swaggerly introduces the concept of a method **operation**, which usually has the same value as the
+HTTP method, but may be overridden on a per-method basis by the `x-operationName` extension:
+
+```json
+{
+    "paths": {
+        "/products": {
+            "get": {
+                "x-operationName": "list",
+                "summary": "List products",
+                "description": "Returns a list of products"
+                "tags": ["Products"]
+            },
+            "post": {
+                "summary": "Get product",
+                "description": "Create product types"
+                "tags": ["Products"]
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "summary": "Get a product",
+                "description": "Returns a products"
+                "tags": ["Products"]
+            }
+        }
+    }
+}
+```
+
+The methods in the above example would be grouped together because they are similarly tagged, and the confusion between
+the two `GET` methods resolved by giving one the operation name of `list`. Thus, the three methods would be described in the
+navigation and API list page as being `list`, `post` and `get`. The HTTP methods assigned to each (get, post and get) remain unchanged.
+
+This technique can also be used to override `GET` to `fetch`, `POST` to `create`, `PUT` to `update` and so on.
+
+### Navigating by method name
+
+Where an openAPI specification is describing a non-RESTful set of APIs, they are often grouped together and sharing the same
+HTTP method. For example, two `get` methods having respective `summary` texts of `lookup product by ID` and `lookup product by barcode` 
+would probably be listed together, both being product APIs. As they are both `get` methods, the reader would be unable to tell them
+apart if they are both referred to as `get` operations in the API navigation. By adding the `"x-navigateMethodsByName" : true` 
+extension to the top level openAPI specification, you can force Swaggerly to describe each method in the navigation using its 
+`summary` text instead of its operation name or HTTP method. The methods will continue to be referred to by operation name or
+HTTP method in API pages.
+
+```json
+{
+    "swagger": "2.0",
+    "x-navigateMethodsByName": true,
+    "info": {
+        "title": "Example API",
+        "description": "The only way is up",
+        "version": "1.0.0"
+    }
+}
+```
+
+## Customising homepages
+
+If you are documenting multiple openAPI specifications with Swaggerly, then you will have several homepages. The first is
+a top level page which describes all of the API specifications that are available:
+
+- `assets/`
+    - `templates/`
+        - `index.tmpl` - Custom 'available specifications' page, in HTML or
+        - `index.md`   - Custom 'available specifications' page, in GFM
+
+The other homepages are provided for each specification, viewed when an openAPI specification has been navigated to:
+
+- `assets/`
+   - `sections/`
+     - `[specification-ID]` - The kabab case of the OpenAPI `info.title` member.
+            - `index.tmpl` - Custom API specification page, in HTML or
+            - `index.md`   - Custom API specification page, in GFM
+
+If you are documenting a single openAPI specification, Swaggerly will automatically show the openAPI specification page
+and skip the top level 'available specifications' page. If you do not want this behaviour, then start Swaggerly with the
+`-force-root-page=true` option (see [Configuration parameters](#configuration-parameters)).
+
+The recommendation is that you use markdown instead of HTML, for the reasons described in
 [Creating authored documentation pages](#creating-authored-documentation-pages).
 
 An example of this is demonstrated by the metadata example, which provides its own custom `index.md` file:
@@ -624,53 +746,9 @@ An example of this is demonstrated by the metadata example, which provides its o
 `examples/metadata/assets/templates/index.md`
 
 To run this example, pass Swaggerly the option 
-`-assets-dir=<Swaggerly-source-directory>/examples/metadata/assets`
+`-assets-dir=<Swaggerly-source-directory>/examples/metadata/assets -force-root-page=true`
 
-The API reference summary will always be available at the `/reference` endpoint.
-
-
-# Versioning
-
-To be completed.
-
-## Reverse proxying through to other resources
-
-To create an integrated developer hub. Such resources could be:
-
-1. API key management tools
-2. Forum
-
-**Coming soon!**
-
-## Dependencies
-
-### `go-swagger`
-
-Swaggerly depends on a fork of [go-swagger](https://github.com/zxchris/go-swagger) as its specification parser. This
-fork adds missing support for complex object response (arrays of objects), and the Swaggerly specific versioning scheme.
-Versioning is currently implemented on the `feature/swaggerly-versioning-extension` branch, and it is on this branch that
-Swaggerly depends.
-
-## Why a makefile and not go build?
-
-As described in [Dependencies](#dependencies), Swaggerly requires a particular branch of `go-swagger` and `go get`, by default,
-will checkout the master branch. The supplied makefile ensures the correct `go-swagger` branch is checked out and built.
-
-If you wish to perform the build manually, the following steps should be carried out (as shown in the Makefile):
-
-```bash
-go get github.com/go-swagger/go-swagger
-cd ../../go-swagger/go-swagger
-git checkout 4459770
-cd -
-go get github.com/zxchris/go-swagger
-cd ../go-swagger
-git checkout feature/swaggerly-versioning-extension
-cd ../swaggerly
-go get && go build
-```
-
-## Configuration parameters
+# Configuration parameters
 
 | Option | Environment variable | Description |
 | ------ | -------------------- | ----------- |
@@ -685,8 +763,13 @@ go get && go build
 | `-spec-rewrite-url` | `SPEC_REWRITE_URL` | The URLs in the OpenAPI specifications to be rewritten as site-url, or to the `to` URL if the value given is of the form from=to. Applies to OpenAPI specification text, not asset files. |
 | `-theme` | `THEME` | Name of the theme to render documentation. |
 | `-themes-dir` | `THEMES_DIR` | Directory containing installed themes. |
+| `-force-root-page` | `FORCE_ROOT_PAGE` | When Swaggerly is serving a single OpenAPI specification, then by default Swaggerly will show the specification index page when serving the homepage. You can force Swaggerly to show the root index page with this option. Takes the value `true` or `false`. |
+| `-author-show-assets` | `AUTHOR_SHOW_ASSETS` | Setting this value to `true` will enable an *assets search path* pane at the foot of every API reference page. This shows the path order that Swaggerly will scan to find GFM content overlay or replacement files. Takes the value `true` or `false`. |
 
-## Swaggerly start up example
+Some configuration parameters can take multiple values, either by specifying the parameter multiple times on the command lines, or by
+comma seperating multiple values when using environment variables.
+
+# Swaggerly start up example
 
 The following command line will start Swaggerly serving the petshop OpenAPI specification, rewriting the API host URL
 of the petstore specification from api.uber.com to API.UBER.COM, and picking up the local assets `examples/markdown/assets` 
@@ -696,11 +779,11 @@ This start up script can be found as `run_example.sh` in the swaggerly source di
 
 ```bash
 ./swaggerly \
-    -spec-dir=petstore \
+    -spec-dir=examples/specifications/petstore/ \
     -bind-addr=0.0.0.0:3123 \
-    -spec-rewrite-url=api.uber.com=API.UBER.COM \
+    -spec-rewrite-url=petstore.swagger.io=PETSTORE.swagger.io \
     -document-rewrite-url=www.google.com=www.google.co.uk \
     -site-url=http://127.0.0.1:3123 \
-    -assets-dir=./examples/markdown/assets \
+    -assets-dir=examples/markdown/assets \
     -log-level=trace
 ```
