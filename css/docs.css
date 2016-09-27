@@ -44,6 +44,10 @@ pre code {
     color: #008000;
 }
 
+td code {
+  background-color: inherit;
+}
+
 p code {
     font-size: 0.8em;
     color: #008000;
