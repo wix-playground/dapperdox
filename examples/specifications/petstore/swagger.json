@@ -1,5 +1,6 @@
 {
     "swagger": "2.0",
+    "x-navigateMethodsByName": true,
     "info": {
         "description": "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
         "version": "1.0.0",
@@ -56,10 +57,7 @@
                     "405": {
                         "description": "Invalid input"
                     }
-                },
-                "security": [{
-                    "petstore_auth": ["write:pets", "read:pets"]
-                }]
+                }
             },
             "put": {
                 "tags": ["pet"],
@@ -659,6 +657,9 @@
             "in": "header"
         }
     },
+    "security": [{
+        "petstore_auth": ["write:fred", "read:pets"]
+    }],
     "definitions": {
         "Order": {
             "title" : "Order",

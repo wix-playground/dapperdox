@@ -36,7 +36,7 @@ func Get() (*config, error) {
 	cfg = &config{
 		//SpecFilename:     "/spec/swagger.json",
 		BindAddr:         "localhost:3123",
-		SpecDir:          "swagger",
+		SpecDir:          "spec",
 		DefaultAssetsDir: "assets",
 		LogLevel:         "info",
 		Theme:            "default",
@@ -50,7 +50,7 @@ func Get() (*config, error) {
 	}
 
 	if len(cfg.SpecFilename) == 0 {
-		cfg.SpecFilename = append(cfg.SpecFilename, "/spec/swagger.json")
+		cfg.SpecFilename = append(cfg.SpecFilename, "/swagger.json")
 	}
 
 	cfg.print()

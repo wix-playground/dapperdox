@@ -446,17 +446,26 @@ func (c *APISpecification) getDefaultSecurity(spec *spec.Swagger) {
 
 func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
 
-	id := o.ID // OperationID
-	if id == "" {
-		id = TitleToKebab(o.Summary) // Summary
-		if id == "" {
-			id = methodname // Last chance. Method name.
-		}
-	}
+	var opname string
+	var gotOpname bool
 
 	operationName := methodname
-	if opname, ok := o.Extensions["x-operationName"].(string); ok {
+	if opname, gotOpname = o.Extensions["x-operationName"].(string); gotOpname {
 		operationName = opname
+	}
+
+	// Construct an ID for the Method. Choose from operation ID, x-operationName, summary and lastly method name.
+	id := o.ID // OperationID
+	if id == "" {
+		// No ID, use operation name
+		if gotOpname {
+			id = TitleToKebab(opname)
+		} else {
+			id = TitleToKebab(o.Summary) // No opname, use summary
+			if id == "" {
+				id = methodname // Last chance. Method name.
+			}
+		}
 	}
 
 	navigationName := operationName
