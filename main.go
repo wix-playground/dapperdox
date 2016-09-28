@@ -151,7 +151,6 @@ func storeTemplate(name string, template string) {
 // --------------------------------------------------------------------------------------
 func Asset(name string) ([]byte, error) {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
-	log.Printf("Lookup %s\n", cannonicalName)
 	if a, ok := _bindata[cannonicalName]; ok {
 		return a, nil
 	}
@@ -162,7 +161,6 @@ func Asset(name string) ([]byte, error) {
 func AssetNames() []string {
 	names := make([]string, 0, len(_bindata))
 	for name := range _bindata {
-		log.Printf(" AssetNames:  %s\n", name)
 		names = append(names, name)
 	}
 	return names

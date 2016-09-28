@@ -23,8 +23,8 @@ HTTP method, but may be overridden on a per-method basis by the `x-operationName
                 "tags": ["Products"]
             },
             "post": {
-                "summary": "Get product",
-                "description": "Create product types"
+                "summary": "Create a product",
+                "description": "Create a new product type"
                 "tags": ["Products"]
             }
         },

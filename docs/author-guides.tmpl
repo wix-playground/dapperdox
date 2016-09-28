@@ -3,8 +3,8 @@
 <p>Authored documentation pages are referred to as <span class="hljs-attr">guides</span> and have their own directory within an 
 assets structure. Guides may be authored in HTML, or using 
 <a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/">Github Flavoured Markdown</a> (GFM).
-Writing guides in HTML will make those files dependant on the theme in use when they
-were written, and are therefore not resistant to change. The flexible approach is to use Github 
+Writing guides in HTML will make them dependant on the theme in use when they
+were written, and therefore resistant to change. The flexible approach is to use Github 
 Flavoured Markdown.</p>
 
 <h2>Github Flavoured Markdown</h2>
@@ -76,6 +76,8 @@ SortOrder: 110</code></pre>
 <p>By using metadata, the side navigation wording and structure is divorced from the underlying file naming
 convention, structure and depth.</p>
 
-<p>The ordering of pages within the page side navigation is also controllable with metadata, as described in [SortOrder](#sortorder) below.</p>
+<p>The ordering of pages within the page side navigation is controlled by the addition of 
+<a href="/docs/author-metadata.html#sortorder">SortOrder</a> metadata. Refer to the 
+<a href="/docs/author-metadata.html">metadata</a> section for further details.</p>
 
 <script>hljs.initHighlightingOnLoad();</script>
