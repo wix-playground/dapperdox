@@ -1,0 +1,9 @@
+x<h1>:<h1 class="page-header">
+x<h2>:<h2 class="sub-header">
+x<h3>:<h3 class="sub-sub-header">
+x<h4>:<h4 class="sub-sub-sub-header">
+<pre>:<pre><code >
+</pre>:</code></pre>
+<table>:<table class="table table-striped">
+<code>:<code class="hljs-keyword">
+!!!HIGHLIGHT!!!:<script>hljs.initHighlightingOnLoad();</script>
