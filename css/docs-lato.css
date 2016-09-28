@@ -1,12 +1,11 @@
 body {
-    font-family: 'Open Sans', sans-serif;
     font-weight: normal;
 }
 header {
   background: #ecf0f1;
 }
 p {
-    font-size: 1.00em; /* 1.08em */
+    font-size: 1.08em;
 }
 
 h1,
@@ -86,10 +85,10 @@ p code {
 
 .nav-inner > li > a {
     padding :0;
-    font-size: 0.95em; /* 0.98 */
+    font-size: 0.98em;
 }
 .nav-toggle {
-font-size: 0.98em; /* 1.08 */
+font-size: 1.08em;
 }
 .nav-toggle.open {
     /* color: green; */
