@@ -1,6 +1,7 @@
 package spec
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -607,35 +608,11 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 		}
 	}
 
-	// TODO FIXME If no Security given from operation, then the global defaults are appled. CHECK THIS IS TRUE!
-
+	// If no Security given for operation, then the global defaults are appled.
 	method.Security = make(map[string]Security)
 	if c.processSecurity(o.Security, method.Security) == false {
 		method.Security = c.DefaultSecurity
 	}
-
-	//method.Security = make(map[string]Security)
-
-	//for _, sec := range o.Security {
-	//	for n, scopes := range sec {
-	//		// Lookup security name in definitions
-	//		if scheme, ok := c.SecurityDefinitions[n]; ok {
-
-	//			// Add security to method
-	//			method.Security[n] = Security{
-	//				Scheme: &scheme,
-	//				Scopes: make(map[string]string),
-	//			}
-
-	//			// Populate method specific scopes by cross referencing SecurityDefinitions
-	//			for _, scope := range scopes {
-	//				if scope_desc, ok := scheme.Scopes[scope]; ok {
-	//					method.Security[n].Scopes[scope] = scope_desc
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
 
 	return method
 }
@@ -678,9 +655,9 @@ func jsonResourceToString(jsonres map[string]interface{}, restype string) string
 	if strings.ToLower(restype) == "array" {
 		var array_obj []map[string]interface{}
 		array_obj = append(array_obj, jsonres)
-		example, _ = json.MarshalIndent(array_obj, "", "    ")
+		example, _ = JSONMarshalIndent(array_obj)
 	} else {
-		example, _ = json.MarshalIndent(jsonres, "", "    ")
+		example, _ = JSONMarshalIndent(jsonres)
 	}
 	return string(example)
 }
@@ -862,7 +839,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	}
 
 	if s.Example != nil {
-		example, err := json.MarshalIndent(&s.Example, "", "    ")
+		example, err := JSONMarshalIndent(&s.Example)
 		if err != nil {
 			logger.Errorf(nil, "Error encoding example json: %s", err)
 		}
@@ -913,88 +890,119 @@ func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method
 		required[n] = true
 	}
 
-	// Now process the properties
 	for name, property := range s.Properties {
-		logger.Tracef(nil, "Process property name '%s'  Type %s\n", name, s.Properties[name].Type)
-		newFQNS := append([]string{}, myFQNS...)
+		c.processProperty(&property, name, r, method, id, required, json_rep, myFQNS, chopped, onlyIsWritable)
+	}
 
-		if chopped && len(id) > 0 {
-			logger.Tracef(nil, "Append ID onto newFQNZ %s + '%s'", newFQNS, id)
-			newFQNS = append(newFQNS, id)
-		}
+	// Special case to deal with AdditionalProperties (which really just boils down to declaring a
+	// map of 'type' (string, int, object etc).
+	if s.AdditionalProperties != nil && s.AdditionalProperties.Allows {
+		name := "<key>"
+		ap := s.AdditionalProperties.Schema
+		ap.Type = spec.StringOrArray([]string{"map", ap.Type[0]}) // massage type so that it is a map of 'type'
 
-		newFQNS = append(newFQNS, name)
+		c.processProperty(ap, name, r, method, id, required, json_rep, myFQNS, chopped, onlyIsWritable)
+	}
+}
 
-		var json_resource map[string]interface{}
-		var resource *Resource
+// -----------------------------------------------------------------------------
 
-		logger.Tracef(nil, "A call resourceFromSchema for property %s\n", name)
-		resource, json_resource = c.resourceFromSchema(&property, method, newFQNS, onlyIsWritable)
+func (c *APISpecification) processProperty(s *spec.Schema, name string, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool, onlyIsWritable bool) {
 
-		skip := onlyIsWritable && resource.ReadOnly
-		if !skip && resource.ExcludeFromOperations != nil {
-			for _, opname := range resource.ExcludeFromOperations {
-				if opname == method.OperationName {
-					skip = true
-					break
-				}
+	newFQNS := prepareNamespace(myFQNS, id, name, chopped)
+
+	var json_resource map[string]interface{}
+	var resource *Resource
+
+	logger.Tracef(nil, "A call resourceFromSchema for property %s\n", name)
+	resource, json_resource = c.resourceFromSchema(s, method, newFQNS, onlyIsWritable)
+
+	skip := onlyIsWritable && resource.ReadOnly
+	if !skip && resource.ExcludeFromOperations != nil {
+		for _, opname := range resource.ExcludeFromOperations {
+			if opname == method.OperationName {
+				skip = true
+				break
 			}
 		}
-		if skip {
-			continue
-		}
+	}
+	if skip {
+		return
+	}
 
-		r.Properties[name] = resource
-		json_rep[name] = json_resource
+	r.Properties[name] = resource
+	json_rep[name] = json_resource
 
-		if _, ok := required[name]; ok {
-			r.Properties[name].Required = true
-		}
-		logger.Tracef(nil, "resource property %s type: %s\n", name, r.Properties[name].Type[0])
+	if _, ok := required[name]; ok {
+		r.Properties[name].Required = true
+	}
+	logger.Tracef(nil, "resource property %s type: %s\n", name, r.Properties[name].Type[0])
 
-		if strings.ToLower(r.Properties[name].Type[0]) != "object" {
-			// Arrays of objects need to be handled as a special case
-			if strings.ToLower(r.Properties[name].Type[0]) == "array" {
-				logger.Tracef(nil, "Processing an array property %s", name)
-				if property.Items != nil {
-					if property.Items.Schema != nil {
-						// Some outputs (example schema, member description) are generated differently
-						// if the array member references an object or a primitive type
-						r.Properties[name].Description = property.Description
+	if strings.ToLower(r.Properties[name].Type[0]) != "object" {
+		// Arrays of objects need to be handled as a special case
+		if strings.ToLower(r.Properties[name].Type[0]) == "array" {
+			logger.Tracef(nil, "Processing an array property %s", name)
+			if s.Items != nil {
+				if s.Items.Schema != nil {
+					// Some outputs (example schema, member description) are generated differently
+					// if the array member references an object or a primitive type
+					r.Properties[name].Description = s.Description
 
-						// If here, we have no json_resource returned from resourceFromSchema, then the property
-						// is an array of primitive, so construct either an array of string or array of object
-						// as appropriate.
-						if len(json_resource) > 0 {
-							var array_obj []map[string]interface{}
-							array_obj = append(array_obj, json_resource)
-							json_rep[name] = array_obj
-						} else {
-							var array_obj []string
-							// We stored the real type of the primitive in Type array index 1 (see the note in
-							// resourceFromSchema).
-							array_obj = append(array_obj, r.Properties[name].Type[1])
-							json_rep[name] = array_obj
-						}
-					} else { // array and property.Items.Schema is NIL
+					// If here, we have no json_resource returned from resourceFromSchema, then the property
+					// is an array of primitive, so construct either an array of string or array of object
+					// as appropriate.
+					if len(json_resource) > 0 {
 						var array_obj []map[string]interface{}
 						array_obj = append(array_obj, json_resource)
 						json_rep[name] = array_obj
+					} else {
+						var array_obj []string
+						// We stored the real type of the primitive in Type array index 1 (see the note in
+						// resourceFromSchema).
+						array_obj = append(array_obj, r.Properties[name].Type[1])
+						json_rep[name] = array_obj
 					}
-				} else { // array and Items are nil
+				} else { // array and property.Items.Schema is NIL
 					var array_obj []map[string]interface{}
 					array_obj = append(array_obj, json_resource)
 					json_rep[name] = array_obj
 				}
+			} else { // array and Items are nil
+				var array_obj []map[string]interface{}
+				array_obj = append(array_obj, json_resource)
+				json_rep[name] = array_obj
+			}
+		} else if strings.ToLower(r.Properties[name].Type[0]) == "map" { // not array, so a map?
+			if strings.ToLower(r.Properties[name].Type[1]) == "object" {
+				json_rep[name] = json_resource // A map of objects
 			} else {
-				// We're NOT an array (or object, so a primitive)
-				json_rep[name] = r.Properties[name].Type[0]
+				json_rep[name] = r.Properties[name].Type[1] // map of primitive
 			}
 		} else {
-			// We're an object
-			json_rep[name] = json_resource
+			// We're NOT an array, map or object, so a primitive
+			json_rep[name] = r.Properties[name].Type[0]
 		}
+	} else {
+		// We're an object
+		json_rep[name] = json_resource
 	}
+	return
+}
+
+// -----------------------------------------------------------------------------
+
+func prepareNamespace(myFQNS []string, id string, name string, chopped bool) []string {
+
+	newFQNS := append([]string{}, myFQNS...) // create slice
+
+	if chopped && len(id) > 0 {
+		logger.Tracef(nil, "Append ID onto newFQNZ %s + '%s'", newFQNS, id)
+		newFQNS = append(newFQNS, id)
+	}
+
+	newFQNS = append(newFQNS, name)
+
+	return newFQNS
 }
 
 // -----------------------------------------------------------------------------
@@ -1027,6 +1035,17 @@ func loadSpec(url string) (*loads.Document, error) {
 	}
 
 	return document, nil
+}
+
+// -----------------------------------------------------------------------------
+// Wrapper around MarshalIndent to prevent < > & from being escaped
+func JSONMarshalIndent(v interface{}) ([]byte, error) {
+	b, err := json.MarshalIndent(v, "", "    ")
+
+	b = bytes.Replace(b, []byte("\\u003c"), []byte("<"), -1)
+	b = bytes.Replace(b, []byte("\\u003e"), []byte(">"), -1)
+	b = bytes.Replace(b, []byte("\\u0026"), []byte("&"), -1)
+	return b, err
 }
 
 // -----------------------------------------------------------------------------
