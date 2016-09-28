@@ -54,6 +54,10 @@ p code {
     color: #008000;
 }
 
+td {
+    font-size: 0.97em;
+}
+
 .main a:link    {color: #337ab7;}
 .main a:visited {color: #337ab7;}
 .main a:hover   {color: #337ab7;
