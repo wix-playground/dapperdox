@@ -1,0 +1,81 @@
+<h1>Creating authored documentation pages</h1>
+
+<p>Authored documentation pages are referred to as <span class="hljs-attr">guides</span> and have their own directory within an 
+assets structure. Guides may be authored in HTML, or using 
+<a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/">Github Flavoured Markdown</a> (GFM).
+Writing guides in HTML will make those files dependant on the theme in use when they
+were written, and are therefore not resistant to change. The flexible approach is to use Github 
+Flavoured Markdown.</p>
+
+<h2>Github Flavoured Markdown</h2>
+
+<p>Guides written using <a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/">Github Flavoured Markdown</a>
+have a file extension of <code>.md</code> and are stored within directory 
+<code>assets/templates/guides/</code> of your [local assets](#creating-local-assets). You can 
+organise your files in subdirectories within the <code>/guides/</code> directory.</p>
+
+<p>If you tell Swaggerly where to find your local assets, then on startup, it will locate and build 
+pages for all of your guides, maintaining the directory structure it finds below the <code>/guides/</code> directory.</p>
+
+<p>For example, the Swaggerly assets example <code>examples/markdown/assets/templates/</code> contains two guides:</p>
+
+<ol>
+    <li><code>guides/markdown.md</code></li>
+    <li><code>guides/level2/markdown2.md</code></li>
+</ol>
+
+<p>Passing Swaggerly the configuration parameter <code>-assets-dir=<Swaggerly-source-directory>/examples/markdown/assets</code> will build these two guides, making them available at <code>http://127.0.0.1:3123/guides/markdown</code> and 
+<code>http://127.0.0.1:3123/guides/level2/markdown2</code></p>
+
+<p>The navigation rendered at the side of the page will show two navigation entries:</p>
+
+<pre><code class="nohighlight">- level2
+  - markdown2
+- markdown</code></pre>
+
+<p>By default, the side navigation will reproduce the directory structure beneath the <code>guides/</code> directory.
+As the navigation cannot be more than two levels deep, this restricts the depth of your directory structure.
+</p>
+<p>
+If you need a more elaborate directory structure, or have a file nameing convention that does not lend itself
+to navigation titles, you can take control of the side navigation through [metadata](#controlling-guide-behaviour-with-meta-data).
+</p>
+
+<h2>Controlling guide behaviour with metadata</h2>
+
+<p>
+Swaggerly allows the integration of guides to be controlled with some simple metadata. This metadata is added
+to the beginning of GFM files as a block of lines containing <code>key: value</code> pairs. Swaggerly will stop processing any metadata present at the first blank line, and consider the rest of the file
+as content.
+</p>
+
+<p>Through the metadata, you can control the side navigation hierarchy, grouping and page naming.</p>
+
+<p>For example, the metadata contained within the example <code>examples/metadata/assets/templates/guides/markdown.md</code> is:</p>
+
+<pre><code class="http">Navigation: Examples/A markdown example
+SortOrder: 210
+Note: This top section is just MetaData and gets stripped to the first blank line.
+
+This page was written using Git Flavoured Markdown - With metadata
+==================================================================</code></pre>
+
+<p>Whereas the example <code>examples/metadata/assets/templates/guides/level2/level3/markdown2.md</code> which is <strong>three</strong>
+directory levels deep, contains navigation metadata of:</p>
+
+<pre><code class="http">Navigation: Overview/Another example
+SortOrder: 110</code></pre>
+
+<p>and this builds a page side navigation that is just <strong>two</strong> levels deep:</p>
+
+<pre><code class="nohighlight">- Overview
+  - Another example
+- Examples
+  - A markdown example</code></pre>
+
+<p>By using metadata, the side navigation wording and structure is divorced from the underlying file naming
+convention, structure and depth.</p>
+
+<p>The ordering of pages within the page side navigation is also controllable with metadata, as described in [SortOrder](#sortorder) below.</p>
+
+<script>hljs.initHighlightingOnLoad();</script>
