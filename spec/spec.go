@@ -112,7 +112,7 @@ type Method struct {
 	BodyParam       *Parameter
 	FormParams      []Parameter
 	Responses       map[int]Response
-	DefaultResponse *Response
+	DefaultResponse *Response // A ptr to allow of easy checking of its existance in templates
 	Resources       []*Resource
 	Security        map[string]Security
 	APIGroup        *APIGroup
@@ -132,7 +132,8 @@ type Parameter struct {
 // Response represents an API method response
 type Response struct {
 	Description string
-	Resource    *Resource // FIXME rename as Resource?
+	Resource    *Resource
+	Headers     []Header
 }
 
 // Resource represents an API resource
@@ -143,13 +144,24 @@ type Resource struct {
 	Description           string
 	Example               string
 	Schema                string
-	Type                  []string
+	Type                  []string // Will contain two elements if an array or map [0]=array [1]=What type is in the array
 	Properties            map[string]*Resource
 	Required              bool
 	ReadOnly              bool
 	ExcludeFromOperations []string
 	Methods               []Method
 	Enum                  []string
+}
+
+type Header struct {
+	Name        string
+	Description string
+	Type        []string // Will contain two elements if an array [0]=array [1]=What type is in the array
+	Format      string
+	ArrayFormat string
+	Default     string
+	Required    bool
+	Enum        []string
 }
 
 // -----------------------------------------------------------------------------
@@ -543,8 +555,6 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	// Compile resources from response declaration
 	// FIXME - Dies if there are no responses...
 	for status, response := range o.Responses.StatusCodeResponses {
-		var vres *Resource
-
 		logger.Tracef(nil, "Response for status %d", status)
 		//spew.Dump(response)
 
@@ -554,58 +564,14 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 			if _, ok := c.ResourceList[version]; !ok {
 				c.ResourceList[version] = make(map[string]*Resource)
 			}
-			var ok bool
-			r, example_json := c.resourceFromSchema(response.Schema, method, nil, false) // May be thrown away
-
-			r.Schema = jsonResourceToString(example_json, r.Type[0])
-
-			// Look for a pre-declared resource with the response ID, and use that or create the first one...
-			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
-			if vres, ok = c.ResourceList[version][r.ID]; !ok {
-				logger.Tracef(nil, "   - Creating new resource\n")
-				vres = r
-			}
-			c.ResourceList[version][r.ID] = vres
-
-			// Compile a list of the methods which use this resource
-			vres.Methods = append(vres.Methods, *method)
-
-			// Add the resource to the method which uses it
-			method.Resources = append(method.Resources, vres)
-
 		}
-
-		method.Responses[status] = Response{
-			Description: string(github_flavored_markdown.Markdown([]byte(response.Description))),
-			Resource:    vres,
-		}
+		rsp := c.buildResponse(&response, method, version)
+		method.Responses[status] = *rsp
 	}
 
 	if o.Responses.Default != nil {
-		r, example_json := c.resourceFromSchema(o.Responses.Default.Schema, method, nil, false)
-		if r != nil {
-
-			r.Schema = jsonResourceToString(example_json, r.Type[0])
-
-			logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
-			// Look for a pre-declared resource with the response ID, and use that or create the first one...
-			var vres *Resource
-			var ok bool
-			if vres, ok = c.ResourceList[version][r.ID]; !ok {
-				logger.Tracef(nil, "   - Creating new resource\n")
-				vres = r
-			}
-			c.ResourceList[version][r.ID] = vres
-
-			// Add to the compiled list of methods which use this resource
-			vres.Methods = append(vres.Methods, *method)
-
-			// Set the default response
-			method.DefaultResponse = &Response{
-				Description: string(github_flavored_markdown.Markdown([]byte(o.Responses.Default.Description))),
-				Resource:    vres,
-			}
-		}
+		rsp := c.buildResponse(o.Responses.Default, method, version)
+		method.DefaultResponse = rsp
 	}
 
 	// If no Security given for operation, then the global defaults are appled.
@@ -615,6 +581,48 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	}
 
 	return method
+}
+
+// -----------------------------------------------------------------------------
+
+func (c *APISpecification) buildResponse(resp *spec.Response, method *Method, version string) *Response {
+	var response *Response
+	if resp != nil {
+		var vres *Resource
+		if resp.Schema != nil {
+			r, example_json := c.resourceFromSchema(resp.Schema, method, nil, false)
+
+			if r != nil {
+				r.Schema = jsonResourceToString(example_json, r.Type[0])
+
+				logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
+				// Look for a pre-declared resource with the response ID, and use that or create the first one...
+				var ok bool
+				if vres, ok = c.ResourceList[version][r.ID]; !ok {
+					logger.Tracef(nil, "   - Creating new resource\n")
+					vres = r
+				}
+				c.ResourceList[version][r.ID] = vres
+
+				// Add to the compiled list of methods which use this resource
+				vres.Methods = append(vres.Methods, *method)
+			}
+		}
+		response = &Response{
+			Description: string(github_flavored_markdown.Markdown([]byte(resp.Description))),
+			Resource:    vres,
+		}
+		method.Resources = append(method.Resources, response.Resource) // Add the resource to the method which uses it
+	}
+	return response
+}
+
+// -----------------------------------------------------------------------------
+
+func (r *Response) compileHeaders(s spec.Schema) {
+	//if s.Header == nil {
+	//	return
+	//}
 }
 
 // -----------------------------------------------------------------------------
