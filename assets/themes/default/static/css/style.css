@@ -258,3 +258,7 @@ blockquote {
     margin-bottom: 0px;
 }
 
+
+.status-desc {
+  font-weight: bold;
+}

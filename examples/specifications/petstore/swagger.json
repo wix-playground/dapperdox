@@ -538,6 +538,15 @@
                                 "type": "string",
                                 "format": "date-time",
                                 "description": "date in UTC when token expires"
+                            },
+                            "X-Array-Test": {
+                                "type": "array",
+                                "description": "Outside items. And *markdown*!",
+                                "items" : {
+                                    "type": "string",
+                                    "description": "Inside items. And *markdown*!",
+                                    "enum": ["placed", "approved", "delivered"]
+                                }
                             }
                         }
                     },

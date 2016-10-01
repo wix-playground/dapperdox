@@ -131,9 +131,10 @@ type Parameter struct {
 
 // Response represents an API method response
 type Response struct {
-	Description string
-	Resource    *Resource
-	Headers     []Header
+	Description       string
+	StatusDescription string
+	Resource          *Resource
+	Headers           []Header
 }
 
 // Resource represents an API resource
@@ -566,7 +567,9 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 			}
 		}
 		rsp := c.buildResponse(&response, method, version)
+		(*rsp).StatusDescription = HTTPStatusDescription(status)
 		method.Responses[status] = *rsp
+
 	}
 
 	if o.Responses.Default != nil {
@@ -587,6 +590,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 
 func (c *APISpecification) buildResponse(resp *spec.Response, method *Method, version string) *Response {
 	var response *Response
+
 	if resp != nil {
 		var vres *Resource
 		if resp.Schema != nil {
@@ -613,17 +617,80 @@ func (c *APISpecification) buildResponse(resp *spec.Response, method *Method, ve
 			Resource:    vres,
 		}
 		method.Resources = append(method.Resources, response.Resource) // Add the resource to the method which uses it
+
+		response.compileHeaders(resp)
 	}
 	return response
 }
 
 // -----------------------------------------------------------------------------
-
-func (r *Response) compileHeaders(s spec.Schema) {
-	//if s.Header == nil {
-	//	return
-	//}
+// OpenAPI/Swagger/go-openAPI define a Header object and an Items object. A
+// Header _can_ be an Items object, if it is an array. Annoyingly, a Header
+// object is the same as Items but with an additional Description member.
+// It would have been nice to treat Header.Items as though it were Header in
+// the case of an array...
+// Solve both problems by defining accessor methods that will do the "right thing"
+// in the case of an array.
+func getType(h spec.Header) string {
+	if h.Type == "array" {
+		return h.Items.Type
+	} else {
+		return h.Type
+	}
 }
+func getFormat(h spec.Header) string {
+	if h.Type == "array" {
+		return h.Items.Format
+	} else {
+		return h.Format
+	}
+}
+func getEnums(h spec.Header) []string {
+	var ea []interface{}
+	if h.Type == "array" {
+		ea = h.Items.Enum
+	} else {
+		ea = h.Enum
+	}
+	var es = make([]string, 0)
+	for _, e := range ea {
+		es = append(es, fmt.Sprintf("%s", e))
+	}
+	return es
+}
+
+func (r *Response) compileHeaders(sr *spec.Response) {
+	if sr.Headers == nil {
+		return
+	}
+	for name, params := range sr.Headers {
+
+		header := &Header{
+			Description: string(github_flavored_markdown.Markdown([]byte(params.Description))),
+			Name:        name,
+			//Format      string
+			//ArrayFormat string
+			//Default     string
+			//Required    bool
+			//Enum        []string
+		}
+
+		htype := getType(params)
+		if params.Type == "array" {
+			header.Type = append(header.Type, params.Type)
+		}
+		format := getFormat(params)
+		if len(format) > 0 {
+			htype = format
+		}
+		header.Type = append(header.Type, htype)
+		header.Enum = getEnums(params)
+
+		r.Headers = append(r.Headers, *header)
+	}
+}
+
+// -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 

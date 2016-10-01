@@ -68,6 +68,7 @@ func main() {
 
 	// Register the spec routes (Listener and server must be up and running by now)
 	specs.Register(router)
+	spec.LoadStatusCodes()
 
 	err = spec.LoadSpecifications(cfg.BindAddr, true)
 	if err != nil {

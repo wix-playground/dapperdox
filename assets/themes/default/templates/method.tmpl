@@ -62,21 +62,23 @@
     </thead>
     <tbody>
       [: range $status, $response := .Method.Responses :]
-    <tr>
-      <td class="type">[: $status :]</td>
-      <td class="hyphenate Hyphenator616hide">[: safehtml $response.Description :]</td>
-      <td class="resource">[: if $response.Resource :]<a href="[: $.SpecPath :]/resources/[: $response.Resource.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: $response.Resource.Title :]</a>[: end :]</td>
-    </tr>
-    [: end :]
-    [: if .Method.DefaultResponse :]
-    <tr>
-      <td class="type">default</td>
-      <td class="hyphenate Hyphenator616hide">[: safehtml .Method.DefaultResponse.Description :]</td>
-      <td class="resource">[: if .Method.DefaultResponse.Resource :]<a href="[: $.SpecPath :]/resources/[: .Method.DefaultResponse.Resource.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method.DefaultResponse.Resource.Title :]</a>[: end :]</td> 
-    </tr>
-    [: end :]
-  </tbody>
-</table>
+        <tr>
+          <td class="type">[: $status :]</td>
+          <td class="hyphenate Hyphenator616hide"><span class="status-desc">[: $response.StatusDescription:]</span>[: safehtml $response.Description :][: template "fragments/reference/response_headers" $response :]</td>
+          <td class="resource">[: if $response.Resource :]<a href="[: $.SpecPath :]/resources/[: $response.Resource.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: $response.Resource.Title :]</a>[: end :]</td>
+        </tr>
+      [: end :]
+      [: if .Method.DefaultResponse :]
+        <tr>
+          <td class="type">default</td>
+          <td class="hyphenate Hyphenator616hide">[: safehtml .Method.DefaultResponse.Description :][: template "fragments/reference/response_headers" .Method.DefaultResponse :]</td>
+          <td class="resource">[: if .Method.DefaultResponse.Resource :]<a href="[: $.SpecPath :]/resources/[: .Method.DefaultResponse.Resource.ID :][: if $.Version :]?v=[: $.Version :][: end :]">[: .Method.DefaultResponse.Resource.Title :]</a>[: end :]</td> 
+        </tr>
+      [: end :]
+    </tbody>
+  </table>
+</div>
+
 
 [: overlay "example" . :]
 
