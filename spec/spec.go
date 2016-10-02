@@ -155,14 +155,14 @@ type Resource struct {
 }
 
 type Header struct {
-	Name        string
-	Description string
-	Type        []string // Will contain two elements if an array [0]=array [1]=What type is in the array
-	Format      string
-	ArrayFormat string
-	Default     string
-	Required    bool
-	Enum        []string
+	Name                        string
+	Description                 string
+	Type                        []string // Will contain two elements if an array [0]=array [1]=What type is in the array
+	CollectionFormat            string
+	CollectionFormatDescription string
+	Default                     string
+	Required                    bool
+	Enum                        []string
 }
 
 // -----------------------------------------------------------------------------
@@ -659,7 +659,25 @@ func getEnums(h spec.Header) []string {
 	return es
 }
 
+var collectionTable *map[string]string
+
+func collectionFormatDescription(format string) string {
+	if collectionTable == nil {
+		collectionTable = &map[string]string{
+			"csv":   "comma",
+			"ssv":   "space",
+			"tsv":   "tab",
+			"pipes": "pipe",
+		}
+	}
+	if desc, ok := (*collectionTable)[format]; ok {
+		return desc
+	}
+	return ""
+}
+
 func (r *Response) compileHeaders(sr *spec.Response) {
+
 	if sr.Headers == nil {
 		return
 	}
@@ -668,8 +686,6 @@ func (r *Response) compileHeaders(sr *spec.Response) {
 		header := &Header{
 			Description: string(github_flavored_markdown.Markdown([]byte(params.Description))),
 			Name:        name,
-			//Format      string
-			//ArrayFormat string
 			//Default     string
 			//Required    bool
 			//Enum        []string
@@ -677,7 +693,13 @@ func (r *Response) compileHeaders(sr *spec.Response) {
 
 		htype := getType(params)
 		if params.Type == "array" {
+			if len(params.CollectionFormat) == 0 {
+				logger.Errorf(nil, "Error: Response header %s is an array without declaring the collectionFormat.\n", name)
+				os.Exit(1)
+			}
 			header.Type = append(header.Type, params.Type)
+			header.CollectionFormat = params.CollectionFormat
+			header.CollectionFormatDescription = collectionFormatDescription(params.CollectionFormat)
 		}
 		format := getFormat(params)
 		if len(format) > 0 {
@@ -689,8 +711,6 @@ func (r *Response) compileHeaders(sr *spec.Response) {
 		r.Headers = append(r.Headers, *header)
 	}
 }
-
-// -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 

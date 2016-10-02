@@ -541,6 +541,7 @@
                             },
                             "X-Array-Test": {
                                 "type": "array",
+                                "collectionFormat":"csv",
                                 "description": "Outside items. And *markdown*!",
                                 "items" : {
                                     "type": "string",
