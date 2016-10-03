@@ -14,7 +14,7 @@ Then start up Swaggerly, pointing it to your OpenAPI 2.0 specification file:
 ```
 ./swaggerly -spec-dir=<location of OpenAPI 2.0 spec>
 ```
-Swaggerly looks for the file path `spec/swagger.json` at the `-spec-dir` location, and builds reference documentation for the OpenAPI specification it finds. For example, the obligitary *petstore* OpenAPI specification is provided in the `petstore` directory, so
+Swaggerly looks for the file path `swagger.json` at the `-spec-dir` location, and builds reference documentation for the OpenAPI specification it finds. For example, the obligitary *petstore* OpenAPI specification is provided in the `petstore` directory, so
 passing parameter `-spec-dir=petstore` will build the petstore documentation.
 
 Swaggerly will default to serving documentation from port 3123 on all interfaces, so you can point your web browser to
@@ -61,16 +61,15 @@ See [Configuration parameters](#configuration-parameters) for further informatio
 
 ## Specifying an OpenAPI specification
 
-Out of the box, Swaggerly will look for the OpenAPI specification `spec/swagger.json` under the directory specified by the
+Out of the box, Swaggerly will look for the OpenAPI specification `swagger.json` under the directory specified by the
 command line option `-spec-dir`. To change this, you can supply the `-spec-filename` option to Swaggerly. For example,
-`-spec-filename=spec/swagger.json` does the same as the default.
+`-spec-filename=swagger.json` does the same as the default.
 
 All JSON specification files found below the `-spec-dir` are served by Swaggerly, maintaining the directory structure.
-For the petstore example, which has its OpenAPI specification `swagger.json` stored in a `spec` subdirectory, the 
-URL to retrieve the specification is:
+For the petstore example, which has its OpenAPI specification `swagger.json`, the URL to retrieve the specification is:
 
 ```url
-http://127.0.0.1:3123/spec/swagger.json
+http://127.0.0.1:3123/swagger.json
 ```
 
 
@@ -759,7 +758,7 @@ To run this example, pass Swaggerly the option
 | `-log-level` | `LOGLEVEL` | Log level (info, debug, trace) |
 | `-site-url` | `SITE_URL` | Public URL of the documentation service. |
 | `-spec-dir` | `SPEC_DIR` | OpenAPI specification (swagger) directory. |
-| `-spec-filename` | `SPEC_FILENAME` | The filename of the OpenAPI specification file within the spec-dir. Defaults to spec/swagger.json |
+| `-spec-filename` | `SPEC_FILENAME` | The filename of the OpenAPI specification file within the spec-dir. Defaults to swagger.json |
 | `-spec-rewrite-url` | `SPEC_REWRITE_URL` | The URLs in the OpenAPI specifications to be rewritten as site-url, or to the `to` URL if the value given is of the form from=to. Applies to OpenAPI specification text, not asset files. |
 | `-theme` | `THEME` | Name of the theme to render documentation. |
 | `-themes-dir` | `THEMES_DIR` | Directory containing installed themes. |

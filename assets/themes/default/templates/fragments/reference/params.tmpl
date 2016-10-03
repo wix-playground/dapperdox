@@ -12,7 +12,7 @@
   [: range . :]
     <tr>
       <td class="resource">[: .Name :]</td>
-      <td class="type">[: .Type :]</td>
+      <td class="type">[: join .Type " of " :][: if .CollectionFormatDescription :], [: .CollectionFormatDescription :] separated[: end :]</td>
       <td class="hyphenate Hyphenator384hide">[: safehtml .Description :]</td>
       <td class="hyphenate Hyphenator384hide">[: if .Required :]Required[: end :]</td>
     </tr>

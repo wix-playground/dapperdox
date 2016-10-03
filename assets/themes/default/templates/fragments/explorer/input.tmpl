@@ -9,7 +9,7 @@
             [: range $name, $key := .Param.Enum :]<option value="[: $key :]">[: $name :]</option>[: end :]
         </select>
     [: else :]
-        [: if eq .Param.Type "boolean" :]
+        [: if eq (index .Param.Type 0) "boolean" :]
             <select id="[: .Param.Name :]" data-type="[: .Section :]" name="[: .Param.Name :]" class="form-control"
                 [: if .Param.Required :]
                     required="true">

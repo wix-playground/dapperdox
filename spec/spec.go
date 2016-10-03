@@ -120,13 +120,15 @@ type Method struct {
 
 // Parameter represents an API method parameter
 type Parameter struct {
-	Name        string
-	Description string
-	In          string
-	Required    bool
-	Type        string
-	Enum        []string
-	Resource    *Resource // For "in body" parameters
+	Name                        string
+	Description                 string
+	In                          string
+	CollectionFormat            string
+	CollectionFormatDescription string
+	Required                    bool
+	Type                        []string
+	Enum                        []string
+	Resource                    *Resource // For "in body" parameters
 }
 
 // Response represents an API method response
@@ -457,6 +459,47 @@ func (c *APISpecification) getDefaultSecurity(spec *spec.Swagger) {
 }
 
 // -----------------------------------------------------------------------------
+func (p *Parameter) setType(src spec.Parameter) {
+	if src.Type == "array" {
+		if len(src.CollectionFormat) == 0 {
+			logger.Errorf(nil, "Error: Request parameter %s is an array without declaring the collectionFormat.\n", src.Name)
+			os.Exit(1)
+		}
+		p.Type = append(p.Type, src.Type)
+		p.CollectionFormat = src.CollectionFormat
+		p.CollectionFormatDescription = collectionFormatDescription(src.CollectionFormat)
+	}
+	var ptype string
+	var format string
+
+	if src.Type == "array" {
+		ptype = src.Items.Type
+		format = src.Items.Format
+	} else {
+		ptype = src.Type
+		format = src.Format
+	}
+	if len(format) > 0 {
+		ptype = format
+	}
+	p.Type = append(p.Type, ptype)
+}
+
+func (p *Parameter) setEnums(src spec.Parameter) {
+	var ea []interface{}
+	if src.Type == "array" {
+		ea = src.Items.Enum
+	} else {
+		ea = src.Enum
+	}
+	var es = make([]string, 0)
+	for _, e := range ea {
+		es = append(es, fmt.Sprintf("%s", e))
+	}
+	p.Enum = es
+}
+
+// -----------------------------------------------------------------------------
 
 func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem, o *spec.Operation, path, methodname string, version string) *Method {
 
@@ -527,9 +570,11 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 			Name:        param.Name,
 			In:          param.In,
 			Description: string(github_flavored_markdown.Markdown([]byte(param.Description))),
-			Type:        param.Type,
 			Required:    param.Required,
 		}
+		p.setType(param)
+		p.setEnums(param)
+
 		switch strings.ToLower(param.In) {
 		case "form":
 			method.FormParams = append(method.FormParams, p)
@@ -540,16 +585,10 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil, true)
 			p.Resource.Schema = jsonResourceToString(body, "")
 			method.BodyParam = &p
-		case "header":
+
 			method.HeaderParams = append(method.HeaderParams, p)
 		case "query":
 			method.QueryParams = append(method.QueryParams, p)
-		}
-		switch strings.ToLower(param.Type) {
-		case "enum":
-			for _, e := range param.Enum {
-				p.Enum = append(p.Enum, fmt.Sprintf("%s", e))
-			}
 		}
 	}
 
