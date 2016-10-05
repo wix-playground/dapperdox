@@ -67,6 +67,8 @@ type APIGroup struct {
 	Methods                []Method            // The current version
 	CurrentVersion         string              // The latest version in operation for the API
 	Info                   *Info
+	Consumes               []string
+	Produces               []string
 }
 
 type Version struct {
@@ -106,6 +108,8 @@ type Method struct {
 	OperationName   string
 	NavigationName  string
 	Path            string
+	Consumes        []string
+	Produces        []string
 	PathParams      []Parameter
 	QueryParams     []Parameter
 	HeaderParams    []Parameter
@@ -541,6 +545,16 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 		OperationName:  operationName,
 		APIGroup:       api,
 	}
+	if len(o.Consumes) > 0 {
+		method.Consumes = o.Consumes
+	} else {
+		method.Produces = api.Produces
+	}
+	if len(o.Produces) > 0 {
+		method.Produces = o.Produces
+	} else {
+		method.Produces = api.Produces
+	}
 
 	// If Tagging is not used by spec to select, group and order API paths to document, then
 	// complete the missing names.
@@ -576,7 +590,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 		p.setEnums(param)
 
 		switch strings.ToLower(param.In) {
-		case "form":
+		case "formdata":
 			method.FormParams = append(method.FormParams, p)
 		case "path":
 			method.PathParams = append(method.PathParams, p)
@@ -585,7 +599,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil, true)
 			p.Resource.Schema = jsonResourceToString(body, "")
 			method.BodyParam = &p
-
+		case "header":
 			method.HeaderParams = append(method.HeaderParams, p)
 		case "query":
 			method.QueryParams = append(method.QueryParams, p)

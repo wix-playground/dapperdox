@@ -286,7 +286,7 @@
                     "format": "int64"
                 }, {
                     "name": "additionalMetadata",
-                    "in": "formData",
+                    "in": "query",
                     "description": "Additional data to pass to server",
                     "required": false,
                     "type": "string"
@@ -520,7 +520,7 @@
                     "description": "The password for login in clear text",
                     "required": true,
                     "type": "string"
-                }],
+                } ],
                 "responses": {
                     "200": {
                         "description": "successful operation",

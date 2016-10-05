@@ -29,7 +29,11 @@
         [: range .Method.FormParams :]
             <tr class="form-group">
                 <td>[: .Name :]</td>
-                <td>[: template "explorer_input" (map "Param" . "Section" "form") :]</td>
+                [: if eq (index .Type 0) "file" :]
+                    <td>[: template "explorer_file_upload" (map "Param" . "Section" "file" "Method" $.Method) :]</td>
+                [: else :]
+                    <td>[: template "explorer_input" (map "Param" . "Section" "form") :]</td>
+                [: end :]
                 <td>[: safehtml .Description :]</td>
             </tr>
         [: end :]
@@ -40,19 +44,6 @@
                 <td>[: safehtml .Description :]</td>
             </tr>
         [: end :]
-        <!-- Some request bodies are blocks of JSON or XML. This is different to a body parameter
-             which is single string. TODO
-        [  : range .Method.Method. :]
-            <tr class="form-group">
-                <td>Request Body</td>
-                <td colspan="2"><textarea data-type="model" name="<: $param.name :>"
-                : if $param.required {
-                    placeholder="Required" required="required"
-                : }
-                ></textarea></td>
-            </tr>
-        [  : end :]
-        -->
         </table>
       </div>
 

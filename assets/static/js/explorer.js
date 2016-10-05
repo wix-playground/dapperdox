@@ -68,6 +68,8 @@ var _process = function(text, status, xhr, fullhost) {
         {
             if( content.match(/json/) )
             {
+var jsont = JSON.stringify(JSON.parse(text), null, 2) ;
+alert("JSON: "+jsont);
                 $('#body_block').show();
                 $('#response_body').html( hljs.highlight( 'json', JSON.stringify(JSON.parse(text), null, 2) ).value );
 
@@ -140,7 +142,7 @@ var _get_url = function(url,query) {
     full_url = url + '?' + $.param(query);
 
     var urlp = document.createElement('a');
-    urlp.href = url;
+    urlp.href = full_url;
     // Make sure there is a leading / on the path
     urlp.pathname = urlp.pathname.replace(/(^\/?)/,"/");
     var port = '';
@@ -157,11 +159,15 @@ var _get_url = function(url,query) {
 apiExplorer.go = function( method, url ){
     var query   = [];
     var form    = [];
-    var body    = {};
+    var file    = [];
+    var body;
+    var body_name;
     var headers = [];
     var gotjson = false;
     var errors  = [];
+    var display_content_type = "";
     var content_type = "";
+    var form_data = new FormData();
 
     $('#apiexplorer :input').each( function() {
         var $input   = $(this);
@@ -177,7 +183,7 @@ apiExplorer.go = function( method, url ){
             errors.push( $input );
         }
 
-        var obj = { "name":name, "value":val };
+        var obj = { "name":name, "value":val}
 
         if( type=='path' ) {
             url = url.replace('{'+name+'}', val);
@@ -190,17 +196,13 @@ apiExplorer.go = function( method, url ){
         }
         if( type=='form' && val ) {
             form.push( obj );
-            //var fobj = {};
-            //fobj[name] = val;
-            //$.extend(body, fobj);
         }
-        //if( type=='body' && val ) {
-        //    var fobj = {};
-        //    fobj[name] = val;
-        //    $.extend(body, fobj);
-        //    gotjson = true;
-        //}
+        if( type=='file' && val ) {
+            obj.file = $input[0].files[0];
+            file.push( obj );
+        }
         if( type=='body' && val ) {
+            body = val;
             // Parse might fail
             try {
                 $.extend(body, JSON.parse(val));
@@ -209,10 +211,10 @@ apiExplorer.go = function( method, url ){
                 $('#jsonerror').html( e );
                 $('#jsonerror').show();
             }
-            gotjson = true;
+            gotjson = true; // FIXME This might not be JSON! Use "produces" from swagger spec to decide JSON, XML etc
+            body_name = name;
         }
     });
-
 
     // Handle errors
     if( errors.length ) {
@@ -231,34 +233,25 @@ apiExplorer.go = function( method, url ){
     $('#request_body').hide();
     $('#jsonerror').hide();
 
-    if( gotjson )
+    if( form.length )
     {
-        body_text = JSON.stringify(body, null, 2);
+        body_text = $.param(form);
+        content_type = "application/x-www-form-urlencoded";// Just for display purposes. formData will set it's own.
+        display_content_type = "\nContent-Type: "+content_type;
+        $('#request_body').html( hljs.highlightAuto( body_text ).value );
+        $('#request_body').show();
 
-        // If we don't have an empty JSON document, display it
-        if( body_text != '{}' ) {
-            content_type = "\nContent-Type: application/json";
-            $('#request_body').html( hljs.highlightAuto( body_text ).value );
-            $('#request_body').show();
-
-            // Replace body with JSON text
-            body = body_text;
+        for( var p in form ) {
+            form_data.append( form[p].name, form[p].value);
         }
     }
-    else
-    {
-        if( form.length )
-        {
-            body_text = $.param(form);
-            content_type = "\nContent-Type: application/x-www-form-urlencoded";
-            $('#request_body').html( hljs.highlightAuto( body_text ).value );
-            $('#request_body').show();
 
-            // Replace body with url encoded data.
-            // XXX This will only work if Ajax does not try to encode this
-            // itself, thus ending up with a doubly-encoded param set.
-            // This seems to be okay, looking in Chrome's console.
-            body = body_text;
+    if( file.length )
+    {
+        content_type = "application/x-www-form-urlencoded"; // Just for display purposes. formData will set it's own.
+        display_content_type = "\nContent-Type: "+content_type;
+        for( var p in file ) {
+            form_data.append( file[p].name, file[p].file);
         }
     }
 
@@ -293,18 +286,57 @@ apiExplorer.go = function( method, url ){
     var constructed_request = _get_url( url, query );
 
     // FIXME Get protocol from passed in url
-    $('#request_url').html( hljs.highlight( 'http', method.toUpperCase() + ' ' + display_url + ' HTTP/1.1\nHost: ' + constructed_request.fullhost + content_type + display_headers ).value );
+    $('#request_url').html( hljs.highlight( 'http', method.toUpperCase() + ' ' + display_url + ' HTTP/1.1\nHost: ' + constructed_request.fullhost + display_content_type + display_headers ).value );
 
     $('#exploreButton').attr('disabled', 'disabled');
+
+    // Tricky to see if formData object is empty. This works. Not elegant.
+    var got_form_data = false;
+    for(var pair of form_data.entries()) {
+        got_form_data = true;
+        break;
+    }
+
+    var data;
+    if( gotjson ) // TODO need to handle outer mime types, such as XML, text etc
+    {
+        body_text = JSON.stringify(body, null, 2); 
+
+        // If we don't have an empty JSON document, display it
+        if( body_text != '{}' ) {
+            $('#request_body').html( hljs.highlightAuto( body ).value );
+            $('#request_body').show();
+            content_type = "application/json"; // Display and actual content type
+
+            // Only send body as multipart formData (above) IFF there is also form data or file upload.
+            // Otherwise, send as playin body_text body.
+            if( got_form_data ) {
+                var blob = new Blob([JSON.parse(body_text)], {type: content_type});
+                form_data.append(body_name, blob, body_name); // name, content, filename
+                content_type = "application/x-www-form-urlencoded"; // Just for display purposes. multipart will contain real
+            } else {
+                data = body;
+            }
+            display_content_type = "\nContent-Type: "+content_type;
+        }
+    }
+
+    if( got_form_data ) {
+        data = form_data;
+    }
 
     $.support.cors = true;
 
     $.ajax({
         url: constructed_request.fullUrl,
-        type: method,
         async: true,
-        data: body,
-        dataType: "text",
+        data: data,
+        type: method,
+        dataType: "text", // Prevents .ajax from parsing response (JSON.parse in _process does this)
+        contentType: got_form_data ? false : content_type, // MUST be false if we've got formData, else real type.
+        traditional: true,
+        processData: false, // Must be False for FormData
+
         success:  function( text, status, xhr)  { _process(text, status, xhr, constructed_request.fullhost) },
         error:    function( xhr,  status, text) { _process(xhr.responseText,  status, xhr, constructed_request.fullhost) },
         beforeSend: function( request ) {
@@ -313,6 +345,12 @@ apiExplorer.go = function( method, url ){
             $('#response').stop(1,0).delay(10).hide();
         },
         complete:   function() { $('#progress').stop(1,0).hide(); }
+        //statusCode: {
+        //    404: function() {
+        //        alert("Not found");
+        //    }
+        //}
     });
 }
+
 // --------------------------------------------------------------------------------------

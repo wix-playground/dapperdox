@@ -70,7 +70,6 @@ func LoadStatusCodes() {
 		}
 		status := i
 		desc := line[indexes[1]:]
-		logger.Printf(nil, "Status %d : %s\n", i, desc)
 
 		StatusCodes[status] = string(desc)
 	}
