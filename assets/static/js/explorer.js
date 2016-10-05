@@ -280,14 +280,6 @@ apiExplorer.go = function( method, url ){
         }
     }
 
-    // Construct request URL bits from the url and extended query
-    var constructed_request = _get_url( url, query );
-
-    // FIXME Get protocol from passed in url
-    $('#request_url').html( hljs.highlight( 'http', method.toUpperCase() + ' ' + display_url + ' HTTP/1.1\nHost: ' + constructed_request.fullhost + display_content_type + display_headers ).value );
-
-    $('#exploreButton').attr('disabled', 'disabled');
-
     // Tricky to see if formData object is empty. This works. Not elegant.
     var got_form_data = false;
     for(var pair of form_data.entries()) {
@@ -322,6 +314,14 @@ apiExplorer.go = function( method, url ){
     if( got_form_data ) {
         data = form_data;
     }
+
+    // Construct request URL bits from the url and extended query
+    var constructed_request = _get_url( url, query );
+
+    // FIXME Get protocol from passed in url
+    $('#request_url').html( hljs.highlight( 'http', method.toUpperCase() + ' ' + display_url + ' HTTP/1.1\nHost: ' + constructed_request.fullhost + display_content_type + display_headers ).value );
+
+    $('#exploreButton').attr('disabled', 'disabled');
 
     $.support.cors = true;
 
