@@ -3,18 +3,21 @@ $(document).ready(function(){
     $('.items').hide();
     var $pagename=decodeURI( window.location.pathname );
 
-    var $element=$('ul[id="navigation"]').find('a[href$="'+$pagename+'"]');
-    console.log( $element );
+    var $parent=$('ul[id="navigation"]');
+    var $element=$parent.find('a[href$="'+$pagename+'"]');
 
     var api_id = $element.data('outer');
     var toggler = $("#toggle"+api_id);
     var outerul = $("#ul"+api_id);
 
-    outerul.removeClass('collapse');
+    //outerul.removeClass('collapse');
+    outerul.addClass('in');
+    toggler.addClass('open');
     toggler.removeClass('collapsed');
     $element.addClass('nav-selected');
 
-    $("#navigation").removeClass('hide');
+    $parent.removeClass('hide');
+    //$("#navigation").removeClass('hide');
 });
 </script>
 
