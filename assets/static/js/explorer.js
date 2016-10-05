@@ -68,8 +68,6 @@ var _process = function(text, status, xhr, fullhost) {
         {
             if( content.match(/json/) )
             {
-var jsont = JSON.stringify(JSON.parse(text), null, 2) ;
-alert("JSON: "+jsont);
                 $('#body_block').show();
                 $('#response_body').html( hljs.highlight( 'json', JSON.stringify(JSON.parse(text), null, 2) ).value );
 
