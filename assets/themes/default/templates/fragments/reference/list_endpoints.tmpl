@@ -1,5 +1,5 @@
 <!-- List all API endpoints for specification -->
 [: range $api := .APIs :]
-    <h3 class="sub-sub-heading">[: .Name :]</h3>
+    <h2 class="sub-header">[: .Name :]</h3>
     [: template "fragments/reference/api-body" (map "SpecPath" $.SpecPath "API" . "Methods" .Methods) :]
 [: end :]
