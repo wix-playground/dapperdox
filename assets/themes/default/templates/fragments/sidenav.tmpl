@@ -6,6 +6,14 @@ $(document).ready(function(){
     var $parent=$('ul[id="navigation"]');
     var $element=$parent.find('a[href$="'+$pagename+'"]');
 
+    // Use last page visitied to expand sidenav, if we can't match.
+    // This happens when we're viewing a resource, for example.
+    if( $element.length == 0 ) {
+        $pagename = sessionStorage.lastpage;
+        $element=$parent.find('a[href$="'+$pagename+'"]');
+    }
+    sessionStorage.lastpage = $pagename;
+
     var api_id = $element.data('outer');
     var toggler = $("#toggle"+api_id);
     var outerul = $("#ul"+api_id);
@@ -21,7 +29,8 @@ $(document).ready(function(){
 });
 </script>
 
-<div class="col-sm-3 col-md-2 sidebar" > 
+<!-- <div class="col-sm-3 col-md-2 sidebar">  -->
+<div class="col-sm-3 col-md-3 sidebar"> 
 <ul class="nav nav-sidebar hide" id="navigation">
     <!-- Guides -->
     [: if .NavigationGuides :]
