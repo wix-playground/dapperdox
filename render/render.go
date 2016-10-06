@@ -22,7 +22,7 @@ import (
 var Render *render.Render
 
 //var guides interface{}
-type GuideType *[]*navigation.NavigationNode
+type GuideType []*navigation.NavigationNode
 
 var guides map[string]GuideType // Guides are per specification-id, or 'top-level'
 
@@ -237,7 +237,7 @@ func SetGuidesNavigation(apiSpec *spec.APISpecification, guidesnav *[]*navigatio
 	if apiSpec != nil {
 		id = apiSpec.ID
 	}
-	guides[id] = guidesnav
+	guides[id] = *guidesnav
 }
 
 // ----------------------------------------------------------------------------------------
