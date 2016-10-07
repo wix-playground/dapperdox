@@ -13,7 +13,7 @@
     <tbody>
         [: range $header := .Headers :]
           <tr><!-- <td></td> -->
-            <td>[: $header.Name :]</td>
+            <td class="resource">[: $header.Name :]</td>
             <td class="type">[: join $header.Type " of " :][: if $header.CollectionFormatDescription :], [: $header.CollectionFormatDescription :] separated[: end :]
                 [: if $header.Enum :]
                 <p>Possible values are:</p>

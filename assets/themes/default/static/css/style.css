@@ -260,13 +260,14 @@ h1 {
 
 pre, code, pre code, .attribute {
     color: #008000;
+    font-size: 0.97em; 
 }
 
 td pre {
     padding: 0px;
     margin: 0px;
     border: 0px;
-    background-color: #f9f9f9;
+    background-color: inherit;
 }
 
 li code, td p code {
@@ -274,11 +275,19 @@ li code, td p code {
     background-color: inherit;
 }
 
+td p {
+    margin: 0;
+}
+
+td li {
+    font-size: 0.97em;
+}
+
 td.resource {
     color: #008000;
-    /* font-family: Menlo,Monaco,Consolas,"Courier New",monospace;  */
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;  
     text-transform: none;
-    font-size: 95%
+    font-size: 94%
 }
 
 td span.object {
