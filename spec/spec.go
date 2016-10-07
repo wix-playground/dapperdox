@@ -1094,7 +1094,7 @@ func (c *APISpecification) processProperty(s *spec.Schema, name string, r *Resou
 				if s.Items.Schema != nil {
 					// Some outputs (example schema, member description) are generated differently
 					// if the array member references an object or a primitive type
-					r.Properties[name].Description = s.Description
+					r.Properties[name].Description = string(github_flavored_markdown.Markdown([]byte(s.Description)))
 
 					// If here, we have no json_resource returned from resourceFromSchema, then the property
 					// is an array of primitive, so construct either an array of string or array of object
