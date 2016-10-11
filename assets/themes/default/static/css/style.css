@@ -88,7 +88,7 @@ h1 {
     position: absolute;
     height: 250px;
     width: 100%;
-    bottom: 50px;
+    bottom: 16px;
     padding-bottom: 15px;
     color: #202020;
     background-color: #e5e5e5;
@@ -133,20 +133,19 @@ h1 {
 }
 @media (min-width: 768px) {
   .sidebar {
-    /* position: fixed; */
-    top: 51px;
+    position: fixed;  /* Width gets too narrow with fixed.. don't know why. See guides on index page */
+    top: 71px;
     bottom: 0;
-    left: 0;
+    /*  left: 0; */
     z-index: 1000;
     display: block;
     padding: 0 20px 20px 20px;
     overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */ 
+    overflow-y: auto; 
     /* background-color: #f5f5f5; */
     /* border-right: 1px solid #eee; */
   }
 }
-
 
 .nav-toggle.open {
      color: green; 
@@ -168,7 +167,7 @@ h1 {
 
 .nav-inner > li > a {
     font-size: 0.95em;
-    padding :0;
+    padding: 0;
 }
 .nav-toggle {
   margin-left: -14px;
@@ -178,18 +177,17 @@ h1 {
   color: #000000;
 }
 .nav-sidebar > li > h4 {
-  /* font-size: 15px; */
   padding-left: 14px;
   margin-bottom: 0px;
   color: #000000;
 }
 .nav-sidebar > li {
-  /* padding-left: 20px; */
-  padding: 0px 0 10px 10px;
+  padding: 0px 5px 10px 10px;
 }
 .nav-sidebar > li > ul {
   padding: 0px;
   padding-left: 30px; /* 40 */
+  padding-top: 6px;
   list-style: none;
 }
 .nav-sidebar > li > ul > li > ul {
@@ -230,8 +228,8 @@ h1 {
 }
 @media (min-width: 768px) {
   .main {
-    padding-right: 40px;
-    padding-left: 40px;
+    padding-right: 15px;
+    padding-left: 15px;
   }
 }
 .main .page-header {
@@ -310,6 +308,10 @@ blockquote {
 .nomargin {
     margin-top: 0px;
     margin-bottom: 0px;
+}
+
+.bottommargin {
+    margin-top: 0px;
 }
 
 

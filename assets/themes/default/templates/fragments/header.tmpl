@@ -1,27 +1,32 @@
 <!-- <div class="container-fluid"> -->
-<div class="container">
-  <div class="navbar-header">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-1 col-lg-1"></div>
+    <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <!-- Here is the small-device navigation -->
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="[:$.SpecPath:]/">[: template "fragments/header_title" . :]</a>
+      </div>
 
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-      <span class="sr-only">Toggle navigation</span>
-<!-- Here is the small-device navigation -->
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand" href="[:$.SpecPath:]/">[: template "fragments/header_title" . :]</a>
-  </div>
-
-  <!-- Collect the nav links, forms, and other content for toggling -->
-  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-    <ul class="nav navbar-nav navbar-right">
-      [: if $.MultipleSpecs :]
-      <li><a href="/"><span class="glyphicon glyphicon-th-list"></span>  All Specifications</a></li>
-      [: end :]
-      <!--
-      <li><a href="/settings"><span class="glyphicon glyphicon-cog"></span></a></li>
-      <li><a href="/signin"><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
-      -->
-    </ul>
-  </div><!-- /.navbar-collapse -->
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          [: if $.MultipleSpecs :]
+          <li><a href="/"><span class="glyphicon glyphicon-th-list" style="padding-right: 21px;"></span>All Specifications</a></li>
+          [: end :]
+          <!--
+          <li><a href="/settings"><span class="glyphicon glyphicon-cog"></span></a></li>
+          <li><a href="/signin"><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
+          -->
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-1 col-lg-1"></div>
+  </div> <!-- /row -->
 </div>

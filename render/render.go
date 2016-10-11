@@ -29,6 +29,8 @@ var guides map[string]GuideType // Guides are per specification-id, or 'top-leve
 // Vars is a map of variables
 type Vars map[string]interface{}
 
+var counter int
+
 // ----------------------------------------------------------------------------------------
 
 func Register() {
@@ -80,6 +82,9 @@ func New() *render.Render {
 			"lc":            strings.ToLower,
 			"uc":            strings.ToUpper,
 			"join":          strings.Join,
+			"counter_set":   func(a int) int { counter = a; return counter },
+			"counter_add":   func(a int) int { counter += a; return counter },
+			"mod":           func(a int, m int) int { return a % m },
 			"safehtml":      func(s string) template.HTML { return template.HTML(s) },
 			"haveTemplate":  func(n string) *template.Template { return TemplateLookup(n) },
 			"overlay":       func(n string, d ...interface{}) template.HTML { return overlay(n, d) },

@@ -24,6 +24,7 @@
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <link href='http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css' rel='stylesheet' type='text/css'>
 
     <!-- Custom styles for this template -->
     <link href="/css/style.css" rel="stylesheet">
@@ -42,7 +43,7 @@
     <script src='/js/highlight.pack.js'   type='text/javascript'></script>
     <script>hljs.initHighlightingOnLoad();</script>
 
-    <title>[: .Info.Title :]Documentation</title>
+    <title>[: .Info.Title :]: [: .Title :]</title>
   </head>
 
 <body [: if .Config.ShowAssets :][: if not .Guide :] class="debug_body" [: end :] [: end :]>
@@ -51,20 +52,42 @@
   </nav>
 
   <!-- <div class="container-fluid">  -->
-  <div class="container"> 
+  <div class="container-fluid"> 
     <div class="row">
-      [: template "fragments/sidenav" . :]
-      <!-- <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">  -->
-      <div class="col-sm-9 col-md-9 main"> 
-        [: yield :]
-      </div>
+      <div class="col-md-1 col-lg-1 main"></div>
+      [: if not (or .APIs .NavigationGuides) :]
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 main"> 
+      [: else :]
+
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"> 
+            [: template "fragments/sidenav" . :] 
+        </div>
+
+        <div class="col-xs-9 col-sm-9 col-md-7 col-lg-7 main"> 
+      [: end :]
+
+          [: yield :]
+        </div>
+
+        <div class="col-md-1 col-lg-1 main"></div>
     </div>
   </div>
   <div id="footer" class="footer">
-    <!-- <div class="container-fluid"> -->
-    <div class="container">
-    [: template "fragments/author_debug" . :]
-    [: template "fragments/footer" . :]
+    <div class="container-fluid">
+      <div class="row">
+        <!-- <div class="col-md-1 col-lg-1"></div> -->
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> 
+          [: template "fragments/author_debug" . :]
+        </div>
+        <!-- <div class="col-md-1 col-lg-1"></div> -->
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-lg-1"></div>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10"> 
+          [: template "fragments/footer" . :] 
+        </div>
+        <div class="col-md-1 col-lg-1"></div>
+      </div>
     </div>
   </div>
 
