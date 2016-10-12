@@ -5,6 +5,13 @@ body {
 header {
   background: #ecf0f1;
 }
+.footer {
+  margin-top: 28px;
+  background: #ecf0f1;
+  height: 60px;
+  width: 100%;
+  z-index: 999;
+}
 p {
     font-size: 1.00em; /* 1.08em */
 }
@@ -110,7 +117,7 @@ font-size: 0.98em; /* 1.08 */
   margin-bottom: 0px;
 }
 .nav-sidebar > li {
-  padding: 0px 0 10px 0px;
+  padding: 0px 0 7px 0px;
 }
 .nav-sidebar > li > ul > li > a {
   padding-left: 1em;
@@ -122,6 +129,7 @@ font-size: 0.98em; /* 1.08 */
 }
 .nav-sidebar > li > ul > li > ul {
   /* padding-left: 20px; */
+
   list-style: none;
 }
 .nav-sidebar a {

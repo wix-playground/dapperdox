@@ -1,5 +1,9 @@
 # Metadata
 
+Metadata can be added to the start of guide documentation written in 
+[Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/)
+(GFM) to control and configure its entry in the site navigation.
+
 The following metadata is recognised by Swaggerly. All other metadata entries will be ignored.
 
 ## Navigation
