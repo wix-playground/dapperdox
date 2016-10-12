@@ -596,6 +596,10 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 			method.PathParams = append(method.PathParams, p)
 		case "body":
 			var body map[string]interface{}
+			if param.Schema == nil {
+				logger.Errorf(nil, "Error: 'in body' parameter %s is missing a schema declaration.\n", param.Name)
+				os.Exit(1)
+			}
 			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil, true)
 			p.Resource.Schema = jsonResourceToString(body, "")
 			method.BodyParam = &p
@@ -607,6 +611,11 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	}
 
 	// Compile resources from response declaration
+
+	if o.Responses == nil {
+		logger.Errorf(nil, "Error: Operation %s %s is missing a responses declaration.\n", methodname, path)
+		os.Exit(1)
+	}
 	// FIXME - Dies if there are no responses...
 	for status, response := range o.Responses.StatusCodeResponses {
 		logger.Tracef(nil, "Response for status %d", status)

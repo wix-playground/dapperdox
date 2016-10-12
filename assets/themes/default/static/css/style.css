@@ -182,12 +182,10 @@ h1 {
   color: #000000;
 }
 .nav-sidebar > li {
-  padding: 0px 5px 10px 10px;
+  padding: 0px 5px 5px 10px;
 }
 .nav-sidebar > li > ul {
-  padding: 0px;
-  padding-left: 30px; /* 40 */
-  padding-top: 6px;
+  padding: 4px 0 0 30px;
   list-style: none;
 }
 .nav-sidebar > li > ul > li > ul {
