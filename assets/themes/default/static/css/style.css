@@ -68,6 +68,12 @@ h1 {
   font-size: 18px;
   font-weight: bold;
 }
+.sub-sub-sub-sub-header {
+  padding-top: 5px;
+  padding-bottom: 10px;
+  font-size: 15px;
+  font-weight: bold;
+}
 
 
 .footer {
@@ -177,7 +183,7 @@ h1 {
   color: #000000;
 }
 .nav-sidebar > li > h4 {
-  padding-left: 14px;
+  padding: 0 0 0 14px;
   margin-bottom: 0px;
   color: #000000;
 }
