@@ -47,8 +47,8 @@ This technique can also be used to override `GET` to `fetch`, `POST` to `create`
 
 ## Navigating by method name
 
-Where an openAPI specification is describing a non-RESTful set of APIs, they are often grouped together and sharing the same
-HTTP method. For example, two `get` methods having respective `summary` texts of `lookup product by ID` and `lookup product by barcode` 
+Where an openAPI specification is describing a non-RESTful set of APIs, they are often grouped together and share the same
+HTTP method. For example, two `GET` methods having respective `summary` texts of `lookup product by ID` and `lookup product by barcode` 
 would probably be listed together, both being product APIs. As they are both `get` methods, the reader would be unable to tell them
 apart if they are both referred to as `get` operations in the API navigation. By adding the `"x-navigateMethodsByName" : true` 
 extension to the top level openAPI specification, you can force Swaggerly to describe each method in the navigation using its 

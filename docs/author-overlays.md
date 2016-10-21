@@ -61,19 +61,19 @@ Shown as a directory tree:
           - `method.md` - Overlay applied to all API methods.
         - `resource/`
           - `resource.md` - Overlay applied to all resource pages.
-    - `sections/` - Contains additional documentation and overlays appropriate to each OpenAPI specification.
-      - `[specification-ID]` - The kabab case of the OpenAPI `info.title` member.
-        - `guides/` - Directory containing guides for appropriate for the named OpenAPI specification.
-        - `reference/` - 
-          - `api.md` - Overlay applied to all API pages of this specification.
-          - `[api-name].md` - Overlay applied to a specific API page of this specification.
-          - `[api-name]/`
-                - `[operation-name].md` - Overlay applied to a specific method, identified by operation, for this named API.
-                - `method.md` - Overlay applied to all methods of this named API.
-          - `[operation-name].md` - Overlay applied to all methods with the given operation name, for all APIs in the specification.
-          - `method.md` - Overlay applied to all methods of all APIs in the specification.
-        - `resource/`
-          - `resource.md` - Overlay applied to all resource pages of this API.
+    - `sections/` - Contains additional documentation and overlays for specific OpenAPI specifications.
+      - `[specification-ID]` - The kabab case of the OpenAPI `info.title` member of the specification the overlays are for.
+            - `guides/` - Directory containing guides for appropriate for the named OpenAPI specification.
+            - `reference/` - 
+              - `api.md` - Overlay applied to all API pages of this specification.
+              - `[api-name].md` - Overlay applied to a specific API page of this specification.
+              - `[api-name]/`
+                    - `[operation-name].md` - Overlay applied to a specific method, identified by operation, for this named API.
+                    - `method.md` - Overlay applied to all methods of this named API.
+              - `[operation-name].md` - Overlay applied to all methods with the given operation name, for all APIs in the specification.
+              - `method.md` - Overlay applied to all methods of all APIs in the specification.
+            - `resource/`
+              - `resource.md` - Overlay applied to all resource pages of this API.
 
 ## Enabling author debug mode
 

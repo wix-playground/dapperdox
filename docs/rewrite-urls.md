@@ -26,8 +26,9 @@ and you will want to use the alternative form of the configuration option, which
 See [Configuration guide](/doc/configuration-guide.html) for further information on configuring Swaggerly.
 
 ## Documentation URLs
-The authored documentation you are combining with your swagger specifications often does not contain API or resource URLs
-that are correct for the environment currently being documented.
+The authored documentation you are combining with your swagger specifications often will not contain URLs
+that are correct for the environment being documented.
+
 For example, the specification guides may contain the production URLs, which are not appropriate when the documentation
 is being served up in a development or test environment.
 

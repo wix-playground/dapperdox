@@ -320,7 +320,14 @@ p {
   line-height: 1.72222;
   margin: 0 0 15px;
 }
-li{list-style-type:none}
+
+ul li{
+    list-style-type:none
+}
+ol li {
+    padding-left: 10px;
+}
+
 .white {color:white}
 .hidden { visibility: hidden;}
 .lead {
@@ -441,7 +448,7 @@ blockquote {
   margin: 0 0 30px;
 }
 blockquote p {
-  font-size: 20px;
+  font-size: 0.98em;
   line-height: 1.55;
   font-weight: normal;
   margin-bottom: .4em;

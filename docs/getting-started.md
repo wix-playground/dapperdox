@@ -82,8 +82,9 @@ To do this, pass the `-spec-rewrite-url` option to Swaggerly:
 
 This rewrites the part of a URL that matches the value given by `-spec-rewrite-url` as the value given by `-site-url`.
 
-> Note that only **absolute** references are allowed. Relative references in JSON files generally do not resolve
-consistently, because the concept of relative to *what* changes depending on the file you are in.
+> Note that only **absolute** `$ref` references are allowed in a Swagger specification. Relative references in JSON
+files generally do not resolve consistently, because the concept of what the reference is relative *to* changes from
+file to file.
 
 See [Rewriting URLs](/docs/rewrite-urls.html) for further details.
 !!!HIGHLIGHT!!!
