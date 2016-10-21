@@ -1,0 +1,36 @@
+{
+    "swagger": "2.0",
+    "x-navigate-methods-by-name": false,
+    "info": {
+        "title": "Product Ordering API",
+        "description": "Search, create and manage all aspects of product orders.",
+        "version": "1.0.0"
+    },
+    "host": "developer.api.ch.gov.uk",
+    "schemes": [
+        "https"
+    ],
+    "basePath": "/accounts/applications",
+    "produces": [
+        "application/json"
+    ],
+    "tags" : [
+      {
+        "name": "applications",
+        "description": "registration stuff"
+      },
+      {
+        "name": "apikeys",
+        "description": "api keys"
+      },
+      {
+        "name": "webkeys",
+        "description": "web keys"
+      },
+      {
+        "name": "serverkeys",
+        "description": "server keys"
+      }
+    ],
+    "paths": { }
+}
