@@ -1,0 +1,12 @@
+./swaggerly \
+    -spec-dir=exs \
+    -spec-filename=authentication.json \
+    -spec-filename=public.json \
+    -spec-filename=streaming.json \
+    -spec-filename=modify.json \
+    -bind-addr=0.0.0.0:3123 \
+    -spec-rewrite-url=http://localhost:3123/swagger-2.0 \
+    -document-rewrite-url=www.google.com=www.google.co.uk \
+    -site-url=http://0.0.0.0:3123 \
+    -log-level=trace \
+    -author-show-assets=false
