@@ -13,7 +13,7 @@
 | `-spec-rewrite-url` | `SPEC_REWRITE_URL` | The URLs in the OpenAPI specifications to be rewritten as `site-url`, or to the `to` URL if the value given is of the form from=to. Applies to OpenAPI specification text, not asset files. |
 | `-theme` | `THEME` | Name of the theme to render documentation. |
 | `-themes-dir` | `THEMES_DIR` | Directory containing installed themes. |
-| `-force-root-page` | `FORCE_ROOT_PAGE` | When Swaggerly is serving a single OpenAPI specification, then by default Swaggerly will show the specification index page when serving the homepage. You can force Swaggerly to show the root index page with this option. Takes the value `true` or `false`. |
+| `-force-specification-list` | `FORCE_SPECIFICATION_LIST` | When Swaggerly is serving a single OpenAPI specification, then by default it will show the API summary page when serving the homepage. Instead, you can force Swaggerly to show the list of available specificatons (as it would if there were more than one specification) with this option. This is necessary if you have global documentation guides which live outside the specification. Takes the value `true` or `false`. |
 | `-author-show-assets` | `AUTHOR_SHOW_ASSETS` | Setting this value to `true` will enable an *assets search path* pane at the foot of every API reference page. This shows the path order that Swaggerly will scan to find GFM content overlay or replacement files. Takes the value `true` or `false`. |
 
 Some configuration parameters can take multiple values, either by specifying the parameter multiple times on the command lines, or by
