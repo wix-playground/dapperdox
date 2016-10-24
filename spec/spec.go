@@ -217,7 +217,7 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		specFilename = "/" + specFilename
 	}
 
-	document, err := loadSpec("http://" + host + specFilename) // XXX Is there a confusion here between SpecDir and SpecFilename
+	document, err := loadSpec("http://" + host + specFilename)
 	if err != nil {
 		return err
 	}

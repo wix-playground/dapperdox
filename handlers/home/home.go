@@ -35,7 +35,7 @@ func Register(r *pat.Router) {
 
 	cfg, _ := config.Get()
 
-	if count == 1 && cfg.ForceRootPage == false {
+	if count == 1 && cfg.ForceSpecList == false {
 		// If there is only one specification loaded, then hotwire '/' to redirect to that index page
 		// unless Swaggerly is configured not to do that!
 		r.Path("/").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

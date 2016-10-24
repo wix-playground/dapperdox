@@ -21,7 +21,7 @@ type config struct {
 	SiteURL            string      `env:"SITE_URL" flag:"site-url" flagDesc:"Public URL of the documentation service"`
 	SpecRewriteURL     []string    `env:"SPEC_REWRITE_URL" flag:"spec-rewrite-url" flagDesc:"The URLs in the swagger specifications to be rewritten as site-url"`
 	DocumentRewriteURL []string    `env:"DOCUMENT_REWRITE_URL" flag:"document-rewrite-url" flagDesc:"Specify a document URL that is to be rewritten. May be multiply defined. Format is from=to."`
-	ForceRootPage      bool        `env:"FORCE_ROOT_PAGE" flag:"force-root-page" flagDesc:"Always show the top level landing page. The default when serving a single OpenAPI specification is to hide the root page."`
+	ForceSpecList      bool        `env:"FORCE_SPECIFICATION_LIST" flag:"force-specification-list" flagDesc:"Force the homepage to be the summary list of available specifications. The default when serving a single OpenAPI specification is to make the homepage the API summary."`
 	ShowAssets         bool        `env:"AUTHOR_SHOW_ASSETS" flag:"author-show-assets" flagDesc:"Display at the foot of each page the overlay asset paths, in priority order, that Swaggerly will check before rendering."`
 }
 

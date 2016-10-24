@@ -212,7 +212,7 @@ func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[
 
 	// If we have a multiple specifications or are forcing a parent "root" page for the single specification
 	// then set MultipleSpecs to true to enable navigation back to the root page.
-	if cfg.ForceRootPage || len(spec.APISuite) > 1 {
+	if cfg.ForceSpecList || len(spec.APISuite) > 1 {
 		m["MultipleSpecs"] = true
 	}
 

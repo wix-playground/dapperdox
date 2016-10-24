@@ -1,7 +1,8 @@
 ./swaggerly \
+    -assets-dir=./examples/metadata/assets \
     -spec-dir=examples/specifications/petstore/ \
     -bind-addr=0.0.0.0:3123 \
     -site-url=http://0.0.0.0:3123 \
     -spec-rewrite-url=petstore.swagger.io=PETSTORE.swagger.io \
-    -assets-dir=./examples/markdown/assets \
+    -force-specification-list=true \
     -log-level=info
