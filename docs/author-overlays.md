@@ -33,7 +33,7 @@ of the file (see [Supported metadata](#supported-metadata)).
 
 There are three ways to overlay a reference page, globally, per-specification or on a page-by-page basis. Swaggerly will
 look at the following file patterns in the order defined below to find any appropriate overlays, and will stop once it finds one.
-For example `sections/[spec-ID]/reference/<API name>.md` takes precident over `sections/[spec-ID]/reference/api.md`.
+For example `sections/[spec-ID]/reference/<API name>.md` takes precidence over `sections/[spec-ID]/reference/api.md`.
 
 | Reference page | Overlay filename | Description |
 | -------------- | ---------------- | ----------- |

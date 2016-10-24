@@ -38,7 +38,8 @@ will build these three guides, making them available a `http://localhost:3123/`.
 
 > When presenting a single specification, Swaggerly will make its root *home page* the summary of that API
 and not the summary list of available specifications. Since the `markdown` and `markdown2` guides are only available
-from the summary list of available specifications, they weill not be visible. The `-force-specification-list=true` option
+from the summary list of available specifications, and only a single specification has been loaded, they will not be
+visible. The `-force-specification-list=true` option
 instructs Swaggerly to show the list of available specifications, from where you can access these global guides.
 
 When viewing the available specifications list the navigation rendered at the side of
@@ -117,7 +118,8 @@ Navigation: Overview/Another example
 SortOrder: 210
 ```
 
-The `Navigation:` entry forces a page side navigation entry that is just **two** levels deep:
+The `Navigation:` entry forces a page side navigation entry that is just **two** levels deep. The side
+navigation for these three example guides is therefore:
 
 ```
   Getting Started
