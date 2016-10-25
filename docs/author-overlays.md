@@ -63,7 +63,7 @@ Shown as a directory tree:
           - `resource.md` - Overlay applied to all resource pages.
     - `sections/` - Contains additional documentation and overlays for specific OpenAPI specifications.
       - `[specification-ID]` - The kabab case of the OpenAPI `info.title` member of the specification the overlays are for.
-            - `guides/` - Directory containing guides for appropriate for the named OpenAPI specification.
+            - `guides/` - Directory containing authored documentation for the named OpenAPI specification.
             - `reference/` - 
               - `api.md` - Overlay applied to all API pages of this specification.
               - `[api-name].md` - Overlay applied to a specific API page of this specification.
