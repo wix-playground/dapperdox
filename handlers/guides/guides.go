@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/gorilla/pat"
-	"github.com/zxchris/swaggerly/config"
 	"github.com/zxchris/swaggerly/logger"
 	"github.com/zxchris/swaggerly/navigation"
 	"github.com/zxchris/swaggerly/render"
@@ -33,19 +32,17 @@ import (
 // Register routes for guide pages
 func Register(r *pat.Router) {
 
-	base := GetBasePath()
-
 	logger.Infof(nil, "Registering guides")
 
 	// specification specific guides
 	for _, specification := range spec.APISuite {
 		logger.Debugf(nil, "- Specification guides for '%s'", specification.APIInfo.Title)
-		register(r, base+"/sections", specification)
+		register(r, "assets/templates", specification)
 	}
 
 	// Top level guides
 	logger.Debugf(nil, "- Root guides")
-	register(r, base+"/templates", nil)
+	register(r, "assets/templates", nil)
 
 	logger.Debugf(nil, "\n")
 }
@@ -65,21 +62,12 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 	guidesNavigation.Children = make([]*navigation.NavigationNode, 0)
 	guidesNavigation.ChildMap = make(map[string]*navigation.NavigationNode)
 
-	logger.Tracef(nil, "  - Walk directory %s", root)
+	logger.Tracef(nil, "  - Walk compiled asset tree %s", root)
 
-	err := filepath.Walk(root, func(path string, info os.FileInfo, _ error) error {
-		if info == nil {
-			return nil
+	for _, path := range asset.AssetNames() {
+		if !strings.HasPrefix(path, root) { // Only keep assets we want
+			continue
 		}
-		if info.IsDir() {
-			// Skip hidden directories TODO this should be applied to files also.
-			_, node := filepath.Split(path)
-			if node[0] == '.' {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-
 		ext := filepath.Ext(path)
 
 		switch ext {
@@ -103,9 +91,7 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 				render.HTML(w, http.StatusOK, resource, render.DefaultVars(req, specification, render.Vars{"Guide": resource}))
 			})
 		}
-		return nil
-	})
-	_ = err
+	}
 
 	sortNavigation(guidesNavigation)
 
@@ -137,21 +123,6 @@ func dumpit(tree *navigation.NavigationNode) {
 			logger.Tracef(nil, "       name = %s\n", node2.Name)
 		}
 	}
-}
-
-// ---------------------------------------------------------------------------
-func GetBasePath() string {
-
-	cfg, _ := config.Get()
-	if len(cfg.AssetsDir) == 0 {
-		return ""
-	}
-
-	base, err := filepath.Abs(cfg.AssetsDir)
-	if err != nil {
-		logger.Errorf(nil, "Error forming guide template path: %s", err)
-	}
-	return base
 }
 
 // ---------------------------------------------------------------------------
