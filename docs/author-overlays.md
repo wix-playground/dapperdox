@@ -16,17 +16,24 @@ of the **Find pet by ID** `GET` method for the example Petstore OpenAPI specific
 pointed to by the `-assets-dir=` configuration parameter:
 
 ```
-> cat {local_assets}/sections/swagger-petstore/reference/XXXXXXXXXXXXXXXXXX/get.md
+> cat {swaggerly-source-directory}/examples/overlay/assets/sections/swagger-petstore/templates/reference/everything-about-your-pets/get-pet-by-id.md
 ```
 
 ```gfm
 Overlay: true
 
-[[request]]
-It is important that this request be called with valid geo-location coordinates.
+[[banner]]
+> This is a banner. Content overlaid onto this method page comes from
+`assets/sections/swagger-petstore/templates/reference/get.md`
+and is therefore applied to **all** GET methods defined by the Petstore specification.
+
+[[description]]
+This is some overlaid *description* text. Defined by file
+`assets/sections/swagger-petstore/templates/reference/get.md`
 
 [[response]]
-The response is always an array of response objects, if successful.
+Here is some overlaid *response* text. Defined by file
+`assets/sections/swagger-petstore/templates/reference/get.md`
 ```
 
 For a GFM page to be treated as an overlay, it must contain the metadata `Overlay: true` at the start
@@ -48,6 +55,7 @@ first member in the following list that yields a value from a method's specifica
 4. method name
 
 where method name (and `method-name` below) is the actual HTTP method name of the operation, such as `get`, `post` and `put`.
+Therefore, it is possible for `operation-ID` and `method-name` to be the same value.
 
 `api-name` is calculated in two ways, depending on whether tagging is in use or not, and is also kabab-cased. If tagging is in use, then `api-name` 
 takes the tag's `description`, falling back to the tag `name` if there no description. If tagging is not in use, then the 
@@ -109,6 +117,9 @@ This can be visualised as a directory tree (though precedence is not maintained 
 By passing swaggerly the configuration parameter `-author-show-assets=true`, swaggerly will display an overlay search
 path pane at the foot of each API reference page. This helps you see exactly which path and filenames you can use to
 overlay content onto the page you are viewing (see [Configuration parameters](#configuration-parameters)).
+
+> Try enabling this mode for the Petstore specification to see for yourself the file paths scanned, and how they relate
+to the specification.
 
 The recommendation is to always enable this debug mode when you are writing overlay content.
 
