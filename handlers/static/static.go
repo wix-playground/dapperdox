@@ -3,6 +3,7 @@ package static
 import (
 	"mime"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	//"github.com/zxchris/swaggerly/assets"
@@ -22,28 +23,26 @@ func Register(r *pat.Router) {
 
 	logger.Debugln(nil, "registering static content handlers for static package")
 
-	// FIXME - We should create a generic "file tree" map that we can itterate over to generate these paths
-	//       - The same for guides. Particularly as we'll probably remove the asset package and patch
-	//         unroller/render to allow an array of template directories to be passed in.
-	//
-	for _, file := range asset.AssetNames() {
-		if strings.HasPrefix(file, "assets/static/") {
+	var allow bool
 
+	for _, file := range asset.AssetNames() {
+		mimeType := mime.TypeByExtension(filepath.Ext(file))
+
+		switch {
+		case strings.HasPrefix(mimeType, "image"),
+			strings.HasPrefix(mimeType, "text/css"),
+			strings.HasSuffix(mimeType, "javascript"):
+			allow = true
+		default:
+			allow = false
+		}
+
+		if allow {
 			// Drop assets/static prefix
 			path := strings.TrimPrefix(file, "assets/static")
-			logger.Tracef(nil, "registering handler for static asset: %s", path)
+			// FIXME We need sections/{specID}/static/* assets to be compiled under assets/static and not assets/templates
 
-			var mimeType string
-			switch {
-			case strings.HasSuffix(path, ".css"):
-				mimeType = "text/css"
-			case strings.HasSuffix(path, ".js"):
-				mimeType = "application/javascript"
-			default:
-				mimeType = mime.TypeByExtension(path)
-			}
-
-			logger.Tracef(nil, "using mime type: %s", mimeType)
+			logger.Debugf(nil, "registering handler for static asset: %s", path)
 
 			r.Path(path).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				if b, err := asset.Asset("assets/static" + path); err == nil {

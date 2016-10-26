@@ -51,9 +51,9 @@ func New() *render.Render {
 	// XXX Order of directory importing is IMPORTANT XXX
 	if len(cfg.AssetsDir) != 0 {
 		asset.Compile(cfg.AssetsDir+"/templates", "assets/templates")
-		asset.Compile(cfg.AssetsDir+"/sections", "assets/templates")
 		asset.Compile(cfg.AssetsDir+"/static", "assets/static")
 		asset.Compile(cfg.AssetsDir+"/themes/"+cfg.Theme, "assets")
+		compileSections(cfg.AssetsDir)
 	}
 	// TODO only import the theme specified instead of all installed themes that will not be used!
 
@@ -91,6 +91,25 @@ func New() *render.Render {
 			"getAssetPaths": func(s string, d ...interface{}) []string { return getAssetPaths(s, d) },
 		}},
 	})
+}
+
+// ----------------------------------------------------------------------------------------
+
+func compileSections(assetsDir string) {
+	// specification specific guides
+	for _, specification := range spec.APISuite {
+		logger.Debugf(nil, "- Specification assets for '%s'", specification.APIInfo.Title)
+		compileSectionPart(assetsDir, specification, "reference", "assets/templates/")
+		compileSectionPart(assetsDir, specification, "guides", "assets/templates/")
+		compileSectionPart(assetsDir, specification, "resource", "assets/templates/")
+		compileSectionPart(assetsDir, specification, "static", "assets/static/")
+	}
+}
+
+// ----------------------------------------------------------------------------------------
+func compileSectionPart(assetsDir string, spec *spec.APISpecification, part string, prefix string) {
+	stem := spec.ID + "/" + part
+	asset.Compile(assetsDir+"/sections/"+stem, prefix+stem)
 }
 
 // ----------------------------------------------------------------------------------------
