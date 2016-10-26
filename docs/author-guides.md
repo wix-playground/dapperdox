@@ -5,12 +5,18 @@ Authored documentation pages are referred to as <span class="hljs-attr">guides</
 using HTML will make them dependant on the theme in use at the time they were written, and therefore resistant to change.
 The flexible approach is to use Github Flavoured Markdown.
 
-## Github Flavoured Markdown
-
 Guides written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/)
-have a file extension of `.md`. They can either be **global**, in which case they are located within directory
-`{local_assets}/templates/guides/`, or **per-specification** and are located within
-directory `{local_assets}/sections/{specification_ID}/guides/`.
+have a file extension of `.md`, those written in HTML are referred to as 'templates' and have a file extension of `.tmpl`.
+
+## Global and per-specification guides
+
+Guides can be applied at two levels:
+
+1. Per-specification guides, which are available when browsing specification reference documentation.
+2. Global guides, which are available when a user is not browsing specification reference documentation.
+
+Global guides are located within directory `{local_assets}/templates/guides/`, 
+and per-specification guides are located within directory `{local_assets}/sections/{specification_ID}/templates/guides/`.
 
 If you tell Swaggerly where to find your local assets, then on startup, it will locate and build 
 pages for all of your guides, maintaining the directory structure it finds below the `/guides/` directory
@@ -21,7 +27,7 @@ The Swaggerly assets example `examples/guides/assets/` contains three guides:
 
 1. `templates/guides/markdown.md`
 2. `templates/guides/level2/markdown2.md`
-3. `sections/swagger-petstore/guides/PetstoreHelp.md`
+3. `sections/swagger-petstore/templates/guides/PetstoreHelp.md`
 
 The first two are global documents, available outside any specification reference page. The thrid is a guide specific to
 the Petstore specification.
@@ -40,7 +46,7 @@ will build these three guides, making them available a `http://localhost:3123/`.
 and not the summary list of available specifications. Since the `markdown` and `markdown2` guides are only available
 from the summary list of available specifications, and only a single specification has been loaded, they will not be
 visible. The `-force-specification-list=true` option
-instructs Swaggerly to show the list of available specifications, from where you can access these global guides.
+instructs Swaggerly to show the list of available specifications, from where these global guides are accessible.
 
 When viewing the available specifications list the navigation rendered at the side of
 the page will show two navigation entries:
