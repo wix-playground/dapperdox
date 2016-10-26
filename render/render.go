@@ -3,7 +3,6 @@ package render
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -183,13 +182,13 @@ func overlayPaths(name string, datamap map[string]interface{}) []string {
 		if method, ok := datamap["Method"].(spec.Method); ok {
 			// Method page
 			if specid, ok := datamap["ID"].(string); ok {
-				overlayName = append(overlayName, specid+"/templates/reference/"+api.ID+"/"+method.OperationName+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/templates/reference/"+api.ID+"/"+method.ID+"/"+name+"/overlay")
 				overlayName = append(overlayName, specid+"/templates/reference/"+api.ID+"/method/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/templates/reference/"+method.OperationName+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/templates/reference/"+method.ID+"/"+name+"/overlay")
 				overlayName = append(overlayName, specid+"/templates/reference/method/"+name+"/overlay")
 			}
 
-			overlayName = append(overlayName, "reference/"+method.OperationName+"/"+name+"/overlay")
+			overlayName = append(overlayName, "reference/"+method.ID+"/"+name+"/overlay")
 			overlayName = append(overlayName, "reference/method/"+name+"/overlay")
 		}
 	}
@@ -264,52 +263,6 @@ func SetGuidesNavigation(apiSpec *spec.APISpecification, guidesnav *[]*navigatio
 
 // ----------------------------------------------------------------------------------------
 
-func DumpAssetPaths() {
-	operations := make(map[string]string)
-
-	for specid, spec := range spec.APISuite {
-		fmt.Printf("\nAsset paths for openAPI specification '%s'\n", specid)
-
-		for _, api := range spec.APIs {
-			fmt.Printf("   API group '%s'\n", api.ID)
-
-			for _, method := range api.Methods {
-				fmt.Printf("      %s %s (%s)\n", strings.ToUpper(method.Method), method.Path, method.Name) //, method.OperationName)
-
-				fmt.Printf("         assets/sections/%s/templates/reference/%s/%s.md\n", spec.ID, api.ID, method.OperationName)
-				fmt.Printf("         assets/sections/%s/templates/reference/%s.md\n\n", spec.ID, method.OperationName)
-
-				operations[method.OperationName] = method.OperationName
-			}
-			fmt.Printf("         assets/sections/%s/templates/reference/method.md\n\n", spec.ID)
-		}
-	}
-	for op, _ := range operations {
-		fmt.Printf("assets/templates/reference/%s.md\n", op)
-	}
-	fmt.Printf("assets/templates/reference/method.md\n")
-
-	for specid, spec := range spec.APISuite {
-		fmt.Printf("Spec ID: %s\n", specid)
-
-		for _, api := range spec.APIs {
-			fmt.Printf("   API ID: %s\n", api.ID)
-			for _, method := range api.Methods {
-				for status, response := range method.Responses {
-					_ = status
-					if response.Resource != nil {
-						fmt.Printf("            assets/sections/%s/templates/resource/%s.md\n", spec.ID, response.Resource.Title)
-					}
-				}
-			}
-		}
-		fmt.Printf("   assets/sections/%s/templates/resource/resource.md\n", spec.ID)
-	}
-	fmt.Printf("assets/templates/resource/resource.md\n")
-}
-
-// ----------------------------------------------------------------------------------------
-
 func getAssetPaths(name string, data []interface{}) []string {
 	datamap := data[0].(map[string]interface{})
 
@@ -328,6 +281,8 @@ func getAssetPaths(name string, data []interface{}) []string {
 	return nil
 }
 
+// ----------------------------------------------------------------------------------------
+
 func getMethodAssetPaths(datamap map[string]interface{}) []string {
 
 	method := datamap["Method"].(spec.Method)
@@ -335,10 +290,16 @@ func getMethodAssetPaths(datamap map[string]interface{}) []string {
 	specID := datamap["ID"].(string)
 
 	var paths []string
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+"/"+method.OperationName+".md")
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+method.OperationName+".md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+"/"+method.ID+".md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+"/"+method.Method+".md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+"/method.md")
+
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+method.ID+".md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+method.Method+".md")
 	paths = append(paths, "assets/sections/"+specID+"/templates/reference/method.md")
-	paths = append(paths, "assets/templates/reference/"+method.OperationName+".md")
+
+	paths = append(paths, "assets/templates/reference/"+method.ID+".md")
+	paths = append(paths, "assets/templates/reference/"+method.Method+".md")
 	paths = append(paths, "assets/templates/reference/method.md")
 
 	return paths

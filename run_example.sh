@@ -5,4 +5,5 @@
     -site-url=http://0.0.0.0:3123 \
     -spec-rewrite-url=petstore.swagger.io=PETSTORE.swagger.io \
     -force-specification-list=true \
+    -author-show-assets=true \
     -log-level=info

@@ -518,7 +518,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	// Construct an ID for the Method. Choose from operation ID, x-operationName, summary and lastly method name.
 	id := o.ID // OperationID
 	if id == "" {
-		// No ID, use operation name
+		// No ID, use x-operationName, if we have it...
 		if gotOpname {
 			id = TitleToKebab(opname)
 		} else {
