@@ -40,7 +40,6 @@ func Register(r *pat.Router) {
 		if allow {
 			// Drop assets/static prefix
 			path := strings.TrimPrefix(file, "assets/static")
-			// FIXME We need sections/{specID}/static/* assets to be compiled under assets/static and not assets/templates
 
 			logger.Debugf(nil, "registering handler for static asset: %s", path)
 

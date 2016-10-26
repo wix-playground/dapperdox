@@ -50,7 +50,7 @@ func Register(r *pat.Router) {
 // ---------------------------------------------------------------------------
 func register(r *pat.Router, base string, specification *spec.APISpecification) {
 
-	root_node := "/guides"
+	root_node := "/templates/guides"
 	if specification != nil {
 		root_node = "/" + specification.ID + root_node
 	}

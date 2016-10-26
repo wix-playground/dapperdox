@@ -99,9 +99,7 @@ func compileSections(assetsDir string) {
 	// specification specific guides
 	for _, specification := range spec.APISuite {
 		logger.Debugf(nil, "- Specification assets for '%s'", specification.APIInfo.Title)
-		compileSectionPart(assetsDir, specification, "reference", "assets/templates/")
-		compileSectionPart(assetsDir, specification, "guides", "assets/templates/")
-		compileSectionPart(assetsDir, specification, "resource", "assets/templates/")
+		compileSectionPart(assetsDir, specification, "templates", "assets/templates/")
 		compileSectionPart(assetsDir, specification, "static", "assets/static/")
 	}
 }
@@ -177,18 +175,18 @@ func overlayPaths(name string, datamap map[string]interface{}) []string {
 		if _, ok := datamap["Methods"].([]spec.Method); ok {
 			// API page
 			if specid, ok := datamap["ID"].(string); ok {
-				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/reference/api/"+name+"overlay")
+				overlayName = append(overlayName, specid+"/templates/reference/"+api.ID+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/templates/reference/api/"+name+"/overlay")
 			}
-			overlayName = append(overlayName, "reference/api/"+name+"overlay")
+			overlayName = append(overlayName, "reference/api/"+name+"/overlay")
 		}
 		if method, ok := datamap["Method"].(spec.Method); ok {
 			// Method page
 			if specid, ok := datamap["ID"].(string); ok {
-				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/"+method.OperationName+"/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/reference/"+api.ID+"/method/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/reference/"+method.OperationName+"/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/reference/method/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/templates/reference/"+api.ID+"/"+method.OperationName+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/templates/reference/"+api.ID+"/method/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/templates/reference/"+method.OperationName+"/"+name+"/overlay")
+				overlayName = append(overlayName, specid+"/templates/reference/method/"+name+"/overlay")
 			}
 
 			overlayName = append(overlayName, "reference/"+method.OperationName+"/"+name+"/overlay")
@@ -197,8 +195,8 @@ func overlayPaths(name string, datamap map[string]interface{}) []string {
 	}
 	if resource, ok := datamap["Resource"].(*spec.Resource); ok {
 		if specid, ok := datamap["ID"].(string); ok {
-			overlayName = append(overlayName, specid+"/resource/"+resource.ID+"/"+name+"/overlay")
-			overlayName = append(overlayName, specid+"/resource/resource/"+name+"/overlay")
+			overlayName = append(overlayName, specid+"/templates/resource/"+resource.ID+"/"+name+"/overlay")
+			overlayName = append(overlayName, specid+"/templates/resource/resource/"+name+"/overlay")
 		}
 		overlayName = append(overlayName, "resource/resource/"+name+"/overlay")
 	}
@@ -278,12 +276,12 @@ func DumpAssetPaths() {
 			for _, method := range api.Methods {
 				fmt.Printf("      %s %s (%s)\n", strings.ToUpper(method.Method), method.Path, method.Name) //, method.OperationName)
 
-				fmt.Printf("         assets/sections/%s/reference/%s/%s.md\n", spec.ID, api.ID, method.OperationName)
-				fmt.Printf("         assets/sections/%s/reference/%s.md\n\n", spec.ID, method.OperationName)
+				fmt.Printf("         assets/sections/%s/templates/reference/%s/%s.md\n", spec.ID, api.ID, method.OperationName)
+				fmt.Printf("         assets/sections/%s/templates/reference/%s.md\n\n", spec.ID, method.OperationName)
 
 				operations[method.OperationName] = method.OperationName
 			}
-			fmt.Printf("         assets/sections/%s/reference/method.md\n\n", spec.ID)
+			fmt.Printf("         assets/sections/%s/templates/reference/method.md\n\n", spec.ID)
 		}
 	}
 	for op, _ := range operations {
@@ -300,24 +298,14 @@ func DumpAssetPaths() {
 				for status, response := range method.Responses {
 					_ = status
 					if response.Resource != nil {
-						fmt.Printf("            assets/sections/%s/resource/%s.md\n", spec.ID, response.Resource.Title)
+						fmt.Printf("            assets/sections/%s/templates/resource/%s.md\n", spec.ID, response.Resource.Title)
 					}
 				}
 			}
 		}
-		fmt.Printf("   assets/sections/%s/resource/resource.md\n", spec.ID)
+		fmt.Printf("   assets/sections/%s/templates/resource/resource.md\n", spec.ID)
 	}
 	fmt.Printf("assets/templates/resource/resource.md\n")
-
-	for specid, spec := range spec.APISuite {
-		fmt.Printf("Spec ID: %s\n", specid)
-
-		for _, api := range spec.APIs {
-			fmt.Printf("      assets/sections/reference/%s.md\n", api.ID)
-		}
-		fmt.Printf("   assets/sections/reference/api.md\n")
-	}
-	fmt.Printf("assets/templates/reference/api.md\n")
 }
 
 // ----------------------------------------------------------------------------------------
@@ -347,9 +335,9 @@ func getMethodAssetPaths(datamap map[string]interface{}) []string {
 	specID := datamap["ID"].(string)
 
 	var paths []string
-	paths = append(paths, "assets/sections/"+specID+"/reference/"+apiID+"/"+method.OperationName+".md")
-	paths = append(paths, "assets/sections/"+specID+"/reference/"+method.OperationName+".md")
-	paths = append(paths, "assets/sections/"+specID+"/reference/method.md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+"/"+method.OperationName+".md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+method.OperationName+".md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/method.md")
 	paths = append(paths, "assets/templates/reference/"+method.OperationName+".md")
 	paths = append(paths, "assets/templates/reference/method.md")
 
@@ -364,8 +352,8 @@ func getAPIAssetPaths(datamap map[string]interface{}) []string {
 	specID := datamap["ID"].(string)
 
 	var paths []string
-	paths = append(paths, "assets/sections/"+specID+"/reference/"+apiID+".md")
-	paths = append(paths, "assets/sections/"+specID+"/reference/api.md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+".md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/api.md")
 	paths = append(paths, "assets/templates/reference/api.md")
 
 	return paths
@@ -379,8 +367,8 @@ func getResourceAssetPaths(datamap map[string]interface{}) []string {
 	specID := datamap["ID"].(string)
 
 	var paths []string
-	paths = append(paths, "assets/sections/"+specID+"/resource/"+resID+".md")
-	paths = append(paths, "assets/sections/"+specID+"/reference/resource.md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/resource/"+resID+".md")
+	paths = append(paths, "assets/sections/"+specID+"/templates/reference/resource.md")
 	paths = append(paths, "assets/templates/resource/resource.md")
 
 	return paths
@@ -388,3 +376,4 @@ func getResourceAssetPaths(datamap map[string]interface{}) []string {
 
 // ----------------------------------------------------------------------------------------
 // end
+// assets/templates/swagger-petstore/templates/reference/api/
