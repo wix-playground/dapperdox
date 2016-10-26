@@ -63,17 +63,18 @@ Shown as a directory tree:
           - `resource.md` - Overlay applied to all resource pages.
     - `sections/` - Contains additional documentation and overlays for specific OpenAPI specifications.
       - `[specification-ID]` - The kabab case of the OpenAPI `info.title` member of the specification the overlays are for.
-            - `guides/` - Directory containing authored documentation for the named OpenAPI specification.
-            - `reference/` - 
-              - `api.md` - Overlay applied to all API pages of this specification.
-              - `[api-name].md` - Overlay applied to a specific API page of this specification.
-              - `[api-name]/`
-                    - `[operation-name].md` - Overlay applied to a specific method, identified by operation, for this named API.
-                    - `method.md` - Overlay applied to all methods of this named API.
-              - `[operation-name].md` - Overlay applied to all methods with the given operation name, for all APIs in the specification.
-              - `method.md` - Overlay applied to all methods of all APIs in the specification.
-            - `resource/`
-              - `resource.md` - Overlay applied to all resource pages of this API.
+            - `templates/`
+                - `guides/` - Directory containing authored documentation for the named OpenAPI specification.
+                - `reference/` - 
+                  - `api.md` - Overlay applied to all API pages of this specification.
+                  - `[api-name].md` - Overlay applied to a specific API page of this specification.
+                  - `[api-name]/`
+                        - `[operation-name].md` - Overlay applied to a specific method, identified by operation, for this named API.
+                        - `method.md` - Overlay applied to all methods of this named API.
+                  - `[operation-name].md` - Overlay applied to all methods with the given operation name, for all APIs in the specification.
+                  - `method.md` - Overlay applied to all methods of all APIs in the specification.
+                - `resource/`
+                  - `resource.md` - Overlay applied to all resource pages of this API.
 
 ## Enabling author debug mode
 
@@ -90,7 +91,9 @@ Each of the three auto-generated reference page types (api, method and resource)
 
 | GFM section reference | Page section |
 | --------------------- | ------------ |
-| `[[banner]]`      | Inserts content at the start of the page, before the API list. |
+| `[[banner]]`      | Inserts content at the start of the page, before the description. |
+| `[[description]]` | Adds content before the API method list. |
+| `[[additional]]`  | Inserts content at the end of the API page. |
 
 ### Method page
 
@@ -106,7 +109,8 @@ Each of the three auto-generated reference page types (api, method and resource)
 | `[[request-body]]`      | Adds content before the body block. |
 | `[[security]]`          | Adds content before the security section. |
 | `[[response]]`          | Adds content before the response section. |
-| `[[example]]`           | Inserts content before the API explorer. |
+| `[[example]]`           | Inserts example content after the response section. |
+| `[[additional]]`        | Inserts additional beofre the API explorer. |
 
 
 ### Resource page
@@ -120,5 +124,28 @@ Each of the three auto-generated reference page types (api, method and resource)
 | `[[example]]`         | Adds content before the resource example, if it exists. |
 | `[[properties]]`      | Inserts content before the resource properties table. |
 | `[[additional]]`      | Inserts content at the end of the resource page. |
+
+## Example
+
+The Swaggerly assets example `examples/overlay/assets/` contains two overlay files:
+
+1. `templates/reference/method.md`
+2. `sections/swagger-petstore/templates/reference/get.md`
+
+The first provides `[[banner]]` and `[[request]]` overlay text for all method pages, across all
+specifications, except where it is overridden by a higher precidence overlay, such as the second
+overlay. This second overlay targets the Petstore specification `GET` method pages, and
+provides `[[banner]]`, `[[description]]` and `[[response]]` overlay texts.
+
+To run these examples, pass the following assets configuration to Swaggerly:
+
+```bash
+-assets-dir=<Swaggerly-source-directory>/examples/overlay/assets 
+```
+
+If you view any `GET` method page of the Petstore API, you will see the text from the second
+overlay file injected into the method's `banner`, `description` and `response` sections. If you
+view any other method page, you will see `banner` and `request` texts injected from the first
+overlay file.
 
 !!!HIGHLIGHT!!!
