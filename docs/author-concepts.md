@@ -23,19 +23,19 @@ Within these groups, assets divide into three categories:
 
 ### Assets directory structure
 
-- `{local_assets}`
-  - `templates`
-     - `guides`
-     - `reference`
-     - `resource`
-  - `static`
-  - `sections`
-        - `{specification-ID}`
-          - `templates`
-             - `guides`
-             - `reference`
-             - `resource`
-          - `static`
+- `{local_assets}/`
+  - `templates/`
+     - `guides/`
+     - `reference/`
+     - `resource/`
+  - `static/`
+  - `sections/`
+        - `{specification-ID}/`
+          - `templates/`
+             - `guides/`
+             - `reference/`
+             - `resource/`
+          - `static/`
 
 For example, `{local_assets}/templates/` contains assets that are applied across the suite of specifications.
 `{local_assets}/sections/{specification-ID}/templates/` contains assets that are applied to a particular specification.
