@@ -44,10 +44,11 @@ of the file (see [Supported metadata](#supported-metadata)).
 There are three ways to overlay a reference page, globally, per-specification or on a page-by-page basis.
 To find an overlay for a page, Swaggerly follows the file patterns defined in the table below
 **in the order in which they are listed**, using the first one it finds.
-For example `sections/{specification-ID}/templates/reference/{api-name}.md` takes precidence over `sections/{specification-ID}/templates/reference/api.md`.
+For example `sections/{specification-ID}/templates/reference/{api-group}.md` takes precidence over `sections/{specification-ID}/templates/reference/api.md`.
 
-In the references below, the `operation-ID` for a method is determined by taking the kabab-case of the 
-first member in the following list that yields a value from a method's specification:
+In the references below, the `operation-ID` for a method is determined by taking the
+[kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles) of the
+first member in the following list that yields a value from an operations's specification:
 
 1. `operationID`
 2. `x-opererationName`
@@ -57,7 +58,7 @@ first member in the following list that yields a value from a method's specifica
 where method name (and `method-name` below) is the actual HTTP method name of the operation, such as `get`, `post` and `put`.
 Therefore, it is possible for `operation-ID` and `method-name` to be the same value.
 
-`api-name` is calculated in two ways, depending on whether tagging is in use or not, and is also kabab-cased. If tagging is in use, then `api-name` 
+`api-group` is calculated in two ways, depending on whether tagging is in use or not, and is also kebab-cased. If tagging is in use, then `api-group` 
 takes the tag's `description`, falling back to the tag `name` if there no description. If tagging is not in use, then the 
 operation's `x-pathName` member is used, otherwise it takes the operation's `summary`. 
 
@@ -67,12 +68,12 @@ This table defines the overlay file lookup priority for API, method and resource
 
 | Reference page | Overlay filename | Description |
 | -------------- | ---------------- | ----------- |
-| API      | `sections/{specification-ID}/templates/reference/{api-name}.md`               | Overlay applied to a specific API page. |
+| API      | `sections/{specification-ID}/templates/reference/{api-group}.md`               | Overlay applied to a specific API page. |
 | API      | `sections/{specification-ID}/templates/reference/api.md`                      | Overlay applied to all API pages for the named specification. |
 | API      | `templates/reference/api.md`                               | Overlay applied to all API pages. |
-| Method   | `sections/{specification-ID}/templates/reference/{api-name}/{operation-ID}.md` | Overlay applied to a specific method page of a specific API of a specific openAPI specification. |
-| Method   | `sections/{specification-ID}/templates/reference/{api-name}/{method-name}.md` | Overlay applied to all method pages with this HTTP method name in the named openAPI specification. |
-| Method   | `sections/{specification-ID}/templates/reference/{api-name}/method.md`        | Overlay applied to all method pages of a specific API. |
+| Method   | `sections/{specification-ID}/templates/reference/{api-group}/{operation-ID}.md` | Overlay applied to a specific method page of a specific API of a specific openAPI specification. |
+| Method   | `sections/{specification-ID}/templates/reference/{api-group}/{method-name}.md` | Overlay applied to all method pages with this HTTP method name in the named openAPI specification. |
+| Method   | `sections/{specification-ID}/templates/reference/{api-group}/method.md`        | Overlay applied to all method pages of a specific API. |
 | Method   | `sections/{specification-ID}/templates/reference/{operation-ID}.md`         | Overlay applied to all method pages for {operation-ID} across all APIs in a specification. |
 | Method   | `sections/{specification-ID}/templates/reference/{method-name}.md`           | Overlay applied to all method pages with this HTTP method name, across all APIs in the named specification. |
 | Method   | `sections/{specification-ID}/templates/reference/method.md`                   | Overlay applied to all method pages of all APIs in the named specification. |
@@ -95,13 +96,13 @@ This can be visualised as a directory tree (though precedence is not maintained 
         - `resource/`
           - `resource.md` - Overlay applied to all resource pages.
     - `sections/` - Contains additional documentation and overlays for specific OpenAPI specifications.
-      - `{specification-ID}` - The kabab case of the OpenAPI `info.title` member of the specification the overlays are for.
+      - `{specification-ID}` - The kebab case of the OpenAPI `info.title` member of the specification the overlays are for.
             - `templates/`
                 - `guides/` - Directory containing authored documentation for the named OpenAPI specification.
                 - `reference/` - 
                   - `api.md` - Overlay applied to all API pages of this specification.
-                  - `{api-name}.md` - Overlay applied to a specific API page of this specification.
-                  - `{api-name}/`
+                  - `{api-group}.md` - Overlay applied to a specific API page of this specification.
+                  - `{api-group}/`
                         - `{operation-ID}.md` - Overlay applied to a specific method, identified by operation, for this named API.
                         - `{method-name}.md` - Overlay applied to all methods with this HTTP method name in the named API.
                         - `method.md` - Overlay applied to all methods of this named API.
