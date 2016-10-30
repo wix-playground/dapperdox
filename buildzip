@@ -1,0 +1,32 @@
+ZIP=$1
+TARGET=$2
+BIN=$3
+shift 3
+
+ZIPFILE=`basename ${ZIP}`
+BASE=${ZIPFILE%.*}
+
+STUFF=${BASE}/${TARGET}
+for i in $*
+do
+    STUFF="${STUFF} ${BASE}/${i}"
+done
+
+cp ${BIN} ${TARGET}
+cd ..
+ln -fhs swaggerly ${BASE}
+
+echo "Building ${ZIP}..."
+echo "${STUFF}"
+
+EXT="${ZIP##*.}"
+
+if [ "$EXT" == "zip" ] 
+then
+    zip -r ${BASE}/${ZIP} ${STUFF} > /dev/null 2>&1
+else
+    tar -czf ${BASE}/${ZIP} ${STUFF} > /dev/null 2>&1
+fi
+
+echo
+exit 0
