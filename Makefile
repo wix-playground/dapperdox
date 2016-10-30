@@ -10,13 +10,13 @@ all:
 	go get && go build
 
 cross: dist \
+${STEM}.linux-x86.tgz \
 ${STEM}.windows-x86.zip \
-${STEM}.windows-amd64.zip \
-${STEM}.darwin-amd64.tgz \
-${STEM}.linux-arm.tgz \
-${STEM}.linux-arm64.tgz \
 ${STEM}.linux-amd64.tgz \
-${STEM}.linux-x86.tgz
+${STEM}.darwin-amd64.tgz \
+${STEM}.windows-amd64.zip \
+${STEM}.linux-arm.tgz \
+${STEM}.linux-arm64.tgz 
 
 dist:
 	mkdir dist
@@ -33,7 +33,7 @@ ${STEM}.linux-amd64.tgz: swaggerly_linux_amd64.exe ${ZIPLIST}
 ${STEM}.linux-x86.tgz: swaggerly_linux_x86.exe ${ZIPLIST}
 	@${BZU}
 
-${STEM}.darwin-amd64.tgz: swaggerly_mac_amd64.exe ${ZIPLIST}
+${STEM}.darwin-amd64.tgz: swaggerly_darwin_amd64.exe ${ZIPLIST}
 	@${BZU}
 
 ${STEM}.windows-x86.zip: swaggerly_win_x86.exe ${ZIPLIST}
@@ -55,7 +55,7 @@ swaggerly_linux_arm64.exe:
 swaggerly_linux_arm.exe:
 	GOOS=linux GOARCH=arm go build -o $@
 
-swaggerly_mac_amd64.exe:
+swaggerly_darwin_amd64.exe:
 	GOOS=darwin GOARCH=amd64 go build -o $@
 
 swaggerly_win_x86.exe:

@@ -17,7 +17,6 @@ cd ..
 ln -fhs swaggerly ${BASE}
 
 echo "Building ${ZIP}..."
-echo "${STUFF}"
 
 EXT="${ZIP##*.}"
 
