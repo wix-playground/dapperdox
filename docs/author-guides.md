@@ -42,14 +42,16 @@ To build and make these guides available, pass Swaggerly the configuration param
 
 will build these three guides, making them available a `http://localhost:3123/`.
 
-> When presenting a single specification, Swaggerly will make its root *home page* the summary of that API
-and not the summary list of available specifications. Since the `markdown` and `markdown2` guides are only available
-from the summary list of available specifications, and only a single specification has been loaded, they will not be
-visible. The `-force-specification-list=true` option
-instructs Swaggerly to show the list of available specifications, from where these global guides are accessible.
+> When presenting a single specification, Swaggerly will set its homepage to that
+[specification's summary page](/docs/glossary-terms.html#specification-summary-page) and not
+the [specification list page](/docs/glossary-terms.html#specification-list-page). Since the
+`markdown` and `markdown2` guides are global, they will only be listed in the side navigation
+of the *specification list page*, and thus will not be visible.
+The `-force-specification-list=true` option instructs Swaggerly to show the
+*specification list page*.
 
-When viewing the available specifications list the navigation rendered at the side of
-the page will show two navigation entries:
+When viewing the *specification list page*, the navigation rendered at the side of
+the page will show two entries:
 
 ```
 ▾ Level2

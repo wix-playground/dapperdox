@@ -24,16 +24,16 @@ Overlay: true
 
 [[banner]]
 > This is a banner. Content overlaid onto this method page comes from
-`assets/sections/swagger-petstore/templates/reference/get.md`
+`assets/sections/swagger-petstore/templates/reference/everything-about-your-pets/get-pet-by-id.md`
 and is therefore applied to **all** GET methods defined by the Petstore specification.
 
 [[description]]
 This is some overlaid *description* text. Defined by file
-`assets/sections/swagger-petstore/templates/reference/get.md`
+`assets/sections/swagger-petstore/templates/reference/everything-about-your-pets/get-pet-by-id.md`
 
 [[response]]
 Here is some overlaid *response* text. Defined by file
-`assets/sections/swagger-petstore/templates/reference/get.md`
+`assets/sections/swagger-petstore/templates/reference/everything-about-your-pets/get-pet-by-id.md`
 ```
 
 For a GFM page to be treated as an overlay, it must contain the metadata `Overlay: true` at the start
