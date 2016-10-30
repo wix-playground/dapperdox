@@ -8,7 +8,7 @@ Additional directories are added to your `assets` directory to accomplish this. 
 multiple OpenAPI specifications, each is given its own section within Swaggerly, allowing you to provide guides and
 overlay documentation appropriate to an OpenAPI specification. 
 
-See [Controlling method names](/docs/author-method-names.html) for a discussion on what an *operation* name is, and
+See [Controlling method names](/docs/author-method-names) for a discussion on what an *operation* name is, and
 how it differs from an HTTP method name.
 
 For example, the following GFM file adds additional content to the *request* and *response* sections

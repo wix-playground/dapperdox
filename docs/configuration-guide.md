@@ -3,10 +3,10 @@
 | Option | Environment variable | Description |
 | ------ | -------------------- | ----------- |
 | `-assets-dir` | `ASSETS_DIR` | Assets to serve. Effectively the document root. |
-| `-bind-addr` | `BIND_ADDR` | Bind address. |
-| `-default-assets-dir` | `DEFAULT_ASSETS_DIR` | Default assets. |
+| `-bind-addr` | `BIND_ADDR` | IP address and port number that Swaggerly should serve content from. Value takes the form `<IP address>:<port>`. |
+| `-default-assets-dir` | `DEFAULT_ASSETS_DIR` | Used to point Swaggerly at its default assets. You wil need to provide this option if you are not running Swaggerly from within it's distribution directory. For example, if you invoke Swaggerly as `<path_to_swaggerly_distribution>/swaggerly` then you must pass this configuration option as `-default-assets-dir=<path_to_swaggerly_distribution>/assets`.|
 | `-document-rewrite-url` | `DOCUMENT_REWRITE_URL` | Specify a URL that is to be rewritten in the documentation. May be multiply defined. Format is from=to. This is applied to assets, not to OpenAPI specification generated text. |
-| `-log-level` | `LOGLEVEL` | Log level (info, debug, trace) |
+| `-log-level` | `LOGLEVEL` | Log level (`info`, `debug`, `trace`) |
 | `-spec-dir` | `SPEC_DIR` | OpenAPI specification (swagger) directory. |
 | `-spec-filename` | `SPEC_FILENAME` | The filename of the OpenAPI specification file within the spec-dir. Defaults to spec/swagger.json |
 | `-site-url` | `SITE_URL` | Public URL of the documentation service. Used by `-spec-rewrite-url` if no `=to` is supplied to the rewrite. |

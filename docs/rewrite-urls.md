@@ -23,7 +23,7 @@ and you will want to use the alternative form of the configuration option, which
 -spec-rewrite-url=http://mydomain.com/swagger-2.0=http://localhost:3123
 ```
 
-See [Configuration guide](/doc/configuration-guide.html) for further information on configuring Swaggerly.
+See [Configuration guide](/docs/configuration-guide) for further information on configuring Swaggerly.
 
 ## Documentation URLs
 The authored documentation you are combining with your swagger specifications often will not contain URLs
@@ -44,7 +44,7 @@ You may also choose to use placeholders in your documentation, instead of real U
 a valid URL:
 
 ```html
-<a href="MY_DOMAIN/some/document.html">Some link</a>
+<a href="MY_DOMAIN/some/document">Some link</a>
 ```
 
 which would be rewritten with:
@@ -58,6 +58,6 @@ There is nothing special about `MY_DOMAIN` in the above example, it is merely a 
 You may pass multiple `-document-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders,
 particularly useful if you additionally need to configure URLs such as CDN location.
 
-See [Configuration guide](/doc/configuration-guide.html) for further information on configuring Swaggerly.
+See [Configuration guide](/docs/configuration-guide) for further information on configuring Swaggerly.
 
 !!!HIGHLIGHT!!!

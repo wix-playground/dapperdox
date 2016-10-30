@@ -6,7 +6,7 @@ to tune the presentation.
 
 ## Download Swaggerly
 
-[Download the latest release](/) of Swaggerly for you operating system, and unpack it.
+[Download the latest release](/downloads/download) of Swaggerly for you operating system, and unpack it.
 
 ```
 tar -zxf swaggerly-*.tgz
@@ -86,5 +86,5 @@ This rewrites the part of a URL that matches the value given by `-spec-rewrite-u
 files generally do not resolve consistently, because the concept of what the reference is relative *to* changes from
 file to file.
 
-See [Rewriting URLs](/docs/rewrite-urls.html) for further details.
+See [Rewriting URLs](/docs/rewrite-urls) for further details.
 !!!HIGHLIGHT!!!

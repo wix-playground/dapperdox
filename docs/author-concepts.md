@@ -17,8 +17,8 @@ Assets are split into two groups:
 
 Within these groups, assets divide into three categories:
 
-1. Authored documentation, refered to as [guides](/docs/author-guides.html)
-2. [Content overlays](/docs/author-overlays.html), containing documentation to be injected into API reference pages
+1. Authored documentation, refered to as [guides](/docs/author-guides)
+2. [Content overlays](/docs/author-overlays), containing documentation to be injected into API reference pages
 3. Static resources such as images, which are used by guides or overlays.
 
 ### Assets directory structure
@@ -42,4 +42,4 @@ For example, `{local_assets}/templates/` contains assets that are applied across
 
 ### Configuring assets
 
-Swaggerly is directed to your assets through the `--assets-dir` [configuration](/docs/configuration-guide.html) option.
+Swaggerly is directed to your assets through the `--assets-dir` [configuration](/docs/configuration-guide) option.

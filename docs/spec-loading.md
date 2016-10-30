@@ -2,10 +2,10 @@
 
 Swaggerly can document a single API specification, or a suite of API specification at once.
 
-With a single specification, Swaggerly will present the [specification summary page](/docs/glossary-terms.html#specification-summary-page) as the homepage (`http://localhost:3128/`)
+With a single specification, Swaggerly will present the [specification summary page](/docs/glossary-terms#specification-summary-page) as the homepage (`http://localhost:3128/`)
 where the all APIs defined by the specification are listed.
 
-With multiple specifications, Swaggerly presents the [specification list page](/docs/glossary-terms.html#specification-list-page)
+With multiple specifications, Swaggerly presents the [specification list page](/docs/glossary-terms#specification-list-page)
 which catalogues each of the API specifications available.
 
 ## Multiple specifications
@@ -45,6 +45,6 @@ The base documentation URL for a specification will be:
 
 Thus, the streaming API example above would have a base URL of `http://localhost:3123/streaming-data-api/`.
 
-It is important to know the specification ID when authoring [guides](/docs/author-guides.html) and documentation
-[overlays](/docs/author-overlays.html).
+It is important to know the specification ID when authoring [guides](/docs/author-guides) and documentation
+[overlays](/docs/author-overlays).
 

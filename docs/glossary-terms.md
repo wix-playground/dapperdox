@@ -19,7 +19,7 @@ of the operation's `x-pathName` member if present, otherwise the operation's `su
 
 ## `operation-ID`
 
-The identifier given to an operation. It is most importantly used to determine the correct content [overlay](/docs/author-overlays.html) to apply.
+The identifier given to an operation. It is most importantly used to determine the correct content [overlay](/docs/author-overlays) to apply.
 
 It is formed by taking the [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles) of the
 first in the following list of operation members that yields a value:
@@ -43,7 +43,7 @@ specifications are loaded by Swaggerly. It is not normally displayed when a sing
 
 ## Specification summary page
 
-This page lists the all APIs defined by a specification, grouped by [`api-group`](/docs/glossary-terms.html#api-group).
+This page lists the all APIs defined by a specification, grouped by [`api-group`](/docs/glossary-terms#api-group).
 It is the first page displayed when a specification is selected from the `specification-list`, and the default homepage
 when a single specification is loaded by Swaggerly.
 

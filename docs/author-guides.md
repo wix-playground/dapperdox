@@ -43,8 +43,8 @@ To build and make these guides available, pass Swaggerly the configuration param
 will build these three guides, making them available a `http://localhost:3123/`.
 
 > When presenting a single specification, Swaggerly will set its homepage to that
-[specification's summary page](/docs/glossary-terms.html#specification-summary-page) and not
-the [specification list page](/docs/glossary-terms.html#specification-list-page), which lists
+[specification's summary page](/docs/glossary-terms#specification-summary-page) and not
+the [specification list page](/docs/glossary-terms#specification-list-page), which lists
 all available specifications. Since the
 `markdown` and `markdown2` guides are global, they will only be listed in the side navigation
 of the *specification list page*, and thus will not be visible.
@@ -143,7 +143,7 @@ By using metadata, the side navigation wording and structure is divorced from th
 convention, structure and depth.
 
 The ordering of pages within the page side navigation is controlled by the addition of 
-[SortOrder](/docs/author-metadata.html#sortorder) metadata. Refer to the 
-[metadata](/docs/author-metadata.html) section for further details.
+[SortOrder](/docs/author-metadata#sortorder) metadata. Refer to the 
+[metadata](/docs/author-metadata) section for further details.
 
 !!!HIGHLIGHT!!!
