@@ -44,7 +44,8 @@ will build these three guides, making them available a `http://localhost:3123/`.
 
 > When presenting a single specification, Swaggerly will set its homepage to that
 [specification's summary page](/docs/glossary-terms.html#specification-summary-page) and not
-the [specification list page](/docs/glossary-terms.html#specification-list-page). Since the
+the [specification list page](/docs/glossary-terms.html#specification-list-page), which lists
+all available specifications. Since the
 `markdown` and `markdown2` guides are global, they will only be listed in the side navigation
 of the *specification list page*, and thus will not be visible.
 The `-force-specification-list=true` option instructs Swaggerly to show the
@@ -59,8 +60,8 @@ the page will show two entries:
   markdown
 ```
 
-and when viewing the [Swagger Petstore](http://localhost:3123/swagger-petstore/) specification, the side navigation
-shows:
+and when viewing the Swagger Petstore specification reference documentation,
+the side navigation shows the Petstore help guide:
 
 ```
   PetstoreHelp

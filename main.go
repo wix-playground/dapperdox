@@ -60,6 +60,10 @@ func registerRoutes(r *pat.Router) {
 		HTML(w, http.StatusOK, resource, map[string]interface{}{})
 	})
 
+    r.Path("/downloads/download").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+        Render.HTML(w, http.StatusOK, "downloads/download", map[string]interface{}{}, render.HTMLOptions{Layout: "wide_outer"})
+	})
+
 	r.Methods("GET").Handler(http.FileServer(http.Dir("./")))
 }
 
