@@ -89,11 +89,16 @@ Doing so would break this *"identification of resources"* principle, where the U
 It is usually in the documentation of such APIs that complexity arises, not in the API specification itself.
 
 Swaggery will automatically exclude read-only resource members from the documentation of an operation's request
-body (which cannot be sent for a `GET` request). It also gives you control over which members should be
-excluded from the request body documentation of an API operation through the `x-excludeFromOperations` member, added
+body (since they can only be sent to writable operations). It also gives you control over which members should be
+excluded from an operation's request body documentation, through the `x-excludeFromOperations` member, added
 to relevant resource properties.
 
-`x-excludeFromOperations` takes an array of string, each value being the 
+`x-excludeFromOperations` takes an array of string, with each value being the operation name (which is either
+the HTTP method name `get`, `post`, `put` and so on, or from the `x-operationName` extenstion.
+See [controlling method names](/docs/spec-method-names) for further details).
+
+The following specification segment illustrates the use of `readOnly` and `x-excludeFromOperations`
+to control the documentation of the resource when presented as a request body:
 
 ```
 {
