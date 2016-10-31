@@ -38,7 +38,7 @@
 [: if .Method.BodyParam :]
   <h2 class="sub-header">Request body</h2>
   [: overlay "request-body" . :]
-  [: template "fragments/reference/request_body" .Method.BodyParam :]
+  [: template "fragments/reference/request_body" . :]
 [: end :]
 
 [: if .Method.Security :]
