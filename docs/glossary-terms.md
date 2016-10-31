@@ -36,6 +36,8 @@ where method name is `method-name` below. Therefore, it is possible for `operati
 
 The name of the HTTP method for an operation, such as `get`, `post` and `put`.
 
+## `operation-name`
+
 ## Specification list page
 
 This page lists the API specifications that are available for reference, and is the default homepage when multiple

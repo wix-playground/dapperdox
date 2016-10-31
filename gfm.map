@@ -6,4 +6,5 @@ x<h4>:<h4 class="sub-sub-sub-header">
 <pre>:<pre><code>
 </pre>:</code></pre>
 <table>:<table class="table table-striped">
+<th align="center">:<th class="center">
 !!!HIGHLIGHT!!!:<script>hljs.initHighlightingOnLoad();</script>
