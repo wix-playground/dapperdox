@@ -28,8 +28,8 @@ $(document).ready(function(){
 });
 </script>
 
-<div class="sidebar">
-    <ul class="nav nav-sidebar hide" id="navigation">
+<div class="side-nav affix"> <!-- sidebar -->
+    <ul class="nav nav-sidebar hide" id="navigation">  <!-- FIXME hide or not? -->
         [: template "fragments/sidenav_guides" . :]
         [: if .NavigationGuides :]
           [: if .APIs :] 
