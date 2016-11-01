@@ -30,10 +30,13 @@ $(document).ready(function(){
 
 <div class="side-nav affix"> <!-- sidebar -->
     <ul class="nav nav-sidebar hide" id="navigation">
-        [: template "fragments/sidenav_guides" . :]
         [: if .NavigationGuides :]
           [: if .APIs :] 
-            <li><h4 class="sub-sub-sub-sub-header">API reference</h4></li>
+            <li class="heading heading-top">Guides</li>
+          [: end :] 
+          [: template "fragments/sidenav_guides" . :]
+          [: if .APIs :] 
+            <li class="heading">Reference</li>
           [: end :] 
         [: end :]
         [: template "fragments/sidenav_reference" . :]
