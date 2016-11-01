@@ -4,8 +4,8 @@
 
 Swaggerly allows you to control the name of each method operation, and how methods are represented in the navigation.
 
-By default the HTTP method is used (GET, POST, PUT etc), as is usual for RESTful API specifications. Even so, it is
-often the case that a resource will be given two GET methods, one which returns a single resource, and one that
+By default the HTTP method is used (`GET`, `POST`, `PUT` etc), as is usual for RESTful API specifications. Even so, it is
+often the case that a resource will be given two `GET` methods, one which returns a single resource, and one that
 returns a list. This is clearly confusing for the reader, so in the latter case it would be clearer for the list method
 to be identified as such.
 

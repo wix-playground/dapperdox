@@ -38,6 +38,9 @@ The name of the HTTP method for an operation, such as `get`, `post` and `put`.
 
 ## `operation-name`
 
+The `operation-name` of an operation is either its HTTP method (see `method-name`), or the name given by the
+Swaggerly extension `x-operationName` which may be added to an operation. See [controlling method names](/docs/spec-method-names).
+
 ## Specification list page
 
 This page lists the API specifications that are available for reference, and is the default homepage when multiple

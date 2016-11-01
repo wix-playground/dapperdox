@@ -78,7 +78,7 @@ The following table shows which members can be set or modified by a `POST` or `P
 | `order_status` | ✘ | ✔ | ✔ |
 
 For instance, the `reference` member can be set, modified and returned by all three methods, whereas
-`order_date` can be set on creation (`POST`), and returned by the `GET`, but not subsequently modified.
+`order_date` can be set on creation (`POST`), and returned by the `GET`, but not subsequently modified (`PUT`).
 
 As a REST API, it is expected that the same resource would be produced and consumed by all methods
 acting on its URI. However, as there are subtle differences in which members can be written or read for each
@@ -94,7 +94,7 @@ excluded from an operation's request body documentation, through the `x-excludeF
 to relevant resource properties.
 
 `x-excludeFromOperations` takes an array of string, with each value being the operation name (which is either
-the HTTP method name `get`, `post`, `put` and so on, or from the `x-operationName` extenstion.
+the HTTP method name `get`, `post`, `put` and so on, or the `x-operationName`, if defined.
 See [controlling method names](/docs/spec-method-names) for further details).
 
 The following specification segment illustrates the use of `readOnly` and `x-excludeFromOperations`

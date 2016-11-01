@@ -1,5 +1,5 @@
 ./swaggerly \
-    -spec-dir=exs \
+    -spec-dir=../swaggerly-web/exs \
     -spec-filename=authentication.json \
     -spec-filename=public.json \
     -spec-filename=streaming.json \
