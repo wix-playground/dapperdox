@@ -1,5 +1,5 @@
 ./swaggerly \
-    -assets-dir=./examples/overlay/assets \
+    -assets-dir=./examples/metadata/assets \
     -spec-dir=examples/specifications/petstore/ \
     -bind-addr=0.0.0.0:3123 \
     -site-url=http://0.0.0.0:3123 \

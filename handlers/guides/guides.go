@@ -98,8 +98,34 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 
 	sortNavigation(guidesNavigation)
 
+    // Register default route for this guide set
+    r.Path(route_base).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+        uri := findFirstGuideUri( guidesNavigation )
+		logger.Infof(nil, "Redirect to %s\n", uri)
+        http.Redirect(w, req, uri, 302)
+    })
+
 	// Register the guides navigation with the renderer
 	render.SetGuidesNavigation(specification, &guidesNavigation.Children)
+}
+
+// ---------------------------------------------------------------------------
+
+func findFirstGuideUri( tree *navigation.NavigationNode) string {
+    var uri string
+	for i := range tree.Children {
+		node := tree.Children[i]
+        uri = node.Uri
+        if uri == "" {
+            if len(node.Children) > 0 {
+                uri = findFirstGuideUri(node)
+            }
+        }
+        if uri != "" {
+            break;
+        }
+    }
+    return uri
 }
 
 // ---------------------------------------------------------------------------
