@@ -50,37 +50,40 @@ func Register(r *pat.Router) {
 // ---------------------------------------------------------------------------
 func register(r *pat.Router, base string, specification *spec.APISpecification) {
 
-	root_node := "/templates/guides"
+	root_node := "/guides"
+	route_base := "/guides"
 	if specification != nil {
-		root_node = "/" + specification.ID + root_node
+		root_node = "/" + specification.ID + "/templates" + root_node
+		route_base = "/" + specification.ID + route_base
 	}
 
-	root := base + root_node
+	path_base := base + root_node
 
 	guidesNavigation := &navigation.NavigationNode{}
 
 	guidesNavigation.Children = make([]*navigation.NavigationNode, 0)
 	guidesNavigation.ChildMap = make(map[string]*navigation.NavigationNode)
 
-	logger.Tracef(nil, "  - Walk compiled asset tree %s", root)
+	logger.Tracef(nil, "  - Walk compiled asset tree %s", path_base)
 
 	for _, path := range asset.AssetNames() {
-		if !strings.HasPrefix(path, root) { // Only keep assets we want
+		if !strings.HasPrefix(path, path_base) { // Only keep assets we want
 			continue
 		}
 		ext := filepath.Ext(path)
 
 		switch ext {
-		case ".html", ".tmpl", ".md":
+		case ".tmpl", ".md":
 			logger.Debugf(nil, "    - File "+path)
 
 			// Convert path/filename to route
-			route := FilenameToRoute(path, base)
-			resource := strings.TrimPrefix(route, "/")
+			route := route_base + StripBasepathAndExtension(path, path_base)
+			absresource := StripBasepathAndExtension(path, base)
+			resource := strings.TrimPrefix(absresource, "/")
 
 			logger.Tracef(nil, "      = URL  "+route)
 
-			buildNavigation(guidesNavigation, path, root, base, ext)
+			buildNavigation(guidesNavigation, path, path_base, route, ext)
 
 			r.Path(route).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				sid := "TOP LEVEL"
@@ -126,7 +129,7 @@ func dumpit(tree *navigation.NavigationNode) {
 }
 
 // ---------------------------------------------------------------------------
-func FilenameToRoute(name string, basepath string) string {
+func StripBasepathAndExtension(name string, basepath string) string {
 	// Strip base path and file extension
 	route := strings.TrimSuffix(strings.TrimPrefix(name, basepath), filepath.Ext(name))
 
@@ -134,24 +137,21 @@ func FilenameToRoute(name string, basepath string) string {
 }
 
 // ---------------------------------------------------------------------------
-func buildNavigation(nav *navigation.NavigationNode, filename string, root string, base string, ext string) {
+func buildNavigation(nav *navigation.NavigationNode, path string, path_base string, route string, ext string) {
 
-	metafile := "assets/templates/" + strings.TrimPrefix(strings.TrimSuffix(filename, ext), base+"/") + ".tmpl"
+	logger.Tracef(nil, "      - Look for metadata asset %s\n", path)
 
 	// See if guide has been marked up with nagivation metadata...
-	hierarchy := asset.MetaData(metafile, "Navigation")
-	sortOrder := asset.MetaData(metafile, "SortOrder")
+	hierarchy := asset.MetaData(path, "Navigation")
+	sortOrder := asset.MetaData(path, "SortOrder")
 
 	if len(hierarchy) > 0 {
-		logger.Tracef(nil, "      * Got navigation metadata %s for file %s\n", hierarchy, filename)
+		logger.Tracef(nil, "      * Got navigation metadata %s for file %s\n", hierarchy, path)
 	} else {
 		// No Meta Data set on guide, so use the directory structure
-		hierarchy = strings.TrimPrefix(strings.TrimSuffix(filename, ext), root+"/")
+		hierarchy = strings.TrimPrefix(strings.TrimSuffix(path, ext), path_base+"/")
 		logger.Tracef(nil, "      * No navigation metadata for "+hierarchy+". Using path")
 	}
-
-	// Convert filename to route
-	route := FilenameToRoute(filename, base)
 
 	// Break hierarchy into bits
 	split := strings.Split(hierarchy, "/")

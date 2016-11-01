@@ -159,9 +159,13 @@ func Compile(dir string, prefix string) {
 				relative = mdname + ".tmpl"
 				storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
 			}
-		case ".tmpl", ".html":
+		case ".tmpl":
 			buf, meta = ProcessMetadata(buf)
 			storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
+
+		case ".html":
+			logger.Errorf(nil, "  * Error - Refusing to process .html files. Expects HTML template fragments with .tmpl extension. File %s\n", relative)
+			os.Exit(1)
 
 		default:
 			storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
