@@ -128,8 +128,9 @@ func Compile(dir string, prefix string) {
 
 		var meta map[string]string
 
+		switch ext {
 		// The file may be in GFM, so convert to HTML and process any embedded metadata
-		if ext == ".md" {
+		case ".md":
 			// Chop off the extension
 			mdname := strings.TrimSuffix(relative, ext)
 
@@ -158,7 +159,11 @@ func Compile(dir string, prefix string) {
 				relative = mdname + ".tmpl"
 				storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
 			}
-		} else {
+		case ".tmpl", ".html":
+			buf, meta = ProcessMetadata(buf)
+			storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
+
+		default:
 			storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
 		}
 
