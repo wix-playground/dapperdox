@@ -35,8 +35,12 @@
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-10">
       <div class="">
         <ul class="nav nav-pills navbar-left navbar-section">
-            <li [: if .Guide :]class="active"[: end :]><a href="[: .SpecPath :]/guides">Guides</a></li>
+            [: if .APIs :]
             <li [: if not .Guide :]class="active"[: end :]><a href="[: .SpecPath :]">Reference</a></li>
+            [: end :]
+            [: if .NavigationGuides :]
+            <li [: if .Guide :]class="active"[: end :]><a href="[: .SpecPath :]/guides">Guides</a></li>
+            [: end :]
         </ul>
       </div>
     </div>
