@@ -23,7 +23,7 @@ func Register(r *pat.Router) {
 
 		logger.Tracef(nil, "Build homepage route for specification '%s'", specification.ID)
 
-		r.Path("/" + specification.ID + "/").Methods("GET").HandlerFunc(specHomeHandler(specification))
+		r.Path("/" + specification.ID + "/").Methods("GET").HandlerFunc(specificationSummaryHandler(specification))
 
 		// If missingh trailing slash, redirect to add it
 		r.Path("/" + specification.ID).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -36,31 +36,31 @@ func Register(r *pat.Router) {
 	cfg, _ := config.Get()
 
 	if count == 1 && cfg.ForceSpecList == false {
-		// If there is only one specification loaded, then hotwire '/' to redirect to that index page
-		// unless Swaggerly is configured not to do that!
+		// If there is only one specification loaded, then hotwire '/' to redirect to the
+		// specification summary page unless Swaggerly is configured to show the specification list page.
 		r.Path("/").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			http.Redirect(w, req, "/"+specification.ID+"/", 302)
 		})
 	} else {
-		r.Path("/").Methods("GET").HandlerFunc(topHandler) // Top level homepage
+		r.Path("/").Methods("GET").HandlerFunc(specificationListHandler)
 	}
 }
 
 // ----------------------------------------------------------------------------------------
-// Handler is a http.Handler for the home page
-func topHandler(w http.ResponseWriter, req *http.Request) {
+// Handler is a http.Handler for the specification list page
+func specificationListHandler(w http.ResponseWriter, req *http.Request) {
 	logger.Tracef(nil, "Render HTML for top level index page")
 
-	render.HTML(w, http.StatusOK, "index", render.DefaultVars(req, nil, render.Vars{"Title": "API documentation"}))
+	render.HTML(w, http.StatusOK, "specification_list", render.DefaultVars(req, nil, render.Vars{"Title": "API documentation"}))
 }
 
 // ----------------------------------------------------------------------------------------
-func specHomeHandler(specification *spec.APISpecification) func(w http.ResponseWriter, req *http.Request) {
+func specificationSummaryHandler(specification *spec.APISpecification) func(w http.ResponseWriter, req *http.Request) {
 
 	// The default "theme" level reference index page.
-	tmpl := "reference"
+	tmpl := "specification_summary"
 
-	customTmpl := specification.ID + "/index" // When customised at specification level, page is index
+	customTmpl := specification.ID + "/specification_summary"
 
 	logger.Tracef(nil, "+ Test for template '%s'", customTmpl)
 

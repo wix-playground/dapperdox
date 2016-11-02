@@ -1,4 +1,4 @@
-<h1 class="page-header">OpenAPI reference documentation</h1>
+[: template "fragments/specification_list_title" . :]
 
 [: $c := counter_set -1 :]
 <div style="padding-top: 20px;">
@@ -26,10 +26,10 @@
              <a href="/[: $spec.ID :]/">[:$spec.APIInfo.Title:]</a>
            </h3>
            [: safehtml $spec.APIInfo.Description :]
-        </div> <!-- margin -->
-      </div> <!-- col-*-6 -->
+        </div>
+      </div>
     [: if eq (mod $c 2) 1 :]
-    </div> <!-- row -->
+    </div>
     [: end :]
 [: end :]
 </div>
