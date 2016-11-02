@@ -3,7 +3,7 @@
        there is no need to diplay any navigation options -->
   [: if .NavigationGuides :]
     [: if .APIs :]
-      <li [: if not .Guide :]class="active"[: end :]><a href="[: .SpecPath :]">Reference</a></li>
+      <li [: if not .Guide :]class="active"[: end :]><a href="[: .SpecPath :]/reference">Reference</a></li>
     [: else :]
       <li [: if not .Guide :]class="active"[: end :]><a href="/">API list</a></li>
     [: end :]

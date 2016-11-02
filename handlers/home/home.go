@@ -23,7 +23,7 @@ func Register(r *pat.Router) {
 
 		logger.Tracef(nil, "Build homepage route for specification '%s'", specification.ID)
 
-		r.Path("/" + specification.ID + "/").Methods("GET").HandlerFunc(specificationSummaryHandler(specification))
+		r.Path("/" + specification.ID + "/reference").Methods("GET").HandlerFunc(specificationSummaryHandler(specification))
 
 		// If missingh trailing slash, redirect to add it
 		r.Path("/" + specification.ID).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
