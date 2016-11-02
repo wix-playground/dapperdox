@@ -13,17 +13,7 @@
         <a class="navbar-brand" href="[:$.SpecPath:]/">[: template "fragments/header_bar_title" . :]</a>
       </div>
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          [: if $.MultipleSpecs :]
-          <li>
-            <a href="/"><span class="glyphicon glyphicon-th-list" style="padding-right: 21px;"></span>All Specifications</a>
-          </li>
-          [: end :]
-          <!--
-          <li><a href="/settings"><span class="glyphicon glyphicon-cog"></span></a></li>
-          <li><a href="/signin"><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
-          -->
-        </ul>
+        [: template "fragments/header_bar_right" . :]
       </div>
     </div>
     <div class="col-lg-1 hidden-xs hidden-sm hidden-md"></div>
@@ -32,15 +22,8 @@
   <div class="row navbar-section">
     <div class="1 col-lg-1 hidden-xs hidden-sm hidden-md"></div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-10">
-      <div class="">
-        <ul class="nav nav-pills navbar-left navbar-section">
-          [: if .APIs :]
-            <li [: if not .Guide :]class="active"[: end :]><a href="[: .SpecPath :]">Reference</a></li>
-          [: end :]
-          [: if .NavigationGuides :]
-            <li [: if .Guide :]class="active"[: end :]><a href="[: .SpecPath :]/guides">Guides</a></li>
-          [: end :]
-        </ul>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+        [: template "fragments/header_bar_section" . :]
       </div>
     </div>
     <div class="1 col-lg-1 hidden-xs hidden-sm hidden-md"></div>

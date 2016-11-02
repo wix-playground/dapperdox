@@ -1,0 +1,8 @@
+<ul class="nav nav-pills navbar-left navbar-section">
+  [: if .APIs :]
+    <li [: if not .Guide :]class="active"[: end :]><a href="[: .SpecPath :]">Reference</a></li>
+  [: end :]
+  [: if .NavigationGuides :]
+    <li [: if .Guide :]class="active"[: end :]><a href="[: .SpecPath :]/guides">Guides</a></li>
+  [: end :]
+</ul>

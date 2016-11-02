@@ -1,4 +1,8 @@
+[: overlay "banner" . :]
+
 [: template "fragments/specification_list_title" . :]
+
+[: overlay "description" . :]
 
 [: $c := counter_set -1 :]
 <div style="padding-top: 20px;">
@@ -33,3 +37,5 @@
     [: end :]
 [: end :]
 </div>
+
+[: overlay "additional" . :]

@@ -22,6 +22,7 @@ var Render *render.Render
 
 //var guides interface{}
 type GuideType []*navigation.NavigationNode
+type overlayPathList []string
 
 var guides map[string]GuideType // Guides are per specification-id, or 'top-level'
 
@@ -166,38 +167,27 @@ func overlayPaths(name string, datamap map[string]interface{}) []string {
 	var overlayName []string
 
 	// Use the passed in data structures to determine what type of "page" we are on:
-	// 1. Details of API, including all methods
-	// 2. An API method page
+	// 1. API summary page
+	// 2. A method/operation page
 	// 3. Resource
+	// 4. Specification List page
 	//
-	if api, ok := datamap["API"].(spec.APIGroup); ok {
+	if _, ok := datamap["API"].(spec.APIGroup); ok {
 		if _, ok := datamap["Methods"].([]spec.Method); ok {
-			// API page
-			if specid, ok := datamap["ID"].(string); ok {
-				overlayName = append(overlayName, specid+"/templates/reference/"+api.ID+"/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/templates/reference/api/"+name+"/overlay")
-			}
-			overlayName = append(overlayName, "reference/api/"+name+"/overlay")
+			getAPIAssetPaths(name, &overlayName, datamap)
 		}
-		if method, ok := datamap["Method"].(spec.Method); ok {
-			// Method page
-			if specid, ok := datamap["ID"].(string); ok {
-				overlayName = append(overlayName, specid+"/templates/reference/"+api.ID+"/"+method.ID+"/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/templates/reference/"+api.ID+"/method/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/templates/reference/"+method.ID+"/"+name+"/overlay")
-				overlayName = append(overlayName, specid+"/templates/reference/method/"+name+"/overlay")
-			}
-
-			overlayName = append(overlayName, "reference/"+method.ID+"/"+name+"/overlay")
-			overlayName = append(overlayName, "reference/method/"+name+"/overlay")
+		if _, ok := datamap["Method"].(spec.Method); ok {
+			getMethodAssetPaths(name, &overlayName, datamap)
 		}
 	}
-	if resource, ok := datamap["Resource"].(*spec.Resource); ok {
-		if specid, ok := datamap["ID"].(string); ok {
-			overlayName = append(overlayName, specid+"/templates/resource/"+resource.ID+"/"+name+"/overlay")
-			overlayName = append(overlayName, specid+"/templates/resource/resource/"+name+"/overlay")
-		}
-		overlayName = append(overlayName, "resource/resource/"+name+"/overlay")
+	if _, ok := datamap["Resource"].(*spec.Resource); ok {
+		getResourceAssetPaths(name, &overlayName, datamap)
+	}
+	if _, ok := datamap["SpecificationList"]; ok {
+		getSpecificationListPaths(name, &overlayName, datamap)
+	}
+	if _, ok := datamap["SpecificationSummary"]; ok {
+		getSpecificationSummaryPaths(name, &overlayName, datamap)
 	}
 
 	return overlayName
@@ -233,7 +223,7 @@ func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[
 	}
 
 	if apiSpec == nil {
-		m["NavigationGuides"] = guides[""] // Top level guides
+		m["NavigationGuides"] = guides[""] // Global guides
 		m["SpecPath"] = ""
 
 		return m
@@ -266,75 +256,129 @@ func SetGuidesNavigation(apiSpec *spec.APISpecification, guidesnav *[]*navigatio
 func getAssetPaths(name string, data []interface{}) []string {
 	datamap := data[0].(map[string]interface{})
 
+	var paths []string
+
 	if _, ok := datamap["API"]; ok {
 		if _, ok := datamap["Methods"]; ok {
-			return getAPIAssetPaths(datamap) // API page
+			// API-group summary page - Shows operations in a group
+			getAPIAssetPaths("", &paths, datamap)
+			return paths
 		}
 	}
 	if _, ok := datamap["Method"]; ok {
-		return getMethodAssetPaths(datamap) // Method page
+		getMethodAssetPaths("", &paths, datamap) // Method page
+		return paths
 	}
 	if _, ok := datamap["Resource"]; ok {
-		return getResourceAssetPaths(datamap) // Method page
+		getResourceAssetPaths("", &paths, datamap) // Resource page
+		return paths
+	}
+	if _, ok := datamap["SpecificationList"]; ok {
+		getSpecificationListPaths("", &paths, datamap) // Specification List page
+		return paths
+	}
+	if _, ok := datamap["SpecificationSummary"]; ok {
+		getSpecificationSummaryPaths("", &paths, datamap) // Specification List page
+		return paths
 	}
 
 	return nil
 }
 
 // ----------------------------------------------------------------------------------------
+// Some path stem and asset name helper stuff, to allow the path generation code to
+// create asset file paths (for author debug), or the imported assets they create (use by
+// the overlay handler).
+type overlayStems struct {
+	specStem   string
+	globalStem string
+	asset      string
+}
 
-func getMethodAssetPaths(datamap map[string]interface{}) []string {
+func getOverlayStems(overlayAsset string) *overlayStems {
+	a := &overlayStems{
+		specStem:   "assets/sections/",
+		globalStem: "assets/templates/",
+		asset:      ".md",
+	}
+	if len(overlayAsset) > 0 {
+		a.specStem = ""
+		a.globalStem = ""
+		a.asset = "/" + overlayAsset + "/overlay"
+	}
+	return a
+}
+
+// ----------------------------------------------------------------------------------------
+
+func getMethodAssetPaths(overlayAsset string, paths *[]string, datamap map[string]interface{}) {
 
 	method := datamap["Method"].(spec.Method)
 	apiID := method.APIGroup.ID
-	specID := datamap["ID"].(string)
 
-	var paths []string
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+"/"+method.ID+".md")
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+"/"+method.Method+".md")
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+"/method.md")
+	a := getOverlayStems(overlayAsset)
 
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+method.ID+".md")
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+method.Method+".md")
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/method.md")
+	if specID, ok := datamap["ID"].(string); ok {
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/"+apiID+"/"+method.ID+a.asset)
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/"+apiID+"/"+method.Method+a.asset)
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/"+apiID+"/method"+a.asset)
 
-	paths = append(paths, "assets/templates/reference/"+method.ID+".md")
-	paths = append(paths, "assets/templates/reference/"+method.Method+".md")
-	paths = append(paths, "assets/templates/reference/method.md")
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/"+method.ID+a.asset)
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/"+method.Method+a.asset)
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/method"+a.asset)
+	}
 
-	return paths
+	*paths = append(*paths, a.globalStem+"reference/"+method.ID+a.asset)
+	*paths = append(*paths, a.globalStem+"reference/"+method.Method+a.asset)
+	*paths = append(*paths, a.globalStem+"reference/method"+a.asset)
 }
 
 // ----------------------------------------------------------------------------------------
 
-func getAPIAssetPaths(datamap map[string]interface{}) []string {
+func getAPIAssetPaths(overlayAsset string, paths *[]string, datamap map[string]interface{}) {
 
 	apiID := datamap["API"].(spec.APIGroup).ID
-	specID := datamap["ID"].(string)
 
-	var paths []string
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/"+apiID+".md")
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/api.md")
-	paths = append(paths, "assets/templates/reference/api.md")
+	a := getOverlayStems(overlayAsset)
 
-	return paths
+	if specID, ok := datamap["ID"].(string); ok {
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/"+apiID+a.asset)
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/api"+a.asset)
+	}
+
+	*paths = append(*paths, a.globalStem+"reference/api"+a.asset)
 }
 
 // ----------------------------------------------------------------------------------------
 
-func getResourceAssetPaths(datamap map[string]interface{}) []string {
+func getResourceAssetPaths(overlayAsset string, paths *[]string, datamap map[string]interface{}) {
 
 	resID := datamap["Resource"].(*spec.Resource).ID
-	specID := datamap["ID"].(string)
+	a := getOverlayStems(overlayAsset)
 
-	var paths []string
-	paths = append(paths, "assets/sections/"+specID+"/templates/resource/"+resID+".md")
-	paths = append(paths, "assets/sections/"+specID+"/templates/reference/resource.md")
-	paths = append(paths, "assets/templates/resource/resource.md")
+	if specID, ok := datamap["ID"].(string); ok {
+		*paths = append(*paths, a.specStem+specID+"/templates/resource/"+resID+a.asset)
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/resource"+a.asset)
+	}
 
-	return paths
+	*paths = append(*paths, a.globalStem+"resource/resource"+a.asset)
+}
+
+// ----------------------------------------------------------------------------------------
+
+func getSpecificationListPaths(overlayAsset string, paths *[]string, datamap map[string]interface{}) {
+
+	a := getOverlayStems(overlayAsset)
+	*paths = append(*paths, a.globalStem+"specification_list"+a.asset)
+}
+
+// ----------------------------------------------------------------------------------------
+
+func getSpecificationSummaryPaths(overlayAsset string, paths *[]string, datamap map[string]interface{}) {
+
+	a := getOverlayStems(overlayAsset)
+	*paths = append(*paths, a.globalStem+"specification_summary"+a.asset)
 }
 
 // ----------------------------------------------------------------------------------------
 // end
-// assets/templates/swagger-petstore/templates/reference/api/

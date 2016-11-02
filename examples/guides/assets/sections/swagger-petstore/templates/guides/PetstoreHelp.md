@@ -1,4 +1,4 @@
-SortOrder: 567
+SortOrder: 100
 
 # Petstore Help
 

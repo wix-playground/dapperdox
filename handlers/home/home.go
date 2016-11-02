@@ -51,7 +51,7 @@ func Register(r *pat.Router) {
 func specificationListHandler(w http.ResponseWriter, req *http.Request) {
 	logger.Tracef(nil, "Render HTML for top level index page")
 
-	render.HTML(w, http.StatusOK, "specification_list", render.DefaultVars(req, nil, render.Vars{"Title": "API documentation"}))
+	render.HTML(w, http.StatusOK, "specification_list", render.DefaultVars(req, nil, render.Vars{"Title": "Specifications list", "SpecificationList": true}))
 }
 
 // ----------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ func specificationSummaryHandler(specification *spec.APISpecification) func(w ht
 		tmpl = customTmpl
 	}
 	return func(w http.ResponseWriter, req *http.Request) {
-		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, specification, render.Vars{"Title": "API documentation"}))
+		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, specification, render.Vars{"Title": "Specification summary", "SpecificationSummary": true}))
 	}
 }
 
