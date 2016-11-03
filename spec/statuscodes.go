@@ -24,8 +24,8 @@ func LoadStatusCodes() {
 			statusfile = ""
 		}
 	}
-	if len(statusfile) == 0 && len(cfg.ThemesDir) != 0 {
-		statusfile = cfg.ThemesDir + "/" + cfg.Theme + "/status_codes.csv"
+	if len(statusfile) == 0 && len(cfg.ThemeDir) != 0 {
+		statusfile = cfg.ThemeDir + "/" + cfg.Theme + "/status_codes.csv"
 		logger.Tracef(nil, "Looking in theme dir for %s\n", statusfile)
 		if _, err := os.Stat(statusfile); os.IsNotExist(err) {
 			statusfile = ""

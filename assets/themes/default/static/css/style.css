@@ -4,7 +4,7 @@
 
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
-	padding-top: 96px;  /* 50 - 20 (the padding-top of .page-header) */
+	padding-top: 73px;  /* Takes into account the header */
 	margin-bottom:100px; /* For the footer and a bit of space*/
 	font-family: 'Open Sans', sans-serif;
 	font-weight: normal;
@@ -83,7 +83,7 @@ h1,
 }
 
 .navbar {
-	background: darkcyan;
+	background: #297A4A;
 }
 .navbar a.navbar-brand {
 	color: white;
@@ -99,12 +99,6 @@ h1,
 }
 .navbar-nav > li > a:hover {
     text-decoration: underline;
-}
-
-.navbar-section  {
-    /* background-color: #315a5a;  */
-    background-color: #1c6f6f;
-    height: 33px; 
 }
 
 .shadow {
@@ -146,11 +140,7 @@ h1,
 		padding-top:15px;
 		width: 100%;
 		left: 0px;
-		/* 
-         * background-color: #003f3f;
-		background-color: #383838;
-         */
-		   background-color: #031c3c; 
+		background-color: #032939;
 	    text-shadow: 0 1px 0 rgba(0, 90, 90, 1);
 		color: white;
 		bottom: 0;

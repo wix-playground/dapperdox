@@ -28,17 +28,12 @@ $(document).ready(function(){
 });
 </script>
 
-<div class="side-nav affix"> <!-- sidebar -->
+<div class="side-nav affix"> 
     <ul class="nav nav-sidebar hide" id="navigation">
-        [: if .NavigationGuides :]
-          [: if .APIs :] 
-            <!-- <li class="heading heading-top">Guides</li> -->
-          [: end :] 
-          [: template "fragments/sidenav_guides" . :]
-          [: if .APIs :] 
-            <!-- <li class="heading">Reference</li> -->
-          [: end :] 
+        [: if .Guide :]
+            [: template "fragments/sidenav_guides" . :]
+        [: else :] 
+            [: template "fragments/sidenav_reference" . :]
         [: end :]
-        [: template "fragments/sidenav_reference" . :]
     </ul>
 </div>

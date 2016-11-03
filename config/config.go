@@ -16,7 +16,7 @@ type config struct {
 	SpecDir            string      `env:"SPEC_DIR" flag:"spec-dir" flagDesc:"OpenAPI specification (swagger) directory"`
 	SpecFilename       []string    `env:"SPEC_FILENAME" flag:"spec-filename" flagDesc:"The filename of the OpenAPI specification file within the spec-dir. May be multiply defined. Defaults to spec/swagger.json"`
 	Theme              string      `env:"THEME" flag:"theme" flagDesc:"Theme to render documentation"`
-	ThemesDir          string      `env:"THEMES_DIR" flag:"themes-dir" flagDesc:"Directory containing installed themes"`
+	ThemeDir           string      `env:"THEME_DIR" flag:"theme-dir" flagDesc:"Directory containing installed themes"`
 	LogLevel           string      `env:"LOGLEVEL" flag:"log-level" flagDesc:"Log level"`
 	SiteURL            string      `env:"SITE_URL" flag:"site-url" flagDesc:"Public URL of the documentation service"`
 	SpecRewriteURL     []string    `env:"SPEC_REWRITE_URL" flag:"spec-rewrite-url" flagDesc:"The URLs in the swagger specifications to be rewritten as site-url"`
@@ -39,7 +39,6 @@ func Get() (*config, error) {
 		SpecDir:          "spec",
 		DefaultAssetsDir: "assets",
 		LogLevel:         "info",
-		Theme:            "default",
 		SiteURL:          "http://localhost:3123/",
 		ShowAssets:       false,
 	}

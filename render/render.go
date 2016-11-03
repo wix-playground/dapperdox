@@ -55,13 +55,20 @@ func New() *render.Render {
 		asset.Compile(cfg.AssetsDir+"/themes/"+cfg.Theme, "assets")
 		compileSections(cfg.AssetsDir)
 	}
-	// TODO only import the theme specified instead of all installed themes that will not be used!
 
-	if len(cfg.ThemesDir) != 0 {
-		logger.Infof(nil, "  - Picking up themes from directory: "+cfg.ThemesDir+"/"+cfg.Theme)
-		asset.Compile(cfg.ThemesDir+"/"+cfg.Theme, "assets")
+	// Import custom theme from custom directory (if defined)
+	if len(cfg.Theme) != 0 {
+		dir := cfg.DefaultAssetsDir + "/themes"
+		if len(cfg.ThemeDir) != 0 {
+			dir = cfg.ThemeDir
+		}
+		asset.Compile(dir+"/"+cfg.Theme, "assets")
 	}
-	// Fallback to local themes directory
+
+	if cfg.Theme != "default" {
+		// The default theme underpins all others
+		asset.Compile(cfg.DefaultAssetsDir+"/themes/default", "assets")
+	}
 	asset.Compile(cfg.DefaultAssetsDir+"/themes/"+cfg.Theme, "assets")
 	// Fallback to local templates directory
 	asset.Compile(cfg.DefaultAssetsDir+"/templates", "assets/templates")

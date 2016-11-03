@@ -290,8 +290,8 @@ func CompileGFMMap() {
 			mapfile = ""
 		}
 	}
-	if len(mapfile) == 0 && len(cfg.ThemesDir) != 0 {
-		mapfile = cfg.ThemesDir + "/" + cfg.Theme + "/gfm.map"
+	if len(mapfile) == 0 && len(cfg.ThemeDir) != 0 {
+		mapfile = cfg.ThemeDir + "/" + cfg.Theme + "/gfm.map"
 		logger.Tracef(nil, "Looking in theme dir for %s\n", mapfile)
 		if _, err := os.Stat(mapfile); os.IsNotExist(err) {
 			mapfile = ""

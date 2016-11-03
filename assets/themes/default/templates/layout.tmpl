@@ -6,28 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src='/js/jquery.wiggle.min.js' type='text/javascript'></script>
-    <script src="/js/explorer.js"          type="text/javascript"></script>
-
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src='/js/jquery.wiggle.min.js' type='text/javascript'></script>
+    <script src="/js/explorer.js"          type="text/javascript"></script>
+
     <link  href="/css/xcode.css"   type="text/css" media="screen" rel="stylesheet">
-
-    <!-- Bootstrap -->
-    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    [: template "fragments/styles" . :]
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
-    <link href='http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css' rel='stylesheet' type='text/css'>
-
-    <!-- Custom styles for this template -->
-    <link href="/css/style.css" rel="stylesheet">
+    [: template "fragments/fonts" . :]
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <!--
@@ -48,25 +39,16 @@
 
 <body [: if .Config.ShowAssets :][: if not .Guide :] class="debug_body" [: end :] [: end :]>
   <nav class="navbar navbar-fixed-top shadow">
+    <div class="container-fluid">
       [: template "fragments/header_bar" . :]
+    </div>
   </nav>
 
   <div class="container-fluid"> 
     <div class="row">
         <div class="hidden-md col-lg-1 hidden-xs hidden-sm"></div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-10">
-            <div class="row">
-                [: if not (or .APIs .Guide) :] <!-- .APIs .NavigationGuides -->
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 main"> 
-                [: else :]
-                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                    [: template "fragments/sidenav" . :] 
-                </div>
-                <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 main">
-                [: end :]
-                    [: yield :]
-                </div>
-            </div>
+            [: template "fragments/body" . :] 
         </div>
         <div class="col-lg-1 hidden-xs hidden-sm hidden-md"></div>
     </div>
