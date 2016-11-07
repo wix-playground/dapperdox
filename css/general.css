@@ -82,10 +82,15 @@ margin: auto;
 	/* font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif; */
 	font-family: "muli", "Helvetica Neue", Helvetica, Arial, sans-serif; 
 	font-weight: 400;
-	letter-spacing: 6px;
+	/* letter-spacing: 6px; */
+	letter-spacing: 1px;
+	text-shadow: 1px 1px 0 rgba(0, 0, 0, 1);
 }
 
-.h3_home{font-weight: 300;}
+.h3_home{
+    font-weight: 300;
+	text-shadow: 1px 1px 0 rgba(0, 0, 0, 1);
+}
 
 /*own carousel */
 
@@ -206,7 +211,7 @@ background: #1abc9c !important;
 /* Nav */
 .navbar {
 	position: relative;
-	min-height: 60px;
+	min-height: 53px;
 	margin-bottom: 0; 
 	width: 100%;
 	z-index: 999;
@@ -215,7 +220,7 @@ background: #1abc9c !important;
 
 .navbar-default {
 	position: relative;
-	min-height: 60px;
+	min-height: 53px;
 	width: 100%;
 	z-index: 999;
 	
@@ -241,6 +246,12 @@ color: #ECEBEB;
 	font-family: muli;
 	letter-spacing: 0px;
 	font-weight: 400 !important;
+}
+
+.navbar-brand > img {
+    width: 26px;
+    display: inline;
+    margin-top: -6px;
 }
 
 .lead {
@@ -304,6 +315,7 @@ color: #ECEBEB;
 	font-weight: 400;
 	/* letter-spacing: 1.5px;*/
 	letter-spacing: 1.2px;
+	text-shadow: 1px 1px 0 rgba(90, 90, 90, 1);
 }
 
 .content-section-a {
@@ -1073,6 +1085,14 @@ color: #ECEBEB;
 		
 }
 
+        .h1_home > img {
+            fill: white;
+            width: 120px;
+            display: block;
+            margin: 0 auto;
+            -webkit-filter: drop-shaddow( -5px -5px -5px #ffffff);
+                    filter: drop-shaddow( -5px -5px -5px #ffffff);
+        }
 
 /* All Mobile Sizes (devices and browser) */
 	@media only screen and (max-width: 767px) {
@@ -1086,7 +1106,7 @@ color: #ECEBEB;
 			text-align: center;
 			background-color: #34495e;
 		}
-		
+
 		h1, .h1 {
 			font-size: 50px;
 		}
