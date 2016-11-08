@@ -1,9 +1,9 @@
-# Terms used by Swaggerly
+# Terms used by DapperDox
 
 ## `specification-ID`
 
 The identifier assigned to each specification Swagger loads. It is derrived from the specifications `info.title` member,
-which Swaggerly lowercases and hyphen delimits ([kebab casing](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles)).
+which DapperDox lowercases and hyphen delimits ([kebab casing](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles)).
 
 For example, a specification title of "My API suite" produces a `specification-ID` of `my-api-suite`.
 
@@ -39,18 +39,18 @@ The name of the HTTP method for an operation, such as `get`, `post` and `put`.
 ## `operation-name`
 
 The `operation-name` of an operation is either its HTTP method (see `method-name`), or the name given by the
-Swaggerly extension `x-operationName` which may be added to an operation. See [controlling method names](/docs/spec-method-names).
+DapperDox extension `x-operationName` which may be added to an operation. See [controlling method names](/docs/spec-method-names).
 
 ## Specification list page
 
 This page lists the API specifications that are available for reference, and is the default homepage when multiple
-specifications are loaded by Swaggerly. It is not normally displayed when a single specification is loaded.
+specifications are loaded by DapperDox. It is not normally displayed when a single specification is loaded.
 
 ## Specification summary page
 
 This page lists the all APIs defined by a specification, grouped by [`api-group`](/docs/glossary-terms#api-group).
 It is the first page displayed when a specification is selected from the `specification-list`, and the default homepage
-when a single specification is loaded by Swaggerly.
+when a single specification is loaded by DapperDox.
 
 ## API group summary page
 

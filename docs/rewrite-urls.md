@@ -3,11 +3,11 @@
 ## Specification URLs
 
 If your swagger specification is split over multiple files, and therefore contain absolute `$ref:` object
-references, these references will not be followed correctly unless they resolve to the running Swaggerly instance serving
+references, these references will not be followed correctly unless they resolve to the running DapperDox instance serving
 the files.
 
 For example, if the swagger specification uses the absolute references of `http://mydomain.com/swagger-2.0/....`, and
-Swagger is serving content from `http://localhost:3123`, then the additional configuration parameters to pass to Swaggerly
+Swagger is serving content from `http://localhost:3123`, then the additional configuration parameters to pass to DapperDox
 to correct this would be:
 
 ```
@@ -23,7 +23,7 @@ and you will want to use the alternative form of the configuration option, which
 -spec-rewrite-url=http://mydomain.com/swagger-2.0=http://localhost:3123
 ```
 
-See [Configuration guide](/docs/configuration-guide) for further information on configuring Swaggerly.
+See [Configuration guide](/docs/configuration-guide) for further information on configuring DapperDox.
 
 ## Documentation URLs
 The authored documentation you are combining with your swagger specifications often will not contain URLs
@@ -32,7 +32,7 @@ that are correct for the environment being documented.
 For example, the specification guides may contain the production URLs, which are not appropriate when the documentation
 is being served up in a development or test environment.
 
-Swaggerly allows you to rewrite these documentation URLs on the fly, so that they match the environment they are being
+DapperDox allows you to rewrite these documentation URLs on the fly, so that they match the environment they are being
 served from. To do this, you specify the URL pattern that should be rewritten *from* and *to*, by passing the
 `-document-rewrite-url` configuration parameter. The parameter takes a `{from}={to}` pair, such as:
 
@@ -55,9 +55,9 @@ which would be rewritten with:
 
 There is nothing special about `MY_DOMAIN` in the above example, it is merely a convention. You can use any expansion text you like.
 
-You may pass multiple `-document-rewrite-url` parameters to Swaggerly, to have it replace multiple URLs or placeholders,
+You may pass multiple `-document-rewrite-url` parameters to DapperDox, to have it replace multiple URLs or placeholders,
 particularly useful if you additionally need to configure URLs such as CDN location.
 
-See [Configuration guide](/docs/configuration-guide) for further information on configuring Swaggerly.
+See [Configuration guide](/docs/configuration-guide) for further information on configuring DapperDox.
 
 !!!HIGHLIGHT!!!

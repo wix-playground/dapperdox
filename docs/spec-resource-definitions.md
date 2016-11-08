@@ -4,11 +4,11 @@
 
 When specifying a resource [schema object](http://swagger.io/specification/#schemaObject), either as a 
 [definitions object](http://swagger.io/specification/#definitionsObject) that can be consumed or produced by
-an operation, or as an inline schema object, Swaggerly **requires** that the optional 
+an operation, or as an inline schema object, DapperDox **requires** that the optional 
 [schema object](http://swagger.io/specification/#schemaObject) 
 `title` member is present.
 
-Swaggerly uses the `title` member to give the resource a name in the documentation it produces.
+DapperDox uses the `title` member to give the resource a name in the documentation it produces.
 
 For example, the operation `GET /store/inventory` in the petstore example specification
 `examples/specifications/petstore/swagger.json`, has a response schema with a `title` of "Quantities":
@@ -44,7 +44,7 @@ For example, the operation `GET /store/inventory` in the petstore example specif
 }
 ```
 
-Without a `title` member, Swaggerly would produce the error:
+Without a `title` member, DapperDox would produce the error:
 
 ```
 Error: GET /store/inventory references a model definition that does not have a title member.

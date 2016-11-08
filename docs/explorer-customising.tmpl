@@ -28,7 +28,7 @@ fetched from some ajax endpoint that you provide, once the user as gone though s
 <p>The supplied example, <code>examples/apikey_injection/assets/templates/fragments/scripts.tmpl</code> demonstrates the addition of an
 API key (hardcoded for the benefit of this example), and injects the list of one into the explorer page.</p>
 
-<p>To run this example, Swaggerly needs to be told about the example assets directory for it to pick up the override. 
+<p>To run this example, DapperDox needs to be told about the example assets directory for it to pick up the override. 
 This is achieved through the configuration parameter <code>-assets-dir</code>, passed to swaggerly when starting: </p>
 
 <pre><code>-assets-dir=examples/apikey_injection/assets</code></pre>
@@ -36,7 +36,7 @@ This is achieved through the configuration parameter <code>-assets-dir</code>, p
 
 <h2>Controlling authentication credential passing</h2>
 
-<p>By default, Swaggerly will automatically attach the API key if supplied, to the request URL as a <code>key=</code> query parameter.
+<p>By default, DapperDox will automatically attach the API key if supplied, to the request URL as a <code>key=</code> query parameter.
 This behaviour can be customised to satisfy the authentication requirements of your API.</p>
 
 <p>The template fragment <code>assets/themes/default/templates/fragments/scripts.tmpl</code>, which is included at the end of the common
@@ -80,7 +80,7 @@ request.headers = { header1: "value1", header2: "value2" }</code></pre>
 
 <p>To put this into practice, if you wanted to change the authentication credential passing mechanism to instead supply the API key
 as an Authorization header, then create a <code>scripts.tmpl</code> within your own assets directory to override this. For example, the
-Swaggerly example file <code>examples/apikey_injection/assets/templates/fragments/scripts.tmpl</code> passes the API key in the 
+DapperDox example file <code>examples/apikey_injection/assets/templates/fragments/scripts.tmpl</code> passes the API key in the 
 Authorization header using BASIC authentication:</p>
 
 <pre><code>$(document).ready(function(){
@@ -93,7 +93,7 @@ Authorization header using BASIC authentication:</p>
     });
 });</code></pre>
 
-<p>Swaggerly then needs to be told about this local assets directory for it to pick up the override, which is achieved through
+<p>DapperDox then needs to be told about this local assets directory for it to pick up the override, which is achieved through
 the configuration parameter <code>-assets-dir</code>, passed to swaggerly when starting. For example, to pick up the example above, use
 <code>-assets-dir=examples/apikey_injection/assets</code>.</p>
 

@@ -1,11 +1,11 @@
 # Content overlays
 
-Additional content can be added to any Swaggerly generated reference page by providing overlay files.
+Additional content can be added to any DapperDox generated reference page by providing overlay files.
 These pages are authored in Github Flavoured Markdown (GFM) and contain special markdown references that
 target particular sections within API, Method or Resource pages.
 
-Additional directories are added to your `assets` directory to accomplish this. As Swaggerly can consume and serve
-multiple OpenAPI specifications, each is given its own section within Swaggerly, allowing you to provide guides and
+Additional directories are added to your `assets` directory to accomplish this. As DapperDox can consume and serve
+multiple OpenAPI specifications, each is given its own section within DapperDox, allowing you to provide guides and
 overlay documentation appropriate to an OpenAPI specification. 
 
 See [Controlling method names](/docs/author-method-names) for a discussion on what an *operation* name is, and
@@ -42,7 +42,7 @@ of the file (see [Supported metadata](#supported-metadata)).
 ## Prioritising overlays
 
 There are three ways to overlay a reference page, globally, per-specification or on a page-by-page basis.
-To find an overlay for a page, Swaggerly follows the file patterns defined in the table below
+To find an overlay for a page, DapperDox follows the file patterns defined in the table below
 **in the order in which they are listed**, using the first one it finds.
 For example `sections/{specification-ID}/templates/reference/{api-group}.md` takes precidence over `sections/{specification-ID}/templates/reference/api.md`.
 
@@ -169,7 +169,7 @@ Each of the three auto-generated reference page types (api, method and resource)
 
 ## Example
 
-The Swaggerly assets example `examples/overlay/assets/` contains two overlay files:
+The DapperDox assets example `examples/overlay/assets/` contains two overlay files:
 
 1. `templates/reference/method.md`
 2. `sections/swagger-petstore/templates/reference/get.md`
@@ -179,10 +179,10 @@ specifications, except where it is overridden by a higher precidence overlay, su
 overlay. This second overlay targets the Petstore specification `GET` method pages, and
 provides `[[banner]]`, `[[description]]` and `[[response]]` overlay texts.
 
-To run these examples, pass the following assets configuration to Swaggerly:
+To run these examples, pass the following assets configuration to DapperDox:
 
 ```bash
--assets-dir=<Swaggerly-source-directory>/examples/overlay/assets 
+-assets-dir=<DapperDox-source-directory>/examples/overlay/assets 
 ```
 
 If you view any `GET` method page of the Petstore API, you will see the text from the second

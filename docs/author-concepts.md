@@ -1,11 +1,11 @@
 # Authoring content concepts
 
-Swaggerly combines reference documentation automatically generated from OpenAPI Swagger specifications
+DapperDox combines reference documentation automatically generated from OpenAPI Swagger specifications
 with other authored content to produce rich, browsable, API documentation.
 
 ## Assets
 
-Any additional content that Swaggerly imports and combines with reference documentation is known
+Any additional content that DapperDox imports and combines with reference documentation is known
 as an asset. Assets can be HTML,
 [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/) (GFM),
 and static resources such as images.
@@ -42,4 +42,4 @@ For example, `{local_assets}/templates/` contains assets that are applied across
 
 ### Configuring assets
 
-Swaggerly is directed to your assets through the `--assets-dir` [configuration](/docs/configuration-guide) option.
+DapperDox is directed to your assets through the `--assets-dir` [configuration](/docs/configuration-guide) option.
