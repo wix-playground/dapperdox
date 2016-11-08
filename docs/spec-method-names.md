@@ -51,7 +51,7 @@ Where an openAPI specification is describing a non-RESTful set of APIs, they are
 HTTP method. For example, two `GET` methods having respective `summary` texts of `lookup product by ID` and `lookup product by barcode` 
 would probably be listed together, both being product APIs. As they are both `get` methods, the reader would be unable to tell them
 apart if they are both referred to as `get` operations in the API navigation. By adding the `"x-navigateMethodsByName" : true` 
-extension to the top level openAPI specification, you can force DapperDox to describe each method in the navigation using its 
+extension to the top level openAPI specification, you can force DapperDox to describe each operation in the navigation using its 
 `summary` text instead of its operation name or HTTP method. The methods will continue to be referred to by operation name or
 HTTP method in API pages.
 
@@ -66,4 +66,9 @@ HTTP method in API pages.
     }
 }
 ```
+
+An example of this modifier being used in practice is the example Petstore specification provided with
+DapperDox. As the Petstore API is not REST, the example specification has the `x-navigationMethodsByName`
+member applied, forcing the use of the operations summary text in the navigation menu.
+
 !!!HIGHLIGHT!!!
