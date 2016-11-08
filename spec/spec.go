@@ -726,10 +726,11 @@ var collectionTable *map[string]string
 func collectionFormatDescription(format string) string {
 	if collectionTable == nil {
 		collectionTable = &map[string]string{
-			"csv":   "comma",
-			"ssv":   "space",
-			"tsv":   "tab",
-			"pipes": "pipe",
+			"csv":   "comma separated",
+			"ssv":   "space separated",
+			"tsv":   "tab separated",
+			"pipes": "pipe separated",
+            "multi": "multiple occurances",
 		}
 	}
 	if desc, ok := (*collectionTable)[format]; ok {

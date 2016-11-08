@@ -14,7 +14,7 @@
         [: range $header := .Headers :]
           <tr><!-- <td></td> -->
             <td class="resource">[: $header.Name :]</td>
-            <td class="type">[: join $header.Type " of " :][: if $header.CollectionFormatDescription :], [: $header.CollectionFormatDescription :] separated[: end :]
+            <td class="type">[: join $header.Type " of " :][: if $header.CollectionFormatDescription :], [: $header.CollectionFormatDescription :][: end :]
                 [: if $header.Enum :]
                 <p>Possible values are:</p>
                 <ul class="list-bullet">
