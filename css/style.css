@@ -287,7 +287,7 @@ h6 small,
 h1,
 h2,
 h3 {
-  margin-top: 30px;
+  margin-top: 20px; /* 30px */
   margin-bottom: 5px;
 }
 h4,
@@ -305,15 +305,12 @@ h1,
 }
 h2,
 .h2 {
-  font-size: 58px;
+  font-size: 30px; /* 58px */
 }
-h3,
-.h3 {
-  font-size: 30px;
-}
+
 h4,
 .h4 {
-  font-size: 20px;
+  font-size: 18px; /* 20px */
 }
 p {
   font-size: 16px;
@@ -332,8 +329,8 @@ ol li {
 .hidden { visibility: hidden;}
 .lead {
   margin-bottom: 30px;
-  margin-top: 20px;
-  font-size: 20px;
+  margin-top: 10px;
+  font-size: 18px; /* 20px */
   line-height: 1.46428571;
   font-weight: 300;
 }
@@ -4465,12 +4462,13 @@ body.vjs-full-window {
 }
 footer {
   background-color: #edeff1;
-  color: #bac1c8;
+  color: #34495e;
   font-size: 15px;
-  padding: 0;
+  padding: 20px 0 20px 0;
 }
 footer a {
   color: #9aa4af;
+  color: #14293e;
   font-weight: 700;
 }
 footer p {
@@ -4739,7 +4737,7 @@ footer p {
 			font-size: 20px;
 			text-align:center
 		}
-		.col-sm-4 {margin-bottom: 120px; text-align:center;}
+		.col-sm-4 {margin-bottom: 0px; text-align:center;} /* 120px */
 		.col-sm-4 > i{text-align:center;}
 		.col-sm-5 .img-responsive {display:none}
 		.col-sm-5 {margin-top:120px}
@@ -4771,7 +4769,7 @@ footer p {
 			font-size: 20px;
 			
 		}
-		.col-sm-4 {margin-bottom: 120px; text-align:center;}
+		.col-sm-4 {margin-bottom: 0px; text-align:center;} /* 120px */
 		
 		.col-sm-5 {margin-top:120px}
 		.box-ct{text-align:center}

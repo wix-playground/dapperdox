@@ -20,7 +20,7 @@ body, html {
 
 .abcen{position: absolute;bottom: 8%;}
 
-.abcen1{position: absolute;top: 20%;}
+.abcen1{position: absolute;top: 10%;}
 
 .content-section-c {
 	border-top: 1px solid #32465A;
@@ -88,6 +88,7 @@ margin: auto;
 }
 
 .h3_home{
+    font-size: 30px;
     font-weight: 300;
 	text-shadow: 1px 1px 0 rgba(0, 0, 0, 1);
 }
@@ -119,7 +120,10 @@ opacity: 0.95 !important;
 filter: alpha(opacity=95) !important;
 }
 
-.item .img-responsive {cursor:url(../img/cross.png),auto;}
+/* .item .img-responsive {cursor:url(../img/cross.png),auto;} */
+.img-responsive {
+    box-shadow: 5px 5px 10px 2px #dddddd;
+}
 
 /* Preloader */
 #preloader {
@@ -249,7 +253,7 @@ color: #ECEBEB;
 }
 
 .navbar-brand > img {
-    width: 26px;
+    width: 30px;
     display: inline;
     margin-top: -6px;
 }
@@ -260,7 +264,7 @@ color: #ECEBEB;
 }
 
 .intro-header {
-	height: 100%; /* Full PAge */
+	height: 80%; /* Full PAge */
 	padding-top: 50px; /* If you're making other pages, make sure there is 50px of padding to make sure the navbar doesn't overlap content! */
 	padding-bottom: 50px;
 	color: #f8f8f8; 
@@ -326,7 +330,7 @@ color: #ECEBEB;
 .content-section-b {
 	border-top: 1px solid #e7e7e7;
 	border-bottom: 1px solid #e7e7e7;
-	padding: 90px 0; 
+	padding: 30px 0; 
 }
 
 .section-heading {
@@ -1097,15 +1101,22 @@ color: #ECEBEB;
 /* All Mobile Sizes (devices and browser) */
 	@media only screen and (max-width: 767px) {
 		.intro-header {
-			height: 100%;
+			height: 80%;
 			padding-top: 50px;
 			padding-bottom: 50px;
 			color: #f8f8f8;
-		    background-image: none; 
+	        background: url(../img/intro/hexagon-colour4.jpg) no-repeat center center;
 			background-size: cover;
 			text-align: center;
 			background-color: #34495e;
 		}
+
+        .h1_home {
+            font-size: 60px;
+        }
+        .h3_home {
+            font-size: 25px;
+        }
 
 		h1, .h1 {
 			font-size: 50px;

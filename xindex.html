@@ -12,6 +12,11 @@
 
     <title>DapperDox – Beautiful, integrated, OpenAPI documentation</title>
 
+    <link rel="shortcut icon" href="/images/favicon32.ico" />
+    <link rel="shortcut icon" href="/images/favicon16.ico" />
+    <link rel="icon" type="image/png" href="/images/favicon32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/images/favicon16.png" sizes="16x16" />
+
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
  
@@ -62,59 +67,27 @@
 			<!-- <h1 class="h1_home wow fadeIn" data-wow-delay="0.4s"><svg><use xlink:href="/images/new_dapperdox_logo.svg"/></svg>DapperDox</h1> -->
             <h3 class="h3_home wow fadeIn" data-wow-delay="0.6s">Beautiful, integrated, OpenAPI documentation</h3>
 			<ul class="list-inline intro-social-buttons">
-                <li><a href="#gettingstarted" class="btn  btn-lg mybutton_cyan wow fadeIn" data-wow-delay="0.8s"><span class="network-name">Get Started</span></a>
+                <li><a href="/docs/getting-started.html" class="btn  btn-lg mybutton_cyan wow fadeIn" data-wow-delay="0.8s"><span class="network-name">Get Started</span></a>
 				</li>
 				<li id="download" ><a href="/downloads/download" class="btn  btn-lg mybutton_cyan wow swing wow fadeIn" data-wow-delay="1.2s"><span class="network-name">Download</span></a>
 				</li>
 			</ul>
 		</div>    
-        <!-- /.container -->
-		<div class="col-xs-12 text-center abcen wow fadeIn">
-			<div class="button_down "> 
-                <!-- <a class="imgcircle wow bounceInUp" data-wow-duration="1.5s"  href="#whatis"> <img class="img_scroll" src="/img/icon/circle.png" alt=""> </a>-->
-                <a class="imgcircle wow bounceInUp" data-wow-duration="1.5s"  href="#whatis"><i class="fa fa-arrow-circle-down fa-4x" style="color: #ffffff;"> </i></a>
-			</div>
-		</div>
     </div>
 	
-	<!-- NavBar-->
-	<nav class="navbar-default" role="navigation">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-                <!-- <a class="navbar-brand" href="xindex.html">{<i class="fa fa-book"> </i>}  DapperDox</a> -->
-                <a class="navbar-brand" href="xindex.html">
-                    <img src="/images/new_dapperdox_logo.svg" alt="Daperdoc logo"/> DapperDox</a>
-			</div>
-
-			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
-				<ul class="nav navbar-nav">
-					<li class="menuItem"><a href="/downloads/download">Download</a></li>
-					<li class="menuItem"><a href="/docs/getting-started">Getting Started</a></li>
-					<li class="menuItem"><a href="/docs/overview">Documentation</a></li>
-				</ul>
-			</div>
-		   
-		</div>
-	</nav> 
-	
-	<!-- What is DapperDox -->
+	<!-- Why DapperDox -->
 	<div id="whatis" class="content-section-b" style="border-top: 0">
 		<div class="container">
-
-			<div class="col-md-6 col-md-offset-3 text-center wrap_title">
-				<h2>What is DapperDox?</h2>
-				<p class="lead" style="margin-top:0">DapperDox provides rich out of the box rendring of your OpenAPI specifications, seamlessly combined with GitHub Flavoured Markdown documentation and guides.</p>
-				
+			<div class="row">
+			<div class="col-md-8 col-md-offset-2 text-center wrap_title">
+				<h2>Why DapperDox?</h2>
+				<p class="lead">DapperDox provides rich, out of the box, rendring of your OpenAPI
+                specifications, seamlessly combined with your GitHub Flavoured Markdown documentation,
+                guides and diagrams.</p>
+			</div>
 			</div>
 			
 			<div class="row">
-			
 				<div class="col-sm-4 wow fadeInDown text-center">
 				  <img class="rotate" src="/img/icon/swagger.png" alt="Generic placeholder image">
 				  <h3>Open API</h3>
@@ -124,10 +97,6 @@
 				</div><!-- /.col-lg-4 -->
 				
 				<div class="col-sm-4 wow fadeInDown text-center">
-				  <!-- <img  class="rotate" src="/img/icon/folder.svg" alt="Generic placeholder image"> -->
-                   <!--
-				   <i class="fa fa-circle-thin fa-5x rotate" style="color: #000080;"> </i> 
-                     -->
                    <span class="fa-stack fa-lg my-fa-icon-group rotate">
                      <i class="fa fa-circle-thin fa-stack-1x my-fa-icon-circle" style="color: #e0e0e0"></i>
                      <i class="fa fa-circle fa-stack-1x" style="color: #08999c; font-size: 92px;"></i>
@@ -136,11 +105,9 @@
 				   <h3>Multiple specifications</h3>
                    <p class="lead">Document multiple API specifications as a suite of products,
                    and cross-reference as required.</p>
-				  <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
-				</div><!-- /.col-lg-4 -->
+				</div>
 				
 				<div class="col-sm-4 wow fadeInDown text-center">
-				  <!-- <img  class="rotate" src="/img/icon/github-logo.svg" alt="Generic placeholder image"> -->
                    <span class="fa-stack fa-lg my-fa-icon-group rotate">
                      <i class="fa fa-circle-thin fa-stack-1x my-fa-icon-circle" style="color: #e0e0e0"></i>
                      <i class="fa fa-github fa-stack-1x my-fa-icon-inner" style="xcolor: #08999c; font-size: 92px;"></i>
@@ -148,18 +115,11 @@
 				   <h3>Author in markdown</h3>
                    <p class="lead">Author full documentation in Github Flavoured Markdown, and seamlessly overlay onto your
                    Swagger API documentation.</p>
-				  <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
-				</div><!-- /.col-lg-4 -->
+				</div>
+			</div>
 				
-			</div><!-- /.row -->
-				
-            <!-- <div class="row tworow"> -->
 			<div class="row">
-			
 				<div class="col-sm-4  wow fadeInDown text-center">
-				  <!--
-                  <img  class="rotate" src="/img/icon/browser.svg" alt="Generic placeholder image">
-                  -->
                    <span class="fa-stack fa-lg my-fa-icon-group rotate">
                      <i class="fa fa-circle fa-stack-1x my-fa-icon-circle" style="color: #e0e0e0;"></i>
                      <i class="fa fa-circle fa-stack-1x" style="color: #084a9c; font-size: 92px;"></i>
@@ -168,14 +128,9 @@
 				  <h3>API explorer</h3>
                   <p class="lead">The built-in API explorer enables API experimentation from within the documentation pages,
                   and can seamlessly integrate into your authentication and API key model.</p>
-				 <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
 				</div><!-- /.col-lg-4 -->
 				
 				<div class="col-sm-4 wow fadeInDown text-center">
-				  <!-- <img  class="rotate" src="/img/icon/pencils.svg" alt="Generic placeholder image"> -->
-                  <!--
-				   <i class="fa fa-puzzle-piece fa-5x rotate" style="color: #800000;"> </i> 
-                   -->
                    <span class="fa-stack fa-lg my-fa-icon-group rotate">
                      <i class="fa fa-circle fa-stack-1x my-fa-icon-circle" style="color: #e0e0e0;"></i>
                      <i class="fa fa-circle fa-stack-1x" style="color: #9c084a; font-size: 92px;"></i>
@@ -184,13 +139,9 @@
 				   <h3>Site integration</h3>
                    <p class="lead">DapperDox can proxy your developer platform, allowing full integration of API key
                    generation and management along side your specifications and guides.</p>
-				   <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
-				</div><!-- /.col-lg-4 -->
+				</div>
 				
 				<div class="col-sm-4 wow fadeInDown text-center">
-                <!--
-				  <img class="rotate" src="/img/icon/laptop.svg" alt="Generic placeholder image">
-                  -->
                    <span class="fa-stack fa-lg my-fa-icon-group rotate">
                      <i class="fa fa-circle-thin fa-stack-1x my-fa-icon-circle" style="color: #e0e0e0;"></i> <!-- 6060a0 -->
                      <i class="fa fa-circle fa-stack-1x" style="color: #9c6508; font-size: 92px;"></i>
@@ -198,28 +149,27 @@
                    </span>
 				   <h3>Multi theme</h3>
 				 <p class="lead">Change themes and present your documentation in the style you like!</p>
-				  <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
 				</div><!-- /.col-lg-4 -->
 				
 			</div><!-- /.row -->
 		</div>
 	</div>
 	
-	<!-- Getting started -->
     <div id ="gettingstarted" class="content-section-a">
         <div class="container">
             <div class="row">
-				<div class="col-sm-6 pull-right wow fadeInRightBig">
-                    <img class="img-responsive " src="/img/swaggerlyScreenshot.png" alt="">
+				<div class="col-sm-6 pull-right wow">
+                    <img class="img-responsive " src="/img/swaggerlyScreenshotRequest.png" alt="">
                 </div>
 				
-                <div class="col-sm-6 wow fadeInLeftBig"  data-animation-delay="200">   
-                    <h3 class="section-heading">Getting started</h3>
+                <div class="col-sm-6 wow">
+                    <h3 class="section-heading">DapperDox use case</h3>
+                    
                     <div class="sub-title lead3">Simply point DapperDox at your OpenAPI Swagger specifications,<br />and DapperDox does the rest.</div>
                     <p class="lead">
-                    The Getting Started guide shows you how to download and install DapperDox; how to quickly
-                    get an OpenAPI Swagger 2.0 specification rendered, and some useful configuration options
-                    to tune the presentation.
+                    DapperDox was created by API developers and documentation authors for one purpose:
+                    to be able to document and communicate the use and intent of an API to other
+                    developers.
 					</p>
 
 					 <p><a class="btn btn-embossed btn-primary" href="/docs/getting-started.html" role="button">Get Started</a> 
@@ -229,136 +179,14 @@
         <!-- /.container -->
     </div>
 
-    <div class="content-section-b"> 
-		
-		<div class="container">
-            <div class="row">
-                <div class="col-sm-6 wow fadeInLeftBig">
-                     <div id="owl-demo-1" class="owl-carousel">
-						<a href="/img/iphone.png" class="image-link">
-							<div class="item">
-								<img  class="img-responsive img-rounded" src="/img/iphone.png" alt="">
-							</div>
-						</a>
-						<a href="/img/iphone.png" class="image-link">
-							<div class="item">
-								<img  class="img-responsive img-rounded" src="/img/iphone.png" alt="">
-							</div>
-						</a>
-						<a href="/img/iphone.png" class="image-link">
-							<div class="item">
-								<img  class="img-responsive img-rounded" src="/img/iphone.png" alt="">
-							</div>
-						</a>
-					</div>       
-                </div>
-				
-                <div class="col-sm-6 wow fadeInRightBig"  data-animation-delay="200">   
-                    <h3 class="section-heading">Drag Gallery</h3>
-					<div class="sub-title lead3">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br> sdfs sit atmet sit dolor greand fdanrh sdfs</div>
-                    <p class="lead">
-						In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. 
-						Sed virtutem ipsam inchoavit, nihil ampliusuma. Scien tiam pollicentur, 
-						uam non erat mirum sapientiae lorem cupido
-						patria esse cariorem. Quae qui non vident, nihilamane umquam magnum ac cognitione.
-					</p>
-
-					 <p><a class="btn btn-embossed btn-primary" href="#" role="button">View Details</a> 
-					 <a class="btn btn-embossed btn-info" href="#" role="button">Visit Website</a></p>
-				</div>  			
-			</div>
-        </div>
-    </div>
-
-	<!-- Screenshot -->
-	<div id="screen" class="content-section-b">
-        <div class="container">
-          <div class="row" >
-			 <div class="col-md-6 col-md-offset-3 text-center wrap_title ">
-				<h2>Screen App</h2>
-				<p class="lead" style="margin-top:0">A special thanks to Death.</p>
-			 </div>
-		  </div>
-		    <div class="row wow bounceInUp" >
-              <div id="owl-demo" class="owl-carousel">
-				
-				<a href="/img/slide/1.png" class="image-link">
-					<div class="item">
-						<!-- <img  class="img-responsive img-rounded" src="/img/slide/1.png" alt="Owl Image"> -->
-                        <img class="img-responsive " src="/img/swaggerlyScreenshot.png" alt="">
-					</div>
-				</a>
-				
-               <a href="/img/slide/2.png" class="image-link">
-					<div class="item">
-						<img  class="img-responsive img-rounded" src="/img/slide/2.png" alt="Owl Image">
-					</div>
-				</a>
-				
-				<a href="/img/slide/3.png" class="image-link">
-					<div class="item">
-						<img  class="img-responsive img-rounded" src="/img/slide/3.png" alt="Owl Image">
-					</div>
-				</a>
-				
-				<a href="/img/slide/1.png" class="image-link">
-					<div class="item">
-						<img  class="img-responsive img-rounded" src="/img/slide/1.png" alt="Owl Image">
-					</div>
-				</a>
-				
-               <a href="/img/slide/2.png" class="image-link">
-					<div class="item">
-						<img  class="img-responsive img-rounded" src="/img/slide/2.png" alt="Owl Image">
-					</div>
-				</a>
-				
-				<a href="/img/slide/3.png" class="image-link">
-					<div class="item">
-						<img  class="img-responsive img-rounded" src="/img/slide/3.png" alt="Owl Image">
-					</div>
-				</a>
-              </div>       
-          </div>
-        </div>
-	</div>
-	
     <footer>
       <div class="container">
         <div class="row">
-          <div class="col-md-7">
-            <h3 class="footer-title">Follow Me!</h3>
-            <p>Vuoi ricevere news su altri template?<br/>
-              Visita Andrea Galanti.it e vedrai tutte le news riguardanti nuovi Theme!<br/>
-              Go to: <a  href="http://andreagalanti.it" target="_blank">andreagalanti.it</a>
-            </p>
-			
+          <div class="col-md-12">
 			<!-- LICENSE -->
-			<a rel="cc:attributionURL" href="http://www.andreagalanti.it/flatfy"
-		   property="dc:title">Flatfy Theme </a> by
-		   <a rel="dc:creator" href="http://www.andreagalanti.it"
-		   property="cc:attributionName">Andrea Galanti</a>
-		   is licensed to the public under 
-		   <BR>the <a rel="license"
-		   href="http://creativecommons.org/licenses/by-nc/3.0/it/deed.it">Creative
-		   Commons Attribution 3.0 License - NOT COMMERCIAL</a>.
-		   
-	   
-          </div> <!-- /col-xs-7 -->
-
-          <div class="col-md-5">
-            <div class="footer-banner">
-              <h3 class="footer-title"></h3>
-              <h3 class="footer-title"><i class="fa fa-book"> </i> DapperDox</h3>
-              <ul>
-                <li>12 Column Grid Bootstrap</li>
-                <li>Form Contact</li>
-                <li>Drag Gallery</li>
-                <li>Full Responsive</li>
-                <li>Lorem Ipsum</li>
-              </ul>
-              Go to: <a href="http://andreagalanti.it/flatfy" target="_blank">andreagalanti.it/flatfy</a>
-            </div>
+			<a rel="cc:attributionURL" href="http://dapperdox.io" property="dc:title">Content</a> &copy; the
+		    <a rel="dc:creator" href="http://dapperdox.io/license" property="cc:attributionName">DapperDox team</a>,
+		   is licensed to the public under the <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution 4.0 License</a>.
           </div>
         </div>
       </div>
@@ -367,19 +195,7 @@
     <!-- JavaScript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="js/owl.carousel.js"></script>
 	<script src="js/script.js"></script>
-	<!-- StikyMenu -->
-	<script src="js/stickUp.min.js"></script>
-	<script type="text/javascript">
-	  jQuery(function($) {
-		$(document).ready( function() {
-		  $('.navbar-default').stickUp();
-		  
-		});
-	  });
-	
-	</script>
 	<!-- Smoothscroll -->
 	<script type="text/javascript" src="js/jquery.corner.js"></script> 
 	<script src="js/wow.min.js"></script>
