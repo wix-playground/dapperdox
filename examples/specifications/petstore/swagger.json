@@ -474,7 +474,7 @@
         "/user/createWithList": {
             "post": {
                 "tags": ["user"],
-                "summary": "Creates list of users with given input array",
+                "summary": "Creates list of users with given input list",
                 "description": "",
                 "operationId": "createUsersWithListInput",
                 "produces": ["application/xml", "application/json"],

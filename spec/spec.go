@@ -603,6 +603,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil, true)
 			p.Resource.Schema = jsonResourceToString(body, "")
 			method.BodyParam = &p
+			c.addMethodToResource(p.Resource, method, version)
 		case "header":
 			method.HeaderParams = append(method.HeaderParams, p)
 		case "query":
@@ -660,18 +661,7 @@ func (c *APISpecification) buildResponse(resp *spec.Response, method *Method, ve
 
 			if r != nil {
 				r.Schema = jsonResourceToString(example_json, r.Type[0])
-
-				logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, r.ID)
-				// Look for a pre-declared resource with the response ID, and use that or create the first one...
-				var ok bool
-				if vres, ok = c.ResourceList[version][r.ID]; !ok {
-					logger.Tracef(nil, "   - Creating new resource\n")
-					vres = r
-				}
-				c.ResourceList[version][r.ID] = vres
-
-				// Add to the compiled list of methods which use this resource
-				vres.Methods = append(vres.Methods, *method)
+				vres = c.addMethodToResource(r, method, version)
 			}
 		}
 		response = &Response{
@@ -683,6 +673,30 @@ func (c *APISpecification) buildResponse(resp *spec.Response, method *Method, ve
 		response.compileHeaders(resp)
 	}
 	return response
+}
+
+// -----------------------------------------------------------------------------
+
+func (c *APISpecification) addMethodToResource(resource *Resource, method *Method, version string) *Resource {
+
+	var vres *Resource
+
+	logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, resource.ID)
+	// Look for a pre-declared resource with the response ID, and use that or create the first one...
+	var ok bool
+	if vres, ok = c.ResourceList[version][resource.ID]; !ok {
+		logger.Tracef(nil, "   - Creating new resource\n")
+		vres = resource
+	}
+	if _, ok = c.ResourceList[version]; !ok {
+		c.ResourceList[version] = make(map[string]*Resource)
+	}
+	c.ResourceList[version][resource.ID] = vres
+
+	// Add to the compiled list of methods which use this resource
+	vres.Methods = append(vres.Methods, *method)
+
+	return vres
 }
 
 // -----------------------------------------------------------------------------
@@ -730,7 +744,7 @@ func collectionFormatDescription(format string) string {
 			"ssv":   "space separated",
 			"tsv":   "tab separated",
 			"pipes": "pipe separated",
-            "multi": "multiple occurances",
+			"multi": "multiple occurances",
 		}
 	}
 	if desc, ok := (*collectionTable)[format]; ok {
