@@ -9,9 +9,7 @@ http://www.andreagalanti.it
 /*General */
 
 body, html {
-	height: 100%;
 	width: 100%;
-	overflow-x:hidden;
 }
 
 ::-moz-selection{background:#1abc9c;color:white}
@@ -213,7 +211,7 @@ background: #1abc9c !important;
 }
 
 /* Nav */
-.navbar {
+.xnavbar {
 	position: relative;
 	min-height: 53px;
 	margin-bottom: 0; 
@@ -222,7 +220,7 @@ background: #1abc9c !important;
 	border-radius: 0; 
 }
 
-.navbar-default {
+.xnavbar-default {
 	position: relative;
 	min-height: 53px;
 	width: 100%;

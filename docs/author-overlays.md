@@ -64,7 +64,7 @@ operation's `x-pathName` member is used, otherwise it takes the operation's `sum
 
 ### Overlay file priority
 
-This table defines the overlay file lookup priority for API, method and resource pages:
+This table defines the overlay file lookup priority for specification list, specification summary, API, method and resource pages:
 
 | Reference page | Overlay filename | Description |
 | -------------- | ---------------- | ----------- |
@@ -82,6 +82,9 @@ This table defines the overlay file lookup priority for API, method and resource
 | Resource | `sections/{specification-ID}/templates/resource/{resource-name}.md`           | Overlay applied to a specific resource page of a specific API.  |
 | Resource | `sections/{specification-ID}/templates/resource/resource.md`                  | Overlay applied to all resource pages of a specific API.  |
 | Resource | `templates/resource/resource.md`                           | Overlay applied to all resource pages of all APIs across all specifications.  |
+| Specification summary | `assets/sections/{specification-ID}/templates/reference/ specification_summary.md` | Overlay applied to a particular specification's summary page. |
+| Specification summary | `assets/templates/reference/ specification_summary.md` | Overlay applied to all specification summary pages. |
+| Specification list | `assets/templates/reference/ specification_list.md` | Overlay applied to the specification list page. |
 
 This can be visualised as a directory tree (though precedence is not maintained in this representation):
 
@@ -93,6 +96,8 @@ This can be visualised as a directory tree (though precedence is not maintained 
           - `{operation-ID}.md` - Overlay applied to a specific method, identified by operation, for all APIs in all specifications.
           - `{method-name}.md` - Overlay applied to all methods with this HTTP method name, across all APIs in all specifications.
           - `method.md` - Overlay applied to all API methods.
+          - `specification_list.md` - Overlay applied to the specification list page.
+          - `specification_summary.md` - Overlay applied to all specification summary pages.
         - `resource/`
           - `resource.md` - Overlay applied to all resource pages.
     - `sections/` - Contains additional documentation and overlays for specific OpenAPI specifications.
@@ -109,6 +114,7 @@ This can be visualised as a directory tree (though precedence is not maintained 
                   - `{operation-ID}.md` - Overlay applied to all methods with the given operation name, for all APIs in the specification.
                   - `{method-name}.md` - Overlay applied to all methods with this HTTP method name, across all APIs in the specification.
                   - `method.md` - Overlay applied to all methods of all APIs in the specification.
+                  - `specification_summary.md` - Overlay applied to a particular specification summary page.
                 - `resource/`
                   - `{resource-name}.md` - Overlay applied to a specific resource page of this API.
                   - `resource.md` - Overlay applied to all resource pages of this API.
@@ -166,6 +172,23 @@ Each of the three auto-generated reference page types (api, method and resource)
 | `[[example]]`         | Adds content before the resource example, if it exists. |
 | `[[properties]]`      | Inserts content before the resource properties table. |
 | `[[additional]]`      | Inserts content at the end of the resource page. |
+
+### Specification list page
+
+| GFM section reference | Page section |
+| --------------------- | ------------ |
+| `[[banner]]`      | Inserts content at the start of the page, before the description. |
+| `[[description]]` | Adds content before the API method list. |
+| `[[additional]]`  | Inserts content at the end of the API page. |
+
+### Specification summary page
+
+| GFM section reference | Page section |
+| --------------------- | ------------ |
+| `[[banner]]`      | Inserts content at the start of the page, before the description. |
+| `[[description]]` | Adds content before the API method list. |
+| `[[{api-group}/description]]` | Adds content after the header of the declared API group. |
+| `[[additional]]`  | Inserts content at the end of the API page. |
 
 ## Example
 
