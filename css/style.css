@@ -1978,8 +1978,8 @@ fieldset[disabled] .input-group-btn .btn-default.active {
 }
 .navbar-toggle:before {
   color: #34495e;
-  content: "\e00c";
-  font-family: "Flat-UI-Icons";
+  content: "\f0c9";
+  font-family: "FontAwesome";
   font-size: 22px;
   font-style: normal;
   font-weight: normal;
