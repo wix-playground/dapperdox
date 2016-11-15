@@ -32,4 +32,8 @@ an embedded [API explorer](/docs/explorer-concepts).
 This page describes an API resource that may be produced or consumed by an API.
 
 
-## Guide
+## Guides
+
+This is the collective name given to the bespoke authored documentation you have provided to
+supplement that which DapperDox generates from the Swagger specification. See [writing guides](/docs/author-guides) for further details.
+

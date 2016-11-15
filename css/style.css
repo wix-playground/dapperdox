@@ -4461,11 +4461,43 @@ body.vjs-full-window {
   }
 }
 footer {
+    /*
+    z-index: 1000;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    */
+
+    padding-top:18px; 
+    height: 60px; 
+    background-color: #ecf0f1;
+}
+.valigned > a i {
+    font-size: 18px;
+    vertical-align: middle;
+}
+.valigned > a p {
+    display: inline;
+    padding-right: 20px;
+}
+footer a:link    {color: #337ab7;}
+footer a:visited {color: #337ab7;}
+footer a:hover   {color: #337ab7;
+                  text-decoration: underline; }
+.align-center {
+    text-align: center;
+}
+.align-right {
+    text-align: right;
+}
+/*
+footer {
   background-color: #edeff1;
   color: #34495e;
   font-size: 15px;
   padding: 20px 0 20px 0;
 }
+*/
 /*
 footer a {
   color: #9aa4af;

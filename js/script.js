@@ -8,21 +8,22 @@ http://www.andreagalanti.it
 
 $(window).load(function() { 
 	//Preloader 
-	$('#status').delay(300).fadeOut(); 
-	$('#preloader').delay(300).fadeOut('slow');
-	$('body').delay(550).css({'overflow':'visible'});
+	//$('#status').delay(300).fadeOut(); 
+	$('#preloader').delay(10).fadeOut('slow');
+	//$('body').delay(550).css({'overflow':'visible'});
+	$('body').delay(50).css({'overflow':'visible'});
 })
 
 $(document).ready(function() {
 		//animated logo
-		$(".navbar-brand").hover(function () {
-			$(this).toggleClass("animated shake");
-		});
+		//$(".navbar-brand").hover(function () {
+		//	$(this).toggleClass("animated shake");
+		//});
 		
 		//animated scroll_arrow
-		$(".img_scroll").hover(function () {
-			$(this).toggleClass("animated infinite bounce");
-		});
+		//$(".img_scroll").hover(function () {
+		//	$(this).toggleClass("animated infinite bounce");
+		//});
 		
 		//Wow Animation DISABLE FOR ANIMATION MOBILE/TABLET
 		wow = new WOW(
@@ -32,7 +33,7 @@ $(document).ready(function() {
 		wow.init();
 		
 		//MagnificPopup
-		$('.image-link').magnificPopup({type:'image'});
+		//$('.image-link').magnificPopup({type:'image'});
 
 		//SmothScroll
 		$('a[href*=#]').click(function() {

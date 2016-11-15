@@ -27,7 +27,7 @@ API to use depends on the customer or business need.
 If DapperDox is asked to render documentation for the above four specifications, by passing it multiple
 `-spec-filename=` options, then a page similar to the following would be shown:
 
-![](/images/api_suite.png "Multiple API Specification page")
+<div class="img-border"><div class="fiximage img-responsive"><img src="/images/api_suite.png" /></div></div>
 
 Each specification loaded by DapperDox will be assigned its own [specification ID](#specification-identifiers).
 

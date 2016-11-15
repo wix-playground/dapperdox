@@ -1,7 +1,7 @@
 body {
     font-family: 'Open Sans', sans-serif;
     font-weight: normal;
-    margin-bottom: 80px;
+    margin-bottom: 60px;
 }
 html {
     position: relative; 
@@ -10,21 +10,21 @@ html {
 header {
   background: #ecf0f1;
 }
+div.main {
+    padding-bottom: 40px;
+}
+
 footer {
     z-index: 1000;
     position: absolute;
     bottom: 0;
     width: 100%;
-    padding-top:28px; 
+    padding-top:18px; 
     background-color: #ecf0f1;
-    height: 80px; 
-}
-div.main {
-    padding-bottom: 40px;
+    height: 60px; 
 }
 
-footer .valigned {
-}
+/*
 .valigned > a i {
     font-size: 16px;
     vertical-align: middle;
@@ -37,6 +37,13 @@ footer a:link    {color: #337ab7;}
 footer a:visited {color: #337ab7;}
 footer a:hover   {color: #337ab7;
                   text-decoration: underline; }
+.align-center {
+    text-align: center;
+}
+.align-right {
+    text-align: right;
+}
+*/
 
 p {
     font-size: 1.00em; /* 1.08em */
@@ -171,8 +178,10 @@ font-size: 0.98em; /* 1.08 */
   background-color: #428bca;
 }
 
-.main > img {
-    padding: 20px 20px 20px 20px;
+.img-border {
+    padding: 20px 40px 40px 20px;
+}
+.fiximage > img {
     max-width: 100%;
     max-height: 100%;
 }

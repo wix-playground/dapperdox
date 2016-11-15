@@ -164,6 +164,16 @@ filter: alpha(opacity=95) !important;
 	color: #ffffff !important;
 	background: rgba(204, 204, 204, 0);
 }
+.mybutton_green{
+	border: 1px solid #297A4A;
+	color: #fff;
+	background-color:#297A4A;
+}
+.mybutton_green:hover{
+	color: #ffffff !important;
+	background-color:#499A6A;
+	/*background: rgba(4, 4, 4, 0);*/
+}
 
 .button_down img {
 width: 50px;
@@ -266,7 +276,7 @@ color: #ECEBEB;
 	padding-top: 50px;
 	padding-bottom: 50px;
 	color: #f8f8f8; 
-	background: url(../img/intro/hexagon-colour4.jpg) no-repeat center center;
+	background: url(/images/home/hexagon-colour4.jpg) no-repeat center center;
 	background-size: cover;
 	text-align: center;
     min-height: 500px;
@@ -1230,10 +1240,12 @@ color: #ECEBEB;
 	}	
 }
 
+/*
 footer {
 	background-color: #f8f8f8;
 	padding: 50px 0;
 }
+*/
 
 p.copyright {
 	margin: 15px 0 0;
