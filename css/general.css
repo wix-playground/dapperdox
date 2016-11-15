@@ -140,7 +140,7 @@ filter: alpha(opacity=95) !important;
 	position:absolute;
 	left:50%; /* centers the loading animation horizontally one the screen */
 	top:50%; /* centers the loading animation vertically one the screen */
-	background-image:url(../img/status.gif); /* path to your loading animation */
+	background-image:url(/images/home/status.gif); /* path to your loading animation */
 	background-repeat:no-repeat;
 	background-position:center;
 	margin:-100px 0 0 -100px; /* is width and height divided by two */
@@ -258,12 +258,6 @@ color: #ECEBEB;
 	font-family: muli;
 	letter-spacing: 0px;
 	font-weight: 400 !important;
-}
-
-.navbar-brand > img {
-    width: 30px;
-    display: inline;
-    margin-top: -6px;
 }
 
 .lead {
@@ -1108,7 +1102,7 @@ color: #ECEBEB;
 			padding-top: 50px;
 			padding-bottom: 50px;
 			color: #f8f8f8;
-	        background: url(../img/intro/hexagon-colour4.jpg) no-repeat center center;
+	        background: url(/images/home/hexagon-colour4.jpg) no-repeat center center;
 			background-size: cover;
 			text-align: center;
 			background-color: #34495e;

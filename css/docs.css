@@ -24,27 +24,6 @@ footer {
     height: 60px; 
 }
 
-/*
-.valigned > a i {
-    font-size: 16px;
-    vertical-align: middle;
-}
-.valigned > a p {
-    display: inline;
-    padding-right: 20px;
-}
-footer a:link    {color: #337ab7;}
-footer a:visited {color: #337ab7;}
-footer a:hover   {color: #337ab7;
-                  text-decoration: underline; }
-.align-center {
-    text-align: center;
-}
-.align-right {
-    text-align: right;
-}
-*/
-
 p {
     font-size: 1.00em; /* 1.08em */
 }
@@ -76,11 +55,6 @@ pre {
     background:#f9f9f9;
 }
 pre code {
-    /* darker red */
-    /* color: #B52248; */
-    /* kinda red */
-    /* color: #c7254e; */
-    /* green */
     color: #008000;
 }
 
@@ -191,4 +165,8 @@ blockquote {
     color: #707070;
 }
 
-
+.navbar-brand > img {
+    width: 30px;
+    display: inline;
+    margin-top: -6px;
+}
