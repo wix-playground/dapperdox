@@ -1,8 +1,15 @@
-ZIPLIST=examples assets
+ZIPLIST=\
+examples/specifications/petstore \
+examples/apikey_injection \
+examples/guides \
+examples/metadata \
+examples/overlay \
+assets
+
 BZW=./buildzip $@ dapperdox.exe $+
 BZU=./buildzip $@ dapperdox     $+
 
-VERSION=1.0.0-beta
+VERSION=1.0.0
 STEM=dist/dapperdox-${VERSION}
 
 all:

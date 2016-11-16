@@ -26,7 +26,7 @@ var VERSION string
 
 func main() {
 
-	VERSION = "1.0.4" // TODO build with doxc to control version number?
+	VERSION = "1.0.0" // TODO build with doxc to control version number?
 
 	log.Printf("Swaggerly server version %s starting\n", VERSION)
 
