@@ -8,6 +8,16 @@ where the all APIs defined by the specification are listed.
 With multiple specifications, DapperDox presents the [specification list page](/docs/glossary-terms#specification-list-page)
 which catalogues each of the API specifications available.
 
+## Single specifications
+
+Point DapperDox at the directory containing your Swagger specification using the `-spec-dir` configuration
+parameter, where DapperDox will look for the file `swagger.json`. If your specification has a different 
+filename, specify this with the `-spec-filename` parameter.
+
+On launching DapperDox, the first web page shown will be the 
+[specification summary page](/docs/glossary-terms#specification-summary-page)
+where the all APIs defined by the specification are listed.
+
 ## Multiple specifications
 
 DapperDox can document a suite of API specifications at once. This allows you to present
@@ -24,8 +34,27 @@ These APIs collectively form a coherent suite of products, in that they all make
 service and provide different types of access to the same data underlying business data. The choice of which
 API to use depends on the customer or business need.
 
-If DapperDox is asked to render documentation for the above four specifications, by passing it multiple
-`-spec-filename=` options, then a page similar to the following would be shown:
+DapperDox can be asked to render documentation for all of the above four specifications, by placing
+them beneath a common parent directory, specified by the `-spec-dir` option, and passing each relative
+specification path with multiple `-spec-filename=` options.
+
+For example, this specification directory tree could be structured as:
+```
+/user/api_specs/streaming/swagger.json
+/user/api_specs/public/swagger.json
+/user/api_specs/ordering/sawgger.json
+/user/api_specs/authorisation/swagger.json
+```
+for which, DapperDox would be configured with:
+```
+-spec-dir=/user/api_specs \
+-spec-filename=streaming/swagger.json \
+-spec-filename=public/swagger.json \
+-spec-filename=ordering/sawgger.json \
+-spec-filename=authorisation/swagger.json
+```
+
+producing an initial documentation page of:
 
 <div class="img-border"><div class="fiximage img-responsive"><img src="/images/api_suite.png" /></div></div>
 

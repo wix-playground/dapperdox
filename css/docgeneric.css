@@ -16,6 +16,7 @@ h1,h2,h3 { margin-top: 20px; margin-bottom: 5px; }
 h1 { font-size: 80px; }
 p { font-size: 16px; line-height: 1.72222; margin: 0px 0px 15px; }
 ul li { list-style-type: none; }
+ol li { padding-left: 10px; }
 ul { margin-bottom: 15px; }
 blockquote { border-left: 3px solid #e7e9ec; padding: 0px 0px 0px 16px; margin: 0px 0px 30px; }
 blockquote p { font-size: 0.98em; line-height: 1.55; font-weight: normal; margin-bottom: 0.4em; }
