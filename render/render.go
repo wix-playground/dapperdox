@@ -89,6 +89,7 @@ func New() *render.Render {
 			"lc":            strings.ToLower,
 			"uc":            strings.ToUpper,
 			"join":          strings.Join,
+			"concat":        func(a, b string) string { return a + b },
 			"counter_set":   func(a int) int { counter = a; return counter },
 			"counter_add":   func(a int) int { counter += a; return counter },
 			"mod":           func(a int, m int) int { return a % m },
@@ -135,6 +136,8 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 		return ""
 	}
 
+	logger.Tracef(nil, "Overlay: Looking for overlay %s\n", name)
+
 	var datamap map[string]interface{}
 	var ok bool
 	if datamap, ok = data[0].(map[string]interface{}); !ok {
@@ -149,6 +152,7 @@ func overlay(name string, data []interface{}) template.HTML { // TODO Will be sp
 
 	// Look for an overlay file in declaration order.... Highest priority is first.
 	for _, overlay = range overlayName {
+		logger.Tracef(nil, "Overlay: Does '%s' exist?\n", overlay)
 		if TemplateLookup(overlay) != nil {
 			break
 		}
@@ -245,6 +249,7 @@ func DefaultVars(req *http.Request, apiSpec *spec.APISpecification, m Vars) map[
 	m["APIVersions"] = apiSpec.APIVersions
 	m["Resources"] = apiSpec.ResourceList
 	m["Info"] = apiSpec.APIInfo
+	m["SpecURL"] = apiSpec.URL
 
 	return m
 }
@@ -376,7 +381,7 @@ func getResourceAssetPaths(overlayAsset string, paths *[]string, datamap map[str
 func getSpecificationListPaths(overlayAsset string, paths *[]string, datamap map[string]interface{}) {
 
 	a := getOverlayStems(overlayAsset)
-	*paths = append(*paths, a.globalStem+"specification_list"+a.asset)
+	*paths = append(*paths, a.globalStem+"reference/specification_list"+a.asset)
 }
 
 // ----------------------------------------------------------------------------------------
@@ -384,7 +389,10 @@ func getSpecificationListPaths(overlayAsset string, paths *[]string, datamap map
 func getSpecificationSummaryPaths(overlayAsset string, paths *[]string, datamap map[string]interface{}) {
 
 	a := getOverlayStems(overlayAsset)
-	*paths = append(*paths, a.globalStem+"specification_summary"+a.asset)
+	if specID, ok := datamap["ID"].(string); ok {
+		*paths = append(*paths, a.specStem+specID+"/templates/reference/specification_summary"+a.asset)
+	}
+	*paths = append(*paths, a.globalStem+"reference/specification_summary"+a.asset)
 }
 
 // ----------------------------------------------------------------------------------------

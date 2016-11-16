@@ -27,7 +27,7 @@ var _metadata = map[string]map[string]string{}
 var guideReplacer *strings.Replacer
 var gfmReplace []*gfmReplacer
 
-var sectionSplitRegex = regexp.MustCompile("\\[\\[[\\w\\-]+\\]\\]")
+var sectionSplitRegex = regexp.MustCompile("\\[\\[[\\w\\-\\/]+\\]\\]")
 var gfmMapSplit = regexp.MustCompile(":")
 
 // ---------------------------------------------------------------------------

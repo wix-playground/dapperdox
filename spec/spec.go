@@ -21,6 +21,7 @@ type APISpecification struct {
 	ID      string
 	APIs    APISet // APIs represents the parsed APIs
 	APIInfo Info
+	URL     string
 
 	SecurityDefinitions map[string]SecurityScheme
 	DefaultSecurity     map[string]Security
@@ -217,7 +218,9 @@ func (c *APISpecification) Load(specFilename string, host string) error {
 		specFilename = "/" + specFilename
 	}
 
-	document, err := loadSpec("http://" + host + specFilename)
+	c.URL = "http://" + host + specFilename
+
+	document, err := loadSpec(c.URL)
 	if err != nil {
 		return err
 	}
