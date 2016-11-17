@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 
@@ -18,6 +19,7 @@ import (
 	"github.com/zxchris/swaggerly/handlers/static"
 	"github.com/zxchris/swaggerly/handlers/timeout"
 	"github.com/zxchris/swaggerly/logger"
+	"github.com/zxchris/swaggerly/network"
 	"github.com/zxchris/swaggerly/proxy"
 	"github.com/zxchris/swaggerly/render"
 	"github.com/zxchris/swaggerly/spec"
@@ -25,6 +27,7 @@ import (
 
 var VERSION string
 
+// ---------------------------------------------------------------------------
 func main() {
 
 	VERSION = "1.0.0" // TODO build with doxc to control version number?
@@ -40,7 +43,8 @@ func main() {
 	if l, err := logger.LevelFromString(cfg.LogLevel); err == nil {
 		logger.DefaultLevel = l
 	} else {
-		log.Fatalf("error setting log level: %s", err)
+		logger.Errorf(nil, "error setting log level: %s", err)
+		os.Exit(1)
 	}
 
 	router := pat.New()
@@ -49,7 +53,8 @@ func main() {
 	logger.Infof(nil, "listening on %s", cfg.BindAddr)
 	listener, err := net.Listen("tcp", cfg.BindAddr)
 	if err != nil {
-		log.Fatal(err)
+		logger.Errorf(nil, "%s", err)
+		os.Exit(1)
 	}
 
 	var wg sync.WaitGroup
@@ -73,33 +78,32 @@ func main() {
 
 	err = spec.LoadSpecifications(cfg.BindAddr, true)
 	if err != nil {
-		log.Fatal(err)
+		logger.Errorf(nil, "%s", err)
+		os.Exit(1)
 	}
 
 	render.Register()
-
-	//render.DumpAssetPaths()
 
 	reference.Register(router)
 	guides.Register(router)
 	static.Register(router) // TODO - Static content should be capable of being CDN hosted
 
 	home.Register(router)
-
-	//proxy.Register(router, "https://developer.companieshouse.gov.uk", `/developer/`)
 	proxy.Register(router)
 
 	listener.Close() // Stop serving specs
 	wg.Wait()        // wait for go routine serving specs to terminate
 
-	logger.Infof(nil, "Listen and server on %s", cfg.BindAddr)
-	listener, err = net.Listen("tcp", cfg.BindAddr)
+	listener, err = network.GetListener()
 	if err != nil {
-		logger.Errorf(nil, "error listening on %s: %s", cfg.BindAddr, err)
+		logger.Errorf(nil, "Error listening on %s: %s", cfg.BindAddr, err)
+		os.Exit(1)
 	}
+
 	http.Serve(listener, chain)
 }
 
+// ---------------------------------------------------------------------------
 func withCsrf(h http.Handler) http.Handler {
 	csrfHandler := nosurf.New(h)
 	csrfHandler.SetFailureHandler(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -110,9 +114,25 @@ func withCsrf(h http.Handler) http.Handler {
 	return csrfHandler
 }
 
+// ---------------------------------------------------------------------------
 func timeoutHandler(h http.Handler) http.Handler {
 	return timeout.Handler(h, 1*time.Second, http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		logger.Warnln(req, "request timed out")
 		render.HTML(w, http.StatusRequestTimeout, "error", map[string]interface{}{"error": "Request timed out"})
 	}))
 }
+
+// ---------------------------------------------------------------------------
+
+//type myHandler struct {
+//}
+//
+//func (a *myHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+//	w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+//}
+//
+//func addHeader(h http.Handler) http.Handler {
+//	return h
+//}
+
+// ---------------------------------------------------------------------------

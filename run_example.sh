@@ -7,4 +7,8 @@
     -force-specification-list=true \
     -author-show-assets=true \
     -theme=default \
+    -proxy-path=/developer/=https://developer.companieshouse.gov.uk \
+    -proxy-path=/fred/=https://google.co.uk \
+    -tls-certificate=server.rsa.crt \
+    -tls-key=server.rsa.key \
     -log-level=trace

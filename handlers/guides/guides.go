@@ -16,18 +16,6 @@ import (
 	"github.com/zxchris/swaggerly/spec"
 )
 
-/*
-100 Overview
-110 - some section
-120 - another section
-200 Getting Started
-210 - Getting started one
-250 - Getting started two
-300 Examples
-310 - examples one
-320 - examples two
-*/
-
 // ---------------------------------------------------------------------------
 // Register routes for guide pages
 func Register(r *pat.Router) {
@@ -98,12 +86,12 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 
 	sortNavigation(guidesNavigation)
 
-    // Register default route for this guide set
-    r.Path(route_base).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-        uri := findFirstGuideUri( guidesNavigation )
+	// Register default route for this guide set
+	r.Path(route_base).Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		uri := findFirstGuideUri(guidesNavigation)
 		logger.Infof(nil, "Redirect to %s\n", uri)
-        http.Redirect(w, req, uri, 302)
-    })
+		http.Redirect(w, req, uri, 302)
+	})
 
 	// Register the guides navigation with the renderer
 	render.SetGuidesNavigation(specification, &guidesNavigation.Children)
@@ -111,21 +99,21 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 
 // ---------------------------------------------------------------------------
 
-func findFirstGuideUri( tree *navigation.NavigationNode) string {
-    var uri string
+func findFirstGuideUri(tree *navigation.NavigationNode) string {
+	var uri string
 	for i := range tree.Children {
 		node := tree.Children[i]
-        uri = node.Uri
-        if uri == "" {
-            if len(node.Children) > 0 {
-                uri = findFirstGuideUri(node)
-            }
-        }
-        if uri != "" {
-            break;
-        }
-    }
-    return uri
+		uri = node.Uri
+		if uri == "" {
+			if len(node.Children) > 0 {
+				uri = findFirstGuideUri(node)
+			}
+		}
+		if uri != "" {
+			break
+		}
+	}
+	return uri
 }
 
 // ---------------------------------------------------------------------------
