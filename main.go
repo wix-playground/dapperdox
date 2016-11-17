@@ -18,6 +18,7 @@ import (
 	"github.com/zxchris/swaggerly/handlers/static"
 	"github.com/zxchris/swaggerly/handlers/timeout"
 	"github.com/zxchris/swaggerly/logger"
+	"github.com/zxchris/swaggerly/proxy"
 	"github.com/zxchris/swaggerly/render"
 	"github.com/zxchris/swaggerly/spec"
 )
@@ -84,6 +85,9 @@ func main() {
 	static.Register(router) // TODO - Static content should be capable of being CDN hosted
 
 	home.Register(router)
+
+	//proxy.Register(router, "https://developer.companieshouse.gov.uk", `/developer/`)
+	proxy.Register(router)
 
 	listener.Close() // Stop serving specs
 	wg.Wait()        // wait for go routine serving specs to terminate
