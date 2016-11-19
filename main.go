@@ -34,6 +34,8 @@ func main() {
 
 	log.Printf("Swaggerly server version %s starting\n", VERSION)
 
+	os.Setenv("GOFIGURE_ENV_ARRAY", "1") // Enable gofigure array parsing of env vars
+
 	cfg, err := config.Get()
 	if err != nil {
 		log.Fatalf("error configuring app: %s", err)

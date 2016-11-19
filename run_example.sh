@@ -1,3 +1,5 @@
+export PROXY_PATH=/developer=https://developer.companieshouse.gov.uk,/fred/=https://google.co.uk
+
 ./swaggerly \
     -assets-dir=./examples/overlay/assets \
     -spec-dir=examples/specifications/petstore/ \
@@ -7,8 +9,8 @@
     -force-specification-list=true \
     -author-show-assets=true \
     -theme=default \
-    -proxy-path=/developer/=https://developer.companieshouse.gov.uk \
-    -proxy-path=/fred/=https://google.co.uk \
     -tls-certificate=server.rsa.crt \
     -tls-key=server.rsa.key \
-    -log-level=trace
+    -log-level=info
+    #-proxy-path=/developer=https://developer.companieshouse.gov.uk \
+    #-proxy-path=/fred/=https://google.co.uk \
