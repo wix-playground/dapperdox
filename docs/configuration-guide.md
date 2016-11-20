@@ -1,4 +1,8 @@
-# Configuration parameters
+# DapperDox configuration
+
+DapperDox can be configured using command line options or, in line with the [twelve-factor app](https://12factor.net/) recomendations, through environment variables. 
+
+## Configuration options
 
 | Option | Environment variable | Description |
 | ------ | -------------------- | ----------- |
@@ -15,6 +19,11 @@
 | `-themes-dir` | `THEMES_DIR` | Directory containing installed themes. |
 | `-force-specification-list` | `FORCE_SPECIFICATION_LIST` | When DapperDox is serving a single OpenAPI specification, then by default it will show the API summary page when serving the homepage. Instead, you can force DapperDox to show the list of available specificatons (as it would if there were more than one specification) with this option. This is necessary if you have global documentation guides which live outside the specification. Takes the value `true` or `false`. |
 | `-author-show-assets` | `AUTHOR_SHOW_ASSETS` | Setting this value to `true` will enable an *assets search path* pane at the foot of every API reference page. This shows the path order that DapperDox will scan to find GFM content overlay or replacement files. Takes the value `true` or `false`. |
+| `-proxy-path` | `PROXY_PATH` | Configures a path prefix that is to be reverse-proxied to another service. Value takes the form `source-path=servce-host/destination/path`. If `destination-path` is given, this will prefix the `source-path` that is passed to the service. See [reverse proxy](/docs/proxy-configure) for further details.. |
+| `-tls-certificate` | `TLS_CERTIFICATE` | Enables HTTPS. The path and filename of the TLS certificate to load. Must be accompanied by the `-tls-key` configuration. |
+| `-tls-key` | `TLS_KEY` | Enables HTTPS. The path and filename of the TLS private key to load. Must be accompanied by the `-tls-certificate` configuration. |
+
+## Multiple values
 
 Some configuration parameters can take multiple values, either by specifying the parameter multiple times on the command lines, or by
 comma seperating multiple values when using environment variables.
