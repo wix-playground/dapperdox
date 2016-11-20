@@ -1,7 +1,7 @@
 # Enable TLS
 
-DapperDox's implementation of TLS restricts iteslf to the strong TLS 1.2 suites, avoiding
-RC4 and BEAST vulnerabilites. DapperDox is therefore compatible with current releases of
+DapperDox's implementation of TLS restricts itself to the strong TLS 1.2 suites, avoiding
+RC4 and BEAST vulnerabilities. DapperDox is therefore compatible with current releases of
 Google Chrome, Apple Safari, Mozilla Firefox and Internet Explorer.
 
 DapperDox requires a certificate and a private key to be configured to enable TLS. The
@@ -59,7 +59,7 @@ Configure DapperDox to read the certificate and key with:
 ## Production certificates
 
 For production use the certificate must be a chain, so you will likely need to 
-concatinate your certificate authority issued certificate, the issuers intermediate
+concatenate your certificate authority issued certificate, the issuers intermediate
 certificate and their root authority certificate together into one combined certificate file:
 
 ```

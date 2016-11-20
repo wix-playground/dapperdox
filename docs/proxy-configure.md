@@ -12,7 +12,7 @@ does not rewrite requests or response pages.
 
 ## Configuring
 
-A reverse proxy configuration for DapperDox consits of two parts.
+A reverse proxy configuration for DapperDox consist of two parts.
 
 1. A URL path prefix to forward.
 2. A host (and an optional path) to forward on to.
@@ -28,7 +28,7 @@ will **prefix** the source path in the forwarded request, becoming
 `/destination-path/source-path`.
 
 Multiple proxy configurations can be supplied to DapperDox, by repeating the
-`-proxy-path` configuration option (or comma seperating the values if you are using
+`-proxy-path` configuration option (or comma separating the values if you are using
 environment variables for configuration).
 
 The configuration for the above example would be:

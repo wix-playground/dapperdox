@@ -42,7 +42,7 @@ For example, this specification directory tree could be structured as:
 ```
 /user/api_specs/streaming/swagger.json
 /user/api_specs/public/swagger.json
-/user/api_specs/ordering/sawgger.json
+/user/api_specs/ordering/swagger.json
 /user/api_specs/authorisation/swagger.json
 ```
 for which, DapperDox would be configured with:
@@ -50,7 +50,7 @@ for which, DapperDox would be configured with:
 -spec-dir=/user/api_specs \
 -spec-filename=streaming/swagger.json \
 -spec-filename=public/swagger.json \
--spec-filename=ordering/sawgger.json \
+-spec-filename=ordering/saggier.json \
 -spec-filename=authorisation/swagger.json
 ```
 
@@ -63,7 +63,7 @@ Each specification loaded by DapperDox will be assigned its own [specification I
 ## Specification identifiers
 
 DapperDox assigns a specification it's own identifier, and it's own base documentation URL. It derives the ID from the
-specifications `info.title` member, which it lowercases and hyphen delimits 
+specifications `info.title` member, which it lower-cases and hyphen delimits 
 ([kebab casing](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles)).
 For example, the
 streaming API has a title of "Streaming Data API", which DapperDox converts into a specification ID of `streaming-data-api`.

@@ -5,7 +5,7 @@
 DapperDox is an Open-Source API documentation generator and server for OpenAPI Swagger specifications.
 
 It differs from other specification inspection tools in that it seamlessly combines your specifications
-with documentation, guides and diagrams, all of which can be authored in Github Flavoured Markdown.
+with documentation, guides and diagrams, all of which can be authored in GitHub Flavoured Markdown.
 
 This enables you to produce rich, browsable reference websites for your APIs. 
 
@@ -13,7 +13,7 @@ This enables you to produce rich, browsable reference websites for your APIs.
 
 ## Features
 
-1. Author full documentation in Github Flavoured Markdown.
+1. Author full documentation in GitHub Flavoured Markdown.
 2. Document multiple API specifications as a suite of cross-referenced products.
 3. Seamlessly overlay content onto the automatically generated reference documentation.
 4. Integrate the built-in API explorer with your APIs and authentication model.

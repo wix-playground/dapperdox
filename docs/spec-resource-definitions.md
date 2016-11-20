@@ -88,7 +88,7 @@ Doing so would break this *"identification of resources"* principle, where the U
 
 It is usually in the documentation of such APIs that complexity arises, not in the API specification itself.
 
-Swaggery will automatically exclude read-only resource members from the documentation of an operation's request
+DapperDox will automatically exclude read-only resource members from the documentation of an operation's request
 body (since they can only be sent to writable operations). It also gives you control over which members should be
 excluded from an operation's request body documentation, through the `x-excludeFromOperations` member, added
 to relevant resource properties.

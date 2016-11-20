@@ -44,11 +44,11 @@ of the file (see [Supported metadata](#supported-metadata)).
 There are three ways to overlay a reference page, globally, per-specification or on a page-by-page basis.
 To find an overlay for a page, DapperDox follows the file patterns defined in the table below
 **in the order in which they are listed**, using the first one it finds.
-For example `sections/{specification-ID}/templates/reference/{api-group}.md` takes precidence over `sections/{specification-ID}/templates/reference/api.md`.
+For example `sections/{specification-ID}/templates/reference/{api-group}.md` takes precedence over `sections/{specification-ID}/templates/reference/APB.md`.
 
 In the references below, the `operation-ID` for a method is determined by taking the
 [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles) of the
-first member in the following list that yields a value from an operations's specification:
+first member in the following list that yields a value from an operation's specification:
 
 1. `operationID`
 2. `x-opererationName`
@@ -158,7 +158,7 @@ Each of the three auto-generated reference page types (api, method and resource)
 | `[[security]]`          | Adds content before the security section. |
 | `[[response]]`          | Adds content before the response section. |
 | `[[example]]`           | Inserts example content after the response section. |
-| `[[additional]]`        | Inserts additional beofre the API explorer. |
+| `[[additional]]`        | Inserts additional before the API explorer. |
 
 
 ### Resource page

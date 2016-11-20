@@ -2,8 +2,8 @@
 
 ## `specification-ID`
 
-The identifier assigned to each specification Swagger loads. It is derrived from the specifications `info.title` member,
-which DapperDox lowercases and hyphen delimits ([kebab casing](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles)).
+The identifier assigned to each specification Swagger loads. It is derived from the specifications `info.title` member,
+which DapperDox lower cases and hyphen delimits ([kebab casing](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles)).
 
 For example, a specification title of "My API suite" produces a `specification-ID` of `my-api-suite`.
 

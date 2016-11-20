@@ -1,7 +1,7 @@
 <h1>Customising the API explorer</h2>
 
-<p>The <code>apiExplorer</code> javascript object provides a method to add API keys to an internal list, and a method to inject those
-API keys into the explorer page, so that the user can select the key from a dropdown menu instead of having to type it in.</p>
+<p>The <code>apiExplorer</code> JavaScript object provides a method to add API keys to an internal list, and a method to inject those
+API keys into the explorer page, so that the user can select the key from a drop-down menu instead of having to type it in.</p>
 
 <h2>apiExplorer methods</h2>
 
@@ -26,7 +26,7 @@ that it can build a list of valid API keys to be used and inject them into the e
 fetched from some ajax endpoint that you provide, once the user as gone though some sign-in process.</p>
 
 <p>The supplied example, <code>examples/apikey_injection/assets/templates/fragments/scripts.tmpl</code> demonstrates the addition of an
-API key (hardcoded for the benefit of this example), and injects the list of one into the explorer page.</p>
+API key (hard-coded for the benefit of this example), and injects the list of one into the explorer page.</p>
 
 <p>To run this example, DapperDox needs to be told about the example assets directory for it to pick up the override. 
 This is achieved through the configuration parameter <code>-assets-dir</code>, passed to DapperDox when starting: </p>
@@ -40,7 +40,7 @@ This is achieved through the configuration parameter <code>-assets-dir</code>, p
 This behaviour can be customised to satisfy the authentication requirements of your API.</p>
 
 <p>The template fragment <code>assets/themes/default/templates/fragments/scripts.tmpl</code>, which is included at the end of the common
-page template <code>layout.tmpl</code> contains the following javascript snippet:</p>
+page template <code>layout.tmpl</code> contains the following JavaScript snippet:</p>
 
 <pre><code>&lt;!-- Additional scripts to be loaded at end of page -->
 &lt;!-- This should be overridden to take control of the authorisation process (adding keys to the explorer request). -->
