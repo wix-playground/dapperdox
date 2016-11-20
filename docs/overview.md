@@ -9,6 +9,8 @@ with documentation, guides and diagrams, all of which can be authored in Github 
 
 This enables you to produce rich, browsable reference websites for your APIs. 
 
+<div class="img-border"><div class="fiximage"><img src="/images/dapperdox_overview.svg" /></div></div>
+
 ## Features
 
 1. Author full documentation in Github Flavoured Markdown.
