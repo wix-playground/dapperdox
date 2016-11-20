@@ -1,7 +1,7 @@
 # Content overlays
 
 Additional content can be added to any DapperDox generated reference page by providing overlay files.
-These pages are authored in Github Flavoured Markdown (GFM) and contain special markdown references that
+These pages are authored in GitHub Flavoured Markdown (GFM) and contain special markdown references that
 target particular sections within API, Method or Resource pages.
 
 Additional directories are added to your `assets` directory to accomplish this. As DapperDox can consume and serve
@@ -16,7 +16,7 @@ of the **Find pet by ID** `GET` method for the example Petstore OpenAPI specific
 pointed to by the `-assets-dir=` configuration parameter:
 
 ```
-> cat {swaggerly-source-directory}/examples/overlay/assets/sections/swagger-petstore/templates/reference/everything-about-your-pets/get-pet-by-id.md
+> cat {dapperdox-source-directory}/examples/overlay/assets/sections/swagger-petstore/templates/reference/everything-about-your-pets/get-pet-by-id.md
 ```
 
 ```gfm
@@ -121,7 +121,7 @@ This can be visualised as a directory tree (though precedence is not maintained 
 
 ## Enabling author debug mode
 
-By passing swaggerly the configuration parameter `-author-show-assets=true`, swaggerly will display an overlay search
+By passing DapperDox the configuration parameter `-author-show-assets=true`, DapperDox will display an overlay search
 path pane at the foot of each API reference page. This helps you see exactly which path and filenames you can use to
 overlay content onto the page you are viewing (see [Configuration parameters](#configuration-parameters)).
 

@@ -8,7 +8,7 @@ DapperDox can be configured using command line options or, in line with the [twe
 | ------ | -------------------- | ----------- |
 | `-assets-dir` | `ASSETS_DIR` | Assets to serve. Effectively the document root. |
 | `-bind-addr` | `BIND_ADDR` | IP address and port number that DapperDox should serve content from. Value takes the form `<IP address>:<port>`. |
-| `-default-assets-dir` | `DEFAULT_ASSETS_DIR` | Used to point DapperDox at its default assets. You wil need to provide this option if you are not running DapperDox from within it's distribution directory. For example, if you invoke DapperDox as `<path_to_swaggerly_distribution>/swaggerly` then you must pass this configuration option as `-default-assets-dir=<path_to_swaggerly_distribution>/assets`.|
+| `-default-assets-dir` | `DEFAULT_ASSETS_DIR` | Used to point DapperDox at its default assets. You wil need to provide this option if you are not running DapperDox from within it's distribution directory. For example, if you invoke DapperDox as `<path_to_dapperdox_distribution>/dapperdox` then you must pass this configuration option as `-default-assets-dir=<path_to_dapperdox_distribution>/assets`.|
 | `-document-rewrite-url` | `DOCUMENT_REWRITE_URL` | Specify a URL that is to be rewritten in the documentation. May be multiply defined. Format is from=to. This is applied to assets, not to OpenAPI specification generated text. |
 | `-log-level` | `LOGLEVEL` | Log level (`info`, `debug`, `trace`) |
 | `-spec-dir` | `SPEC_DIR` | OpenAPI specification (swagger) directory. |

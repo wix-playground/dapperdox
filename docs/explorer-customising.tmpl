@@ -29,7 +29,7 @@ fetched from some ajax endpoint that you provide, once the user as gone though s
 API key (hardcoded for the benefit of this example), and injects the list of one into the explorer page.</p>
 
 <p>To run this example, DapperDox needs to be told about the example assets directory for it to pick up the override. 
-This is achieved through the configuration parameter <code>-assets-dir</code>, passed to swaggerly when starting: </p>
+This is achieved through the configuration parameter <code>-assets-dir</code>, passed to DapperDox when starting: </p>
 
 <pre><code>-assets-dir=examples/apikey_injection/assets</code></pre>
 
@@ -94,7 +94,7 @@ Authorization header using BASIC authentication:</p>
 });</code></pre>
 
 <p>DapperDox then needs to be told about this local assets directory for it to pick up the override, which is achieved through
-the configuration parameter <code>-assets-dir</code>, passed to swaggerly when starting. For example, to pick up the example above, use
+the configuration parameter <code>-assets-dir</code>, passed to DapperDox when starting. For example, to pick up the example above, use
 <code>-assets-dir=examples/apikey_injection/assets</code>.</p>
 
 <p>See [Creating local assets](#creating-local-assets) for further information about creating custom assets.</p>

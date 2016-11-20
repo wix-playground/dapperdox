@@ -9,8 +9,8 @@ to tune the presentation.
 [Download the latest release](/downloads/download) of DapperDox for you operating system, and unpack it.
 
 ```
-tar -zxf swaggerly-*.tgz
-cd swaggerly
+tar -zxf dapperdox-*.tgz
+cd dapperdox
 ```
 
 ## Basic configuration
@@ -21,7 +21,7 @@ environment variables.
 
 For this example, we will specify the Swagger specification location on the command line:
 ```
-./swaggerly -spec-dir=examples/specifications/petstore
+./dapperdox -spec-dir=examples/specifications/petstore
 ```
 
 This will start serving the example <em>petstore</em> specification included in the DapperDox distribution.

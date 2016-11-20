@@ -7,7 +7,7 @@ with other authored content to produce rich, browsable, API documentation.
 
 Any additional content that DapperDox imports and combines with reference documentation is known
 as an asset. Assets can be HTML,
-[Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/) (GFM),
+[GitHub Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/) (GFM),
 and static resources such as images.
 
 Assets are split into two groups:
@@ -17,7 +17,7 @@ Assets are split into two groups:
 
 Within these groups, assets divide into three categories:
 
-1. Authored documentation, refered to as [guides](/docs/author-guides)
+1. Authored documentation, referred to as [guides](/docs/author-guides)
 2. [Content overlays](/docs/author-overlays), containing documentation to be injected into API reference pages
 3. Static resources such as images, which are used by guides or overlays.
 

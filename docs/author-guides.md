@@ -1,11 +1,11 @@
 # Creating authored documentation pages
 
 Authored documentation pages are referred to as <span class="hljs-attr">guides</span>. Guides should be authored in
-[Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/) (GFM) since 
+[GitHub Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/) (GFM) since 
 using HTML will make them dependant on the theme in use at the time they were written, and therefore resistant to change.
-The flexible approach is to use Github Flavoured Markdown.
+The flexible approach is to use GitHub Flavoured Markdown.
 
-Guides written using [Github Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/)
+Guides written using [GitHub Flavoured Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/)
 have a file extension of `.md`, those written in HTML are referred to as 'templates' and have a file extension of `.tmpl`.
 
 ## Global and per-specification guides
@@ -29,7 +29,7 @@ The DapperDox assets example `examples/guides/assets/` contains three guides:
 2. `templates/guides/level2/markdown2.md`
 3. `sections/swagger-petstore/templates/guides/PetstoreHelp.md`
 
-The first two are global documents, available outside any specification reference page. The thrid is a guide specific to
+The first two are global documents, available outside any specification reference page. The third is a guide specific to
 the Petstore specification.
 
 To build and make these guides available, pass DapperDox the configuration parameters:
@@ -75,7 +75,7 @@ By default, the side navigation will reproduce the directory structure beneath t
 However there is an enforced limit of two levels in the navigation, which consequently restricts the depth of
 your directory structure.
 
-If you need a deeper directory structure, or have a file nameing convention that does not lend itself
+If you need a deeper directory structure, or have a file naming convention that does not lend itself
 to navigation titles, you can take control of the side navigation through [metadata](#controlling-guide-behaviour-with-metadata).
 
 ## Controlling guide behaviour with metadata
