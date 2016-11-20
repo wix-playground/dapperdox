@@ -4,7 +4,7 @@ DapperDox's implementation of TLS restricts iteslf to the strong TLS 1.2 suites,
 RC4 and BEAST vulnerabilites. DapperDox is therefore compatible with current releases of
 Google Chrome, Apple Safari, Mozilla Firefox and Internet Explorer.
 
-DapperDox requires a certificate and a private key to be configured to enable TLS. THe
+DapperDox requires a certificate and a private key to be configured to enable TLS. The
 certificate and key filenames are passed to DapperDox using the `-tls-certificate` and
 `-tls-key` [configuration](/docs/configuration/guide) options.
 
