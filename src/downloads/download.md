@@ -6,17 +6,17 @@ If yours is not listed here, then clone the source from [GitHub](http://github.c
 
 ## Precompiled releases
 
-**1.0.0-beta (2016-10-28)**
+**1.0.0 (2016-11-21)**
 
 | Filename | OS   | Arch | Size | Checksum |
 | -------- | ---- | ---- | ---- | -------- |
-[dapperdox-1.0.0-beta.darwin-amd64.tgz](/downloads/dapperdox-1.0.0-beta.darwin-amd64.tgz) | darwin | amd64 | 3.5M | 0e379438c07bb8d24fd101082ebed11f077375b72b5499059ce6981f4a06fc4a |
-[dapperdox-1.0.0-beta.linux-amd64.tgz](/downloads/dapperdox-1.0.0-beta.linux-amd64.tgz) | linux | amd64 | 3.5M | 53f9dad978c3b0fd8c07f93c02070d3732ab794b57c520ddc57f4edafc5c03b1 |
-[dapperdox-1.0.0-beta.linux-arm.tgz](/downloads/dapperdox-1.0.0-beta.linux-arm.tgz) | linux | arm | 3.1M | fd1e0efe495105100b3b1310caf5f9a9d48961593c0dda742f225fe793fa9cea |
-[dapperdox-1.0.0-beta.linux-arm64.tgz](/downloads/dapperdox-1.0.0-beta.linux-arm64.tgz) | linux | arm64 | 3.2M | 5ece17eddb01a6120a7f0e7d86a562f205613eba1b1031389a776c3a33c92b3a |
-[dapperdox-1.0.0-beta.linux-x86.tgz](/downloads/dapperdox-1.0.0-beta.linux-x86.tgz) | linux | x86 | 3.2M | d8aca31752c3cd21f066d495ca56157f379ec33d059670f83d8e695b029a909e |
-[dapperdox-1.0.0-beta.windows-amd64.zip](/downloads/dapperdox-1.0.0-beta.windows-amd64.zip) | windows | amd64 | 3.5M | 097a14715dc58e09919a8920e3735a158dfb76ac52378c3c5c1ad788b5f8328e |
-[dapperdox-1.0.0-beta.windows-x86.zip](/downloads/dapperdox-1.0.0-beta.windows-x86.zip) | windows | x86 | 3.2M | 2f274adb08a46197d846cca828c1cbadfcb64ae5a34cc45e54ef2e8eb0c0bcd3 |
+[dapperdox-1.0.0.darwin-amd64.tgz](https://github.com/DapperDox/dapperdox/releases/download/v1.0.0/dapperdox-1.0.0.darwin-amd64.tgz) | darwin | amd64 | 3.9M | 7c24fe026af30f8ae1bbe711814135e3f2c71b1ddde4e40092b499539fe78433 |
+[dapperdox-1.0.0.linux-amd64.tgz](https://github.com/DapperDox/dapperdox/releases/download/v1.0.0/dapperdox-1.0.0.linux-amd64.tgz) | linux | amd64 | 3.9M | 1f91081a0ed106c5477ca434adb8a1dd216703bc3987180ba0c472d56aabb27c |
+[dapperdox-1.0.0.linux-arm.tgz](https://github.com/DapperDox/dapperdox/releases/download/v1.0.0/dapperdox-1.0.0.linux-arm.tgz) | linux | arm | 3.5M | 5f6c694ff200065c0d44fc3ea72a99786562a03a488a4c584ad3e0a1616929ec |
+[dapperdox-1.0.0.linux-arm64.tgz](https://github.com/DapperDox/dapperdox/releases/download/v1.0.0/dapperdox-1.0.0.linux-arm64.tgz) | linux | arm64 | 3.6M | c1b1d0da32321a860fe5b3ffbe8fe3e8dbfae938e7252e5b24a57e508781eafd |
+[dapperdox-1.0.0.linux-x86.tgz](https://github.com/DapperDox/dapperdox/releases/download/v1.0.0/dapperdox-1.0.0.linux-x86.tgz) | linux | x86 | 3.7M | 0454ab0da92bd79a2c814a4f11e267bbb972874e3711fbc7ed2470834208b025 |
+[dapperdox-1.0.0.windows-amd64.zip](https://github.com/DapperDox/dapperdox/releases/download/v1.0.0/dapperdox-1.0.0.windows-amd64.zip) | windows | amd64 | 3.9M | 7b74176cb691335acb9c006ef8028e2ca4665c20fb4763b6d872888928fa51ef |
+[dapperdox-1.0.0.windows-x86.zip](https://github.com/DapperDox/dapperdox/releases/download/v1.0.0/dapperdox-1.0.0.windows-x86.zip) | windows | x86 | 3.7M | 8417d0a2eda4c00cee06e445b92c2468b35967162c9c8a38f3512808a0b79333 |
 
 ## Building from source
 
