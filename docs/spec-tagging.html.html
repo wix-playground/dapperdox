@@ -149,64 +149,116 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="terms-used-by-dapperdox" class="anchor" href="#terms-used-by-dapperdox" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Terms used by DapperDox</h1>
-<h2><a name="specification-id" class="anchor" href="#specification-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">specification-ID</code></h2>
+            <h1><a name="operation-tagging" class="anchor" href="#operation-tagging" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Operation tagging</h1>
 
-<p>The identifier assigned to each specification Swagger loads. It is derived from the specifications <code class="hljs-keyword">info.title</code> member,
-which DapperDox lower cases and hyphen delimits (<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab casing</a>).</p>
+<p>For most APIs, the grouping of operations into related sets helps users understand and reference the
+documentation.</p>
 
-<p>For example, a specification title of &#34;My API suite&#34; produces a <code class="hljs-keyword">specification-ID</code> of <code class="hljs-keyword">my-api-suite</code>.</p>
-<h2><a name="api-group" class="anchor" href="#api-group" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">api-group</code></h2>
+<p>DapperDox will try to group your API operations as best it can, and by default will group by API
+path, but you can take control of this grouping by using <a href="http://swagger.io/specification/#tagObject" rel="nofollow">tags</a>.</p>
+<h2><a name="grouping-by-tag" class="anchor" href="#grouping-by-tag" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Grouping by tag</h2>
 
-<p>A logical grouping of API operations. Grouping will be made based on the tag if tagging is used by the specification,
-in which case <code class="hljs-keyword">api-group</code> is set to the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of
-the tag&#39;s <code class="hljs-keyword">description</code> member if present, or the tag <code class="hljs-keyword">name</code> if not.</p>
+<p>DapperDox will look for the specification&#39;s top level <code class="hljs-keyword">tags</code> declaration member and, if
+present, it restricts itself to documenting only those API operations that have tags declared in
+this set. Operations will be grouped by tag and listed in the navigation in the order in which
+they are declared.
+This allows you to control which reference documentation gets presented. The name of each group
+is taken from the tag&#39;s <code class="hljs-keyword">description</code> member if it has one, otherwise it takes the tag&#39;s <code class="hljs-keyword">name</code>
+member, and is used as the group description or heading in pages and navigation.</p>
 
-<p>If tagging is not in use, then <code class="hljs-keyword">api-group</code> is set to the
-<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a>
-of the operation&#39;s <code class="hljs-keyword">x-pathName</code> member if present, otherwise the operation&#39;s <code class="hljs-keyword">summary</code> member is used.</p>
-<h2><a name="operation-id" class="anchor" href="#operation-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">operation-ID</code></h2>
+<p>If a path has an <code class="hljs-keyword">x-pathName</code> member, then its value will override the group name inherited from
+the <code class="hljs-keyword">tags</code> <code class="hljs-keyword">description</code> or <code class="hljs-keyword">name</code> member.</p>
 
-<p>The identifier given to an operation. It is most importantly used to determine the correct content <a href="/docs/author-overlays" rel="nofollow">overlay</a> to apply.</p>
+<p>This group name is also used to form the <code class="hljs-keyword">api-group</code> identifier,
+used in URLs and <a href="/docs/author-overlays" rel="nofollow">overlays</a>.
+See the <a href="/docs/glossary-terms#api-group" rel="nofollow">Glossary of terms</a> for further details.</p>
 
-<p>It is formed by taking the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of the
-first in the following list of operation members that yields a value:</p>
+<div class="highlight highlight-json"><pre><code>{
+  &#34;swagger&#34;: &#34;2.0&#34;,
 
-<ol>
-<li><code class="hljs-keyword">operationID</code></li>
-<li><code class="hljs-keyword">x-opererationName</code></li>
-<li><code class="hljs-keyword">summary</code></li>
-<li>method name</li>
-</ol>
+  &#34;tags&#34;: [
+    { 
+        &#34;name&#34;: &#34;Products&#34;,
+        &#34;description&#34;: &#34;A more verbose description of tag&#34;
+    },
+    { &#34;name&#34;: &#34;Estimates Price&#34; }
+  ],
+    &#34;paths&#34;: {
+        &#34;/products&#34;: {
+            &#34;get&#34;: {
+                &#34;tags&#34;: [
+                  &#34;Products&#34;
+                ],
+                &#34;summary&#34;: &#34;Product Types&#34;,
+                &#34;description&#34;: &#34;Read product types&#34;
+            },
+            &#34;post&#34;: {
+                &#34;tags&#34;: [
+                  &#34;Products&#34;
+                ],
+                &#34;summary&#34;: &#34;Product Types&#34;,
+                &#34;description&#34;: &#34;Create product types&#34;
+            }
+        }
+    }
+}
+</code></pre></div>
 
-<p>where method name is <code class="hljs-keyword">method-name</code> below. Therefore, it is possible for <code class="hljs-keyword">operation-ID</code> and <code class="hljs-keyword">method-name</code> to be the same value.</p>
-<h2><a name="method-name" class="anchor" href="#method-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">method-name</code></h2>
+<p>This incomplete specification example shows how documentation order and filtering is controlled by
+<code class="hljs-keyword">tags</code>. The top level tags member declares that API operations tagged with <code class="hljs-keyword">Estimates Price</code> and
+<code class="hljs-keyword">Products</code> should be built, in that order.  The <code class="hljs-keyword">description</code> member of the <code class="hljs-keyword">Products</code> tag is used
+to name all operations grouped by that tag. The name of the <code class="hljs-keyword">Estimates Price</code> tag would be used to
+name all operations grouped by that tag, as there is no <code class="hljs-keyword">description</code> member.</p>
 
-<p>The name of the HTTP method for an operation, such as <code class="hljs-keyword">get</code>, <code class="hljs-keyword">post</code> and <code class="hljs-keyword">put</code>.</p>
-<h2><a name="operation-name" class="anchor" href="#operation-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">operation-name</code></h2>
+<p>This mechanism for naming and grouping API operations gives you the most control.</p>
+<h2><a name="grouping-without-tags" class="anchor" href="#grouping-without-tags" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Grouping without tags</h2>
 
-<p>The <code class="hljs-keyword">operation-name</code> of an operation is either its HTTP method (see <code class="hljs-keyword">method-name</code>), or the name given by the
-DapperDox extension <code class="hljs-keyword">x-operationName</code> which may be added to an operation. See <a href="/docs/spec-method-names" rel="nofollow">controlling method names</a>.</p>
-<h2><a name="specification-list-page" class="anchor" href="#specification-list-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Specification list page</h2>
+<p>If tags cannot be used, DapperDox must still have a title to use for an operation path, and will
+fall back to using the <code class="hljs-keyword">summary</code> member from one of the operations for a path. This often does not
+produce the desired results, unless the <code class="hljs-keyword">summary</code> members of all operations for a path are set to
+the same text, as in the example above, but will rarely be the case.</p>
 
-<p>This page lists the API specifications that are available for reference, and is the default homepage when multiple
-specifications are loaded by DapperDox. It is not normally displayed when a single specification is loaded.</p>
-<h2><a name="specification-summary-page" class="anchor" href="#specification-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Specification summary page</h2>
+<p>To force the group name of all operations declared for a path, the DapperDox specific <code class="hljs-keyword">x-pathName</code>
+member may be specified in the Path Item object. This will always take effect, and will even
+override the description or name inherited from the top level <code class="hljs-keyword">tags</code> member. However, tags are the
+most flexible approach to name method groups.
+See the <a href="/docs/glossary-terms#api-group" rel="nofollow">Glossary of terms</a> for further details.</p>
 
-<p>This page lists the all APIs defined by a specification, grouped by <a href="/docs/glossary-terms#api-group" rel="nofollow"><code class="hljs-keyword">api-group</code></a>.
-It is the first page displayed when a specification is selected from the <code class="hljs-keyword">specification-list</code>, and the default homepage
-when a single specification is loaded by DapperDox.</p>
-<h2><a name="api-group-summary-page" class="anchor" href="#api-group-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-API group summary page</h2>
+<div class="highlight highlight-json"><pre><code>{
+  &#34;swagger&#34;: &#34;2.0&#34;,
 
-<p>This page lists the API operations within a single <code class="hljs-keyword">api-group</code>.</p>
+  &#34;tags&#34;: [
+    { 
+        &#34;name&#34;: &#34;Products&#34;,
+        &#34;description&#34;: &#34;A more verbose description of tag&#34;
+    },
+    { &#34;name&#34;: &#34;Estimates Price&#34; }
+  ],
+    &#34;paths&#34;: {
+        &#34;/products&#34;: {
+            &#34;x-pathName&#34;: &#34;Types of Product&#34;,
+            &#34;get&#34;: {
+                &#34;tags&#34;: [
+                  &#34;Products&#34;
+                ],
+                &#34;summary&#34;: &#34;Product Types&#34;,
+                &#34;description&#34;: &#34;Read product types&#34;
+            },
+            &#34;post&#34;: {
+                &#34;tags&#34;: [
+                  &#34;Products&#34;
+                ],
+                &#34;summary&#34;: &#34;Product Types&#34;,
+                &#34;description&#34;: &#34;Create product types&#34;
+            }
+        }
+    }
+}
+</code></pre></div>
+
+<p><script>hljs.initHighlightingOnLoad();</script></p>
 
 		</div>
       </div>
@@ -222,7 +274,7 @@ API group summary page</h2>
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

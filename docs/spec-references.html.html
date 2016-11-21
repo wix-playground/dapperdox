@@ -149,87 +149,35 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="loading-specifications" class="anchor" href="#loading-specifications" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Loading specifications</h1>
+            <h1><a name="resolving-references" class="anchor" href="#resolving-references" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolving references</h1>
 
-<p>DapperDox can document a single API specification, or a suite of API specification at once.</p>
+<p>It is common that a specification that is split over multiple files will fail to load the first time, caused by its <code class="hljs-keyword">$ref</code>
+members not resolving to the address that DapperDox is serving the files from.</p>
 
-<p>With a single specification, DapperDox will present the <a href="/docs/glossary-terms#specification-summary-page" rel="nofollow">specification summary page</a> as the homepage (<code class="hljs-keyword">http://localhost:3128/</code>)
-where the all APIs defined by the specification are listed.</p>
+<p>To correct this, you can tell DapperDox to automatically rewrite all specification references so that they correctly
+resolve to the running DapperDox instance.</p>
 
-<p>With multiple specifications, DapperDox presents the <a href="/docs/glossary-terms#specification-list-page" rel="nofollow">specification list page</a>
-which catalogues each of the API specifications available.</p>
-<h2><a name="single-specifications" class="anchor" href="#single-specifications" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Single specifications</h2>
+<p>For example, if the above example specification has been written with <code class="hljs-keyword">http://mydomain.com/swagger-2.0/</code> as its base URL,
+such that the main swagger specification would be found at <code class="hljs-keyword">http://mydomain.com/swagger-2.0/spec/swagger.json</code>, and if
+DapperDox is serving files from address <code class="hljs-keyword">http://localhost:3123</code>, at the directory <code class="hljs-keyword">/users/api_specs/</code> and down,
+then we need to rewrite all references to <code class="hljs-keyword">http://mydomain.com/swagger-2.0/</code> in the specification as <code class="hljs-keyword">http://localhost:3123/</code>.</p>
 
-<p>Point DapperDox at the directory containing your Swagger specification using the <code class="hljs-keyword">-spec-dir</code> configuration
-parameter, where DapperDox will look for the file <code class="hljs-keyword">swagger.json</code>. If your specification has a different
-filename, specify this with the <code class="hljs-keyword">-spec-filename</code> parameter.</p>
+<p>To do this, pass the <code class="hljs-keyword">-spec-rewrite-url</code> option to DapperDox:</p>
 
-<p>On launching DapperDox, the first web page shown will be the
-<a href="/docs/glossary-terms#specification-summary-page" rel="nofollow">specification summary page</a>
-where the all APIs defined by the specification are listed.</p>
-<h2><a name="multiple-specifications" class="anchor" href="#multiple-specifications" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Multiple specifications</h2>
-
-<p>DapperDox can document a suite of API specifications at once. This allows you to present
-a portfolio of API products under a single website.</p>
-
-<p>For example, an organisation could provide the following APIs:</p>
-
-<ol>
-<li>A public data API</li>
-<li>A streaming API</li>
-<li>A product ordering API</li>
-<li>An OAuth2 authentication service</li>
-</ol>
-
-<p>These APIs collectively form a coherent suite of products, in that they all make use of the authentication
-service and provide different types of access to the same data underlying business data. The choice of which
-API to use depends on the customer or business need.</p>
-
-<p>DapperDox can be asked to render documentation for all of the above four specifications, by placing
-them beneath a common parent directory, specified by the <code class="hljs-keyword">-spec-dir</code> option, and passing each relative
-specification path with multiple <code class="hljs-keyword">-spec-filename=</code> options.</p>
-
-<p>For example, this specification directory tree could be structured as:</p>
-
-<pre><code><code class="hljs-keyword">/user/api_specs/streaming/swagger.json
-/user/api_specs/public/swagger.json
-/user/api_specs/ordering/swagger.json
-/user/api_specs/authorisation/swagger.json
+<pre><code><code class="hljs-keyword">-spec-rewrite-url=http://mydomain.com/swagger-2.0 \
+-site-url=http://localhost:3123
 </code></code></pre>
 
-<p>for which, DapperDox would be configured with:</p>
+<p>This rewrites the part of a URL that matches the value given by <code class="hljs-keyword">-spec-rewrite-url</code> as the value given by <code class="hljs-keyword">-site-url</code>.</p>
 
-<pre><code><code class="hljs-keyword">-spec-dir=/user/api_specs \
--spec-filename=streaming/swagger.json \
--spec-filename=public/swagger.json \
--spec-filename=ordering/saggier.json \
--spec-filename=authorisation/swagger.json
-</code></code></pre>
+<blockquote>
+<p>Note that only <strong>absolute</strong> <code class="hljs-keyword">$ref</code> references are allowed in a Swagger specification. Relative references in JSON
+files generally do not resolve consistently, because the concept of what the reference is relative <em>to</em> changes from
+file to file.</p>
+</blockquote>
 
-<p>producing an initial documentation page of:</p>
-
-<div class="img-border"><div class="fiximage img-responsive"><img src="/images/api_suite.png"/></div></div>
-
-<p>Each specification loaded by DapperDox will be assigned its own <a href="#specification-identifiers" rel="nofollow">specification ID</a>.</p>
-<h2><a name="specification-identifiers" class="anchor" href="#specification-identifiers" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Specification identifiers</h2>
-
-<p>DapperDox assigns a specification it&#39;s own identifier, and it&#39;s own base documentation URL. It derives the ID from the
-specifications <code class="hljs-keyword">info.title</code> member, which it lower-cases and hyphen delimits
-(<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab casing</a>).
-For example, the
-streaming API has a title of &#34;Streaming Data API&#34;, which DapperDox converts into a specification ID of <code class="hljs-keyword">streaming-data-api</code>.</p>
-
-<p>The base documentation URL for a specification will be:</p>
-
-<p><code class="hljs-keyword">http://localhost:3123/{specification-ID}/</code></p>
-
-<p>Thus, the streaming API example above would have a base URL of <code class="hljs-keyword">http://localhost:3123/streaming-data-api/</code>.</p>
-
-<p>It is important to know the specification ID when authoring <a href="/docs/author-guides" rel="nofollow">guides</a> and documentation
-<a href="/docs/author-overlays" rel="nofollow">overlays</a>.</p>
+<p>See <a href="/docs/rewrite-spec" rel="nofollow">Rewriting specification URLs</a> for further details.
+<script>hljs.initHighlightingOnLoad();</script></p>
 
 		</div>
       </div>
@@ -245,7 +193,7 @@ streaming API has a title of &#34;Streaming Data API&#34;, which DapperDox conve
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

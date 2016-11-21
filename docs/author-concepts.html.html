@@ -149,18 +149,72 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1>API explorer concepts</h1>
+            <h1><a name="authoring-content-concepts" class="anchor" href="#authoring-content-concepts" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authoring content concepts</h1>
 
-<p>The DapperDox in-page API explorer is similar in function to <em>swagger-ui</em> as it allows user's to try out API calls
-from within the reference page, without needing to write any client code.</p>
+<p>DapperDox combines reference documentation automatically generated from OpenAPI Swagger specifications
+with other authored content to produce rich, browsable, API documentation.</p>
+<h2><a name="assets" class="anchor" href="#assets" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Assets</h2>
 
-<p>The DapperDox in-page API explorer detects when a method is configured as authenticated, and prompts for appropriate
-credentials to be supplied as part of the request being explored. These could be one of API key or an OAuth2 access token.</p>
+<p>Any additional content that DapperDox imports and combines with reference documentation is known
+as an asset. Assets can be HTML,
+<a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/" rel="nofollow">GitHub Flavoured Markdown</a> (GFM),
+and static resources such as images.</p>
 
-<p>If you have, or are building, a developer site that allows users to register for and manage their own API keys, you may want 
-DapperDox to integrate with that site, so that a user's API keys are automatically available to the explorer once the user has
-signed-in. DapperDox provides a simple JavaScript interface via which you can pass API keys to the explorer, through a piece
-of custom Javascript.</p>
+<p>Assets are split into two groups:</p>
+
+<ol>
+<li>Those applied across the suite of specifications being served</li>
+<li>Those applied to particular specifications</li>
+</ol>
+
+<p>Within these groups, assets divide into three categories:</p>
+
+<ol>
+<li>Authored documentation, referred to as <a href="/docs/author-guides" rel="nofollow">guides</a></li>
+<li><a href="/docs/author-overlays" rel="nofollow">Content overlays</a>, containing documentation to be injected into API reference pages</li>
+<li>Static resources such as images, which are used by guides or overlays.</li>
+</ol>
+<h3><a name="assets-directory-structure" class="anchor" href="#assets-directory-structure" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Assets directory structure</h3>
+
+<ul>
+<li><code class="hljs-keyword">{local_assets}/</code>
+
+<ul>
+<li><code class="hljs-keyword">templates/</code>
+
+<ul>
+<li><code class="hljs-keyword">guides/</code></li>
+<li><code class="hljs-keyword">reference/</code></li>
+<li><code class="hljs-keyword">resource/</code></li>
+</ul></li>
+<li><code class="hljs-keyword">static/</code></li>
+<li><code class="hljs-keyword">sections/</code>
+
+<ul>
+<li><code class="hljs-keyword">{specification-ID}/</code>
+
+<ul>
+<li><code class="hljs-keyword">templates/</code>
+
+<ul>
+<li><code class="hljs-keyword">guides/</code></li>
+<li><code class="hljs-keyword">reference/</code></li>
+<li><code class="hljs-keyword">resource/</code></li>
+</ul></li>
+<li><code class="hljs-keyword">static/</code></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>For example, <code class="hljs-keyword">{local_assets}/templates/</code> contains assets that are applied across the suite of specifications.
+<code class="hljs-keyword">{local_assets}/sections/{specification-ID}/templates/</code> contains assets that are applied to a particular specification.</p>
+<h3><a name="configuring-assets" class="anchor" href="#configuring-assets" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Configuring assets</h3>
+
+<p>DapperDox is directed to your assets through the <code class="hljs-keyword">--assets-dir</code> <a href="/docs/configuration-guide" rel="nofollow">configuration</a> option.</p>
 
 		</div>
       </div>
@@ -176,7 +230,7 @@ of custom Javascript.</p>
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

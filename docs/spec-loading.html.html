@@ -149,67 +149,87 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="reverse-proxy" class="anchor" href="#reverse-proxy" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reverse proxy</h1>
+            <h1><a name="loading-specifications" class="anchor" href="#loading-specifications" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Loading specifications</h1>
 
-<p>DapperDox can proxy URL paths to other services. This allows multiple services to be
-accessed from the same domain as DapperDox, such as user API key management, user sign-on,
-and services to provide API keys and other credentials to DapperDox&#39;s API explorer.</p>
+<p>DapperDox can document a single API specification, or a suite of API specification at once.</p>
 
-<div class="img-border"><div class="fiximage"><img src="/images/proxy_diag.svg"/></div></div>
+<p>With a single specification, DapperDox will present the <a href="/docs/glossary-terms#specification-summary-page" rel="nofollow">specification summary page</a> as the homepage (<code class="hljs-keyword">http://localhost:3128/</code>)
+where the all APIs defined by the specification are listed.</p>
 
-<p>The exposed path, for example <code class="hljs-keyword">/forum/some-page</code>, is passed through to the proxied service,
-therefore the service must be configured to recognise and respond to that path. DapperDox
-does not rewrite requests or response pages.</p>
-<h2><a name="configuring" class="anchor" href="#configuring" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Configuring</h2>
+<p>With multiple specifications, DapperDox presents the <a href="/docs/glossary-terms#specification-list-page" rel="nofollow">specification list page</a>
+which catalogues each of the API specifications available.</p>
+<h2><a name="single-specifications" class="anchor" href="#single-specifications" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Single specifications</h2>
 
-<p>A reverse proxy configuration for DapperDox consist of two parts.</p>
+<p>Point DapperDox at the directory containing your Swagger specification using the <code class="hljs-keyword">-spec-dir</code> configuration
+parameter, where DapperDox will look for the file <code class="hljs-keyword">swagger.json</code>. If your specification has a different
+filename, specify this with the <code class="hljs-keyword">-spec-filename</code> parameter.</p>
+
+<p>On launching DapperDox, the first web page shown will be the
+<a href="/docs/glossary-terms#specification-summary-page" rel="nofollow">specification summary page</a>
+where the all APIs defined by the specification are listed.</p>
+<h2><a name="multiple-specifications" class="anchor" href="#multiple-specifications" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Multiple specifications</h2>
+
+<p>DapperDox can document a suite of API specifications at once. This allows you to present
+a portfolio of API products under a single website.</p>
+
+<p>For example, an organisation could provide the following APIs:</p>
 
 <ol>
-<li>A URL path prefix to forward.</li>
-<li>A host (and an optional path) to forward on to.</li>
+<li>A public data API</li>
+<li>A streaming API</li>
+<li>A product ordering API</li>
+<li>An OAuth2 authentication service</li>
 </ol>
 
-<p>These are supplied to DapperDox through the <code class="hljs-keyword">-proxy-path</code> configuration option, which takes
-the form</p>
+<p>These APIs collectively form a coherent suite of products, in that they all make use of the authentication
+service and provide different types of access to the same data underlying business data. The choice of which
+API to use depends on the customer or business need.</p>
 
-<pre><code><code class="hljs-keyword">-proxy-path=source-path=service-host/destination-path/
+<p>DapperDox can be asked to render documentation for all of the above four specifications, by placing
+them beneath a common parent directory, specified by the <code class="hljs-keyword">-spec-dir</code> option, and passing each relative
+specification path with multiple <code class="hljs-keyword">-spec-filename=</code> options.</p>
+
+<p>For example, this specification directory tree could be structured as:</p>
+
+<pre><code><code class="hljs-keyword">/user/api_specs/streaming/swagger.json
+/user/api_specs/public/swagger.json
+/user/api_specs/ordering/swagger.json
+/user/api_specs/authorisation/swagger.json
 </code></code></pre>
 
-<blockquote>
-<p>If the proxied host declaration contains the optional <code class="hljs-keyword">/destination-path/</code> then that path
-will <strong>prefix</strong> the source path in the forwarded request, becoming
-<code class="hljs-keyword">/destination-path/source-path</code>.</p>
-</blockquote>
+<p>for which, DapperDox would be configured with:</p>
 
-<p>Multiple proxy configurations can be supplied to DapperDox, by repeating the
-<code class="hljs-keyword">-proxy-path</code> configuration option (or comma separating the values if you are using
-environment variables for configuration).</p>
-
-<p>The configuration for the above example would be:</p>
-
-<pre><code><code class="hljs-keyword">-proxy-path=/user/sign-on/=https://192.168.10.1 \
--proxy-path=/forum/=https://192.168.10.2 \
--proxy-path=/applications/=https://192.168.10.3
+<pre><code><code class="hljs-keyword">-spec-dir=/user/api_specs \
+-spec-filename=streaming/swagger.json \
+-spec-filename=public/swagger.json \
+-spec-filename=ordering/saggier.json \
+-spec-filename=authorisation/swagger.json
 </code></code></pre>
 
-<p>or with environment variables:</p>
+<p>producing an initial documentation page of:</p>
 
-<pre><code><code class="hljs-keyword">export PROXY_PATH=/user/sign-on/=https://192.168.10.1,/forum/=https://192.168.10.2,/applications/=https://192.168.10.3
-</code></code></pre>
-<h2><a name="secure-connections" class="anchor" href="#secure-connections" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Secure connections</h2>
+<div class="img-border"><div class="fiximage img-responsive"><img src="/images/api_suite.png"/></div></div>
 
-<p>DapperDox can proxy between <code class="hljs-keyword">HTTP</code> and <code class="hljs-keyword">HTTPS</code> connections, or vice versa.
-However, care should be taken to avoid <a href="https://developers.google.com/web/fundamentals/security/prevent-mixed-content/what-is-mixed-content" rel="nofollow">mixed content</a> issues when
-DapperDox is configured to serve content over <code class="hljs-keyword">HTTPS</code> and you are proxying to an <code class="hljs-keyword">HTTP</code>
-service.</p>
-<h2><a name="error-handling" class="anchor" href="#error-handling" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Error handling</h2>
+<p>Each specification loaded by DapperDox will be assigned its own <a href="#specification-identifiers" rel="nofollow">specification ID</a>.</p>
+<h2><a name="specification-identifiers" class="anchor" href="#specification-identifiers" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Specification identifiers</h2>
 
-<p>Once a path is forwarded, DapperDox hands all response generation onto the proxied service.
-This means that all responses generated by the service, including <code class="hljs-keyword">404 Page not found</code>,
-are passed back to the client untouched.</p>
+<p>DapperDox assigns a specification it&#39;s own identifier, and it&#39;s own base documentation URL. It derives the ID from the
+specifications <code class="hljs-keyword">info.title</code> member, which it lower-cases and hyphen delimits
+(<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab casing</a>).
+For example, the
+streaming API has a title of &#34;Streaming Data API&#34;, which DapperDox converts into a specification ID of <code class="hljs-keyword">streaming-data-api</code>.</p>
+
+<p>The base documentation URL for a specification will be:</p>
+
+<p><code class="hljs-keyword">http://localhost:3123/{specification-ID}/</code></p>
+
+<p>Thus, the streaming API example above would have a base URL of <code class="hljs-keyword">http://localhost:3123/streaming-data-api/</code>.</p>
+
+<p>It is important to know the specification ID when authoring <a href="/docs/author-guides" rel="nofollow">guides</a> and documentation
+<a href="/docs/author-overlays" rel="nofollow">overlays</a>.</p>
 
 		</div>
       </div>
@@ -225,7 +245,7 @@ are passed back to the client untouched.</p>
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

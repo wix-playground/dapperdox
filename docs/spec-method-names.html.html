@@ -149,67 +149,78 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="metadata" class="anchor" href="#metadata" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Metadata</h1>
+            <h1><a name="controlling-method-names" class="anchor" href="#controlling-method-names" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Controlling method names</h1>
+<h2><a name="methods-and-operations" class="anchor" href="#methods-and-operations" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Methods and operations</h2>
 
-<p>Metadata can be added to the start of guide documentation written in
-<a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/" rel="nofollow">GitHub Flavoured Markdown</a>
-(GFM) to control and configure its entry in the site navigation.</p>
+<p>DapperDox allows you to control the name of each method operation, and how methods are represented in the navigation.</p>
 
-<p>The following metadata is recognised by DapperDox. All other metadata entries will be ignored.</p>
-<h2><a name="navigation" class="anchor" href="#navigation" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Navigation</h2>
+<p>By default the HTTP method is used (<code class="hljs-keyword">GET</code>, <code class="hljs-keyword">POST</code>, <code class="hljs-keyword">PUT</code> etc), as is usual for RESTful API specifications. Even so, it is
+often the case that a resource will be given two <code class="hljs-keyword">GET</code> methods, one which returns a single resource, and one that
+returns a list. This is clearly confusing for the reader, so in the latter case it would be clearer for the list method
+to be identified as such.</p>
 
-<p>The <code class="hljs-keyword">Navigation</code> metadata entry describes how the page is integrated into the site navigation. The navigation value is a
-path that defines the page placement in the navigation tree. With the default theme, guides are placed <em>before</em> the
-reference documentation in the navigation.</p>
+<p>To do this, DapperDox introduces the concept of a method <strong>operation</strong>, which usually has the same value as the
+HTTP method, but may be overridden on a per-method basis by the <code class="hljs-keyword">x-operationName</code> extension:</p>
 
-<p>For example, a page containing the metadata <code class="hljs-keyword">Navigation: Examples/A markdown example</code> creates a navigation section called
-<em>Examples</em> and places that page beneath it, with the description <em>A markdown example</em>.</p>
-<h2><a name="sortorder" class="anchor" href="#sortorder" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-SortOrder</h2>
+<div class="highlight highlight-json"><pre><code>{
+    &#34;paths&#34;: {
+        &#34;/products&#34;: {
+            &#34;get&#34;: {
+                &#34;x-operationName&#34;: &#34;list&#34;,
+                &#34;summary&#34;: &#34;List products&#34;,
+                &#34;description&#34;: &#34;Returns a list of products&#34;
+                &#34;tags&#34;: [&#34;Products&#34;]
+            },
+            &#34;post&#34;: {
+                &#34;summary&#34;: &#34;Create a product&#34;,
+                &#34;description&#34;: &#34;Create a new product type&#34;
+                &#34;tags&#34;: [&#34;Products&#34;]
+            }
+        },
+        &#34;/products/{id}&#34;: {
+            &#34;get&#34;: {
+                &#34;summary&#34;: &#34;Get a product&#34;,
+                &#34;description&#34;: &#34;Returns a products&#34;
+                &#34;tags&#34;: [&#34;Products&#34;]
+            }
+        }
+    }
+}
+</code></pre></div>
 
-<p>The order in which guides are listed in the page side navigation is controlled with <code class="hljs-keyword">SortOrder</code> metadata.
-<code class="hljs-keyword">SortOrder</code> can take any alphanumeric string, but may be clearer if numeric only values are used.
-Each page is assigned the sort order defined by the metadata, otherwise it is assigned the relative URI path
-(<code class="hljs-keyword">/guides/.....</code>) as its sort order.</p>
+<p>The methods in the above example would be grouped together because they are similarly tagged, and the confusion between
+the two <code class="hljs-keyword">GET</code> methods resolved by giving one the operation name of <code class="hljs-keyword">list</code>. Thus, the three methods would be described in the
+navigation and API list page as being <code class="hljs-keyword">list</code>, <code class="hljs-keyword">post</code> and <code class="hljs-keyword">get</code>. The HTTP methods assigned to each (get, post and get) remain unchanged.</p>
 
-<p>Where pages are grouped by a parent section, the parent section receives the lowest sort order of its
-children, unless it is a page in its own right.
-Assigning a numeric sort order range per section makes it easy to manage the ordering of sections,
-and the pages within a section. This can be illustrated by the following tree, where pages have been give
-numeric <code class="hljs-keyword">SortOrder</code> metadata entries, assigning blocks of 100 per section:</p>
+<p>This technique can also be used to override <code class="hljs-keyword">GET</code> to <code class="hljs-keyword">fetch</code>, <code class="hljs-keyword">POST</code> to <code class="hljs-keyword">create</code>, <code class="hljs-keyword">PUT</code> to <code class="hljs-keyword">update</code> and so on.</p>
+<h2><a name="navigating-by-method-name" class="anchor" href="#navigating-by-method-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Navigating by method name</h2>
 
-<ul>
-<li>100 Overview
+<p>Where an OpenAPI specification is describing a non-RESTful set of APIs, they are often grouped together and share the same
+HTTP method. For example, two <code class="hljs-keyword">GET</code> methods having respective <code class="hljs-keyword">summary</code> texts of <code class="hljs-keyword">lookup product by ID</code> and <code class="hljs-keyword">lookup product by barcode</code>
+would probably be listed together, both being product APIs. As they are both <code class="hljs-keyword">get</code> methods, the reader would be unable to tell them
+apart if they are both referred to as <code class="hljs-keyword">get</code> operations in the API navigation. By adding the <code class="hljs-keyword">&#34;x-navigateMethodsByName&#34; : true</code>
+extension to the top level OpenAPI specification, you can force DapperDox to describe each operation in the navigation using its
+<code class="hljs-keyword">summary</code> text instead of its operation name or HTTP method. The methods will continue to be referred to by operation name or
+HTTP method in API pages.</p>
 
-<ul>
-<li>100 - A page</li>
-<li>150 - Another page</li>
-</ul></li>
-<li>210 Getting Started
+<div class="highlight highlight-json"><pre><code>{
+    &#34;swagger&#34;: &#34;2.0&#34;,
+    &#34;x-navigateMethodsByName&#34;: true,
+    &#34;info&#34;: {
+        &#34;title&#34;: &#34;Example API&#34;,
+        &#34;description&#34;: &#34;The only way is up&#34;,
+        &#34;version&#34;: &#34;1.0.0&#34;
+    }
+}
+</code></pre></div>
 
-<ul>
-<li>210 - Getting started page one</li>
-<li>250 - Getting started page two</li>
-</ul></li>
-<li>300 Examples
+<p>An example of this modifier being used in practice is the example Petstore specification provided with
+DapperDox. As the Petstore API is not REST, the example specification has the <code class="hljs-keyword">x-navigationMethodsByName</code>
+member applied, forcing the use of the operations summary text in the navigation menu.</p>
 
-<ul>
-<li>300 - Examples page one</li>
-<li>350 - Examples page two</li>
-</ul></li>
-<li>400 Top level page one</li>
-<li>420 Top level page two</li>
-</ul>
-<h2><a name="overlay" class="anchor" href="#overlay" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Overlay</h2>
-
-<p>You may provide GitHub Flavoured Markdown pages containing content to be overlaid on top of reference
-documentation generated by DapperDox. These pages are marked as such with the boolean metadata entry
-<code class="hljs-keyword">Overlay: true</code>.</p>
-
-<p>Special embedded tags within the GFM page target sections within API, method and resource pages, inserting
-the associated documentation at those sections. See <a href="/docs/author-overlays" rel="nofollow">Overlays</a> for further details.</p>
+<p><script>hljs.initHighlightingOnLoad();</script></p>
 
 		</div>
       </div>
@@ -225,7 +236,7 @@ the associated documentation at those sections. See <a href="/docs/author-overla
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

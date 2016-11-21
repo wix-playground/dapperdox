@@ -149,166 +149,124 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="resource-definitions" class="anchor" href="#resource-definitions" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resource definitions</h1>
-<h2><a name="resource-title" class="anchor" href="#resource-title" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Resource title</h2>
+            <h1><a name="dapperdox-configuration" class="anchor" href="#dapperdox-configuration" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>DapperDox configuration</h1>
 
-<p>When specifying a resource <a href="http://swagger.io/specification/#schemaObject" rel="nofollow">schema object</a>, either as a
-<a href="http://swagger.io/specification/#definitionsObject" rel="nofollow">definitions object</a> that can be consumed or produced by
-an operation, or as an inline schema object, DapperDox <strong>requires</strong> that the optional
-<a href="http://swagger.io/specification/#schemaObject" rel="nofollow">schema object</a>
-<code class="hljs-keyword">title</code> member is present.</p>
-
-<p>DapperDox uses the <code class="hljs-keyword">title</code> member to give the resource a name in the documentation it produces.</p>
-
-<p>For example, the operation <code class="hljs-keyword">GET /store/inventory</code> in the petstore example specification
-<code class="hljs-keyword">examples/specifications/petstore/swagger.json</code>, has a response schema with a <code class="hljs-keyword">title</code> of &#34;Quantities&#34;:</p>
-
-<pre><code><code class="hljs-keyword">{
-    &#34;/store/inventory&#34;: {
-        &#34;get&#34;: {
-            &#34;tags&#34;: [&#34;store&#34;],
-            &#34;summary&#34;: &#34;Returns pet inventories by status&#34;,
-            &#34;description&#34;: &#34;Returns a map of status codes to quantities&#34;,
-            &#34;operationId&#34;: &#34;getInventory&#34;,
-            &#34;produces&#34;: [&#34;application/json&#34;],
-            &#34;parameters&#34;: [],
-            &#34;responses&#34;: {
-                &#34;200&#34;: {
-                    &#34;description&#34;: &#34;successful operation&#34;,
-                    &#34;schema&#34;: {
-                        &#34;type&#34;: &#34;object&#34;,
-                        &#34;title&#34;:&#34;Quantities&#34;,
-                        &#34;additionalProperties&#34;: {
-                            &#34;type&#34;: &#34;integer&#34;,
-                            &#34;format&#34;: &#34;int32&#34;
-                        }
-                    }
-                }
-            },
-            &#34;security&#34;: [{
-                &#34;api_key&#34;: []
-            }]
-        }
-    },
-}
-</code></code></pre>
-
-<p>Without a <code class="hljs-keyword">title</code> member, DapperDox would produce the error:</p>
-
-<pre><code><code class="hljs-keyword">Error: GET /store/inventory references a model definition that does not have a title member.
-</code></code></pre>
-<h2><a name="excluding-request-body-members-from-operations" class="anchor" href="#excluding-request-body-members-from-operations" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Excluding request body members from operations</h2>
-
-<p>In some scenarios, you might want your reference documentation to show a filtered request body resource.</p>
-
-<p>To understand why, consider the following trivial <code class="hljs-keyword">Orders</code> resource used by a fictional REST API:</p>
-
-<pre><code><code class="hljs-keyword">{
-    &#34;order_number&#34; : &#34;string&#34;,
-    &#34;order_date&#34; : &#34;date-time&#34;,
-    &#34;reference&#34;: &#34;string&#34;,
-    &#34;order_status&#34;: &#34;string&#34;
-}
-</code></code></pre>
-
-<p>In this hypothetical example, some of these members are read-only, being automatically populated when the resource
-is created, and some are supplied by the client when creating the resource which cannot be modified afterwards.</p>
-
-<p>The following table shows which members can be set or modified by a <code class="hljs-keyword">POST</code> or <code class="hljs-keyword">PUT</code> and are returned by a <code class="hljs-keyword">GET</code>:</p>
+<p>DapperDox can be configured using command line options or, in line with the <a href="https://12factor.net/" rel="nofollow">twelve-factor app</a> recommendations, through environment variables.</p>
+<h2><a name="configuration-options" class="anchor" href="#configuration-options" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Configuration options</h2>
 
 <table class="table table-striped">
 <thead>
 <tr>
-<th>Member</th>
-<th class="center">POST</th>
-<th class="center">PUT</th>
-<th class="center">GET</th>
+<th>Option</th>
+<th>Environment variable</th>
+<th>Description</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td><code class="hljs-keyword">order_number</code></td>
-<td align="center">✘</td>
-<td align="center">✘</td>
-<td align="center">✔</td>
+<td><code class="hljs-keyword">-assets-dir</code></td>
+<td><code class="hljs-keyword">ASSETS_DIR</code></td>
+<td>Assets to serve. Effectively the document root.</td>
 </tr>
 
 <tr>
-<td><code class="hljs-keyword">order_date</code></td>
-<td align="center">✔</td>
-<td align="center">✘</td>
-<td align="center">✔</td>
+<td><code class="hljs-keyword">-bind-addr</code></td>
+<td><code class="hljs-keyword">BIND_ADDR</code></td>
+<td>IP address and port number that DapperDox should serve content from. Value takes the form <code class="hljs-keyword">&lt;IP address&gt;:&lt;port&gt;</code>.</td>
 </tr>
 
 <tr>
-<td><code class="hljs-keyword">reference</code></td>
-<td align="center">✔</td>
-<td align="center">✔</td>
-<td align="center">✔</td>
+<td><code class="hljs-keyword">-default-assets-dir</code></td>
+<td><code class="hljs-keyword">DEFAULT_ASSETS_DIR</code></td>
+<td>Used to point DapperDox at its default assets. You Will need to provide this option if you are not running DapperDox from within it&#39;s distribution directory. For example, if you invoke DapperDox as <code class="hljs-keyword">&lt;path_to_dapperdox_distribution&gt;/dapperdox</code> then you must pass this configuration option as <code class="hljs-keyword">-default-assets-dir=&lt;path_to_dapperdox_distribution&gt;/assets</code>.</td>
 </tr>
 
 <tr>
-<td><code class="hljs-keyword">order_status</code></td>
-<td align="center">✘</td>
-<td align="center">✔</td>
-<td align="center">✔</td>
+<td><code class="hljs-keyword">-document-rewrite-url</code></td>
+<td><code class="hljs-keyword">DOCUMENT_REWRITE_URL</code></td>
+<td>Specify a URL that is to be rewritten in the documentation. May be multiply defined. Format is from=to. This is applied to assets, not to OpenAPI specification generated text.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-log-level</code></td>
+<td><code class="hljs-keyword">LOGLEVEL</code></td>
+<td>Log level (<code class="hljs-keyword">info</code>, <code class="hljs-keyword">debug</code>, <code class="hljs-keyword">trace</code>)</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-spec-dir</code></td>
+<td><code class="hljs-keyword">SPEC_DIR</code></td>
+<td>OpenAPI specification (swagger) directory.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-spec-filename</code></td>
+<td><code class="hljs-keyword">SPEC_FILENAME</code></td>
+<td>The filename of the OpenAPI specification file within the spec-dir. Defaults to spec/swagger.json</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-site-url</code></td>
+<td><code class="hljs-keyword">SITE_URL</code></td>
+<td>Public URL of the documentation service. Used by <code class="hljs-keyword">-spec-rewrite-url</code> if no <code class="hljs-keyword">=to</code> is supplied to the rewrite.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-spec-rewrite-url</code></td>
+<td><code class="hljs-keyword">SPEC_REWRITE_URL</code></td>
+<td>The URLs in the OpenAPI specifications to be rewritten as <code class="hljs-keyword">site-url</code>, or to the <code class="hljs-keyword">to</code> URL if the value given is of the form from=to. Applies to OpenAPI specification text, not asset files.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-theme</code></td>
+<td><code class="hljs-keyword">THEME</code></td>
+<td>Name of the theme to render documentation.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-themes-dir</code></td>
+<td><code class="hljs-keyword">THEMES_DIR</code></td>
+<td>Directory containing installed themes.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-force-specification-list</code></td>
+<td><code class="hljs-keyword">FORCE_SPECIFICATION_LIST</code></td>
+<td>When DapperDox is serving a single OpenAPI specification, then by default it will show the API summary page when serving the homepage. Instead, you can force DapperDox to show the list of available specifications (as it would if there were more than one specification) with this option. This is necessary if you have global documentation guides which live outside the specification. Takes the value <code class="hljs-keyword">true</code> or <code class="hljs-keyword">false</code>.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-author-show-assets</code></td>
+<td><code class="hljs-keyword">AUTHOR_SHOW_ASSETS</code></td>
+<td>Setting this value to <code class="hljs-keyword">true</code> will enable an <em>assets search path</em> pane at the foot of every API reference page. This shows the path order that DapperDox will scan to find GFM content overlay or replacement files. Takes the value <code class="hljs-keyword">true</code> or <code class="hljs-keyword">false</code>.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-proxy-path</code></td>
+<td><code class="hljs-keyword">PROXY_PATH</code></td>
+<td>Configures a path prefix that is to be reverse-proxied to another service. Value takes the form <code class="hljs-keyword">source-path=service-host/destination/path</code>. If <code class="hljs-keyword">destination-path</code> is given, this will prefix the <code class="hljs-keyword">source-path</code> that is passed to the service. See <a href="/docs/proxy-configure" rel="nofollow">reverse proxy</a> for further details..</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-tls-certificate</code></td>
+<td><code class="hljs-keyword">TLS_CERTIFICATE</code></td>
+<td>Enables HTTPS. The path and filename of the TLS certificate to load. Must be accompanied by the <code class="hljs-keyword">-tls-key</code> configuration.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-tls-key</code></td>
+<td><code class="hljs-keyword">TLS_KEY</code></td>
+<td>Enables HTTPS. The path and filename of the TLS private key to load. Must be accompanied by the <code class="hljs-keyword">-tls-certificate</code> configuration.</td>
 </tr>
 </tbody>
 </table>
+<h2><a name="multiple-values" class="anchor" href="#multiple-values" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Multiple values</h2>
 
-<p>For instance, the <code class="hljs-keyword">reference</code> member can be set, modified and returned by all three methods, whereas
-<code class="hljs-keyword">order_date</code> can be set on creation (<code class="hljs-keyword">POST</code>), and returned by the <code class="hljs-keyword">GET</code>, but not subsequently modified (<code class="hljs-keyword">PUT</code>).</p>
-
-<p>As a REST API, it is expected that the same resource would be produced and consumed by all methods
-acting on its URI. However, as there are subtle differences in which members can be written or read for each
-method, it might be tempting to define a <em>different</em> resource for each method so that only the significant members
-for the consumed or produced resource are shown in the documentation.
-Doing so would break this <em>&#34;identification of resources&#34;</em> principle, where the URI represents a single resource.</p>
-
-<p>It is usually in the documentation of such APIs that complexity arises, not in the API specification itself.</p>
-
-<p>DapperDox will automatically exclude read-only resource members from the documentation of an operation&#39;s request
-body (since they can only be sent to writable operations). It also gives you control over which members should be
-excluded from an operation&#39;s request body documentation, through the <code class="hljs-keyword">x-excludeFromOperations</code> member, added
-to relevant resource properties.</p>
-
-<p><code class="hljs-keyword">x-excludeFromOperations</code> takes an array of string, with each value being the operation name (which is either
-the HTTP method name <code class="hljs-keyword">get</code>, <code class="hljs-keyword">post</code>, <code class="hljs-keyword">put</code> and so on, or the <code class="hljs-keyword">x-operationName</code>, if defined.
-See <a href="/docs/spec-method-names" rel="nofollow">controlling method names</a> for further details).</p>
-
-<p>The following specification segment illustrates the use of <code class="hljs-keyword">readOnly</code> and <code class="hljs-keyword">x-excludeFromOperations</code>
-to control the documentation of the resource when presented as a request body:</p>
-
-<pre><code><code class="hljs-keyword">{
-    &#34;Orders&#34;: {
-        &#34;title&#34; : &#34;Orders&#34;,
-        &#34;type&#34;: &#34;object&#34;,
-        &#34;properties&#34;: {
-            &#34;order_number&#34;: {
-                &#34;type&#34;: &#34;string&#34;,
-                &#34;readOnly&#34;: true
-            },
-            &#34;order_date&#34;: {
-                &#34;type&#34;: &#34;string&#34;,
-                &#34;format&#34;: &#34;date-time&#34;,
-                &#34;x-excludeFromOperations&#34;: [&#34;put&#34;]
-            },
-            &#34;reference&#34;: {
-                &#34;type&#34;: &#34;string&#34;
-            },
-            &#34;order_status&#34;: {
-                &#34;type&#34;: &#34;string&#34;,
-                &#34;x-excludeFromOperations&#34;: [&#34;post&#34;]
-            }
-        }
-    }
-}
-</code></code></pre>
-
-<p><script>hljs.initHighlightingOnLoad();</script></p>
+<p>Some configuration parameters can take multiple values, either by specifying the parameter multiple times on the command lines, or by
+comma separating multiple values when using environment variables.</p>
 
 		</div>
       </div>
@@ -324,7 +282,7 @@ to control the documentation of the resource when presented as a request body:</
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

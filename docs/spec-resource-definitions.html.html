@@ -149,35 +149,166 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="resolving-references" class="anchor" href="#resolving-references" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolving references</h1>
+            <h1><a name="resource-definitions" class="anchor" href="#resource-definitions" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resource definitions</h1>
+<h2><a name="resource-title" class="anchor" href="#resource-title" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Resource title</h2>
 
-<p>It is common that a specification that is split over multiple files will fail to load the first time, caused by its <code class="hljs-keyword">$ref</code>
-members not resolving to the address that DapperDox is serving the files from.</p>
+<p>When specifying a resource <a href="http://swagger.io/specification/#schemaObject" rel="nofollow">schema object</a>, either as a
+<a href="http://swagger.io/specification/#definitionsObject" rel="nofollow">definitions object</a> that can be consumed or produced by
+an operation, or as an inline schema object, DapperDox <strong>requires</strong> that the optional
+<a href="http://swagger.io/specification/#schemaObject" rel="nofollow">schema object</a>
+<code class="hljs-keyword">title</code> member is present.</p>
 
-<p>To correct this, you can tell DapperDox to automatically rewrite all specification references so that they correctly
-resolve to the running DapperDox instance.</p>
+<p>DapperDox uses the <code class="hljs-keyword">title</code> member to give the resource a name in the documentation it produces.</p>
 
-<p>For example, if the above example specification has been written with <code class="hljs-keyword">http://mydomain.com/swagger-2.0/</code> as its base URL,
-such that the main swagger specification would be found at <code class="hljs-keyword">http://mydomain.com/swagger-2.0/spec/swagger.json</code>, and if
-DapperDox is serving files from address <code class="hljs-keyword">http://localhost:3123</code>, at the directory <code class="hljs-keyword">/users/api_specs/</code> and down,
-then we need to rewrite all references to <code class="hljs-keyword">http://mydomain.com/swagger-2.0/</code> in the specification as <code class="hljs-keyword">http://localhost:3123/</code>.</p>
+<p>For example, the operation <code class="hljs-keyword">GET /store/inventory</code> in the petstore example specification
+<code class="hljs-keyword">examples/specifications/petstore/swagger.json</code>, has a response schema with a <code class="hljs-keyword">title</code> of &#34;Quantities&#34;:</p>
 
-<p>To do this, pass the <code class="hljs-keyword">-spec-rewrite-url</code> option to DapperDox:</p>
-
-<pre><code><code class="hljs-keyword">-spec-rewrite-url=http://mydomain.com/swagger-2.0 \
--site-url=http://localhost:3123
+<pre><code><code class="hljs-keyword">{
+    &#34;/store/inventory&#34;: {
+        &#34;get&#34;: {
+            &#34;tags&#34;: [&#34;store&#34;],
+            &#34;summary&#34;: &#34;Returns pet inventories by status&#34;,
+            &#34;description&#34;: &#34;Returns a map of status codes to quantities&#34;,
+            &#34;operationId&#34;: &#34;getInventory&#34;,
+            &#34;produces&#34;: [&#34;application/json&#34;],
+            &#34;parameters&#34;: [],
+            &#34;responses&#34;: {
+                &#34;200&#34;: {
+                    &#34;description&#34;: &#34;successful operation&#34;,
+                    &#34;schema&#34;: {
+                        &#34;type&#34;: &#34;object&#34;,
+                        &#34;title&#34;:&#34;Quantities&#34;,
+                        &#34;additionalProperties&#34;: {
+                            &#34;type&#34;: &#34;integer&#34;,
+                            &#34;format&#34;: &#34;int32&#34;
+                        }
+                    }
+                }
+            },
+            &#34;security&#34;: [{
+                &#34;api_key&#34;: []
+            }]
+        }
+    },
+}
 </code></code></pre>
 
-<p>This rewrites the part of a URL that matches the value given by <code class="hljs-keyword">-spec-rewrite-url</code> as the value given by <code class="hljs-keyword">-site-url</code>.</p>
+<p>Without a <code class="hljs-keyword">title</code> member, DapperDox would produce the error:</p>
 
-<blockquote>
-<p>Note that only <strong>absolute</strong> <code class="hljs-keyword">$ref</code> references are allowed in a Swagger specification. Relative references in JSON
-files generally do not resolve consistently, because the concept of what the reference is relative <em>to</em> changes from
-file to file.</p>
-</blockquote>
+<pre><code><code class="hljs-keyword">Error: GET /store/inventory references a model definition that does not have a title member.
+</code></code></pre>
+<h2><a name="excluding-request-body-members-from-operations" class="anchor" href="#excluding-request-body-members-from-operations" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Excluding request body members from operations</h2>
 
-<p>See <a href="/docs/rewrite-spec" rel="nofollow">Rewriting specification URLs</a> for further details.
-<script>hljs.initHighlightingOnLoad();</script></p>
+<p>In some scenarios, you might want your reference documentation to show a filtered request body resource.</p>
+
+<p>To understand why, consider the following trivial <code class="hljs-keyword">Orders</code> resource used by a fictional REST API:</p>
+
+<pre><code><code class="hljs-keyword">{
+    &#34;order_number&#34; : &#34;string&#34;,
+    &#34;order_date&#34; : &#34;date-time&#34;,
+    &#34;reference&#34;: &#34;string&#34;,
+    &#34;order_status&#34;: &#34;string&#34;
+}
+</code></code></pre>
+
+<p>In this hypothetical example, some of these members are read-only, being automatically populated when the resource
+is created, and some are supplied by the client when creating the resource which cannot be modified afterwards.</p>
+
+<p>The following table shows which members can be set or modified by a <code class="hljs-keyword">POST</code> or <code class="hljs-keyword">PUT</code> and are returned by a <code class="hljs-keyword">GET</code>:</p>
+
+<table class="table table-striped">
+<thead>
+<tr>
+<th>Member</th>
+<th class="center">POST</th>
+<th class="center">PUT</th>
+<th class="center">GET</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code class="hljs-keyword">order_number</code></td>
+<td align="center">✘</td>
+<td align="center">✘</td>
+<td align="center">✔</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">order_date</code></td>
+<td align="center">✔</td>
+<td align="center">✘</td>
+<td align="center">✔</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">reference</code></td>
+<td align="center">✔</td>
+<td align="center">✔</td>
+<td align="center">✔</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">order_status</code></td>
+<td align="center">✘</td>
+<td align="center">✔</td>
+<td align="center">✔</td>
+</tr>
+</tbody>
+</table>
+
+<p>For instance, the <code class="hljs-keyword">reference</code> member can be set, modified and returned by all three methods, whereas
+<code class="hljs-keyword">order_date</code> can be set on creation (<code class="hljs-keyword">POST</code>), and returned by the <code class="hljs-keyword">GET</code>, but not subsequently modified (<code class="hljs-keyword">PUT</code>).</p>
+
+<p>As a REST API, it is expected that the same resource would be produced and consumed by all methods
+acting on its URI. However, as there are subtle differences in which members can be written or read for each
+method, it might be tempting to define a <em>different</em> resource for each method so that only the significant members
+for the consumed or produced resource are shown in the documentation.
+Doing so would break this <em>&#34;identification of resources&#34;</em> principle, where the URI represents a single resource.</p>
+
+<p>It is usually in the documentation of such APIs that complexity arises, not in the API specification itself.</p>
+
+<p>DapperDox will automatically exclude read-only resource members from the documentation of an operation&#39;s request
+body (since they can only be sent to writable operations). It also gives you control over which members should be
+excluded from an operation&#39;s request body documentation, through the <code class="hljs-keyword">x-excludeFromOperations</code> member, added
+to relevant resource properties.</p>
+
+<p><code class="hljs-keyword">x-excludeFromOperations</code> takes an array of string, with each value being the operation name (which is either
+the HTTP method name <code class="hljs-keyword">get</code>, <code class="hljs-keyword">post</code>, <code class="hljs-keyword">put</code> and so on, or the <code class="hljs-keyword">x-operationName</code>, if defined.
+See <a href="/docs/spec-method-names" rel="nofollow">controlling method names</a> for further details).</p>
+
+<p>The following specification segment illustrates the use of <code class="hljs-keyword">readOnly</code> and <code class="hljs-keyword">x-excludeFromOperations</code>
+to control the documentation of the resource when presented as a request body:</p>
+
+<pre><code><code class="hljs-keyword">{
+    &#34;Orders&#34;: {
+        &#34;title&#34; : &#34;Orders&#34;,
+        &#34;type&#34;: &#34;object&#34;,
+        &#34;properties&#34;: {
+            &#34;order_number&#34;: {
+                &#34;type&#34;: &#34;string&#34;,
+                &#34;readOnly&#34;: true
+            },
+            &#34;order_date&#34;: {
+                &#34;type&#34;: &#34;string&#34;,
+                &#34;format&#34;: &#34;date-time&#34;,
+                &#34;x-excludeFromOperations&#34;: [&#34;put&#34;]
+            },
+            &#34;reference&#34;: {
+                &#34;type&#34;: &#34;string&#34;
+            },
+            &#34;order_status&#34;: {
+                &#34;type&#34;: &#34;string&#34;,
+                &#34;x-excludeFromOperations&#34;: [&#34;post&#34;]
+            }
+        }
+    }
+}
+</code></code></pre>
+
+<p><script>hljs.initHighlightingOnLoad();</script></p>
 
 		</div>
       </div>
@@ -193,7 +324,7 @@ file to file.</p>
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

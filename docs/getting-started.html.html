@@ -149,72 +149,72 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="authoring-content-concepts" class="anchor" href="#authoring-content-concepts" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authoring content concepts</h1>
+            <h1><a name="getting-started" class="anchor" href="#getting-started" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting started</h1>
 
-<p>DapperDox combines reference documentation automatically generated from OpenAPI Swagger specifications
-with other authored content to produce rich, browsable, API documentation.</p>
-<h2><a name="assets" class="anchor" href="#assets" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Assets</h2>
+<p>The Getting Started guide shows you how to download and install DapperDox; how to quickly
+get an OpenAPI Swagger 2.0 specification rendered, and some useful configuration options
+to tune the presentation.</p>
+<h2><a name="download-dapperdox" class="anchor" href="#download-dapperdox" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Download DapperDox</h2>
 
-<p>Any additional content that DapperDox imports and combines with reference documentation is known
-as an asset. Assets can be HTML,
-<a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/" rel="nofollow">GitHub Flavoured Markdown</a> (GFM),
-and static resources such as images.</p>
+<p><a href="/downloads/download" rel="nofollow">Download the latest release</a> of DapperDox for you operating system, and unpack it.</p>
 
-<p>Assets are split into two groups:</p>
+<pre><code><code class="hljs-keyword">tar -zxf dapperdox-*.tgz
+cd dapperdox
+</code></code></pre>
+<h2><a name="basic-configuration" class="anchor" href="#basic-configuration" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Basic configuration</h2>
 
-<ol>
-<li>Those applied across the suite of specifications being served</li>
-<li>Those applied to particular specifications</li>
-</ol>
+<p>DapperDox requires little configuration to get started, just where to find your OpenAPI Swagger 2.0
+specifications. Configuration parameters can be specified on the command line, or by setting
+environment variables.</p>
 
-<p>Within these groups, assets divide into three categories:</p>
+<p>For this example, we will specify the Swagger specification location on the command line:</p>
 
-<ol>
-<li>Authored documentation, referred to as <a href="/docs/author-guides" rel="nofollow">guides</a></li>
-<li><a href="/docs/author-overlays" rel="nofollow">Content overlays</a>, containing documentation to be injected into API reference pages</li>
-<li>Static resources such as images, which are used by guides or overlays.</li>
-</ol>
-<h3><a name="assets-directory-structure" class="anchor" href="#assets-directory-structure" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Assets directory structure</h3>
+<pre><code><code class="hljs-keyword">./dapperdox -spec-dir=examples/specifications/petstore
+</code></code></pre>
 
-<ul>
-<li><code class="hljs-keyword">{local_assets}/</code>
+<p>This will start serving the example <em>petstore</em> specification included in the DapperDox distribution.</p>
 
-<ul>
-<li><code class="hljs-keyword">templates/</code>
+<p>By default, DapperDox will start serving reference documentation on port 3123, so point your web browser at
+<a href="http://localhost:3123" rel="nofollow">http://localhost:3123</a></p>
+<h2><a name="serving-your-own-specification" class="anchor" href="#serving-your-own-specification" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Serving your own specification</h2>
 
-<ul>
-<li><code class="hljs-keyword">guides/</code></li>
-<li><code class="hljs-keyword">reference/</code></li>
-<li><code class="hljs-keyword">resource/</code></li>
-</ul></li>
-<li><code class="hljs-keyword">static/</code></li>
-<li><code class="hljs-keyword">sections/</code>
+<p>Point DapperDox at the directory containing your Swagger specification using the <code class="hljs-keyword">-spec-dir</code> configuration parameter,
+where DapperDox will look for the file <code class="hljs-keyword">swagger.json</code>. If your specification has a different filename, specify
+this with the <code class="hljs-keyword">-spec-filename</code> parameter.</p>
 
-<ul>
-<li><code class="hljs-keyword">{specification-ID}/</code>
+<p>If your specification is broken down into multiple files, with some in sub-directories, then you must point
+DapperDox at the parent directory, beneath which it can find all the files it needs. If the main Swagger
+specification file exists in a sub-directory of this parent, then configure that using the <code class="hljs-keyword">-spec-filename</code> parameter.</p>
 
-<ul>
-<li><code class="hljs-keyword">templates/</code>
+<p>For example, consider the following file structure:</p>
 
-<ul>
-<li><code class="hljs-keyword">guides/</code></li>
-<li><code class="hljs-keyword">reference/</code></li>
-<li><code class="hljs-keyword">resource/</code></li>
-</ul></li>
-<li><code class="hljs-keyword">static/</code></li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul>
+<pre><code><code class="hljs-keyword">/user/api_specs/spec/swagger.json
+/user/api_specs/operations/get_user.json
+/user/api_specs/operations/post_user.json
+/user/api_specs/definitions/user_resource.json
+</code></code></pre>
 
-<p>For example, <code class="hljs-keyword">{local_assets}/templates/</code> contains assets that are applied across the suite of specifications.
-<code class="hljs-keyword">{local_assets}/sections/{specification-ID}/templates/</code> contains assets that are applied to a particular specification.</p>
-<h3><a name="configuring-assets" class="anchor" href="#configuring-assets" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Configuring assets</h3>
+<p>Since the common parent directory of all these resource files is <code class="hljs-keyword">api_specs</code>, this is where you need to tell DapperDox
+to look for specification files:</p>
 
-<p>DapperDox is directed to your assets through the <code class="hljs-keyword">--assets-dir</code> <a href="/docs/configuration-guide" rel="nofollow">configuration</a> option.</p>
+<pre><code><code class="hljs-keyword">-spec-dir=/user/api_specs
+</code></code></pre>
+
+<p>and because the main swagger specification file is within a sub-directory of the common parent <code class="hljs-keyword">api_specs</code>, give the
+relative path to this using the <code class="hljs-keyword">-spec-filename</code> parameter:</p>
+
+<pre><code><code class="hljs-keyword">-spec-filename=spec/swagger.json
+</code></code></pre>
+<h3><a name="resolving-references" class="anchor" href="#resolving-references" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Resolving references</h3>
+
+<p>You may find that your specification does not load first time if it consists of multiple files
+referenced by <code class="hljs-keyword">$ref:</code> members. Please refer to the section on <a href="/docs/spec-references" rel="nofollow">resolving references</a> if this is the case.</p>
+
+<p><script>hljs.initHighlightingOnLoad();</script></p>
 
 		</div>
       </div>
@@ -230,7 +230,7 @@ Configuring assets</h3>
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

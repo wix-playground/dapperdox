@@ -149,72 +149,64 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="getting-started" class="anchor" href="#getting-started" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting started</h1>
+            <h1><a name="terms-used-by-dapperdox" class="anchor" href="#terms-used-by-dapperdox" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Terms used by DapperDox</h1>
+<h2><a name="specification-id" class="anchor" href="#specification-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">specification-ID</code></h2>
 
-<p>The Getting Started guide shows you how to download and install DapperDox; how to quickly
-get an OpenAPI Swagger 2.0 specification rendered, and some useful configuration options
-to tune the presentation.</p>
-<h2><a name="download-dapperdox" class="anchor" href="#download-dapperdox" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Download DapperDox</h2>
+<p>The identifier assigned to each specification Swagger loads. It is derived from the specifications <code class="hljs-keyword">info.title</code> member,
+which DapperDox lower cases and hyphen delimits (<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab casing</a>).</p>
 
-<p><a href="/downloads/download" rel="nofollow">Download the latest release</a> of DapperDox for you operating system, and unpack it.</p>
+<p>For example, a specification title of &#34;My API suite&#34; produces a <code class="hljs-keyword">specification-ID</code> of <code class="hljs-keyword">my-api-suite</code>.</p>
+<h2><a name="api-group" class="anchor" href="#api-group" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">api-group</code></h2>
 
-<pre><code><code class="hljs-keyword">tar -zxf dapperdox-*.tgz
-cd dapperdox
-</code></code></pre>
-<h2><a name="basic-configuration" class="anchor" href="#basic-configuration" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Basic configuration</h2>
+<p>A logical grouping of API operations. Grouping will be made based on the tag if tagging is used by the specification,
+in which case <code class="hljs-keyword">api-group</code> is set to the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of
+the tag&#39;s <code class="hljs-keyword">description</code> member if present, or the tag <code class="hljs-keyword">name</code> if not.</p>
 
-<p>DapperDox requires little configuration to get started, just where to find your OpenAPI Swagger 2.0
-specifications. Configuration parameters can be specified on the command line, or by setting
-environment variables.</p>
+<p>If tagging is not in use, then <code class="hljs-keyword">api-group</code> is set to the
+<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a>
+of the operation&#39;s <code class="hljs-keyword">x-pathName</code> member if present, otherwise the operation&#39;s <code class="hljs-keyword">summary</code> member is used.</p>
+<h2><a name="operation-id" class="anchor" href="#operation-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">operation-ID</code></h2>
 
-<p>For this example, we will specify the Swagger specification location on the command line:</p>
+<p>The identifier given to an operation. It is most importantly used to determine the correct content <a href="/docs/author-overlays" rel="nofollow">overlay</a> to apply.</p>
 
-<pre><code><code class="hljs-keyword">./dapperdox -spec-dir=examples/specifications/petstore
-</code></code></pre>
+<p>It is formed by taking the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of the
+first in the following list of operation members that yields a value:</p>
 
-<p>This will start serving the example <em>petstore</em> specification included in the DapperDox distribution.</p>
+<ol>
+<li><code class="hljs-keyword">operationID</code></li>
+<li><code class="hljs-keyword">x-opererationName</code></li>
+<li><code class="hljs-keyword">summary</code></li>
+<li>method name</li>
+</ol>
 
-<p>By default, DapperDox will start serving reference documentation on port 3123, so point your web browser at
-<a href="http://localhost:3123" rel="nofollow">http://localhost:3123</a></p>
-<h2><a name="serving-your-own-specification" class="anchor" href="#serving-your-own-specification" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Serving your own specification</h2>
+<p>where method name is <code class="hljs-keyword">method-name</code> below. Therefore, it is possible for <code class="hljs-keyword">operation-ID</code> and <code class="hljs-keyword">method-name</code> to be the same value.</p>
+<h2><a name="method-name" class="anchor" href="#method-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">method-name</code></h2>
 
-<p>Point DapperDox at the directory containing your Swagger specification using the <code class="hljs-keyword">-spec-dir</code> configuration parameter,
-where DapperDox will look for the file <code class="hljs-keyword">swagger.json</code>. If your specification has a different filename, specify
-this with the <code class="hljs-keyword">-spec-filename</code> parameter.</p>
+<p>The name of the HTTP method for an operation, such as <code class="hljs-keyword">get</code>, <code class="hljs-keyword">post</code> and <code class="hljs-keyword">put</code>.</p>
+<h2><a name="operation-name" class="anchor" href="#operation-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">operation-name</code></h2>
 
-<p>If your specification is broken down into multiple files, with some in sub-directories, then you must point
-DapperDox at the parent directory, beneath which it can find all the files it needs. If the main Swagger
-specification file exists in a sub-directory of this parent, then configure that using the <code class="hljs-keyword">-spec-filename</code> parameter.</p>
+<p>The <code class="hljs-keyword">operation-name</code> of an operation is either its HTTP method (see <code class="hljs-keyword">method-name</code>), or the name given by the
+DapperDox extension <code class="hljs-keyword">x-operationName</code> which may be added to an operation. See <a href="/docs/spec-method-names" rel="nofollow">controlling method names</a>.</p>
+<h2><a name="specification-list-page" class="anchor" href="#specification-list-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Specification list page</h2>
 
-<p>For example, consider the following file structure:</p>
+<p>This page lists the API specifications that are available for reference, and is the default homepage when multiple
+specifications are loaded by DapperDox. It is not normally displayed when a single specification is loaded.</p>
+<h2><a name="specification-summary-page" class="anchor" href="#specification-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Specification summary page</h2>
 
-<pre><code><code class="hljs-keyword">/user/api_specs/spec/swagger.json
-/user/api_specs/operations/get_user.json
-/user/api_specs/operations/post_user.json
-/user/api_specs/definitions/user_resource.json
-</code></code></pre>
+<p>This page lists the all APIs defined by a specification, grouped by <a href="/docs/glossary-terms#api-group" rel="nofollow"><code class="hljs-keyword">api-group</code></a>.
+It is the first page displayed when a specification is selected from the <code class="hljs-keyword">specification-list</code>, and the default homepage
+when a single specification is loaded by DapperDox.</p>
+<h2><a name="api-group-summary-page" class="anchor" href="#api-group-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+API group summary page</h2>
 
-<p>Since the common parent directory of all these resource files is <code class="hljs-keyword">api_specs</code>, this is where you need to tell DapperDox
-to look for specification files:</p>
-
-<pre><code><code class="hljs-keyword">-spec-dir=/user/api_specs
-</code></code></pre>
-
-<p>and because the main swagger specification file is within a sub-directory of the common parent <code class="hljs-keyword">api_specs</code>, give the
-relative path to this using the <code class="hljs-keyword">-spec-filename</code> parameter:</p>
-
-<pre><code><code class="hljs-keyword">-spec-filename=spec/swagger.json
-</code></code></pre>
-<h3><a name="resolving-references" class="anchor" href="#resolving-references" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Resolving references</h3>
-
-<p>You may find that your specification does not load first time if it consists of multiple files
-referenced by <code class="hljs-keyword">$ref:</code> members. Please refer to the section on <a href="/docs/spec-references" rel="nofollow">resolving references</a> if this is the case.</p>
-
-<p><script>hljs.initHighlightingOnLoad();</script></p>
+<p>This page lists the API operations within a single <code class="hljs-keyword">api-group</code>.</p>
 
 		</div>
       </div>
@@ -230,7 +222,7 @@ referenced by <code class="hljs-keyword">$ref:</code> members. Please refer to t
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

@@ -149,30 +149,64 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="rewriting-specification-urls" class="anchor" href="#rewriting-specification-urls" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rewriting specification URLs</h1>
+            <h1><a name="terms-used-by-dapperdox" class="anchor" href="#terms-used-by-dapperdox" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Terms used by DapperDox</h1>
+<h2><a name="specification-id" class="anchor" href="#specification-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">specification-ID</code></h2>
 
-<p>If your swagger specification is split over multiple files, and therefore contain absolute <code class="hljs-keyword">$ref:</code> object
-references, these references will not be followed correctly unless they resolve to the running DapperDox instance serving
-the files.</p>
+<p>The identifier assigned to each specification Swagger loads. It is derived from the specifications <code class="hljs-keyword">info.title</code> member,
+which DapperDox lower cases and hyphen delimits (<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab casing</a>).</p>
 
-<p>For example, if the swagger specification uses the absolute references of <code class="hljs-keyword">http://mydomain.com/swagger-2.0/....</code>, and
-Swagger is serving content from <code class="hljs-keyword">http://localhost:3123</code>, then the additional configuration parameters to pass to DapperDox
-to correct this would be:</p>
+<p>For example, a specification title of &#34;My API suite&#34; produces a <code class="hljs-keyword">specification-ID</code> of <code class="hljs-keyword">my-api-suite</code>.</p>
+<h2><a name="api-group" class="anchor" href="#api-group" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">api-group</code></h2>
 
-<pre><code><code class="hljs-keyword">-spec-rewrite-url=http://mydomain.com/swagger-2.0 \
--site-url=http://localhost:3123
-</code></code></pre>
+<p>A logical grouping of API operations. Grouping will be made based on the tag if tagging is used by the specification,
+in which case <code class="hljs-keyword">api-group</code> is set to the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of
+the tag&#39;s <code class="hljs-keyword">description</code> member if present, or the tag <code class="hljs-keyword">name</code> if not.</p>
 
-<p>Multiple <code class="hljs-keyword">-spec-rewrite-url</code> options may be given if you have several URLs you need to rewrite, perhaps in the case
-where you have embedded links to external documentation. In these scenarios rewriting to a single site-url is insufficient,
-and you will want to use the alternative form of the configuration option, which has a <code class="hljs-keyword">{from}</code> and <code class="hljs-keyword">{to}</code> component:</p>
+<p>If tagging is not in use, then <code class="hljs-keyword">api-group</code> is set to the
+<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a>
+of the operation&#39;s <code class="hljs-keyword">x-pathName</code> member if present, otherwise the operation&#39;s <code class="hljs-keyword">summary</code> member is used.</p>
+<h2><a name="operation-id" class="anchor" href="#operation-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">operation-ID</code></h2>
 
-<pre><code><code class="hljs-keyword">-spec-rewrite-url=http://mydomain.com/swagger-2.0=http://localhost:3123
-</code></code></pre>
+<p>The identifier given to an operation. It is most importantly used to determine the correct content <a href="/docs/author-overlays" rel="nofollow">overlay</a> to apply.</p>
 
-<p>See <a href="/docs/configuration-guide" rel="nofollow">Configuration guide</a> for further information on configuring DapperDox.</p>
+<p>It is formed by taking the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of the
+first in the following list of operation members that yields a value:</p>
 
-<p><script>hljs.initHighlightingOnLoad();</script></p>
+<ol>
+<li><code class="hljs-keyword">operationID</code></li>
+<li><code class="hljs-keyword">x-opererationName</code></li>
+<li><code class="hljs-keyword">summary</code></li>
+<li>method name</li>
+</ol>
+
+<p>where method name is <code class="hljs-keyword">method-name</code> below. Therefore, it is possible for <code class="hljs-keyword">operation-ID</code> and <code class="hljs-keyword">method-name</code> to be the same value.</p>
+<h2><a name="method-name" class="anchor" href="#method-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">method-name</code></h2>
+
+<p>The name of the HTTP method for an operation, such as <code class="hljs-keyword">get</code>, <code class="hljs-keyword">post</code> and <code class="hljs-keyword">put</code>.</p>
+<h2><a name="operation-name" class="anchor" href="#operation-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">operation-name</code></h2>
+
+<p>The <code class="hljs-keyword">operation-name</code> of an operation is either its HTTP method (see <code class="hljs-keyword">method-name</code>), or the name given by the
+DapperDox extension <code class="hljs-keyword">x-operationName</code> which may be added to an operation. See <a href="/docs/spec-method-names" rel="nofollow">controlling method names</a>.</p>
+<h2><a name="specification-list-page" class="anchor" href="#specification-list-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Specification list page</h2>
+
+<p>This page lists the API specifications that are available for reference, and is the default homepage when multiple
+specifications are loaded by DapperDox. It is not normally displayed when a single specification is loaded.</p>
+<h2><a name="specification-summary-page" class="anchor" href="#specification-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Specification summary page</h2>
+
+<p>This page lists the all APIs defined by a specification, grouped by <a href="/docs/glossary-terms#api-group" rel="nofollow"><code class="hljs-keyword">api-group</code></a>.
+It is the first page displayed when a specification is selected from the <code class="hljs-keyword">specification-list</code>, and the default homepage
+when a single specification is loaded by DapperDox.</p>
+<h2><a name="api-group-summary-page" class="anchor" href="#api-group-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+API group summary page</h2>
+
+<p>This page lists the API operations within a single <code class="hljs-keyword">api-group</code>.</p>
 
 		</div>
       </div>
@@ -188,7 +222,7 @@ and you will want to use the alternative form of the configuration option, which
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>

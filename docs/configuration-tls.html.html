@@ -149,38 +149,66 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="dapperdox-page-types" class="anchor" href="#dapperdox-page-types" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>DapperDox page types</h1>
+            <h1><a name="enable-tls" class="anchor" href="#enable-tls" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Enable TLS</h1>
 
-<p>DapperDox documentation is made up of six page types, listed below, each of which may be
-<a href="/docs/author-overlays" rel="nofollow">overlaid</a> with custom content.</p>
-<h2><a name="specification-list-page" class="anchor" href="#specification-list-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Specification list page</h2>
+<p>DapperDox&#39;s implementation of TLS restricts itself to the strong TLS 1.2 suites, avoiding
+RC4 and BEAST vulnerabilities. DapperDox is therefore compatible with current releases of
+Google Chrome, Apple Safari, Mozilla Firefox and Internet Explorer.</p>
 
-<p>This page lists the API specifications that are available for reference, and is the default
-homepage when multiple specifications are loaded by DapperDox. If documenting a single specification
-this page is not shown, unless forced to by a <a href="/docs/configuration-guide" rel="nofollow">configuration option</a>.</p>
-<h2><a name="specification-summary-page" class="anchor" href="#specification-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Specification summary page</h2>
+<p>DapperDox requires a certificate and a private key to be configured to enable TLS. The
+certificate and key filenames are passed to DapperDox using the <code class="hljs-keyword">-tls-certificate</code> and
+<code class="hljs-keyword">-tls-key</code> <a href="/docs/configuration-guide" rel="nofollow">configuration</a> options.</p>
+<h2><a name="supported-cipher-suites" class="anchor" href="#supported-cipher-suites" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Supported cipher suites</h2>
 
-<p>This page lists the all APIs defined by a specification, grouped by <code class="hljs-keyword">api-group</code>. It is the first page displayed when a specification is selected from the <code class="hljs-keyword">specification-list</code>, and the default homepage when a single specification is loaded by DapperDox.</p>
-<h2><a name="api-group-summary-page" class="anchor" href="#api-group-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-API group summary page</h2>
+<p>DapperDox supports the following strong TLS 1.2 cipher suites:</p>
 
-<p>This page lists the API operations within a single <code class="hljs-keyword">api-group</code>.</p>
-<h2><a name="method-page" class="anchor" href="#method-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Method page</h2>
+<ul>
+<li>TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384</li>
+<li>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA</li>
+<li>TLS_RSA_WITH_AES_256_GCM_SHA384</li>
+<li>TLS_RSA_WITH_AES_256_CBC_SHA</li>
+</ul>
+<h2><a name="generating-self-signed-certificates" class="anchor" href="#generating-self-signed-certificates" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Generating self signed certificates</h2>
 
-<p>This page describes an API method (or operation), giving the request parameters, responses and includes
-an embedded <a href="/docs/explorer-concepts" rel="nofollow">API explorer</a>.</p>
-<h2><a name="resource-page" class="anchor" href="#resource-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Resource page</h2>
+<p>If you intend to use HTTPS, then for testing and internal use, you can generate your own
+self-signed certificate:</p>
+<h3><a name="rsa-2048-bit" class="anchor" href="#rsa-2048-bit" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+RSA 2048 bit</h3>
 
-<p>This page describes an API resource that may be produced or consumed by an API.</p>
-<h2><a name="guides" class="anchor" href="#guides" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Guides</h2>
+<p>To generate a self-signed RSA certificate and 2048 bit key, use the following <code class="hljs-keyword">openssl</code> command:</p>
 
-<p>This is the collective name given to the bespoke authored documentation you have provided to
-supplement that which DapperDox generates from the Swagger specification. See <a href="/docs/author-guides" rel="nofollow">writing guides</a> for further details.</p>
+<pre><code><code class="hljs-keyword">openssl req -x509 -nodes -newkey rsa:2048 -keyout dapperdox_rsa.key -out dapperdox_rsa.crt -days 3650
+</code></code></pre>
+
+<p>Configure DapperDox to read the certificate and key with:</p>
+
+<pre><code><code class="hljs-keyword">-tls-cert=dapperdox_rsa.crt \
+-tle-key=dapperdox_rsa.key
+</code></code></pre>
+<h3><a name="ecdsa-secp384r1" class="anchor" href="#ecdsa-secp384r1" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+ECDSA secp384r1</h3>
+
+<p>To generate a self-signed ECDSA certifiacte and secp3841 key, use the following <code class="hljs-keyword">openssl</code> command:</p>
+
+<pre><code><code class="hljs-keyword">openssl req -x509 -nodes -newkey ec:secp384r1 -keyout dapperdox_ecdsa.key -out dapperdox_ecdsa.crt -days 3650
+</code></code></pre>
+
+<p>Configure DapperDox to read the certificate and key with:</p>
+
+<pre><code><code class="hljs-keyword">-tls-cert=dapperdox_ecdsa.crt \
+-tle-key=dapperdox_ecdsa.key
+</code></code></pre>
+<h2><a name="production-certificates" class="anchor" href="#production-certificates" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Production certificates</h2>
+
+<p>For production use the certificate must be a chain, so you will likely need to
+concatenate your certificate authority issued certificate, the issuers intermediate
+certificate and their root authority certificate together into one combined certificate file:</p>
+
+<pre><code><code class="hljs-keyword">cat your_cert.pem intermediate.ca.pem ca.pem &gt; dapperdox_production.crt
+</code></code></pre>
 
 		</div>
       </div>
@@ -196,7 +224,7 @@ supplement that which DapperDox generates from the Swagger specification. See <a
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
                 
             </div>
