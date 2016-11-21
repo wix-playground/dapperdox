@@ -46,7 +46,7 @@ Configure DapperDox to read the certificate and key with:
 
 ### ECDSA secp384r1
 
-To generate a self-signed ECDSA certifiacte and secp3841 key, use the following `openssl` command:
+To generate a self-signed ECDSA certifiacte and secp384 key, use the following `openssl` command:
 
 ```
 openssl req -x509 -nodes -newkey ec:secp384r1 -keyout dapperdox_ecdsa.key -out dapperdox_ecdsa.crt -days 3650
