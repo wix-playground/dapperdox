@@ -1,0 +1,226 @@
+<!doctype html>
+
+
+
+
+ <html> 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="DapperDox - Beautiful integrated OpenAPI documentation">
+    <meta name="author" content="Chris Smith">
+
+    <title>DapperDox – Beautiful, integrated, OpenAPI documentation</title>
+
+    
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/images/fav/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/images/fav/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/images/fav/manifest.json">
+    <link rel="mask-icon" href="/images/fav/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+ 
+    
+    
+    <link href='http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css' rel='stylesheet' type='text/css'> 
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet"> 
+	<link href='http://fonts.googleapis.com/css?family=Muli:400,700' rel='stylesheet' type='text/css'> 
+	
+    
+	<link href="/css/docgeneric.css" rel="stylesheet">
+	<link href="/css/docs.css" rel="stylesheet">
+    <link href="/css/footer.css" rel="stylesheet">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+	
+	<script src="/js/modernizr-2.8.3.min.js"></script>  
+	
+	
+
+	
+
+    <link href="/css/hilight-dapperdox.css" rel="stylesheet">
+</head>
+
+<body id="home" class="" style="overflow: visible">
+        <header>
+      <div class="container">
+        <div class="row">
+          <nav class="navbar-default" role="navigation">
+             <div class="navbar-header">
+
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+                <a class="navbar-brand" href="/xindex.html"><img src="/images/dapperdox_logo_circle_outline.svg" alt="DapperDox logo"/> DapperDox</a>
+			</div>
+
+			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					
+					<li class="menuItem"><a href="/downloads/download">Download</a></li>
+					<li class="menuItem"><a href="/docs/getting-started">Getting Started</a></li>
+					<li class="menuItem"><a href="/docs/overview">Documentation</a></li>
+				</ul>
+			</div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+		   
+	<div class="container">
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 main">
+            <h1><a name="download" class="anchor" href="#download" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download</h1>
+
+<p>We provide the lastest release builds for the most common operating systems and architectures.
+If yours is not listed here, then clone the source from <a href="http://github.com/dapperdox/dapperdox" rel="nofollow">GitHub</a> and follow the <a href="#building-from-source" rel="nofollow">build instructions</a>.</p>
+<h2><a name="precompiled-releases" class="anchor" href="#precompiled-releases" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Precompiled releases</h2>
+
+<p><strong>1.0.0-beta (2016-10-28)</strong></p>
+
+<table class="table table-striped">
+<thead>
+<tr>
+<th>Filename</th>
+<th>OS</th>
+<th>Arch</th>
+<th>Size</th>
+<th>Checksum</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><a href="/downloads/dapperdox-1.0.0-beta.darwin-amd64.tgz" rel="nofollow">dapperdox-1.0.0-beta.darwin-amd64.tgz</a></td>
+<td>darwin</td>
+<td>amd64</td>
+<td>3.5M</td>
+<td>0e379438c07bb8d24fd101082ebed11f077375b72b5499059ce6981f4a06fc4a</td>
+</tr>
+
+<tr>
+<td><a href="/downloads/dapperdox-1.0.0-beta.linux-amd64.tgz" rel="nofollow">dapperdox-1.0.0-beta.linux-amd64.tgz</a></td>
+<td>linux</td>
+<td>amd64</td>
+<td>3.5M</td>
+<td>53f9dad978c3b0fd8c07f93c02070d3732ab794b57c520ddc57f4edafc5c03b1</td>
+</tr>
+
+<tr>
+<td><a href="/downloads/dapperdox-1.0.0-beta.linux-arm.tgz" rel="nofollow">dapperdox-1.0.0-beta.linux-arm.tgz</a></td>
+<td>linux</td>
+<td>arm</td>
+<td>3.1M</td>
+<td>fd1e0efe495105100b3b1310caf5f9a9d48961593c0dda742f225fe793fa9cea</td>
+</tr>
+
+<tr>
+<td><a href="/downloads/dapperdox-1.0.0-beta.linux-arm64.tgz" rel="nofollow">dapperdox-1.0.0-beta.linux-arm64.tgz</a></td>
+<td>linux</td>
+<td>arm64</td>
+<td>3.2M</td>
+<td>5ece17eddb01a6120a7f0e7d86a562f205613eba1b1031389a776c3a33c92b3a</td>
+</tr>
+
+<tr>
+<td><a href="/downloads/dapperdox-1.0.0-beta.linux-x86.tgz" rel="nofollow">dapperdox-1.0.0-beta.linux-x86.tgz</a></td>
+<td>linux</td>
+<td>x86</td>
+<td>3.2M</td>
+<td>d8aca31752c3cd21f066d495ca56157f379ec33d059670f83d8e695b029a909e</td>
+</tr>
+
+<tr>
+<td><a href="/downloads/dapperdox-1.0.0-beta.windows-amd64.zip" rel="nofollow">dapperdox-1.0.0-beta.windows-amd64.zip</a></td>
+<td>windows</td>
+<td>amd64</td>
+<td>3.5M</td>
+<td>097a14715dc58e09919a8920e3735a158dfb76ac52378c3c5c1ad788b5f8328e</td>
+</tr>
+
+<tr>
+<td><a href="/downloads/dapperdox-1.0.0-beta.windows-x86.zip" rel="nofollow">dapperdox-1.0.0-beta.windows-x86.zip</a></td>
+<td>windows</td>
+<td>x86</td>
+<td>3.2M</td>
+<td>2f274adb08a46197d846cca828c1cbadfcb64ae5a34cc45e54ef2e8eb0c0bcd3</td>
+</tr>
+</tbody>
+</table>
+<h2><a name="building-from-source" class="anchor" href="#building-from-source" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Building from source</h2>
+
+<p>To build from source, clone the <a href="https://github.com/dapperdox/dapperdox" rel="nofollow">GitHub repo</a>:</p>
+
+<div class="highlight highlight-bash"><pre><code>&gt; git clone https://github.com/dapperdox/dapperdox
+</code></pre></div>
+
+<p>Now build dapperdox (this assumes that you have your <a href="https://golang.org/doc/install" rel="nofollow">golang</a> environment configured correctly):</p>
+
+<pre><code><code class="hljs-keyword">go get &amp;&amp; go build
+</code></code></pre>
+
+		</div>
+      </div>
+	</div>
+
+        <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            &copy; DapperDox 2016
+          </div>
+          <div class="col-lg-4 col-md-4">
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            <div class="valigned align-right">
+                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+	
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	  jQuery(function($) {
+		$(document).ready( function() {
+		    
+            $('.items').hide();
+            var $pagename=decodeURI( window.location.pathname );
+
+            var $parent=$('ul[id="navigation"]')
+            var $element=$parent.find('a[href$="'+$pagename+'"]');
+            
+
+            var api_id = $element.data('outer');
+            var toggler = $("#toggle"+api_id);
+            var outerul = $("#ul"+api_id);
+
+            outerul.addClass('in');
+            toggler.addClass('open');
+            toggler.removeClass('collapsed');
+            $element.addClass('nav-selected');
+
+            $parent.removeClass('hide');
+            $('body').removeClass('hide');
+		});
+	  });
+	</script>
+</body>
+</html>

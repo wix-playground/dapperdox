@@ -1,0 +1,324 @@
+<!doctype html>
+
+
+
+
+ <html> 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="DapperDox - Beautiful integrated OpenAPI documentation">
+    <meta name="author" content="Chris Smith">
+
+    <title>DapperDox – Beautiful, integrated, OpenAPI documentation</title>
+
+    
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/images/fav/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/images/fav/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/images/fav/manifest.json">
+    <link rel="mask-icon" href="/images/fav/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+ 
+    
+    
+    <link href='http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css' rel='stylesheet' type='text/css'> 
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet"> 
+	<link href='http://fonts.googleapis.com/css?family=Muli:400,700' rel='stylesheet' type='text/css'> 
+	
+    
+	<link href="/css/docgeneric.css" rel="stylesheet">
+	<link href="/css/docs.css" rel="stylesheet">
+    <link href="/css/footer.css" rel="stylesheet">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+	
+	<script src="/js/modernizr-2.8.3.min.js"></script>  
+	
+	
+
+	
+
+    <link href="/css/hilight-dapperdox.css" rel="stylesheet">
+</head>
+
+  <body id="home" class="" style="overflow: visible">
+        <header>
+      <div class="container">
+        <div class="row">
+          <nav class="navbar-default" role="navigation">
+             <div class="navbar-header">
+
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+                <a class="navbar-brand" href="/xindex.html"><img src="/images/dapperdox_logo_circle_outline.svg" alt="DapperDox logo"/> DapperDox</a>
+			</div>
+
+			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					
+					<li class="menuItem"><a href="/downloads/download">Download</a></li>
+					<li class="menuItem"><a href="/docs/getting-started">Getting Started</a></li>
+					<li class="menuItem"><a href="/docs/overview">Documentation</a></li>
+				</ul>
+			</div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+		   
+	<div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+          <ul class="nav nav-sidebar hide" id="navigation" data-open="">
+   <li class="panel">
+       <a id="toggleIntro" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulIntro">Introduction</a>
+       <ul class="nav nav-inner collapse" id="ulIntro">
+           <li><a href="/docs/overview" data-outer="Intro">Overview</a></li>
+           <li><a href="/docs/getting-started" data-outer="Intro">Getting started</a></li>
+           
+       </ul>
+   </li>
+   <li class="panel">
+       <a id="toggleSpec" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulSpec">Specifications</a>
+       <ul class="nav collapse nav-inner" id="ulSpec">
+           <li><a href="/docs/spec-loading" data-outer="Spec">Loading specifications</a></li>
+           <li><a href="/docs/spec-references" data-outer="Spec">Resolving references</a></li>
+           <li><a href="/docs/spec-method-names" data-outer="Spec">Controlling method names</a></li>
+           <li><a href="/docs/spec-resource-definitions" data-outer="Spec">Resource definitions</a></li>
+           <li><a href="/docs/spec-tagging" data-outer="Spec">Operation tagging</a></li>
+       </ul>
+   </li>
+   <li class="panel">
+       <a id="toggleRewrite" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulRewrite">Rewriting URLs</a>
+       <ul class="nav collapse nav-inner" id="ulRewrite">
+           <li><a href="/docs/rewrite-spec" data-outer="Rewrite">Specification URLs</a></li>
+           <li><a href="/docs/rewrite-doc" data-outer="Rewrite">DocumentationURLs</a></li>
+       </ul>
+   </li>
+   <li class="panel">
+       <a id="toggleAuthor" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulAuthor">Authoring content</a>
+       <ul class="nav collapse nav-inner" id="ulAuthor">
+           <li><a href="/docs/author-concepts" data-outer="Author">Concepts</a></li>
+           <li><a href="/docs/author-page-types" data-outer="Author">Page types</a></li>
+           <li><a href="/docs/author-guides" data-outer="Author">Writing guides</a></li>
+           <li><a href="/docs/author-overlays" data-outer="Author">Content overlays</a></li>
+           <li><a href="/docs/author-metadata" data-outer="Author">Metadata</a></li>
+       </ul>
+   </li>
+   <li class="panel">
+       <a id="toggleExplorer" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulExplorer">The API explorer</a>
+       <ul class="nav collapse nav-inner" id="ulExplorer">
+           <li><a href="/docs/explorer-concepts" data-outer="Explorer">Concepts</a></li>
+           <li><a href="/docs/explorer-customising" data-outer="Explorer">Customising</a></li>
+       </ul>
+   </li>
+
+   <li class="panel">
+       <a id="toggleProxy" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulProxy">Reverse proxy</a>
+       <ul class="nav collapse nav-inner" id="ulProxy">
+           <li><a href="/docs/proxy-configure" data-outer="Proxy">Configuration</a></li>
+       </ul>
+   </li>
+
+   <li class="panel">
+       <a id="toggleConfiguration" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulConfiguration">Configuration</a>
+       <ul class="nav collapse nav-inner" id="ulConfiguration">
+           <li><a href="/docs/configuration-guide" data-outer="Configuration">Configuration guide</a></li>
+           <li><a href="/docs/configuration-tls" data-outer="Configuration">Enabling TLS</a></li>
+       </ul>
+   </li>
+
+   <li class="panel">
+       <a id="toggleGlossary" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulGlossary">Glossary</a>
+       <ul class="nav collapse nav-inner" id="ulGlossary">
+           <li><a href="/docs/glossary-terms" data-outer="Glossary">Terms used by DapperDox</a></li>
+       </ul>
+   </li>
+</ul>
+
+        </div>
+
+        <div class="col-lg-9 col-md-9 col-sm-9 main">
+            <h1><a name="dapperdox-configuration" class="anchor" href="#dapperdox-configuration" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>DapperDox configuration</h1>
+
+<p>DapperDox can be configured using command line options or, in line with the <a href="https://12factor.net/" rel="nofollow">twelve-factor app</a> recommendations, through environment variables.</p>
+<h2><a name="configuration-options" class="anchor" href="#configuration-options" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Configuration options</h2>
+
+<table class="table table-striped">
+<thead>
+<tr>
+<th>Option</th>
+<th>Environment variable</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code class="hljs-keyword">-assets-dir</code></td>
+<td><code class="hljs-keyword">ASSETS_DIR</code></td>
+<td>Assets to serve. Effectively the document root.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-bind-addr</code></td>
+<td><code class="hljs-keyword">BIND_ADDR</code></td>
+<td>IP address and port number that DapperDox should serve content from. Value takes the form <code class="hljs-keyword">&lt;IP address&gt;:&lt;port&gt;</code>.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-default-assets-dir</code></td>
+<td><code class="hljs-keyword">DEFAULT_ASSETS_DIR</code></td>
+<td>Used to point DapperDox at its default assets. You Will need to provide this option if you are not running DapperDox from within it&#39;s distribution directory. For example, if you invoke DapperDox as <code class="hljs-keyword">&lt;path_to_dapperdox_distribution&gt;/dapperdox</code> then you must pass this configuration option as <code class="hljs-keyword">-default-assets-dir=&lt;path_to_dapperdox_distribution&gt;/assets</code>.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-document-rewrite-url</code></td>
+<td><code class="hljs-keyword">DOCUMENT_REWRITE_URL</code></td>
+<td>Specify a URL that is to be rewritten in the documentation. May be multiply defined. Format is from=to. This is applied to assets, not to OpenAPI specification generated text.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-log-level</code></td>
+<td><code class="hljs-keyword">LOGLEVEL</code></td>
+<td>Log level (<code class="hljs-keyword">info</code>, <code class="hljs-keyword">debug</code>, <code class="hljs-keyword">trace</code>)</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-spec-dir</code></td>
+<td><code class="hljs-keyword">SPEC_DIR</code></td>
+<td>OpenAPI specification (swagger) directory.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-spec-filename</code></td>
+<td><code class="hljs-keyword">SPEC_FILENAME</code></td>
+<td>The filename of the OpenAPI specification file within the spec-dir. Defaults to spec/swagger.json</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-site-url</code></td>
+<td><code class="hljs-keyword">SITE_URL</code></td>
+<td>Public URL of the documentation service. Used by <code class="hljs-keyword">-spec-rewrite-url</code> if no <code class="hljs-keyword">=to</code> is supplied to the rewrite.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-spec-rewrite-url</code></td>
+<td><code class="hljs-keyword">SPEC_REWRITE_URL</code></td>
+<td>The URLs in the OpenAPI specifications to be rewritten as <code class="hljs-keyword">site-url</code>, or to the <code class="hljs-keyword">to</code> URL if the value given is of the form from=to. Applies to OpenAPI specification text, not asset files.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-theme</code></td>
+<td><code class="hljs-keyword">THEME</code></td>
+<td>Name of the theme to render documentation.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-themes-dir</code></td>
+<td><code class="hljs-keyword">THEMES_DIR</code></td>
+<td>Directory containing installed themes.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-force-specification-list</code></td>
+<td><code class="hljs-keyword">FORCE_SPECIFICATION_LIST</code></td>
+<td>When DapperDox is serving a single OpenAPI specification, then by default it will show the API summary page when serving the homepage. Instead, you can force DapperDox to show the list of available specifications (as it would if there were more than one specification) with this option. This is necessary if you have global documentation guides which live outside the specification. Takes the value <code class="hljs-keyword">true</code> or <code class="hljs-keyword">false</code>.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-author-show-assets</code></td>
+<td><code class="hljs-keyword">AUTHOR_SHOW_ASSETS</code></td>
+<td>Setting this value to <code class="hljs-keyword">true</code> will enable an <em>assets search path</em> pane at the foot of every API reference page. This shows the path order that DapperDox will scan to find GFM content overlay or replacement files. Takes the value <code class="hljs-keyword">true</code> or <code class="hljs-keyword">false</code>.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-proxy-path</code></td>
+<td><code class="hljs-keyword">PROXY_PATH</code></td>
+<td>Configures a path prefix that is to be reverse-proxied to another service. Value takes the form <code class="hljs-keyword">source-path=service-host/destination/path</code>. If <code class="hljs-keyword">destination-path</code> is given, this will prefix the <code class="hljs-keyword">source-path</code> that is passed to the service. See <a href="/docs/proxy-configure" rel="nofollow">reverse proxy</a> for further details..</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-tls-certificate</code></td>
+<td><code class="hljs-keyword">TLS_CERTIFICATE</code></td>
+<td>Enables HTTPS. The path and filename of the TLS certificate to load. Must be accompanied by the <code class="hljs-keyword">-tls-key</code> configuration.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">-tls-key</code></td>
+<td><code class="hljs-keyword">TLS_KEY</code></td>
+<td>Enables HTTPS. The path and filename of the TLS private key to load. Must be accompanied by the <code class="hljs-keyword">-tls-certificate</code> configuration.</td>
+</tr>
+</tbody>
+</table>
+<h2><a name="multiple-values" class="anchor" href="#multiple-values" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Multiple values</h2>
+
+<p>Some configuration parameters can take multiple values, either by specifying the parameter multiple times on the command lines, or by
+comma separating multiple values when using environment variables.</p>
+
+		</div>
+      </div>
+	</div>
+
+        <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            &copy; DapperDox 2016
+          </div>
+          <div class="col-lg-4 col-md-4">
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            <div class="valigned align-right">
+                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	  jQuery(function($) {
+		$(document).ready( function() {
+		    
+            $('.items').hide();
+            var $pagename=decodeURI( window.location.pathname );
+
+            var $parent=$('ul[id="navigation"]')
+            var $element=$parent.find('a[href$="'+$pagename+'"]');
+            
+
+            var api_id = $element.data('outer');
+            var toggler = $("#toggle"+api_id);
+            var outerul = $("#ul"+api_id);
+
+            outerul.addClass('in');
+            toggler.addClass('open');
+            toggler.removeClass('collapsed');
+            $element.addClass('nav-selected');
+
+            $parent.removeClass('hide');
+            $('body').removeClass('hide');
+		});
+	  });
+	</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!doctype html>
+
+
+
+
+ <html> 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="DapperDox - Beautiful integrated OpenAPI documentation">
+    <meta name="author" content="Chris Smith">
+
+    <title>DapperDox – Beautiful, integrated, OpenAPI documentation</title>
+
+    
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/images/fav/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/images/fav/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/images/fav/manifest.json">
+    <link rel="mask-icon" href="/images/fav/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+ 
+    
+    
+    <link href='http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css' rel='stylesheet' type='text/css'> 
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet"> 
+	<link href='http://fonts.googleapis.com/css?family=Muli:400,700' rel='stylesheet' type='text/css'> 
+	
+    
+	<link href="/css/docgeneric.css" rel="stylesheet">
+	<link href="/css/docs.css" rel="stylesheet">
+    <link href="/css/footer.css" rel="stylesheet">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+	
+	<script src="/js/modernizr-2.8.3.min.js"></script>  
+	
+	
+
+	
+
+    <link href="/css/hilight-dapperdox.css" rel="stylesheet">
+</head>
+
+  <body id="home" class="" style="overflow: visible">
+        <header>
+      <div class="container">
+        <div class="row">
+          <nav class="navbar-default" role="navigation">
+             <div class="navbar-header">
+
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+                <a class="navbar-brand" href="/xindex.html"><img src="/images/dapperdox_logo_circle_outline.svg" alt="DapperDox logo"/> DapperDox</a>
+			</div>
+
+			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					
+					<li class="menuItem"><a href="/downloads/download">Download</a></li>
+					<li class="menuItem"><a href="/docs/getting-started">Getting Started</a></li>
+					<li class="menuItem"><a href="/docs/overview">Documentation</a></li>
+				</ul>
+			</div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+		   
+	<div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+          <ul class="nav nav-sidebar hide" id="navigation" data-open="">
+   <li class="panel">
+       <a id="toggleIntro" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulIntro">Introduction</a>
+       <ul class="nav nav-inner collapse" id="ulIntro">
+           <li><a href="/docs/overview" data-outer="Intro">Overview</a></li>
+           <li><a href="/docs/getting-started" data-outer="Intro">Getting started</a></li>
+           
+       </ul>
+   </li>
+   <li class="panel">
+       <a id="toggleSpec" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulSpec">Specifications</a>
+       <ul class="nav collapse nav-inner" id="ulSpec">
+           <li><a href="/docs/spec-loading" data-outer="Spec">Loading specifications</a></li>
+           <li><a href="/docs/spec-references" data-outer="Spec">Resolving references</a></li>
+           <li><a href="/docs/spec-method-names" data-outer="Spec">Controlling method names</a></li>
+           <li><a href="/docs/spec-resource-definitions" data-outer="Spec">Resource definitions</a></li>
+           <li><a href="/docs/spec-tagging" data-outer="Spec">Operation tagging</a></li>
+       </ul>
+   </li>
+   <li class="panel">
+       <a id="toggleRewrite" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulRewrite">Rewriting URLs</a>
+       <ul class="nav collapse nav-inner" id="ulRewrite">
+           <li><a href="/docs/rewrite-spec" data-outer="Rewrite">Specification URLs</a></li>
+           <li><a href="/docs/rewrite-doc" data-outer="Rewrite">DocumentationURLs</a></li>
+       </ul>
+   </li>
+   <li class="panel">
+       <a id="toggleAuthor" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulAuthor">Authoring content</a>
+       <ul class="nav collapse nav-inner" id="ulAuthor">
+           <li><a href="/docs/author-concepts" data-outer="Author">Concepts</a></li>
+           <li><a href="/docs/author-page-types" data-outer="Author">Page types</a></li>
+           <li><a href="/docs/author-guides" data-outer="Author">Writing guides</a></li>
+           <li><a href="/docs/author-overlays" data-outer="Author">Content overlays</a></li>
+           <li><a href="/docs/author-metadata" data-outer="Author">Metadata</a></li>
+       </ul>
+   </li>
+   <li class="panel">
+       <a id="toggleExplorer" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulExplorer">The API explorer</a>
+       <ul class="nav collapse nav-inner" id="ulExplorer">
+           <li><a href="/docs/explorer-concepts" data-outer="Explorer">Concepts</a></li>
+           <li><a href="/docs/explorer-customising" data-outer="Explorer">Customising</a></li>
+       </ul>
+   </li>
+
+   <li class="panel">
+       <a id="toggleProxy" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulProxy">Reverse proxy</a>
+       <ul class="nav collapse nav-inner" id="ulProxy">
+           <li><a href="/docs/proxy-configure" data-outer="Proxy">Configuration</a></li>
+       </ul>
+   </li>
+
+   <li class="panel">
+       <a id="toggleConfiguration" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulConfiguration">Configuration</a>
+       <ul class="nav collapse nav-inner" id="ulConfiguration">
+           <li><a href="/docs/configuration-guide" data-outer="Configuration">Configuration guide</a></li>
+           <li><a href="/docs/configuration-tls" data-outer="Configuration">Enabling TLS</a></li>
+       </ul>
+   </li>
+
+   <li class="panel">
+       <a id="toggleGlossary" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulGlossary">Glossary</a>
+       <ul class="nav collapse nav-inner" id="ulGlossary">
+           <li><a href="/docs/glossary-terms" data-outer="Glossary">Terms used by DapperDox</a></li>
+       </ul>
+   </li>
+</ul>
+
+        </div>
+
+        <div class="col-lg-9 col-md-9 col-sm-9 main">
+            <h1><a name="resource-definitions" class="anchor" href="#resource-definitions" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resource definitions</h1>
+<h2><a name="resource-title" class="anchor" href="#resource-title" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Resource title</h2>
+
+<p>When specifying a resource <a href="http://swagger.io/specification/#schemaObject" rel="nofollow">schema object</a>, either as a
+<a href="http://swagger.io/specification/#definitionsObject" rel="nofollow">definitions object</a> that can be consumed or produced by
+an operation, or as an inline schema object, DapperDox <strong>requires</strong> that the optional
+<a href="http://swagger.io/specification/#schemaObject" rel="nofollow">schema object</a>
+<code class="hljs-keyword">title</code> member is present.</p>
+
+<p>DapperDox uses the <code class="hljs-keyword">title</code> member to give the resource a name in the documentation it produces.</p>
+
+<p>For example, the operation <code class="hljs-keyword">GET /store/inventory</code> in the petstore example specification
+<code class="hljs-keyword">examples/specifications/petstore/swagger.json</code>, has a response schema with a <code class="hljs-keyword">title</code> of &#34;Quantities&#34;:</p>
+
+<pre><code><code class="hljs-keyword">{
+    &#34;/store/inventory&#34;: {
+        &#34;get&#34;: {
+            &#34;tags&#34;: [&#34;store&#34;],
+            &#34;summary&#34;: &#34;Returns pet inventories by status&#34;,
+            &#34;description&#34;: &#34;Returns a map of status codes to quantities&#34;,
+            &#34;operationId&#34;: &#34;getInventory&#34;,
+            &#34;produces&#34;: [&#34;application/json&#34;],
+            &#34;parameters&#34;: [],
+            &#34;responses&#34;: {
+                &#34;200&#34;: {
+                    &#34;description&#34;: &#34;successful operation&#34;,
+                    &#34;schema&#34;: {
+                        &#34;type&#34;: &#34;object&#34;,
+                        &#34;title&#34;:&#34;Quantities&#34;,
+                        &#34;additionalProperties&#34;: {
+                            &#34;type&#34;: &#34;integer&#34;,
+                            &#34;format&#34;: &#34;int32&#34;
+                        }
+                    }
+                }
+            },
+            &#34;security&#34;: [{
+                &#34;api_key&#34;: []
+            }]
+        }
+    },
+}
+</code></code></pre>
+
+<p>Without a <code class="hljs-keyword">title</code> member, DapperDox would produce the error:</p>
+
+<pre><code><code class="hljs-keyword">Error: GET /store/inventory references a model definition that does not have a title member.
+</code></code></pre>
+<h2><a name="excluding-request-body-members-from-operations" class="anchor" href="#excluding-request-body-members-from-operations" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Excluding request body members from operations</h2>
+
+<p>In some scenarios, you might want your reference documentation to show a filtered request body resource.</p>
+
+<p>To understand why, consider the following trivial <code class="hljs-keyword">Orders</code> resource used by a fictional REST API:</p>
+
+<pre><code><code class="hljs-keyword">{
+    &#34;order_number&#34; : &#34;string&#34;,
+    &#34;order_date&#34; : &#34;date-time&#34;,
+    &#34;reference&#34;: &#34;string&#34;,
+    &#34;order_status&#34;: &#34;string&#34;
+}
+</code></code></pre>
+
+<p>In this hypothetical example, some of these members are read-only, being automatically populated when the resource
+is created, and some are supplied by the client when creating the resource which cannot be modified afterwards.</p>
+
+<p>The following table shows which members can be set or modified by a <code class="hljs-keyword">POST</code> or <code class="hljs-keyword">PUT</code> and are returned by a <code class="hljs-keyword">GET</code>:</p>
+
+<table class="table table-striped">
+<thead>
+<tr>
+<th>Member</th>
+<th class="center">POST</th>
+<th class="center">PUT</th>
+<th class="center">GET</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code class="hljs-keyword">order_number</code></td>
+<td align="center">✘</td>
+<td align="center">✘</td>
+<td align="center">✔</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">order_date</code></td>
+<td align="center">✔</td>
+<td align="center">✘</td>
+<td align="center">✔</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">reference</code></td>
+<td align="center">✔</td>
+<td align="center">✔</td>
+<td align="center">✔</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">order_status</code></td>
+<td align="center">✘</td>
+<td align="center">✔</td>
+<td align="center">✔</td>
+</tr>
+</tbody>
+</table>
+
+<p>For instance, the <code class="hljs-keyword">reference</code> member can be set, modified and returned by all three methods, whereas
+<code class="hljs-keyword">order_date</code> can be set on creation (<code class="hljs-keyword">POST</code>), and returned by the <code class="hljs-keyword">GET</code>, but not subsequently modified (<code class="hljs-keyword">PUT</code>).</p>
+
+<p>As a REST API, it is expected that the same resource would be produced and consumed by all methods
+acting on its URI. However, as there are subtle differences in which members can be written or read for each
+method, it might be tempting to define a <em>different</em> resource for each method so that only the significant members
+for the consumed or produced resource are shown in the documentation.
+Doing so would break this <em>&#34;identification of resources&#34;</em> principle, where the URI represents a single resource.</p>
+
+<p>It is usually in the documentation of such APIs that complexity arises, not in the API specification itself.</p>
+
+<p>DapperDox will automatically exclude read-only resource members from the documentation of an operation&#39;s request
+body (since they can only be sent to writable operations). It also gives you control over which members should be
+excluded from an operation&#39;s request body documentation, through the <code class="hljs-keyword">x-excludeFromOperations</code> member, added
+to relevant resource properties.</p>
+
+<p><code class="hljs-keyword">x-excludeFromOperations</code> takes an array of string, with each value being the operation name (which is either
+the HTTP method name <code class="hljs-keyword">get</code>, <code class="hljs-keyword">post</code>, <code class="hljs-keyword">put</code> and so on, or the <code class="hljs-keyword">x-operationName</code>, if defined.
+See <a href="/docs/spec-method-names" rel="nofollow">controlling method names</a> for further details).</p>
+
+<p>The following specification segment illustrates the use of <code class="hljs-keyword">readOnly</code> and <code class="hljs-keyword">x-excludeFromOperations</code>
+to control the documentation of the resource when presented as a request body:</p>
+
+<pre><code><code class="hljs-keyword">{
+    &#34;Orders&#34;: {
+        &#34;title&#34; : &#34;Orders&#34;,
+        &#34;type&#34;: &#34;object&#34;,
+        &#34;properties&#34;: {
+            &#34;order_number&#34;: {
+                &#34;type&#34;: &#34;string&#34;,
+                &#34;readOnly&#34;: true
+            },
+            &#34;order_date&#34;: {
+                &#34;type&#34;: &#34;string&#34;,
+                &#34;format&#34;: &#34;date-time&#34;,
+                &#34;x-excludeFromOperations&#34;: [&#34;put&#34;]
+            },
+            &#34;reference&#34;: {
+                &#34;type&#34;: &#34;string&#34;
+            },
+            &#34;order_status&#34;: {
+                &#34;type&#34;: &#34;string&#34;,
+                &#34;x-excludeFromOperations&#34;: [&#34;post&#34;]
+            }
+        }
+    }
+}
+</code></code></pre>
+
+<p><script>hljs.initHighlightingOnLoad();</script></p>
+
+		</div>
+      </div>
+	</div>
+
+        <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            &copy; DapperDox 2016
+          </div>
+          <div class="col-lg-4 col-md-4">
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            <div class="valigned align-right">
+                <a href="https://github.com/zxchris/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	  jQuery(function($) {
+		$(document).ready( function() {
+		    
+            $('.items').hide();
+            var $pagename=decodeURI( window.location.pathname );
+
+            var $parent=$('ul[id="navigation"]')
+            var $element=$parent.find('a[href$="'+$pagename+'"]');
+            
+
+            var api_id = $element.data('outer');
+            var toggler = $("#toggle"+api_id);
+            var outerul = $("#ul"+api_id);
+
+            outerul.addClass('in');
+            toggler.addClass('open');
+            toggler.removeClass('collapsed');
+            $element.addClass('nav-selected');
+
+            $parent.removeClass('hide');
+            $('body').removeClass('hide');
+		});
+	  });
+	</script>
+</body>
+</html>
