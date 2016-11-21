@@ -6,7 +6,7 @@ Google Chrome, Apple Safari, Mozilla Firefox and Internet Explorer.
 
 DapperDox requires a certificate and a private key to be configured to enable TLS. The
 certificate and key filenames are passed to DapperDox using the `-tls-certificate` and
-`-tls-key` [configuration](/docs/configuration/guide) options.
+`-tls-key` [configuration](/docs/configuration-guide) options.
 
 
 

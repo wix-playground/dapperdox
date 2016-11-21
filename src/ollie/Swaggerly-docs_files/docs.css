@@ -1,0 +1,99 @@
+header {
+  background: #ecf0f1;
+}
+p {
+    font-weight: 320;
+    font-size: 1.1em;
+}
+
+h1,
+.h1 {
+  margin-top: 28px;
+  font-size: 33px;
+  padding-bottom: 20px;
+}
+h2,
+.h2 {
+  font-size: 25px;
+  padding-bottom: 18px;
+}
+h3,
+.h3 {
+  font-size: 20px;
+  padding-bottom: 14px;
+}
+h4,
+.h4 {
+  font-size: 15px;
+  padding-bottom: 10px;
+}
+
+pre code {
+    /* darker red */
+    /* color: #B52248; */
+    /* kinda red */
+    color: #c7254e;
+}
+
+.main a:link    {color: #0000EE;}
+.main a:visited {color: #0000EE;}
+.main a:hover   {color: #60a0ff;}
+
+/*
+ * Sidebar
+ */
+/* Hide for mobile, show later */
+/* Sidebar navigation */
+.nav-sidebar {
+  list-style: none;
+  margin: 2em 0 0 0;
+  padding: 0;
+}
+.nav-sidebar > li > a {
+  padding: 0 20px 0 0px;
+}
+
+.nav-inner > li > a {
+    padding :0;
+}
+.nav-toggle {
+  /*margin-left: -14px;*/
+font-size: 1.1em;
+}
+.nav-toggle.open {
+  font-weight: bold;
+  color: green;
+}
+.nav-selected {
+  font-weight: bold;
+  color: #000000;
+}
+.nav-sidebar > li > h4 {
+  font-size: 15px;
+  padding-left: 14px;
+  margin-bottom: 0px;
+}
+.nav-sidebar > li {
+  padding: 0px 0 10px 0px;
+}
+.nav-sidebar > li > ul > li > a {
+  padding-left: 1em;
+}
+.nav-sidebar > li > ul {
+  padding: 0px;
+  padding-left: 0px; /* 40 */
+  list-style: none;
+}
+.nav-sidebar > li > ul > li > ul {
+  /* padding-left: 20px; */
+  list-style: none;
+}
+.nav-sidebar a {
+  cursor:pointer;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+  background-color: #428bca;
+}
