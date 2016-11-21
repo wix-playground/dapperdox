@@ -40,7 +40,7 @@ Configure DapperDox to read the certificate and key with:
 
 ```
 -tls-cert=dapperdox_rsa.crt \
--tle-key=dapperdox_rsa.key
+-tls-key=dapperdox_rsa.key
 ```
 
 
@@ -56,7 +56,7 @@ Configure DapperDox to read the certificate and key with:
 
 ```
 -tls-cert=dapperdox_ecdsa.crt \
--tle-key=dapperdox_ecdsa.key
+-tls-key=dapperdox_ecdsa.key
 ```
 
 
