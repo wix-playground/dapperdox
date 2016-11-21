@@ -12,7 +12,7 @@ do
 done
 cd -
 
-mv downloads/download downloads/download.html
+mv download/downloads download/downloads.html
 echo "dapperdox.io" > CNAME
 
 for f in `find . -type f | grep -v "^\./src" | grep -v "^\./\.git"`
@@ -20,5 +20,4 @@ do
     git add ${f}
 done
 git add CNAME
-git add downloads/*
-
+git add download/*
