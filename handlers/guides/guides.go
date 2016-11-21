@@ -8,12 +8,12 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/dapperdox/dapperdox/logger"
+	"github.com/dapperdox/dapperdox/navigation"
+	"github.com/dapperdox/dapperdox/render"
+	"github.com/dapperdox/dapperdox/render/asset"
+	"github.com/dapperdox/dapperdox/spec"
 	"github.com/gorilla/pat"
-	"github.com/zxchris/swaggerly/logger"
-	"github.com/zxchris/swaggerly/navigation"
-	"github.com/zxchris/swaggerly/render"
-	"github.com/zxchris/swaggerly/render/asset"
-	"github.com/zxchris/swaggerly/spec"
 )
 
 // ---------------------------------------------------------------------------

@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zxchris/swaggerly/logger"
+	"github.com/dapperdox/dapperdox/logger"
 )
 
 // Handler returns a Handler that runs h with the given time limit.

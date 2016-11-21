@@ -3,8 +3,8 @@ package network
 import (
 	"crypto/tls"
 	"errors"
-	"github.com/zxchris/swaggerly/config"
-	"github.com/zxchris/swaggerly/logger"
+	"github.com/dapperdox/dapperdox/config"
+	"github.com/dapperdox/dapperdox/logger"
 	"net"
 )
 

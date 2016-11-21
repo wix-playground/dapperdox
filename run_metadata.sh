@@ -1,6 +1,6 @@
-#./swaggerly -swagger-dir=../developer.ch.gov.uk-poc/swagger -bind-addr=192.168.56.2:3123 -rewrite-url=http://localhost:4242/swagger-2.0 -site-url=http://192.168.56.2:3123 -log-level=trace
+#./dapperdox -swagger-dir=../developer.ch.gov.uk-poc/swagger -bind-addr=192.168.56.2:3123 -rewrite-url=http://localhost:4242/swagger-2.0 -site-url=http://192.168.56.2:3123 -log-level=trace
     #-swagger-dir=../../companieshouse/developer.ch.gov.uk-poc/swagger \
-./swaggerly \
+./dapperdox \
     --force-specification-list=false \
     -spec-dir=examples/specifications/petstore \
     -bind-addr=0.0.0.0:3123 \

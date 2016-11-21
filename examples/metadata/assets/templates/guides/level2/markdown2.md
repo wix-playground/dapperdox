@@ -1,4 +1,4 @@
-Title: Swaggerly Markdown Example 1
+Title: DapperDox Markdown Example 1
 Author: Chris Smith
 Navigation: Getting Started 
 SortOrder: 100

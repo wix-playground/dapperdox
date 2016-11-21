@@ -14,7 +14,7 @@ done
 
 cp ${BIN} ${TARGET}
 cd ..
-ln -fhs swaggerly ${BASE}
+ln -fhs dapperdox ${BASE}
 
 echo "Building ${ZIP}..."
 

@@ -3,11 +3,11 @@ package home
 import (
 	"net/http"
 
+	"github.com/dapperdox/dapperdox/config"
+	"github.com/dapperdox/dapperdox/logger"
+	"github.com/dapperdox/dapperdox/render"
+	"github.com/dapperdox/dapperdox/spec"
 	"github.com/gorilla/pat"
-	"github.com/zxchris/swaggerly/config"
-	"github.com/zxchris/swaggerly/logger"
-	"github.com/zxchris/swaggerly/render"
-	"github.com/zxchris/swaggerly/spec"
 )
 
 // ----------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ func Register(r *pat.Router) {
 
 	if count == 1 && cfg.ForceSpecList == false {
 		// If there is only one specification loaded, then hotwire '/' to redirect to the
-		// specification summary page unless Swaggerly is configured to show the specification list page.
+		// specification summary page unless DapperDox is configured to show the specification list page.
 		r.Path("/").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			http.Redirect(w, req, "/"+specification.ID+"/", 302)
 		})

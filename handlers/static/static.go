@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	//"github.com/zxchris/swaggerly/assets"
+	//"github.com/dapperdox/dapperdox/assets"
+	"github.com/dapperdox/dapperdox/logger"
+	"github.com/dapperdox/dapperdox/render"
+	"github.com/dapperdox/dapperdox/render/asset"
 	"github.com/gorilla/pat"
-	"github.com/zxchris/swaggerly/logger"
-	"github.com/zxchris/swaggerly/render"
-	"github.com/zxchris/swaggerly/render/asset"
 )
 
 // Register creates routes for each static resource

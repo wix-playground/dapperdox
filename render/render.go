@@ -8,13 +8,13 @@ import (
 	"strings"
 
 	//"github.com/davecgh/go-spew/spew"
+	"github.com/dapperdox/dapperdox/config"
+	"github.com/dapperdox/dapperdox/logger"
+	"github.com/dapperdox/dapperdox/navigation"
+	"github.com/dapperdox/dapperdox/render/asset"
+	"github.com/dapperdox/dapperdox/spec"
 	"github.com/ian-kent/htmlform"
 	"github.com/unrolled/render"
-	"github.com/zxchris/swaggerly/config"
-	"github.com/zxchris/swaggerly/logger"
-	"github.com/zxchris/swaggerly/navigation"
-	"github.com/zxchris/swaggerly/render/asset"
-	"github.com/zxchris/swaggerly/spec"
 )
 
 // Render is a global instance of github.com/unrolled/render.Render

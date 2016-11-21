@@ -1,9 +1,9 @@
 package proxy
 
 import (
+	"github.com/dapperdox/dapperdox/config"
+	"github.com/dapperdox/dapperdox/logger"
 	"github.com/gorilla/pat"
-	"github.com/zxchris/swaggerly/config"
-	"github.com/zxchris/swaggerly/logger"
 	"net/http"
 	"net/http/httputil"
 	"net/url"

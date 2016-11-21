@@ -8,21 +8,21 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dapperdox/dapperdox/config"
+	"github.com/dapperdox/dapperdox/handlers/guides"
+	"github.com/dapperdox/dapperdox/handlers/home"
+	"github.com/dapperdox/dapperdox/handlers/reference"
+	"github.com/dapperdox/dapperdox/handlers/specs"
+	"github.com/dapperdox/dapperdox/handlers/static"
+	"github.com/dapperdox/dapperdox/handlers/timeout"
+	"github.com/dapperdox/dapperdox/logger"
+	"github.com/dapperdox/dapperdox/network"
+	"github.com/dapperdox/dapperdox/proxy"
+	"github.com/dapperdox/dapperdox/render"
+	"github.com/dapperdox/dapperdox/spec"
 	"github.com/gorilla/pat"
 	"github.com/justinas/alice"
 	"github.com/justinas/nosurf"
-	"github.com/zxchris/swaggerly/config"
-	"github.com/zxchris/swaggerly/handlers/guides"
-	"github.com/zxchris/swaggerly/handlers/home"
-	"github.com/zxchris/swaggerly/handlers/reference"
-	"github.com/zxchris/swaggerly/handlers/specs"
-	"github.com/zxchris/swaggerly/handlers/static"
-	"github.com/zxchris/swaggerly/handlers/timeout"
-	"github.com/zxchris/swaggerly/logger"
-	"github.com/zxchris/swaggerly/network"
-	"github.com/zxchris/swaggerly/proxy"
-	"github.com/zxchris/swaggerly/render"
-	"github.com/zxchris/swaggerly/spec"
 )
 
 var VERSION string
@@ -32,7 +32,7 @@ func main() {
 
 	VERSION = "1.0.0" // TODO build with doxc to control version number?
 
-	log.Printf("Swaggerly server version %s starting\n", VERSION)
+	log.Printf("DapperDox server version %s starting\n", VERSION)
 
 	os.Setenv("GOFIGURE_ENV_ARRAY", "1") // Enable gofigure array parsing of env vars
 

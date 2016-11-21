@@ -1,6 +1,6 @@
 export PROXY_PATH=/developer=https://developer.companieshouse.gov.uk,/fred/=https://google.co.uk
 
-./swaggerly \
+./dapperdox \
     -assets-dir=./examples/overlay/assets \
     -spec-dir=examples/specifications/petstore/ \
     -bind-addr=0.0.0.0:3123 \
