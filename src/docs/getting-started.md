@@ -1,3 +1,8 @@
+Title: Getting started
+Description: Quickstart guide
+Keywords: Quickstart, running, download, configuration
+
+
 # Getting started
 
 The Getting Started guide shows you how to download and install DapperDox; how to quickly

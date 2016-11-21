@@ -1,3 +1,7 @@
+Title: Terms used by DapperDox
+Description: A summary of terms used by DapperDox
+Keywords: terms, glossary
+
 # Terms used by DapperDox
 
 ## `specification-ID`

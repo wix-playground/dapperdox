@@ -1,3 +1,7 @@
+Title: DapperDox page type
+Description: Overview of the page types supported by DapperDox
+Keywords: DapperDox, pages, content
+
 # DapperDox page types 
 
 DapperDox documentation is made up of six page types, listed below, each of which may be

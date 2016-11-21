@@ -1,3 +1,7 @@
+Title: Rewriting specification URLs
+Description: How to rewrite URLs appearing in OpenAPI specifications
+Keywords: Rewrite, URL, OpenAPI, Swagger, specification
+
 # Rewriting specification URLs
 
 If your swagger specification is split over multiple files, and therefore contain absolute `$ref:` object

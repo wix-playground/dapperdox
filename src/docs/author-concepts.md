@@ -1,3 +1,7 @@
+Title: Authoring content
+Description: Overview of authoring content within DapperDox
+Keywords: Guides, Overlay, OpenAPI, Swagger
+
 # Authoring content concepts
 
 DapperDox combines reference documentation automatically generated from OpenAPI Swagger specifications

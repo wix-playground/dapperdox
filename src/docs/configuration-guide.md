@@ -1,3 +1,7 @@
+Title: Configuring DapperDox
+Description: DapperDox configuration parameters
+Keywords: Configuration, command line, environment variables, customisation
+
 # DapperDox configuration
 
 DapperDox can be configured using command line options or, in line with the [twelve-factor app](https://12factor.net/) recommendations, through environment variables. 

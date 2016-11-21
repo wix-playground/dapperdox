@@ -1,3 +1,7 @@
+Title: Rewriting documentation URLs
+Description: How to rewrite URLs appearing in documentation, on the fly
+Keywords: rewrite, url
+
 # Rewriting documentation URLs
 
 The authored documentation you are combining with your swagger specifications often will not contain URLs

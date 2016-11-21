@@ -1,3 +1,7 @@
+Title: Reverse proxy
+Description: How to configure and use the reverse proxy in DapperDox
+Keywords: Reverse, proxy, remove, service, forward, domain
+
 # Reverse proxy
 
 DapperDox can proxy URL paths to other services. This allows multiple services to be 

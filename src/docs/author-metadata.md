@@ -1,3 +1,7 @@
+Title: Metadata
+Description: Controlling DapperDox navigation through metadata
+Keywords: Navigation, metadata
+
 # Metadata
 
 Metadata can be added to the start of guide documentation written in 

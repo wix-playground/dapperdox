@@ -1,3 +1,7 @@
+Title: Loading specifications
+Description: How to load single or multiple specifications
+Keywords: OpenAPI, Swagger, specification, single, multiple, list
+
 # Loading specifications
 
 DapperDox can document a single API specification, or a suite of API specification at once.

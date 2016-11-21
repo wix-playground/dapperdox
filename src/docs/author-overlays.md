@@ -1,3 +1,7 @@
+Title: Content overlays
+Description: How to overlay and inject custom content into rendered specification pages.
+Keywords: Overlay, specification, OpenAPI, Swagger, inject
+
 # Content overlays
 
 Additional content can be added to any DapperDox generated reference page by providing overlay files.

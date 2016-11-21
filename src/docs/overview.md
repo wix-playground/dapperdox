@@ -1,3 +1,7 @@
+Title: Overview
+Description: Quick overview of DapperDox and its features
+Keywords: Overview, features
+
 # Overview
 
 ## What is DapperDox?

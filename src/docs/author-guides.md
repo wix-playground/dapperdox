@@ -1,3 +1,7 @@
+Title: Creating authored documentation pages
+Description: How to create authored guides and documents within DapperDox
+Keywords: Guides, OpenAPI, Swagger, specifications
+
 # Creating authored documentation pages
 
 Authored documentation pages are referred to as <span class="hljs-attr">guides</span>. Guides should be authored in

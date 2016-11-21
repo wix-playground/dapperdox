@@ -1,3 +1,7 @@
+Title: Operation tagging
+Description: Using operation tagging to control what documentation is built
+Keywords: tagging, operation, path, openAPI, swagger, navigation, documentation
+
 # Operation tagging
 
 For most APIs, the grouping of operations into related sets helps users understand and reference the

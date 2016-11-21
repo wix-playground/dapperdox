@@ -1,3 +1,7 @@
+Title: Controlling method names
+Description: How to control the names used for methods and operations in DapperDox
+Keywords: method, operation, name, specification, swagger, OpenAPI, navigation
+
 # Controlling method names
 
 ## Methods and operations

@@ -1,5 +1,8 @@
-# Download
+Title: Download DapperDox
+Description: Download the latest pre-built release of DapperDox
+Keywords: Download, linux, mac, osx, windows, binary, tar, zip
 
+# Download DapperDox
 
 We provide the lastest release builds for the most common operating systems and architectures.
 If yours is not listed here, then clone the source from [GitHub](http://github.com/dapperdox/dapperdox) and follow the [build instructions](#building-from-source).

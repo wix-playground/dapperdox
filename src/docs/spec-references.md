@@ -1,4 +1,8 @@
-# Resolving references
+Title: Resolving specification references
+Description: How to correctly resolve references in your OpenAPI specification
+Keywords: openAPI, swagger, specification, resolve, references
+
+# Resolving specification references
 
 It is common that a specification that is split over multiple files will fail to load the first time, caused by its `$ref`
 members not resolving to the address that DapperDox is serving the files from.

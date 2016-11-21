@@ -1,3 +1,7 @@
+Title: Enable TLS
+Description: How to enable DapperDox HTTPS
+Keywords: TLS, HTTPS, Cipher, certificate, private key, SSL
+
 # Enable TLS
 
 DapperDox's implementation of TLS restricts itself to the strong TLS 1.2 suites, avoiding

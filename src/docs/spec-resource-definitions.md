@@ -1,3 +1,7 @@
+Title: Resource definitions
+Description: How to get the best out of your specification resource definitions
+Keywords: resource, title, including, excluding, controll, openAPI, swagger
+
 # Resource definitions
 
 ## Resource title

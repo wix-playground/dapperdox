@@ -7,10 +7,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="DapperDox - Beautiful integrated OpenAPI documentation">
-    <meta name="author" content="Chris Smith">
+    <meta name="description" content="How to correctly resolve references in your OpenAPI specification">
+    <meta name="keywords" content="openAPI, swagger, specification, resolve, references">
+    <meta name="author" content="DapperDox - Chris Smith">
 
-    <title>DapperDox – Beautiful, integrated, OpenAPI documentation</title>
+    <title>Resolving specification references</title>
 
     
 
@@ -149,7 +150,7 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="resolving-references" class="anchor" href="#resolving-references" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolving references</h1>
+            <h1><a name="resolving-specification-references" class="anchor" href="#resolving-specification-references" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolving specification references</h1>
 
 <p>It is common that a specification that is split over multiple files will fail to load the first time, caused by its <code class="hljs-keyword">$ref</code>
 members not resolving to the address that DapperDox is serving the files from.</p>
@@ -232,8 +233,7 @@ file to file.</p>
 	  });
 	</script>
     
-    
-<script>
+    <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)

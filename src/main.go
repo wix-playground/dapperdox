@@ -12,11 +12,13 @@ import (
 	"github.com/unrolled/render"
 
 	"bufio"
+	"bytes"
 	"fmt"
 	"github.com/shurcooL/github_flavored_markdown"
 	"io/ioutil"
 	"os"
 	"regexp"
+	"unicode"
 )
 
 type gfmReplacer struct {
@@ -29,6 +31,7 @@ var Render *render.Render
 var gfmMapSplit = regexp.MustCompile(":")
 var guideReplacer *strings.Replacer
 var gfmReplace []*gfmReplacer
+var _metadata = map[string]map[string]string{}
 
 // --------------------------------------------------------------------------------------
 func main() {
@@ -56,12 +59,18 @@ func registerRoutes(r *pat.Router) {
 
 	r.Path("/docs/{page}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		page := req.URL.Query().Get(":page")
+
+		log.Printf("Render page %s\n", page)
+
 		resource := "docs/" + strings.TrimSuffix(page, filepath.Ext(page))
-		HTML(w, http.StatusOK, resource, map[string]interface{}{})
+
+		args := AllMetaData(resource + ".tmpl")
+		HTML(w, http.StatusOK, resource, args)
 	})
 
 	r.Path("/download/downloads").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		Render.HTML(w, http.StatusOK, "download/downloads", map[string]interface{}{}, render.HTMLOptions{Layout: "wide_outer"})
+		args := AllMetaData("download/downloads.tmpl")
+		Render.HTML(w, http.StatusOK, "download/downloads", args, render.HTMLOptions{Layout: "wide_outer"})
 	})
 
 	r.Methods("GET").Handler(http.FileServer(http.Dir("./")))
@@ -133,6 +142,8 @@ func CompileGFMMap() {
 // Returns rendered markdown
 func ProcessMarkdown(doc []byte) []byte {
 
+	// See if the first line contains metadata:
+
 	html := github_flavored_markdown.Markdown([]byte(doc))
 	// Apply any HTML substitutions
 	for _, rep := range gfmReplace {
@@ -142,7 +153,11 @@ func ProcessMarkdown(doc []byte) []byte {
 }
 
 // --------------------------------------------------------------------------------------
-func storeTemplate(name string, template string) {
+func storeTemplate(name string, template string, meta map[string]string) {
+
+	if len(meta) > 0 {
+		_metadata[name] = meta
+	}
 
 	name = "assets/" + name
 	if _, ok := _bindata[name]; !ok {
@@ -209,17 +224,24 @@ func Compile(dir string) {
 			panic(err)
 		}
 
+		var meta map[string]string
+
 		// The file may be in GFM, so convert to HTML and process any embedded metadata
 		if ext == ".md" {
+
+			buf, meta = ProcessMetadata(buf)
+
 			// Chop off the extension
 			mdname := strings.TrimSuffix(relative, ext)
 
 			buf = ProcessMarkdown(buf) // Convert markdown into HTML
 
 			relative = mdname + ".tmpl"
-			storeTemplate(relative, string(buf))
+			storeTemplate(relative, string(buf), meta)
 		} else if ext == ".tmpl" {
-			storeTemplate(relative, string(buf))
+			buf, meta = ProcessMetadata(buf)
+
+			storeTemplate(relative, string(buf), meta)
 		}
 
 		return nil
@@ -236,6 +258,68 @@ func (g *gfmReplacer) Parse(line string) *string {
 	g.Replace = []byte(line[indexes[1]:])
 
 	return &line
+}
+
+// ---------------------------------------------------------------------------
+// Strips and processed metadata from markdown document
+func ProcessMetadata(doc []byte) ([]byte, map[string]string) {
+
+	// Inspect the markdown src doc to see if it contains metadata
+	reader := bytes.NewReader(doc)
+	scanner := bufio.NewScanner(reader)
+	scanner.Split(bufio.ScanLines)
+
+	var newdoc string
+	metaData := make(map[string]string)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		splitLine := strings.Split(line, ":")
+
+		trimmed := strings.TrimSpace(splitLine[0])
+		if (len(splitLine) < 2) || (!unicode.IsLetter(rune(trimmed[0]))) { // Have we reached a non KEY: line? If so, we're done with the metadata.
+			if len(line) > 0 { // If the line is not empty, keep the contents
+				newdoc = newdoc + line + "\n"
+			}
+			// Gather up all remainging lines
+			for scanner.Scan() {
+				// TODO Make this more efficient!
+				newdoc = newdoc + scanner.Text() + "\n"
+			}
+			break
+		}
+
+		// Else, deal with meta-data
+		metaValue := ""
+		if len(splitLine) > 1 {
+			metaValue = strings.TrimSpace(splitLine[1])
+		}
+
+		//metaKey := strings.ToLower(splitLine[0])
+		metaKey := splitLine[0] // Leave key as cased
+		metaData[metaKey] = metaValue
+	}
+
+	return []byte(newdoc), metaData
+}
+
+// ---------------------------------------------------------------------------
+func MetaData(filename string, name string) string {
+	if md, ok := _metadata[filename]; ok {
+		//if val, ok := md[strings.ToLower(name)]; ok {
+		if val, ok := md[name]; ok {
+			return val
+		}
+	}
+	return ""
+}
+
+// ---------------------------------------------------------------------------
+func AllMetaData(filename string) map[string]string {
+	if md, ok := _metadata[filename]; ok {
+		return md
+	}
+	return map[string]string{}
 }
 
 // ---------------------------------------------------------------------------
