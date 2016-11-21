@@ -1,0 +1,202 @@
+<!doctype html>
+
+
+
+
+ <html> 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="DapperDox - Beautiful integrated OpenAPI documentation">
+    <meta name="author" content="Chris Smith">
+
+    <title>DapperDox – Beautiful, integrated, OpenAPI documentation</title>
+
+    
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/images/fav/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/images/fav/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/images/fav/manifest.json">
+    <link rel="mask-icon" href="/images/fav/safari-pinned-tab.svg" color="#000000">
+    <meta name="theme-color" content="#ffffff">
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+ 
+    
+    
+    <link href='http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css' rel='stylesheet' type='text/css'> 
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet"> 
+	<link href='http://fonts.googleapis.com/css?family=Muli:400,700' rel='stylesheet' type='text/css'> 
+	
+    
+	<link href="/css/docgeneric.css" rel="stylesheet">
+	<link href="/css/docs.css" rel="stylesheet">
+    <link href="/css/footer.css" rel="stylesheet">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+	
+	<script src="/js/modernizr-2.8.3.min.js"></script>  
+	
+	
+
+	
+
+    <link href="/css/hilight-dapperdox.css" rel="stylesheet">
+</head>
+
+<body id="home" class="" style="overflow: visible">
+        <header>
+      <div class="container">
+        <div class="row">
+          <nav class="navbar-default" role="navigation">
+             <div class="navbar-header">
+
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+                <a class="navbar-brand" href="/xindex.html"><img src="/images/dapperdox_logo_circle_outline.svg" alt="DapperDox logo"/> DapperDox</a>
+			</div>
+
+			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					
+					<li class="menuItem"><a href="/downloads/download">Download</a></li>
+					<li class="menuItem"><a href="/docs/getting-started">Getting Started</a></li>
+					<li class="menuItem"><a href="/docs/overview">Documentation</a></li>
+				</ul>
+			</div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+		   
+	<div class="container">
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 main">
+            <h1><a name="getting-started" class="anchor" href="#getting-started" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting started</h1>
+
+<p>The Getting Started guide shows you how to download and install DapperDox; how to quickly
+get an OpenAPI Swagger 2.0 specification rendered, and some useful configuration options
+to tune the presentation.</p>
+<h2><a name="download-dapperdox" class="anchor" href="#download-dapperdox" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Download DapperDox</h2>
+
+<p><a href="/downloads/download" rel="nofollow">Download the latest release</a> of DapperDox for you operating system, and unpack it.</p>
+
+<pre><code><code class="hljs-keyword">tar -zxf dapperdox-*.tgz
+cd dapperdox
+</code></code></pre>
+<h2><a name="basic-configuration" class="anchor" href="#basic-configuration" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Basic configuration</h2>
+
+<p>DapperDox requires little configuration to get started, just where to find your OpenAPI Swagger 2.0
+specifications. Configuration parameters can be specified on the command line, or by setting
+environment variables.</p>
+
+<p>For this example, we will specify the Swagger specification location on the command line:</p>
+
+<pre><code><code class="hljs-keyword">./dapperdox -spec-dir=examples/specifications/petstore
+</code></code></pre>
+
+<p>This will start serving the example <em>petstore</em> specification included in the DapperDox distribution.</p>
+
+<p>By default, DapperDox will start serving reference documentation on port 3123, so point your web browser at
+<a href="http://localhost:3123" rel="nofollow">http://localhost:3123</a></p>
+<h2><a name="serving-your-own-specification" class="anchor" href="#serving-your-own-specification" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Serving your own specification</h2>
+
+<p>Point DapperDox at the directory containing your Swagger specification using the <code class="hljs-keyword">-spec-dir</code> configuration parameter,
+where DapperDox will look for the file <code class="hljs-keyword">swagger.json</code>. If your specification has a different filename, specify
+this with the <code class="hljs-keyword">-spec-filename</code> parameter.</p>
+
+<p>If your specification is broken down into multiple files, with some in sub-directories, then you must point
+DapperDox at the parent directory, beneath which it can find all the files it needs. If the main Swagger
+specification file exists in a sub-directory of this parent, then configure that using the <code class="hljs-keyword">-spec-filename</code> parameter.</p>
+
+<p>For example, consider the following file structure:</p>
+
+<pre><code><code class="hljs-keyword">/user/api_specs/spec/swagger.json
+/user/api_specs/operations/get_user.json
+/user/api_specs/operations/post_user.json
+/user/api_specs/definitions/user_resource.json
+</code></code></pre>
+
+<p>Since the common parent directory of all these resource files is <code class="hljs-keyword">api_specs</code>, this is where you need to tell DapperDox
+to look for specification files:</p>
+
+<pre><code><code class="hljs-keyword">-spec-dir=/user/api_specs
+</code></code></pre>
+
+<p>and because the main swagger specification file is within a sub-directory of the common parent <code class="hljs-keyword">api_specs</code>, give the
+relative path to this using the <code class="hljs-keyword">-spec-filename</code> parameter:</p>
+
+<pre><code><code class="hljs-keyword">-spec-filename=spec/swagger.json
+</code></code></pre>
+<h3><a name="resolving-references" class="anchor" href="#resolving-references" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Resolving references</h3>
+
+<p>You may find that your specification does not load first time if it consists of multiple files
+referenced by <code class="hljs-keyword">$ref:</code> members. Please refer to the section on <a href="/docs/spec-references" rel="nofollow">resolving references</a> if this is the case.</p>
+
+<p><script>hljs.initHighlightingOnLoad();</script></p>
+
+		</div>
+      </div>
+	</div>
+
+        <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            &copy; DapperDox 2016
+          </div>
+          <div class="col-lg-4 col-md-4">
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            <div class="valigned align-right">
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+	
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	  jQuery(function($) {
+		$(document).ready( function() {
+		    
+            $('.items').hide();
+            var $pagename=decodeURI( window.location.pathname );
+
+            var $parent=$('ul[id="navigation"]')
+            var $element=$parent.find('a[href$="'+$pagename+'"]');
+            
+
+            var api_id = $element.data('outer');
+            var toggler = $("#toggle"+api_id);
+            var outerul = $("#ul"+api_id);
+
+            outerul.addClass('in');
+            toggler.addClass('open');
+            toggler.removeClass('collapsed');
+            $element.addClass('nav-selected');
+
+            $parent.removeClass('hide');
+            $('body').removeClass('hide');
+		});
+	  });
+	</script>
+</body>
+</html>

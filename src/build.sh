@@ -12,7 +12,7 @@ do
 done
 cd -
 
-mv download/downloads download/downloads.html
+mv downloads/download downloads/download.html
 echo "dapperdox.io" > CNAME
 
 for f in `find . -type f | grep -v "^\./src" | grep -v "^\./\.git"`
