@@ -6,7 +6,7 @@ to tune the presentation.
 
 ## Download DapperDox
 
-[Download the latest release](/downloads/download) of DapperDox for you operating system, and unpack it.
+[Download the latest release](/download/downloads) of DapperDox for you operating system, and unpack it.
 
 ```
 tar -zxf dapperdox-*.tgz
