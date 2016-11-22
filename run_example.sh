@@ -4,7 +4,7 @@
     -site-url=http://localhost:3123 \
     -spec-rewrite-url=petstore.swagger.io=PETSTORE.swagger.io \
     -theme=default  \
-    -log-level=trace \
+    -log-level=info \
     #-tls-certificate=server.rsa.crt \
     #-tls-key=server.rsa.key \
     #-author-show-assets=true \
