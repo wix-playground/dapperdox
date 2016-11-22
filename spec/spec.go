@@ -186,8 +186,11 @@ func LoadSpecifications(host string, collapse bool) error {
 		return err
 	}
 
-	if host == "0.0.0.0" {
-		host = "127.0.0.1"
+	if strings.HasPrefix(host, "0.0.0.0") {
+		splithost := strings.Split(host, ":")
+		splithost[0] = "127.0.0.1"
+		host = strings.Join(splithost, ":")
+		logger.Tracef(nil, "Loading specifications from %s\n", host)
 	}
 
 	for _, specFilename := range cfg.SpecFilename {
