@@ -24,3 +24,5 @@ This enables you to produce rich, browsable reference websites for your APIs.
 5. Proxy your developer platform, allowing full integration of API key management.
 6. Choose from multiple themes, or create your own.
 
+[Get started](/docs/getting-started) with DapperDox!
+
