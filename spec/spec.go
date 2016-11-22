@@ -174,7 +174,7 @@ type Header struct {
 
 // -----------------------------------------------------------------------------
 
-func LoadSpecifications(host string, collapse bool) error {
+func LoadSpecifications(specHost string, collapse bool) error {
 
 	if APISuite == nil {
 		APISuite = make(map[string]*APISpecification)
@@ -186,11 +186,11 @@ func LoadSpecifications(host string, collapse bool) error {
 		return err
 	}
 
-	if strings.HasPrefix(host, "0.0.0.0") {
-		splithost := strings.Split(host, ":")
+	if strings.HasPrefix(specHost, "0.0.0.0") {
+		splithost := strings.Split(specHost, ":")
 		splithost[0] = "127.0.0.1"
-		host = strings.Join(splithost, ":")
-		logger.Tracef(nil, "Loading specifications from %s\n", host)
+		specHost = strings.Join(splithost, ":")
+		logger.Tracef(nil, "Loading specifications from %s\n", specHost)
 	}
 
 	for _, specFilename := range cfg.SpecFilename {
@@ -202,7 +202,7 @@ func LoadSpecifications(host string, collapse bool) error {
 			specification = &APISpecification{}
 		}
 
-		err = specification.Load(specFilename, host)
+		err = specification.Load(specFilename, specHost)
 		if err != nil {
 			return err
 		}
@@ -219,19 +219,18 @@ func LoadSpecifications(host string, collapse bool) error {
 
 // -----------------------------------------------------------------------------
 // Load loads API specs from the supplied host (usually local!)
-func (c *APISpecification) Load(specFilename string, host string) error {
+func (c *APISpecification) Load(specFilename string, specHost string) error {
 
 	if !strings.HasPrefix(specFilename, "/") {
 		specFilename = "/" + specFilename
 	}
 
-	c.URL = "http://" + host + specFilename
+	c.URL = specFilename
 
-	document, err := loadSpec(c.URL)
+	document, err := loadSpec("http://" + specHost + specFilename)
 	if err != nil {
 		return err
 	}
-
 	apispec := document.Spec()
 
 	basePath := apispec.BasePath
