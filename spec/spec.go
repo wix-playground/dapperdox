@@ -174,7 +174,7 @@ type Header struct {
 
 // -----------------------------------------------------------------------------
 
-func LoadSpecifications(specHost string, siteHost string, collapse bool) error {
+func LoadSpecifications(specHost string, collapse bool) error {
 
 	if APISuite == nil {
 		APISuite = make(map[string]*APISpecification)
@@ -202,7 +202,7 @@ func LoadSpecifications(specHost string, siteHost string, collapse bool) error {
 			specification = &APISpecification{}
 		}
 
-		err = specification.Load(specFilename, specHost, siteHost)
+		err = specification.Load(specFilename, specHost)
 		if err != nil {
 			return err
 		}
@@ -219,7 +219,7 @@ func LoadSpecifications(specHost string, siteHost string, collapse bool) error {
 
 // -----------------------------------------------------------------------------
 // Load loads API specs from the supplied host (usually local!)
-func (c *APISpecification) Load(specFilename string, specHost string, siteHost string) error {
+func (c *APISpecification) Load(specFilename string, specHost string) error {
 
 	if !strings.HasPrefix(specFilename, "/") {
 		specFilename = "/" + specFilename
