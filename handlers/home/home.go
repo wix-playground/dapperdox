@@ -39,7 +39,7 @@ func Register(r *pat.Router) {
 		// If there is only one specification loaded, then hotwire '/' to redirect to the
 		// specification summary page unless DapperDox is configured to show the specification list page.
 		r.Path("/").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			http.Redirect(w, req, "/"+specification.ID+"/", 302)
+			http.Redirect(w, req, "/"+specification.ID+"/reference", 302)
 		})
 	} else {
 		r.Path("/").Methods("GET").HandlerFunc(specificationListHandler)
