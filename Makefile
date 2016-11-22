@@ -18,13 +18,13 @@ all:
 
 release: dist \
 ${STEM}.linux-x86.tgz \
-${STEM}.windows-x86.zip \
 ${STEM}.linux-amd64.tgz \
 ${STEM}.darwin-amd64.tgz \
-${STEM}.windows-amd64.zip \
 ${STEM}.linux-arm.tgz \
 ${STEM}.linux-arm64.tgz \
 releaseTable
+#${STEM}.windows-x86.zip \
+#${STEM}.windows-amd64.zip \
 
 dist:
 	mkdir dist

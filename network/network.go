@@ -8,7 +8,7 @@ import (
 	"net"
 )
 
-func GetListener() (net.Listener, error) {
+func GetListener(tlsEnabled *bool) (net.Listener, error) {
 
 	cfg, _ := config.Get() // Don't worry about error. If there was something wrong with the config, we'd know by now.
 
@@ -51,9 +51,6 @@ func GetListener() (net.Listener, error) {
 	}
 
 	logger.Infof(nil, "listening on %s for SECURED connections", cfg.BindAddr)
+	*tlsEnabled = true
 	return tls.Listen("tcp", cfg.BindAddr, tlscfg)
-
-	//w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-
-	// TODO Do we need to disable HTTP/2 ? : TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 }
