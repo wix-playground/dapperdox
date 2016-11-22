@@ -14,5 +14,5 @@ do
     TARG=`echo $i | cut -d'.' -f4`
     OS=`echo $TARG | cut -d'-' -f1`
     ARCH=`echo $TARG | cut -d'-' -f2`
-    echo "[$i](/downloads/$i) | ${OS} | ${ARCH} | ${SIZE} | ${SUM} |"
+    echo "[$i](https://github.com/DapperDox/dapperdox/releases/download/v1.0.0/$i) | ${OS} | ${ARCH} | ${SIZE} | ${SUM} |"
 done

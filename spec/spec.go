@@ -186,6 +186,10 @@ func LoadSpecifications(host string, collapse bool) error {
 		return err
 	}
 
+	if host == "0.0.0.0" {
+		host = "127.0.0.1"
+	}
+
 	for _, specFilename := range cfg.SpecFilename {
 
 		var ok bool
