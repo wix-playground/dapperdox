@@ -16,17 +16,23 @@ all:
 	@echo "Build DapperDox..."; \
 	go get && go build
 
-cross: dist \
+release: dist \
 ${STEM}.linux-x86.tgz \
 ${STEM}.windows-x86.zip \
 ${STEM}.linux-amd64.tgz \
 ${STEM}.darwin-amd64.tgz \
 ${STEM}.windows-amd64.zip \
 ${STEM}.linux-arm.tgz \
-${STEM}.linux-arm64.tgz 
+${STEM}.linux-arm64.tgz \
+releaseTable
 
 dist:
 	mkdir dist
+
+releaseTable: dist/release-table-${VERSION}.md
+
+dist/release-table-${VERSION}.md:
+	./createReleaseTable.sh ${VERSION} > $@
 
 ${STEM}.linux-arm.tgz: dapperdox_linux_arm.exe ${ZIPLIST}
 	@${BZU}

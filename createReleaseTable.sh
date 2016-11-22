@@ -1,7 +1,11 @@
 #!/bin/bash
 
+VERSION=$1
 
 ## 1.0.0-beta (2016-10-25)
+
+echo "**${VERSION}**"
+echo ""
 
 echo "| Filename | OS   | Arch | Size | Checksum |"
 echo "| -------- | ---- | ---- | ---- | -------- |"
@@ -14,5 +18,5 @@ do
     TARG=`echo $i | cut -d'.' -f4`
     OS=`echo $TARG | cut -d'-' -f1`
     ARCH=`echo $TARG | cut -d'-' -f2`
-    echo "[$i](https://github.com/DapperDox/dapperdox/releases/download/v1.0.0/$i) | ${OS} | ${ARCH} | ${SIZE} | ${SUM} |"
+    echo "[$i](https://github.com/DapperDox/dapperdox/releases/download/v$VERSION/$i) | ${OS} | ${ARCH} | ${SIZE} | ${SUM} |"
 done
