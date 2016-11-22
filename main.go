@@ -30,7 +30,7 @@ var VERSION string
 // ---------------------------------------------------------------------------
 func main() {
 
-	VERSION = "1.0.0" // TODO build with doxc to control version number?
+	VERSION = "1.0.1" // TODO build with doxc to control version number?
 
 	log.Printf("DapperDox server version %s starting\n", VERSION)
 
