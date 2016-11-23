@@ -25,13 +25,13 @@ import (
 	"github.com/justinas/nosurf"
 )
 
-var VERSION string
+const VERSION string = "1.0.1" // TODO build with doxc to control version number?
+
+var tlsEnabled bool
 
 // ---------------------------------------------------------------------------
 func main() {
-
-	VERSION = "1.0.1" // TODO build with doxc to control version number?
-
+	tlsEnabled = false
 	log.Printf("DapperDox server version %s starting\n", VERSION)
 
 	os.Setenv("GOFIGURE_ENV_ARRAY", "1") // Enable gofigure array parsing of env vars
@@ -50,7 +50,7 @@ func main() {
 	}
 
 	router := pat.New()
-	chain := alice.New(logger.Handler /*, context.ClearHandler*/, timeoutHandler, withCsrf).Then(router)
+	chain := alice.New(logger.Handler /*, context.ClearHandler*/, timeoutHandler, withCsrf, injectHeaders).Then(router)
 
 	logger.Infof(nil, "listening on %s", cfg.BindAddr)
 	listener, err := net.Listen("tcp", cfg.BindAddr)
@@ -78,7 +78,7 @@ func main() {
 	specs.Register(router)
 	spec.LoadStatusCodes()
 
-	err = spec.LoadSpecifications(cfg.BindAddr, true)
+	err = spec.LoadSpecifications(cfg.BindAddr, cfg.SiteURL, true)
 	if err != nil {
 		logger.Errorf(nil, "%s", err)
 		os.Exit(1)
@@ -96,7 +96,7 @@ func main() {
 	listener.Close() // Stop serving specs
 	wg.Wait()        // wait for go routine serving specs to terminate
 
-	listener, err = network.GetListener()
+	listener, err = network.GetListener(&tlsEnabled)
 	if err != nil {
 		logger.Errorf(nil, "Error listening on %s: %s", cfg.BindAddr, err)
 		os.Exit(1)
@@ -125,16 +125,18 @@ func timeoutHandler(h http.Handler) http.Handler {
 }
 
 // ---------------------------------------------------------------------------
+// Handle additional headers such as strict transport security for TLS, and
+// giving the Server name.
+func injectHeaders(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Server", "DapperDox "+VERSION)
 
-//type myHandler struct {
-//}
-//
-//func (a *myHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-//	w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-//}
-//
-//func addHeader(h http.Handler) http.Handler {
-//	return h
-//}
+		if tlsEnabled {
+			w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		}
+
+		h.ServeHTTP(w, r)
+	})
+}
 
 // ---------------------------------------------------------------------------
