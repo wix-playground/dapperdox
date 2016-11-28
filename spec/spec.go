@@ -400,6 +400,7 @@ func (c *APISpecification) getMethods(tag spec.Tag, api *APIGroup, methods *[]Me
 
 func (c *APISpecification) getMethod(tag spec.Tag, api *APIGroup, methods *[]Method, version string, pathitem *spec.PathItem, operation *spec.Operation, path, methodname string) {
 	if operation == nil {
+		logger.Tracef(nil, "Skipping %s %s - Operation is nil.", path, methodname)
 		return
 	}
 	// Filter and sort by matching current top-level tag with the operation tags.
@@ -1205,12 +1206,18 @@ func CamelToKebab(s string) string {
 // -----------------------------------------------------------------------------
 
 func loadSpec(url string) (*loads.Document, error) {
+
 	document, err := loads.Spec(url)
 	if err != nil {
 		return nil, err
 	}
 
-	err = spec.ExpandSpec(document.Spec())
+	//options := &spec.ExpandOptions{
+	//	RelativeBase: "/Users/csmith1/src/go/src/github.com/dapperdox/dapperdox-demo/specifications",
+	//}
+
+	// TODO Allow relative references https://github.com/go-openapi/spec/issues/14
+	err = spec.ExpandSpec(document.Spec(), nil)
 	if err != nil {
 		return nil, err
 	}
