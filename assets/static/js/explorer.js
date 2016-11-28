@@ -44,6 +44,19 @@ apiExplorer.readApiKey = function() {
 apiExplorer.readAccessToken = function() {
     return $('#access-token-input').val() || "";
 };
+apiExplorer.readBasicUsername = function() {
+    return $('#basic-username-input').val() || "";
+};
+apiExplorer.readBasicPassword = function() {
+    return $('#basic-password-input').val() || "";
+};
+apiExplorer.getBasicAuthentication = function() {
+       var token = this.readBasicUsername() + ":" + this.readBasicPassword();
+       if( token == ":" ) {
+           return ""
+       }
+       return btoa(token); 
+}
 
 // --------------------------------------------------------------------------------------
 var _process = function(text, status, xhr, fullhost) {

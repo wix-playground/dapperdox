@@ -6,10 +6,12 @@
         apiExplorer.setBeforeSendCallback( function( request ) {
             var apiKey = apiExplorer.readApiKey();           // Read API key from explorer input
             var accessToken = apiExplorer.readAccessToken(); // Read access token from explorer input
+            var basicAuth   = apiExplorer.getBasicAuthentication(); // Create basic auth string
 
             // Favour access tokens over api keys
             if( accessToken != "" ) { request.headers = {Authorization: "Bearer "+accessToken}; }
             else if( apiKey != "" ) { request.params  = {key: apiKey}; }
+            else if( basicAuth != "" ) { request.headers = {Authorization: "Basic "+basicAuth}; }
         });
     });
 </script>
