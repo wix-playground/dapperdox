@@ -70,7 +70,18 @@
                     <td>Access token to be used for request</td>
                 </tr>
               [: end :]
-              [: if $security.Scheme.IsBasic :][: end :]
+              [: if $security.Scheme.IsBasic :]
+                <tr class="form-group">
+                    <td>Username</td>
+                    <td><input id="basic-username-input" type="text" data-type="" name="basic_username" value="" placeholder="username" class="form-control"/></td>
+                    <td>Authentication username to be used for request</td>
+                </tr>
+                <tr class="form-group">
+                    <td>Password</td>
+                    <td><input id="basic-password-input" type="text" data-type="" name="basic_password" value="" placeholder="password" class="form-control"/></td>
+                    <td>Authentication password to be used for request</td>
+                </tr>
+              [: end :]
             [: end :]
           </p>
         [: end :]
