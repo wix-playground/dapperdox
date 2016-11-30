@@ -157,7 +157,7 @@ type Resource struct {
 	Required              bool
 	ReadOnly              bool
 	ExcludeFromOperations []string
-	Methods               []Method
+	Methods               map[string]*Method
 	Enum                  []string
 }
 
@@ -672,6 +672,12 @@ func (c *APISpecification) buildResponse(resp *spec.Response, method *Method, ve
 			if r != nil {
 				r.Schema = jsonResourceToString(example_json, r.Type[0])
 				vres = c.addMethodToResource(r, method, version)
+
+				// Store response resource in resouce list for specification
+				if _, ok := c.ResourceList[version]; !ok {
+					c.ResourceList[version] = make(map[string]*Resource)
+				}
+				c.ResourceList[version][r.ID] = vres
 			}
 		}
 		response = &Response{
@@ -698,13 +704,12 @@ func (c *APISpecification) addMethodToResource(resource *Resource, method *Metho
 		logger.Tracef(nil, "   - Creating new resource\n")
 		vres = resource
 	}
-	if _, ok = c.ResourceList[version]; !ok {
-		c.ResourceList[version] = make(map[string]*Resource)
-	}
-	c.ResourceList[version][resource.ID] = vres
 
-	// Add to the compiled list of methods which use this resource
-	vres.Methods = append(vres.Methods, *method)
+	// Add to the compiled list of methods which use this resource.
+	if vres.Methods == nil {
+		vres.Methods = make(map[string]*Method)
+	}
+	vres.Methods[method.ID] = method // Use a map to collapse dupliactes.
 
 	return vres
 }
