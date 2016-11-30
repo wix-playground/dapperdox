@@ -127,6 +127,7 @@ func CompileGFMMap() {
 		line := scanner.Text()
 
 		rep := &gfmReplacer{}
+
 		if rep.Parse(line) != nil {
 			log.Printf("GFM replace %s with %s\n", rep.Regexp, rep.Replace)
 			gfmReplace = append(gfmReplace, rep)
@@ -140,15 +141,29 @@ func CompileGFMMap() {
 
 // --------------------------------------------------------------------------------------
 // Returns rendered markdown
-func ProcessMarkdown(doc []byte) []byte {
-
-	// See if the first line contains metadata:
+func ProcessMarkdown(doc []byte, meta map[string]string) []byte {
 
 	html := github_flavored_markdown.Markdown([]byte(doc))
+
 	// Apply any HTML substitutions
 	for _, rep := range gfmReplace {
 		html = rep.Regexp.ReplaceAll(html, rep.Replace)
 	}
+
+	// Now process any additional GFM replacements provided as metadata
+	log.Printf("CM: meta is %s\n", meta)
+
+	if v, ok := meta["GFMMap"]; ok {
+		// regex key:value pairs can be repeated with '@" delimiter
+		splitLine := strings.Split(v, "@")
+		for _, rex := range splitLine {
+			rep := &gfmReplacer{}
+			if rep.Parse(rex) != nil {
+				html = rep.Regexp.ReplaceAll(html, rep.Replace)
+			}
+		}
+	}
+
 	return html
 }
 
@@ -234,7 +249,7 @@ func Compile(dir string) {
 			// Chop off the extension
 			mdname := strings.TrimSuffix(relative, ext)
 
-			buf = ProcessMarkdown(buf) // Convert markdown into HTML
+			buf = ProcessMarkdown(buf, meta) // Convert markdown into HTML
 
 			relative = mdname + ".tmpl"
 			storeTemplate(relative, string(buf), meta)
@@ -292,7 +307,7 @@ func ProcessMetadata(doc []byte) ([]byte, map[string]string) {
 		// Else, deal with meta-data
 		metaValue := ""
 		if len(splitLine) > 1 {
-			metaValue = strings.TrimSpace(splitLine[1])
+			metaValue = strings.TrimSpace(strings.Join(splitLine[1:], ":"))
 		}
 
 		//metaKey := strings.ToLower(splitLine[0])

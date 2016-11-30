@@ -43,3 +43,4 @@ pre { padding: 8px; margin: 0px 0px 15px; font-size: 13px; line-height: 1.72222;
 .navbar-default .navbar-nav > li > a { color: #34495e; }
 .navbar-default .navbar-nav > li > a:hover { color: #b522b5; background-color: transparent; }
 footer p { font-size: 15px; line-height: 20px; margin-bottom: 10px; }
+.bullet-list { list-style-type: disc; }
