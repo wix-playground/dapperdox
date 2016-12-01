@@ -46,4 +46,4 @@ For example, `{local_assets}/templates/` contains assets that are applied across
 
 ### Configuring assets
 
-DapperDox is directed to your assets through the `--assets-dir` [configuration](/docs/configuration-guide) option.
+DapperDox is directed to your assets through the `-assets-dir` [configuration](/docs/configuration-guide) option.
