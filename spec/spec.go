@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"regexp"
 	"strings"
 
 	//"github.com/davecgh/go-spew/spew"
@@ -144,6 +145,13 @@ type Response struct {
 	Headers           []Header
 }
 
+type ResourceOrigin int
+
+const (
+	RequestBody ResourceOrigin = iota
+	MethodResponse
+)
+
 // Resource represents an API resource
 type Resource struct {
 	ID                    string
@@ -159,6 +167,7 @@ type Resource struct {
 	ExcludeFromOperations []string
 	Methods               map[string]*Method
 	Enum                  []string
+	origin                ResourceOrigin
 }
 
 type Header struct {
@@ -612,8 +621,9 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 			}
 			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil, true)
 			p.Resource.Schema = jsonResourceToString(body, "")
+			p.Resource.origin = RequestBody
 			method.BodyParam = &p
-			c.addMethodToResource(p.Resource, method, version)
+			c.crossLinkMethodAndResource(p.Resource, method, version)
 		case "header":
 			method.HeaderParams = append(method.HeaderParams, p)
 		case "query":
@@ -671,13 +681,8 @@ func (c *APISpecification) buildResponse(resp *spec.Response, method *Method, ve
 
 			if r != nil {
 				r.Schema = jsonResourceToString(example_json, r.Type[0])
-				vres = c.addMethodToResource(r, method, version)
-
-				// Store response resource in resouce list for specification
-				if _, ok := c.ResourceList[version]; !ok {
-					c.ResourceList[version] = make(map[string]*Resource)
-				}
-				c.ResourceList[version][r.ID] = vres
+				r.origin = MethodResponse
+				vres = c.crossLinkMethodAndResource(r, method, version)
 			}
 		}
 		response = &Response{
@@ -693,14 +698,18 @@ func (c *APISpecification) buildResponse(resp *spec.Response, method *Method, ve
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) addMethodToResource(resource *Resource, method *Method, version string) *Resource {
-
-	var vres *Resource
+func (c *APISpecification) crossLinkMethodAndResource(resource *Resource, method *Method, version string) *Resource {
 
 	logger.Tracef(nil, "++ Resource version %s  ID %s\n", version, resource.ID)
+
+	if _, ok := c.ResourceList[version]; !ok {
+		c.ResourceList[version] = make(map[string]*Resource)
+	}
+
 	// Look for a pre-declared resource with the response ID, and use that or create the first one...
-	var ok bool
-	if vres, ok = c.ResourceList[version][resource.ID]; !ok {
+	var resFound bool
+	var vres *Resource
+	if vres, resFound = c.ResourceList[version][resource.ID]; !resFound {
 		logger.Tracef(nil, "   - Creating new resource\n")
 		vres = resource
 	}
@@ -709,7 +718,23 @@ func (c *APISpecification) addMethodToResource(resource *Resource, method *Metho
 	if vres.Methods == nil {
 		vres.Methods = make(map[string]*Method)
 	}
-	vres.Methods[method.ID] = method // Use a map to collapse dupliactes.
+	vres.Methods[method.ID] = method // Use a map to collapse duplicates.
+
+	// Store resource in resouce-list of the specification, so that the resource knows every
+	// operation/method that uses it.
+	if vres.origin == RequestBody {
+		if !resFound {
+			// This is the first time this resource has been seen, and it is a RequestBody, so it's
+			// okay to store this in the global list.
+			// A request body resource is a filtered (excludes read-only) resource, so has a lower
+			// precident than a response resource.
+			c.ResourceList[version][resource.ID] = vres
+		}
+	} else {
+		// Not a response resource (which has the highest precident) so replace whatever is stored
+		// currently.
+		c.ResourceList[version][resource.ID] = vres
+	}
 
 	return vres
 }
@@ -1194,8 +1219,11 @@ func prepareNamespace(myFQNS []string, id string, name string, chopped bool) []s
 
 // -----------------------------------------------------------------------------
 
+var kababExclude = regexp.MustCompile("[^\\w\\s]") // Any non word or space character
+
 func TitleToKebab(s string) string {
 	s = strings.ToLower(s)
+	s = string(kababExclude.ReplaceAll([]byte(s), []byte("")))
 	s = strings.Replace(s, " ", "-", -1)
 	return s
 }
