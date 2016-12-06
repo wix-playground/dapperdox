@@ -21,12 +21,21 @@ Detailed usage instructions are available on the [DapperDox website http://dappe
 
 ## Quickstart
 
+We provide the lastest release builds for the most common operating systems and architectures, which you
+can download from [releases](https://github.com/DapperDox/dapperdox/releases),
+or you can build from source by cloning this repo..
+See [downloads](http://dapperdox.io/download/downloads) for further information.
+
+### Build from source
+
 First build DapperDox (this assumes that you have your golang environment configured correctly):
 ```bash
 go get && go build
 ```
 
-Then start up DapperDox, pointing it to your OpenAPI 2.0 specification file:
+### Running DapperDox
+
+Start up DapperDox, pointing it to your OpenAPI 2.0 specification file:
 
 ```
 ./dapperdox -spec-dir=<location of OpenAPI 2.0 spec>
