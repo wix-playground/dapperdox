@@ -1,19 +1,10 @@
-# DapperDox
-<span style="float: right;">[![Build Status](https://travis-ci.org/DapperDox/dapperdox.svg?branch=master)](https://travis-ci.org/DapperDox/dapperdox) [![Download](https://img.shields.io/badge/release-v1.0.1-green.svg) ](https://github.com/DapperDox/dapperdox/releases/tag/v1.0.1)</span>
+# DapperDox&nbsp;&nbsp;&nbsp;[![Build Status](https://travis-ci.org/DapperDox/dapperdox.svg?branch=master)](https://travis-ci.org/DapperDox/dapperdox) [![Download](https://img.shields.io/badge/release-v1.0.1-green.svg) ](https://github.com/DapperDox/dapperdox/releases/tag/v1.0.1)
 
-Beautiful, integrated, OpenAPI documentation.
+### Beautiful, integrated, OpenAPI documentation.
 
 > Themed documentation generator, server and API explorer for OpenAPI (Swagger) Specifications. Helps you build integrated, browsable reference documentation and guides. For example, the [Companies House Developer Hub](https://developer.companieshouse.gov.uk/api/docs/) built with the alpha version.
 
-## Project Status
-
-DapperDox works fine.
-
-You can download the latest DapperDox release from [releases](https://github.com/DapperDox/dapperdox/releases).
-
-## Usage
-
-Detailed usage instructions are available on the comprehensive [website](http://dapperdox.io).
+![DapperDox logo](/docs/logo-dapperdox-github.png "DapperDox")
 
 ## Features
 
@@ -24,6 +15,9 @@ Detailed usage instructions are available on the comprehensive [website](http://
 * Proxy your developer platform, allowing full integration of API key management.
 * Choose from multiple themes, or create your own.
 
+## Documentation and usage
+
+Detailed usage instructions are available on the [DapperDox website http://dapperdox.io](http://dapperdox.io).
 
 ## Quickstart
 
