@@ -249,13 +249,23 @@ func (c *APISpecification) Load(specFilename string, specHost string) error {
 		basePathLen = 0
 	}
 
-	u, err := url.Parse(apispec.Schemes[0] + "://" + apispec.Host)
+	scheme := "http"
+	if apispec.Schemes != nil {
+		scheme = apispec.Schemes[0]
+	}
+
+	u, err := url.Parse(scheme + "://" + apispec.Host)
 	if err != nil {
 		return err
 	}
 
 	c.APIInfo.Description = string(github_flavored_markdown.Markdown([]byte(apispec.Info.Description)))
 	c.APIInfo.Title = apispec.Info.Title
+
+	if len(c.APIInfo.Title) == 0 {
+		logger.Errorf(nil, "Error: Specification %s does not have a info.title member.\n", c.URL)
+		os.Exit(1)
+	}
 
 	logger.Tracef(nil, "Parse OpenAPI specification '%s'\n", c.APIInfo.Title)
 
@@ -803,9 +813,6 @@ func (r *Response) compileHeaders(sr *spec.Response) {
 		header := &Header{
 			Description: string(github_flavored_markdown.Markdown([]byte(params.Description))),
 			Name:        name,
-			//Default     string
-			//Required    bool
-			//Enum        []string
 		}
 
 		htype := getType(params)

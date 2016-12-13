@@ -388,3 +388,9 @@ blockquote {
 		cursor: inherit;
 		display: block;
 }
+
+td > input {
+    min-width: 300px;
+}
+
+
