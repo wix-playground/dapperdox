@@ -356,7 +356,7 @@ apiExplorer.go = function( method, url ){
             $('#response').stop(1,0).delay(10).hide();
         },
         complete:   function() { $('#progress').stop(1,0).hide(); }
-        //statusCode: {
+        //,statusCode: {
         //    404: function() {
         //        alert("Not found");
         //    }
