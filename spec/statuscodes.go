@@ -38,6 +38,13 @@ func LoadStatusCodes() {
 			statusfile = ""
 		}
 	}
+	if len(statusfile) == 0 {
+		statusfile = cfg.DefaultAssetsDir + "/themes/default/status_codes.csv"
+		logger.Tracef(nil, "Looking in default theme %s\n", statusfile)
+		if _, err := os.Stat(statusfile); os.IsNotExist(err) {
+			statusfile = ""
+		}
+	}
 
 	if len(statusfile) == 0 {
 		logger.Tracef(nil, "No status code map file found.")

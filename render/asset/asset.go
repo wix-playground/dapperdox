@@ -304,8 +304,16 @@ func CompileGFMMap() {
 			mapfile = ""
 		}
 	}
+	if len(mapfile) == 0 {
+		mapfile = cfg.DefaultAssetsDir + "/themes/default/gfm.map"
+		logger.Tracef(nil, "Looking in default theme for %s\n", mapfile)
+		if _, err := os.Stat(mapfile); os.IsNotExist(err) {
+			mapfile = ""
+		}
+	}
 
 	if len(mapfile) == 0 {
+		logger.Tracef(nil, "No GFM HTML mapfile found\n")
 		return
 	}
 	logger.Tracef(nil, "Processing GFM HTML mapfile: %s\n", mapfile)
