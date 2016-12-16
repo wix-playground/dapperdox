@@ -6,7 +6,7 @@
             [: else :]
                 ><option value=""></option>
             [: end :]
-            [: range $name, $key := .Param.Enum :]<option value="[: $key :]">[: $name :]</option>[: end :]
+            [: range $key := .Param.Enum :]<option value="[: $key :]">[: $key :]</option>[: end :]
         </select>
     [: else :]
         [: if eq (index .Param.Type 0) "boolean" :]

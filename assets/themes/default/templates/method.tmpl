@@ -40,11 +40,13 @@
   [: overlay "request-body" . :]
   [: template "fragments/reference/request_body" . :]
 [: end :]
+[: overlay "request-end" . :]
 
 [: if .Method.Security :]
   <h2 class="sub-header">Authorisation</h2>
   [: overlay "security" . :]
   [: template "fragments/reference/authorisation" .Method.Security :]
+  [: overlay "security-end" . :]
 [: end :]
 
 <h2 class="sub-header">Response</h2>

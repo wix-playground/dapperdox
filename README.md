@@ -57,10 +57,9 @@ This demonstrates many of the configuration options available. See [configuratio
 
 ## Acknowledgements
 
-Many thanks to [Ian Kent](https://github.com/ian-kent) who began the Golang implementation of DapperDox
-as part of a bigger project, from nothing more than a rough spec and by trying to figure out how the Perl
-alpha version worked! His commit history was lost when DapperDox was extracted into a stand-alone project, but
-its core retains his original and valuable work.
+Many thanks to [Ian Kent](https://github.com/ian-kent) who spiked the Golang implementation of DapperDox
+as part of a bigger project. His commit history was lost when DapperDox was extracted into a stand-alone
+project, but its core retains his valuable work.
 
 [David Mort](https://github.com/davidmort) for painstaking testing, and bug fixing.
 

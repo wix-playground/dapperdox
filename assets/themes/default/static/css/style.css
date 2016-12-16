@@ -52,6 +52,7 @@ h6,
 	font-weight: 700;
 	line-height: 1.1;
 	color: inherit;
+    margin-top: 20px;
 }
 h1,
 .h1 {
@@ -388,3 +389,9 @@ blockquote {
 		cursor: inherit;
 		display: block;
 }
+
+td > input {
+    min-width: 300px;
+}
+
+

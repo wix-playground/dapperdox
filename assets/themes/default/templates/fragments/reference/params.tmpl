@@ -13,7 +13,16 @@
     <tr>
       <td class="resource">[: .Name :]</td>
       <td class="type">[: join .Type " of " :][: if .CollectionFormatDescription :], [: .CollectionFormatDescription :][: end :]</td>
-      <td class="hyphenate Hyphenator384hide">[: safehtml .Description :]</td>
+      <td class="hyphenate Hyphenator384hide">[: safehtml .Description :]
+      [: if .Enum :]
+      <p>Possible values are:</p>
+      <ul class="list-bullet">
+        [: range .Enum :]
+        <li><code>[: . :]</code></li>
+        [: end :]
+      </ul>
+      [: end :]
+      </td>
       <td class="hyphenate Hyphenator384hide">[: if .Required :]Required[: end :]</td>
     </tr>
   [: end :]
