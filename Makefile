@@ -9,7 +9,7 @@ assets
 BZW=./buildzip $@ dapperdox.exe $+
 BZU=./buildzip $@ dapperdox     $+
 
-VERSION=1.0.1
+VERSION=1.0.2
 STEM=dist/dapperdox-${VERSION}
 
 all:
@@ -17,14 +17,14 @@ all:
 	go get && go build
 
 release: dist \
-${STEM}.linux-x86.tgz \
-${STEM}.linux-amd64.tgz \
-${STEM}.darwin-amd64.tgz \
-${STEM}.linux-arm.tgz \
-${STEM}.linux-arm64.tgz \
-releaseTable
-#${STEM}.windows-x86.zip \
-#${STEM}.windows-amd64.zip \
+	${STEM}.linux-x86.tgz \
+	${STEM}.linux-amd64.tgz \
+	${STEM}.darwin-amd64.tgz \
+	${STEM}.linux-arm.tgz \
+	${STEM}.linux-arm64.tgz \
+	releaseTable
+	#${STEM}.windows-x86.zip \
+	#${STEM}.windows-amd64.zip \
 
 dist:
 	mkdir dist
