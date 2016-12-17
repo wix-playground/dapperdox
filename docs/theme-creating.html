@@ -7,11 +7,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="How to control the names used for methods and operations in DapperDox">
-    <meta name="keywords" content="method, operation, name, specification, swagger, OpenAPI, navigation">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
     <meta name="author" content="DapperDox - Chris Smith">
 
-    <title>Controlling method names</title>
+    <title>DapperDox – Beautiful, integrated, OpenAPI documentation</title>
 
     
 
@@ -74,8 +74,7 @@
 					
 					<li class="menuItem"><a href="/download/downloads">Download</a></li>
 					<li class="menuItem"><a href="/docs/getting-started">Getting Started</a></li>
-					<li class="menuItem"><a href="http://forum.dapperdox.io">Forum</a></li>
-					<li class="menuItem"><a href="/docs/overview">Docs</a></li>
+					<li class="menuItem"><a href="/docs/overview">Documentation</a></li>
 				</ul>
 			</div>
           </nav>
@@ -93,7 +92,6 @@
        <ul class="nav nav-inner collapse" id="ulIntro">
            <li><a href="/docs/overview" data-outer="Intro">Overview</a></li>
            <li><a href="/docs/getting-started" data-outer="Intro">Getting started</a></li>
-           
        </ul>
    </li>
    <li class="panel">
@@ -137,7 +135,14 @@
            <li><a href="/docs/proxy-configure" data-outer="Proxy">Configuration</a></li>
        </ul>
    </li>
-
+   <li class="panel">
+       <a id="toggleThemes" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulThemes">Themes and styling</a>
+       <ul class="nav collapse nav-inner" id="ulThemes">
+           <li><a href="/docs/theme-overview" data-outer="Themes">Overview</a></li>
+           <li><a href="/docs/theme-customisation" data-outer="Themes">Customisation</a></li>
+           
+       </ul>
+   </li>
    <li class="panel">
        <a id="toggleConfiguration" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulConfiguration">Configuration</a>
        <ul class="nav collapse nav-inner" id="ulConfiguration">
@@ -157,78 +162,64 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="controlling-method-names" class="anchor" href="#controlling-method-names" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Controlling method names</h1>
-<h2><a name="methods-and-operations" class="anchor" href="#methods-and-operations" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Methods and operations</h2>
+            <h1><a name="terms-used-by-dapperdox" class="anchor" href="#terms-used-by-dapperdox" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Terms used by DapperDox</h1>
+<h2><a name="specification-id" class="anchor" href="#specification-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">specification-ID</code></h2>
 
-<p>DapperDox allows you to control the name of each method operation, and how methods are represented in the navigation.</p>
+<p>The identifier assigned to each specification Swagger loads. It is derived from the specifications <code class="hljs-keyword">info.title</code> member,
+which DapperDox lower cases and hyphen delimits (<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab casing</a>).</p>
 
-<p>By default the HTTP method is used (<code class="hljs-keyword">GET</code>, <code class="hljs-keyword">POST</code>, <code class="hljs-keyword">PUT</code> etc), as is usual for RESTful API specifications. Even so, it is
-often the case that a resource will be given two <code class="hljs-keyword">GET</code> methods, one which returns a single resource, and one that
-returns a list. This is clearly confusing for the reader, so in the latter case it would be clearer for the list method
-to be identified as such.</p>
+<p>For example, a specification title of &#34;My API suite&#34; produces a <code class="hljs-keyword">specification-ID</code> of <code class="hljs-keyword">my-api-suite</code>.</p>
+<h2><a name="api-group" class="anchor" href="#api-group" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">api-group</code></h2>
 
-<p>To do this, DapperDox introduces the concept of a method <strong>operation</strong>, which usually has the same value as the
-HTTP method, but may be overridden on a per-method basis by the <code class="hljs-keyword">x-operationName</code> extension:</p>
+<p>A logical grouping of API operations. Grouping will be made based on the tag if tagging is used by the specification,
+in which case <code class="hljs-keyword">api-group</code> is set to the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of
+the tag&#39;s <code class="hljs-keyword">description</code> member if present, or the tag <code class="hljs-keyword">name</code> if not.</p>
 
-<div class="highlight highlight-json"><pre><code>{
-    &#34;paths&#34;: {
-        &#34;/products&#34;: {
-            &#34;get&#34;: {
-                &#34;x-operationName&#34;: &#34;list&#34;,
-                &#34;summary&#34;: &#34;List products&#34;,
-                &#34;description&#34;: &#34;Returns a list of products&#34;
-                &#34;tags&#34;: [&#34;Products&#34;]
-            },
-            &#34;post&#34;: {
-                &#34;summary&#34;: &#34;Create a product&#34;,
-                &#34;description&#34;: &#34;Create a new product type&#34;
-                &#34;tags&#34;: [&#34;Products&#34;]
-            }
-        },
-        &#34;/products/{id}&#34;: {
-            &#34;get&#34;: {
-                &#34;summary&#34;: &#34;Get a product&#34;,
-                &#34;description&#34;: &#34;Returns a products&#34;
-                &#34;tags&#34;: [&#34;Products&#34;]
-            }
-        }
-    }
-}
-</code></pre></div>
+<p>If tagging is not in use, then <code class="hljs-keyword">api-group</code> is set to the
+<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a>
+of the operation&#39;s <code class="hljs-keyword">x-pathName</code> member if present, otherwise the operation&#39;s <code class="hljs-keyword">summary</code> member is used.</p>
+<h2><a name="operation-id" class="anchor" href="#operation-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">operation-ID</code></h2>
 
-<p>The methods in the above example would be grouped together because they are similarly tagged, and the confusion between
-the two <code class="hljs-keyword">GET</code> methods resolved by giving one the operation name of <code class="hljs-keyword">list</code>. Thus, the three methods would be described in the
-navigation and API list page as being <code class="hljs-keyword">list</code>, <code class="hljs-keyword">post</code> and <code class="hljs-keyword">get</code>. The HTTP methods assigned to each (get, post and get) remain unchanged.</p>
+<p>The identifier given to an operation. It is most importantly used to determine the correct content <a href="/docs/author-overlays" rel="nofollow">overlay</a> to apply.</p>
 
-<p>This technique can also be used to override <code class="hljs-keyword">GET</code> to <code class="hljs-keyword">fetch</code>, <code class="hljs-keyword">POST</code> to <code class="hljs-keyword">create</code>, <code class="hljs-keyword">PUT</code> to <code class="hljs-keyword">update</code> and so on.</p>
-<h2><a name="navigating-by-method-name" class="anchor" href="#navigating-by-method-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Navigating by method name</h2>
+<p>It is formed by taking the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of the
+first in the following list of operation members that yields a value:</p>
 
-<p>Where an OpenAPI specification is describing a non-RESTful set of APIs, they are often grouped together and share the same
-HTTP method. For example, two <code class="hljs-keyword">GET</code> methods having respective <code class="hljs-keyword">summary</code> texts of <code class="hljs-keyword">lookup product by ID</code> and <code class="hljs-keyword">lookup product by barcode</code>
-would probably be listed together, both being product APIs. As they are both <code class="hljs-keyword">get</code> methods, the reader would be unable to tell them
-apart if they are both referred to as <code class="hljs-keyword">get</code> operations in the API navigation. By adding the <code class="hljs-keyword">&#34;x-navigateMethodsByName&#34; : true</code>
-extension to the top level OpenAPI specification, you can force DapperDox to describe each operation in the navigation using its
-<code class="hljs-keyword">summary</code> text instead of its operation name or HTTP method. The methods will continue to be referred to by operation name or
-HTTP method in API pages.</p>
+<ol>
+<li><code class="hljs-keyword">operationID</code></li>
+<li><code class="hljs-keyword">x-opererationName</code></li>
+<li><code class="hljs-keyword">summary</code></li>
+<li>method name</li>
+</ol>
 
-<div class="highlight highlight-json"><pre><code>{
-    &#34;swagger&#34;: &#34;2.0&#34;,
-    &#34;x-navigateMethodsByName&#34;: true,
-    &#34;info&#34;: {
-        &#34;title&#34;: &#34;Example API&#34;,
-        &#34;description&#34;: &#34;The only way is up&#34;,
-        &#34;version&#34;: &#34;1.0.0&#34;
-    }
-}
-</code></pre></div>
+<p>where method name is <code class="hljs-keyword">method-name</code> below. Therefore, it is possible for <code class="hljs-keyword">operation-ID</code> and <code class="hljs-keyword">method-name</code> to be the same value.</p>
+<h2><a name="method-name" class="anchor" href="#method-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">method-name</code></h2>
 
-<p>An example of this modifier being used in practice is the example Petstore specification provided with
-DapperDox. As the Petstore API is not REST, the example specification has the <code class="hljs-keyword">x-navigationMethodsByName</code>
-member applied, forcing the use of the operations summary text in the navigation menu.</p>
+<p>The name of the HTTP method for an operation, such as <code class="hljs-keyword">get</code>, <code class="hljs-keyword">post</code> and <code class="hljs-keyword">put</code>.</p>
+<h2><a name="operation-name" class="anchor" href="#operation-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code class="hljs-keyword">operation-name</code></h2>
 
-<p><script>hljs.initHighlightingOnLoad();</script></p>
+<p>The <code class="hljs-keyword">operation-name</code> of an operation is either its HTTP method (see <code class="hljs-keyword">method-name</code>), or the name given by the
+DapperDox extension <code class="hljs-keyword">x-operationName</code> which may be added to an operation. See <a href="/docs/spec-method-names" rel="nofollow">controlling method names</a>.</p>
+<h2><a name="specification-list-page" class="anchor" href="#specification-list-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Specification list page</h2>
+
+<p>This page lists the API specifications that are available for reference, and is the default homepage when multiple
+specifications are loaded by DapperDox. It is not normally displayed when a single specification is loaded.</p>
+<h2><a name="specification-summary-page" class="anchor" href="#specification-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Specification summary page</h2>
+
+<p>This page lists the all APIs defined by a specification, grouped by <a href="/docs/glossary-terms#api-group" rel="nofollow"><code class="hljs-keyword">api-group</code></a>.
+It is the first page displayed when a specification is selected from the <code class="hljs-keyword">specification-list</code>, and the default homepage
+when a single specification is loaded by DapperDox.</p>
+<h2><a name="api-group-summary-page" class="anchor" href="#api-group-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+API group summary page</h2>
+
+<p>This page lists the API operations within a single <code class="hljs-keyword">api-group</code>.</p>
 
 		</div>
       </div>
@@ -244,9 +235,8 @@ member applied, forcing the use of the operations summary text in the navigation
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://forum.dapperdox.io"><i class="fa fa-users" aria-hidden="true"></i>&nbsp;<p>Forum</p></a>
-                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
-                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;Open Source</a>
+                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;Twitter</a>
                 
             </div>
           </div>

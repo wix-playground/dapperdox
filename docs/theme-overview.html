@@ -7,11 +7,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="How to control the names used for methods and operations in DapperDox">
-    <meta name="keywords" content="method, operation, name, specification, swagger, OpenAPI, navigation">
+    <meta name="description" content="Overview of the themeing and styling of documentation in DapperDox">
+    <meta name="keywords" content="theme, css, style, presentation, layout">
     <meta name="author" content="DapperDox - Chris Smith">
 
-    <title>Controlling method names</title>
+    <title>Themes and styling</title>
 
     
 
@@ -74,8 +74,7 @@
 					
 					<li class="menuItem"><a href="/download/downloads">Download</a></li>
 					<li class="menuItem"><a href="/docs/getting-started">Getting Started</a></li>
-					<li class="menuItem"><a href="http://forum.dapperdox.io">Forum</a></li>
-					<li class="menuItem"><a href="/docs/overview">Docs</a></li>
+					<li class="menuItem"><a href="/docs/overview">Documentation</a></li>
 				</ul>
 			</div>
           </nav>
@@ -93,7 +92,6 @@
        <ul class="nav nav-inner collapse" id="ulIntro">
            <li><a href="/docs/overview" data-outer="Intro">Overview</a></li>
            <li><a href="/docs/getting-started" data-outer="Intro">Getting started</a></li>
-           
        </ul>
    </li>
    <li class="panel">
@@ -137,7 +135,14 @@
            <li><a href="/docs/proxy-configure" data-outer="Proxy">Configuration</a></li>
        </ul>
    </li>
-
+   <li class="panel">
+       <a id="toggleThemes" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulThemes">Themes and styling</a>
+       <ul class="nav collapse nav-inner" id="ulThemes">
+           <li><a href="/docs/theme-overview" data-outer="Themes">Overview</a></li>
+           <li><a href="/docs/theme-customisation" data-outer="Themes">Customisation</a></li>
+           
+       </ul>
+   </li>
    <li class="panel">
        <a id="toggleConfiguration" class="nav-toggle collapsed" data-parent="#navigation" data-toggle="collapse" data-target="#ulConfiguration">Configuration</a>
        <ul class="nav collapse nav-inner" id="ulConfiguration">
@@ -157,78 +162,70 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="controlling-method-names" class="anchor" href="#controlling-method-names" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Controlling method names</h1>
-<h2><a name="methods-and-operations" class="anchor" href="#methods-and-operations" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Methods and operations</h2>
+            <h1><a name="themes-and-styling" class="anchor" href="#themes-and-styling" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Themes and styling</h1>
 
-<p>DapperDox allows you to control the name of each method operation, and how methods are represented in the navigation.</p>
+<p>The HTML templates, CSS, images and javascript files used by DapperDox are known as
+assets. Assets that collectively provide a particular look-and-feel are known as a theme.</p>
 
-<p>By default the HTTP method is used (<code class="hljs-keyword">GET</code>, <code class="hljs-keyword">POST</code>, <code class="hljs-keyword">PUT</code> etc), as is usual for RESTful API specifications. Even so, it is
-often the case that a resource will be given two <code class="hljs-keyword">GET</code> methods, one which returns a single resource, and one that
-returns a list. This is clearly confusing for the reader, so in the latter case it would be clearer for the list method
-to be identified as such.</p>
+<p>By providing local assets, individual files can be overridden or customised to tailor
+DapperDox&#39;s presentation to meet your requirements, alternatively an entire theme can be
+created and imported into DapperDox.</p>
 
-<p>To do this, DapperDox introduces the concept of a method <strong>operation</strong>, which usually has the same value as the
-HTTP method, but may be overridden on a per-method basis by the <code class="hljs-keyword">x-operationName</code> extension:</p>
+<p>If you provide local asset files, these are placed in the same <a href="/docs/author-concepts#assets" rel="nofollow">assets</a> directory structure as your authored content and guides.</p>
+<h2><a name="supplying-local-assets" class="anchor" href="#supplying-local-assets" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Supplying local assets</h2>
 
-<div class="highlight highlight-json"><pre><code>{
-    &#34;paths&#34;: {
-        &#34;/products&#34;: {
-            &#34;get&#34;: {
-                &#34;x-operationName&#34;: &#34;list&#34;,
-                &#34;summary&#34;: &#34;List products&#34;,
-                &#34;description&#34;: &#34;Returns a list of products&#34;
-                &#34;tags&#34;: [&#34;Products&#34;]
-            },
-            &#34;post&#34;: {
-                &#34;summary&#34;: &#34;Create a product&#34;,
-                &#34;description&#34;: &#34;Create a new product type&#34;
-                &#34;tags&#34;: [&#34;Products&#34;]
-            }
-        },
-        &#34;/products/{id}&#34;: {
-            &#34;get&#34;: {
-                &#34;summary&#34;: &#34;Get a product&#34;,
-                &#34;description&#34;: &#34;Returns a products&#34;
-                &#34;tags&#34;: [&#34;Products&#34;]
-            }
-        }
-    }
-}
-</code></pre></div>
+<p>DapperDox is directed to your local assets through the <code class="hljs-keyword">-assets-dir</code> <a href="/docs/configuration-guide" rel="nofollow">configuration</a> option. These assets work within, and perhaps customise, the theme that you are
+using.</p>
 
-<p>The methods in the above example would be grouped together because they are similarly tagged, and the confusion between
-the two <code class="hljs-keyword">GET</code> methods resolved by giving one the operation name of <code class="hljs-keyword">list</code>. Thus, the three methods would be described in the
-navigation and API list page as being <code class="hljs-keyword">list</code>, <code class="hljs-keyword">post</code> and <code class="hljs-keyword">get</code>. The HTTP methods assigned to each (get, post and get) remain unchanged.</p>
+<p>For details on what asset files you can and should override, refer to the section on <a href="/docs/theme-customisation" rel="nofollow">customisation</a>.</p>
+<h2><a name="changing-themes" class="anchor" href="#changing-themes" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Changing themes</h2>
 
-<p>This technique can also be used to override <code class="hljs-keyword">GET</code> to <code class="hljs-keyword">fetch</code>, <code class="hljs-keyword">POST</code> to <code class="hljs-keyword">create</code>, <code class="hljs-keyword">PUT</code> to <code class="hljs-keyword">update</code> and so on.</p>
-<h2><a name="navigating-by-method-name" class="anchor" href="#navigating-by-method-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Navigating by method name</h2>
+<p>To switch themes, pass DapperDox the <code class="hljs-keyword">-theme</code> <a href="/docs/configuration-guide" rel="nofollow">configuration</a>
+option giving the name of the theme you want to use. For example, select to the
+<code class="hljs-keyword">sectionbar</code> theme
+(see <a href="/docs/theme-overview#built-in-themes" rel="nofollow">built-in themes</a>) with the option:</p>
 
-<p>Where an OpenAPI specification is describing a non-RESTful set of APIs, they are often grouped together and share the same
-HTTP method. For example, two <code class="hljs-keyword">GET</code> methods having respective <code class="hljs-keyword">summary</code> texts of <code class="hljs-keyword">lookup product by ID</code> and <code class="hljs-keyword">lookup product by barcode</code>
-would probably be listed together, both being product APIs. As they are both <code class="hljs-keyword">get</code> methods, the reader would be unable to tell them
-apart if they are both referred to as <code class="hljs-keyword">get</code> operations in the API navigation. By adding the <code class="hljs-keyword">&#34;x-navigateMethodsByName&#34; : true</code>
-extension to the top level OpenAPI specification, you can force DapperDox to describe each operation in the navigation using its
-<code class="hljs-keyword">summary</code> text instead of its operation name or HTTP method. The methods will continue to be referred to by operation name or
-HTTP method in API pages.</p>
+<pre><code><code class="hljs-keyword">-theme=sectionbar
+</code></code></pre>
+<h3><a name="built-in-themes" class="anchor" href="#built-in-themes" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Built-in themes</h3>
 
-<div class="highlight highlight-json"><pre><code>{
-    &#34;swagger&#34;: &#34;2.0&#34;,
-    &#34;x-navigateMethodsByName&#34;: true,
-    &#34;info&#34;: {
-        &#34;title&#34;: &#34;Example API&#34;,
-        &#34;description&#34;: &#34;The only way is up&#34;,
-        &#34;version&#34;: &#34;1.0.0&#34;
-    }
-}
-</code></pre></div>
+<p>DapperDox ships with two built-in themes.</p>
 
-<p>An example of this modifier being used in practice is the example Petstore specification provided with
-DapperDox. As the Petstore API is not REST, the example specification has the <code class="hljs-keyword">x-navigationMethodsByName</code>
-member applied, forcing the use of the operations summary text in the navigation menu.</p>
+<ol>
+<li><code class="hljs-keyword">default</code></li>
+<li><code class="hljs-keyword">sectionbar</code></li>
+</ol>
 
-<p><script>hljs.initHighlightingOnLoad();</script></p>
+<p>Both these themes are built using <a href="http://getbootstrap.com/" rel="nofollow">bootstrap</a>,
+as this is one of the most flexible, well documented and well understood frameworks,
+making these themes simple to customise and extend.</p>
+<h4><a name="default-theme" class="anchor" href="#default-theme" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+default theme</h4>
+
+<p>This theme combines the navigation for reference documentation and authored guides into a
+single page side-navigation.</p>
+<h4><a name="sectionbar-theme" class="anchor" href="#sectionbar-theme" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+sectionbar theme</h4>
+
+<p>This theme separates the reference documentation from the authored guides for a specification,
+and provides a navigation bar at the top of the screen to allow the user
+to switch between the guide and reference sections. The page side-navigation provides
+navigation within the current section.</p>
+<h2><a name="adding-new-themes" class="anchor" href="#adding-new-themes" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+Adding new themes</h2>
+
+<p>If you are providing your own themes, either created yourself or downloaded, then they
+should be placed within a common directory and DapperDox configured to look for them there.
+To do this, pass DapperDox the <code class="hljs-keyword">-theme-dir</code> <a href="/docs/configuration-guide" rel="nofollow">configuration</a>
+option.</p>
+
+<p>DapperDox will fall back to its default theme to find any asset files not provided by an
+imported theme.</p>
+
+<p>For details on using and creating new themes, refer to the section on <a href="/docs/theme-creating" rel="nofollow">creating a theme</a>.</p>
 
 		</div>
       </div>
@@ -244,9 +241,8 @@ member applied, forcing the use of the operations summary text in the navigation
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
-                <a href="https://forum.dapperdox.io"><i class="fa fa-users" aria-hidden="true"></i>&nbsp;<p>Forum</p></a>
-                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
-                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;Open Source</a>
+                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;Twitter</a>
                 
             </div>
           </div>
