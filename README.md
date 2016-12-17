@@ -41,7 +41,7 @@ Start up DapperDox, pointing it to your OpenAPI 2.0 specification file:
 ./dapperdox -spec-dir=<location of OpenAPI 2.0 spec>
 ```
 
-DapperDox looks for the file path `spec/swagger.json` at the `-spec-dir` location, and builds reference documentation for the OpenAPI specification it finds. For example, the obligatory *petstore* OpenAPI specification is provided in the `examples/specifications/petstore` directory, so
+DapperDox looks for the file `swagger.json` at the `-spec-dir` location, and builds reference documentation for the OpenAPI specification it finds. For example, the obligatory *petstore* OpenAPI specification is provided in the `examples/specifications/petstore` directory, so
 passing parameter `-spec-dir=examples/specifications/petstore` will build the petstore documentation.
 
 DapperDox will default to serving documentation from port 3123 on all interfaces, so you can point your 
