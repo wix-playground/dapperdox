@@ -1,0 +1,17 @@
+.navbar a.navbar-brand {
+	color: white;
+	text-shadow: 0 1px 0 rgba(0, 90, 90, 1);
+}
+
+.navbar-nav > li,
+.navbar-nav > li > a,
+.navbar-nav > li > a,
+.navbar-nav > li > a:hover,
+.navbar-nav > li > a:focus {
+    color: white;
+	text-shadow: 0 1px 0 rgba(0, 90, 90, 1);
+}
+.footer {
+	text-shadow: 0 1px 0 rgba(0, 90, 90, 1);
+    color: white;
+}
