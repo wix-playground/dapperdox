@@ -1,7 +1,7 @@
 package spec
 
 import (
-	"bytes"
+	"ebytes"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -730,20 +730,32 @@ func (c *APISpecification) crossLinkMethodAndResource(resource *Resource, method
 	}
 	vres.Methods[method.ID] = method // Use a map to collapse duplicates.
 
-	// Store resource in resouce-list of the specification, so that the resource knows every
-	// operation/method that uses it.
-	if vres.origin == RequestBody {
+	// Store resource in resouce-list of the specification, considering precident.
+	//
+	if resource.origin == RequestBody {
+		// Resource is a Request Body - the lowest precident
+		//
+		logger.Tracef(nil, "   - Resource origin is a request body\n")
+
+		// If this is the first time the resource has been seen, it's okay to store this in
+		// the global list. A request body resource is a filtered (excludes read-only) resource,
+		// and has a lower precident than a response resource.
 		if !resFound {
-			// This is the first time this resource has been seen, and it is a RequestBody, so it's
-			// okay to store this in the global list.
-			// A request body resource is a filtered (excludes read-only) resource, so has a lower
-			// precident than a response resource.
+			logger.Tracef(nil, "     - Not seen before, so storing in global list\n")
 			c.ResourceList[version][resource.ID] = vres
 		}
 	} else {
-		// Not a response resource (which has the highest precident) so replace whatever is stored
-		// currently.
-		c.ResourceList[version][resource.ID] = vres
+		logger.Tracef(nil, "   - Resource origin is a response, so storing in global list\n")
+
+		// This is a response resource (which has the highest precident). If an existing
+		// request-body resource was found in the cache, then it is replaced by the
+		// response resource (but maintaining the method list associated with the resource).
+		//
+		if resFound && vres.origin == RequestBody {
+			resource.Methods = vres.Methods
+			vres = resource
+		}
+		c.ResourceList[version][resource.ID] = vres // If we've already got the resource, this does nothing
 	}
 
 	return vres
