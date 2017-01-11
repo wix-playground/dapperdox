@@ -1,7 +1,7 @@
 package spec
 
 import (
-	"ebytes"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/url"
