@@ -304,19 +304,17 @@ h1,
 
 pre, code, pre code, .attribute {
 		color: #008000;
-		font-size: 0.97em;
+		font-size: 14px;
 }
 
 td pre {
 		padding: 0px;
 		margin: 0px;
 		border: 0px;
-		font-size: 0.9em;
 		background-color: inherit;
 }
 
 li code, td p code {
-		/* background-color: #f0f0f0; */
 		background-color: inherit;
 }
 
@@ -324,15 +322,18 @@ td p {
 		margin: 0;
 }
 
+td ul {
+    padding-left: 20px;
+}
 td li {
-		font-size: 0.97em;
+		font-size: 14px;
 }
 
 td.resource {
 		color: #008000;
 		font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 		text-transform: none;
-		font-size: 94%
+		font-size: 14px;
 }
 
 td span.object {
