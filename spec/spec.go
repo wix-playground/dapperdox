@@ -1189,8 +1189,19 @@ func (c *APISpecification) processProperty(s *spec.Schema, name string, r *Resou
 					} else {
 						var array_obj []string
 						// We stored the real type of the primitive in Type array index 1 (see the note in
-						// resourceFromSchema).
-						array_obj = append(array_obj, r.Properties[name].Type[1])
+						// resourceFromSchema). There is a special case of an array of object where EVERY
+						// member of the object is read-only and filtered out due to onlyIsWritable being true.
+						// In this case, we will fall into this section of code, so we must check the length
+						// of the .Type array, as array len will be 1 [0] in this case, and 2 [1] for an array of
+						// primitives case.
+						// In the case where object members are readonly, the JSON produced will have a
+						// value of nil. This shouldn't happen often, as a more correct spec will declare the
+						// array member as readOnly!
+						//
+						if len(r.Properties[name].Type) > 1 {
+							// Got an array of primitives
+							array_obj = append(array_obj, r.Properties[name].Type[1])
+						}
 						json_rep[name] = array_obj
 					}
 				} else { // array and property.Items.Schema is NIL
