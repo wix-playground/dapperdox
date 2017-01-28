@@ -31,7 +31,7 @@ option giving the name of the theme you want to use. For example, select to the
 -theme=sectionbar
 ```
 
-### Built-in themes
+## Built-in themes
 
 DapperDox ships with two built-in themes.
 
@@ -54,6 +54,15 @@ and provides a navigation bar at the top of the screen to allow the user
 to switch between the guide and reference sections. The page side-navigation provides 
 navigation within the current section.
 
+## Downloading a theme
+
+Overtime the DapperDox team and third parties will release additional themes. Once such example
+is the GOV.UK theme, produced by [CompaniesHouse](#).
+This is available from their [GitHub repository](https://github.com/companieshouse/dapperdox-theme-gov-uk).
+
+Other themes are available, search for `dapperdox-theme` on GitHub or your favourite search
+(see [Dapperdox themes on GitHub](/docs/theme-creating#dapperdox-themes-on-github)).
+
 ## Adding new themes
 
 If you are providing your own themes, either created yourself or downloaded, then they 
@@ -65,3 +74,4 @@ DapperDox will fall back to its default theme to find any asset files not provid
 imported theme.
 
 For details on using and creating new themes, refer to the section on [creating a theme](/docs/theme-creating).
+

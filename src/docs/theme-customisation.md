@@ -1,4 +1,4 @@
-Title: Customisation
+Title: Theme customisation
 Description: Customising the presentation
 Keywords: header, footer, customisation, presentation
 GFMMap: <li>:<li class="bullet-list">
@@ -23,17 +23,22 @@ These frequently overridden assets are described here.
 
 ### Frequently overriden assets
 
-Taking the default theme directory `assets/themes/default/`:
+Starting with the files in the default theme directory `assets/themes/default/`, you can copy
+individual files into your `{local_assets}/templates` directory (see [local assets](/docs/author-concepts)), as required to customise the presentation to your needs.
 
-Create a copies of these file in your `{local_assets}/templates` directory (see [local assets](/docs/author-concepts))
-and customise to tailor the presentation to your needs.
+You only need to make copies of the few files you wish to modify, as DapperDox will fall back
+to the default theme to find the additional files it needs.
 
+The most usefully overridden or modified files in the default theme are as follows:
 
 | Asset filename | Description |
 | -------------- | ----------- |
 | `templates/fragments/header_bar.tmpl` | Provides the header bar for all pages. It pulls in fragments `templates/fragments/header_bar_title.tmpl` and `templates/fragments/header_bar_right.tmpl` |
 | `templates/fragments/header_bar_title.tmpl` | Contains the branding for all pages and the provides the title of the specification being viewed. |
 | `templates/fragments/header_bar_right.tmpl` | Supplies the content for the right-hand side of the header bar. By default provides the `All specifications` navigation, enabled when multiple specifications are being served. |
+| `templates/fragments/body_header.tmpl` | Content positioned below the header, spanning the width of the main content body, including side menu. By default it is empty. |
+| `templates/fragments/body.tmpl` | This template pulls in the main body content and, when necessary, the side menu `templates/fragments/sidenav.tmpl`. | 
+| `templates/fragments/sidenav.tmpl` | This template encloses the side navigation, and pulls in `templates/fragments/sidenav_guides.tmpl`, `templates/fragments/sidenav_reference.tmpl` and `templates/fragments/sidenav_specification.tmpl` templates. |
 | `templates/fragments/footer.tmpl` | This template fragment provides the footer content for all pages. |
 | `templates/fragments/theme.tmpl` | This template fragment imports the theme specific styles. Override this to provide styles *in addition* to the default. |
 | `templates/fragments/fonts.tmpl` | This template fragment imports the fonts used by DapperDox. |
@@ -46,13 +51,15 @@ to achieve the presentation you are after. These should be added to appropriate
 sub-directories within your `{local_assets}/static/` directory.  DapperDox will make
 these assets available using the file's path, excluding the `/{local_assets}/static` stem.
 
-DapperDox will import and register files that match one of the following MIME types:
+DapperDox will import and register files that have MIME types matching one of the
+following patterns:
 
 - `image*`
 - `text/css`
 - `javascript*`
 
-Therefore, a local asset of `{local_assets}/static/images/my_corporate_logo.png` will be
-served by DapperDox as `/images/my_corporate_logo.png`.
+For example, a local asset of `{local_assets}/static/images/my_corporate_logo.png` which
+would have a MIME type of `image/png` will be imported and served by DapperDox as
+`/images/my_corporate_logo.png`.
 
 
