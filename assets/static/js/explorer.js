@@ -14,6 +14,8 @@ apiExplorer.getApiKey = function(name){
 apiExplorer.injectApiKeysIntoPage = function() {
     var select = document.getElementById("api-key-select");
 
+    if( select == null ) return;
+
     var names = this.listApiKeys();
     var len   = names.length;
 
