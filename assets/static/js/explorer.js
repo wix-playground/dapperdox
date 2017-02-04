@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------
 //
-var apiExplorer = { _apiKeys: {} };
+var apiExplorer = { _apiKeys: {}, _bodyMime: {} };
 
 apiExplorer.addApiKey = function(name,key) {
     this._apiKeys[name] = key;
@@ -58,7 +58,42 @@ apiExplorer.getBasicAuthentication = function() {
            return ""
        }
        return btoa(token); 
+};
+
+apiExplorer.addBodyMime = function(type) {
+    this._bodyMime[type] = type;
 }
+apiExplorer.listBodyMime = function(){
+    return Object.keys(this._bodyMime);
+}
+apiExplorer.getBodyMime = function(type){
+    return this._bodyMime[type];
+}
+apiExplorer.injectConsumesIntoPage = function() {
+    var select = document.getElementById("body-mime-select");
+
+    if( select == null ) return;
+
+    var types = this.listBodyMime();
+    var len   = types.length;
+
+    if( len < 2 ) {
+        // Don't show MIME selector if there are less than two in the list.
+        $('#body-mime-group').hide();
+    }
+    if( len == 0 ) { return; } 
+
+    for (var i = 0; i < len; i++) {
+        var option = document.createElement("option");
+        option.text = types[i];
+        option.setAttribute("value", option.tet );
+        select.appendChild(option);
+    }
+    if( len > 1 ) {
+        // There is a choice (>1) so show the selector
+        $('#body-mime-group').show();
+    }
+};
 
 // --------------------------------------------------------------------------------------
 var _process = function(text, status, xhr, fullhost) {
