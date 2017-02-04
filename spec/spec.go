@@ -9,9 +9,9 @@ import (
 	"regexp"
 	"strings"
 
-	//"github.com/davecgh/go-spew/spew"
 	"github.com/dapperdox/dapperdox/config"
 	"github.com/dapperdox/dapperdox/logger"
+	//"github.com/davecgh/go-spew/spew"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/spec"
 	"github.com/serenize/snaker"
@@ -848,15 +848,17 @@ func (c *APISpecification) processSecurity(s []map[string][]string, security map
 				count++
 
 				// Add security
-				security[n] = Security{
+				security[scheme.Type] = Security{
 					Scheme: &scheme,
 					Scopes: make(map[string]string),
 				}
 
-				// Populate method specific scopes by cross referencing SecurityDefinitions
-				for _, scope := range scopes {
-					if scope_desc, ok := scheme.Scopes[scope]; ok {
-						security[n].Scopes[scope] = scope_desc
+				if scheme.IsOAuth2 {
+					// Populate method specific scopes by cross referencing SecurityDefinitions
+					for _, scope := range scopes {
+						if scope_desc, ok := scheme.Scopes[scope]; ok {
+							security[scheme.Type].Scopes[scope] = scope_desc
+						}
 					}
 				}
 			}

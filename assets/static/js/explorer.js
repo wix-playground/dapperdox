@@ -268,9 +268,8 @@ apiExplorer.go = function( method, url ){
         }
     }
 
-    // Create display headers and url before custom headers/queries are added, as these are internal.
+    // Create display headers before custom headers/queries are added, as these are internal.
     var display_headers = _get_header_text( headers );
-    var display_url = _get_url(url, query).requestUrl;
     
     // Add internal queries and headers, if the extend callback is configured.
     // This allows authentication paramerters, for example, to be added to the request.
@@ -294,6 +293,7 @@ apiExplorer.go = function( method, url ){
             }
         }
     }
+    var display_url = _get_url(url, query).requestUrl;
 
     // Tricky to see if formData object is empty. This works. Not elegant.
     var got_form_data = false;
