@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/dapperdox/dapperdox/config"
 	"github.com/dapperdox/dapperdox/logger"
 	"github.com/go-openapi/loads"
@@ -312,6 +312,7 @@ func (c *APISpecification) Load(specFilename string, specHost string) error {
 				URL:  u,
 				Info: &c.APIInfo,
 				MethodNavigationByName: methodNavByName,
+                Consumes:apispec.Consumes,
 			}
 		}
 
@@ -330,6 +331,7 @@ func (c *APISpecification) Load(specFilename string, specHost string) error {
 					URL:  u,
 					Info: &c.APIInfo,
 					MethodNavigationByName: methodNavByName,
+                    Consumes:apispec.Consumes,
 				}
 			}
 
@@ -577,13 +579,15 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	if len(o.Consumes) > 0 {
 		method.Consumes = o.Consumes
 	} else {
-		method.Produces = api.Produces
+		method.Consumes = api.Consumes
 	}
 	if len(o.Produces) > 0 {
 		method.Produces = o.Produces
 	} else {
 		method.Produces = api.Produces
 	}
+
+    spew.Dump(method.Consumes)
 
 	// If Tagging is not used by spec to select, group and order API paths to document, then
 	// complete the missing names.
