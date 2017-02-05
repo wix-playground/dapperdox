@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------
 //
-var apiExplorer = { _apiKeys: {}, _bodyMime: {} };
+var apiExplorer = { _apiKeys: {}, _bodyMime: {}, _respMime: {} };
 
 apiExplorer.addApiKey = function(name,key) {
     this._apiKeys[name] = key;
@@ -60,26 +60,28 @@ apiExplorer.getBasicAuthentication = function() {
        return btoa(token); 
 };
 
-apiExplorer.addBodyMime = function(type) {
-    this._bodyMime[type] = type;
+apiExplorer.addRequestMime   = function(type) { this._bodyMime[type] = type; }
+apiExplorer.listRequestMime  = function()     { return Object.keys(this._bodyMime); }
+apiExplorer.getRequestMime   = function(type) { return this._bodyMime[type]; }
+apiExplorer.addResponseMime  = function(type) { this._respMime[type] = type; }
+apiExplorer.listResponseMime = function()     { return Object.keys(this._respMime); }
+apiExplorer.getResponseMime  = function(type) { return this._respMime[type]; }
+
+apiExplorer.injectMimeTypesIntoPage = function() {
+    _procMime( this.listRequestMime(),  "request" )
+    _procMime( this.listResponseMime(), "response" )
 }
-apiExplorer.listBodyMime = function(){
-    return Object.keys(this._bodyMime);
-}
-apiExplorer.getBodyMime = function(type){
-    return this._bodyMime[type];
-}
-apiExplorer.injectConsumesIntoPage = function() {
-    var select = document.getElementById("body-mime-select");
+
+var _procMime = function( types, loc ) {
+    var select = document.getElementById(loc+'-mime-select');
 
     if( select == null ) return;
 
-    var types = this.listBodyMime();
     var len   = types.length;
 
     if( len < 2 ) {
         // Don't show MIME selector if there are less than two in the list.
-        $('#body-mime-group').hide();
+        $('#'+loc+'-mime-group').hide();
     }
     if( len == 0 ) { return; } 
 
@@ -91,7 +93,7 @@ apiExplorer.injectConsumesIntoPage = function() {
     }
     if( len > 1 ) {
         // There is a choice (>1) so show the selector
-        $('#body-mime-group').show();
+        $('#'+loc+'-mime-group').show();
     }
 };
 
@@ -211,10 +213,10 @@ apiExplorer.go = function( method, url ){
     var body;
     var body_name;
     var headers = [];
-    var gotjson = false;
+    var gotbody = false;
     var errors  = [];
     var display_content_type = "";
-    var content_type = "";
+    var request_content_type = "";
     var form_data = new FormData();
 
     $('#apiexplorer :input').each( function() {
@@ -259,8 +261,14 @@ apiExplorer.go = function( method, url ){
                 $('#jsonerror').html( e );
                 $('#jsonerror').show();
             }
-            gotjson = true; // FIXME This might not be JSON! Use "produces" from swagger spec to decide JSON, XML etc
+            gotbody = true; // FIXME This might not be JSON! Use "produces" from swagger spec to decide JSON, XML etc
             body_name = name;
+        }
+        if( type=='mime' && val ) {
+            alert(val);
+            if( name == 'request-mime' ) {
+                request_content_type = val;
+            }
         }
     });
 
@@ -284,8 +292,10 @@ apiExplorer.go = function( method, url ){
     if( form.length )
     {
         body_text = $.param(form);
-        content_type = "application/x-www-form-urlencoded";// Just for display purposes. formData will set it's own.
-        display_content_type = "\nContent-Type: "+content_type;
+        //request_content_type = "application/x-www-form-urlencoded";// Just for display purposes. formData will set it's own.
+        //display_content_type = "\nContent-Type: "+request_content_type;
+        var ct = "application/x-www-form-urlencoded";// Just for display purposes. formData will set it's own.
+        display_content_type = "\nContent-Type: "+ct;
         $('#request_body').html( hljs.highlightAuto( body_text ).value );
         $('#request_body').show();
 
@@ -296,8 +306,10 @@ apiExplorer.go = function( method, url ){
 
     if( file.length )
     {
-        content_type = "application/x-www-form-urlencoded"; // Just for display purposes. formData will set it's own.
-        display_content_type = "\nContent-Type: "+content_type;
+        //request_content_type = "application/x-www-form-urlencoded"; // Just for display purposes. formData will set it's own.
+        //display_content_type = "\nContent-Type: "+request_content_type;
+        var ct = "application/x-www-form-urlencoded"; // Just for display purposes. formData will set it's own.
+        display_content_type = "\nContent-Type: "+ct;
         for( var p in file ) {
             form_data.append( file[p].name, file[p].file);
         }
@@ -338,26 +350,28 @@ apiExplorer.go = function( method, url ){
     }
 
     var data;
-    if( gotjson ) // TODO need to handle outer mime types, such as XML, text etc
+    if( gotbody )
     {
+        // TODO need to handle outer mime types, such as XML, text etc
         body_text = JSON.stringify(body, null, 2); 
 
         // If we don't have an empty JSON document, display it
         if( body_text != '{}' ) {
             $('#request_body').html( hljs.highlightAuto( body ).value );
             $('#request_body').show();
-            content_type = "application/json"; // Display and actual content type
+            //request_content_type = "application/json"; // Display and actual content type
 
             // Only send body as multipart formData (above) IFF there is also form data or file upload.
             // Otherwise, send as playin body_text body.
             if( got_form_data ) {
-                var blob = new Blob([JSON.parse(body_text)], {type: content_type});
+                var blob = new Blob([JSON.parse(body_text)], {type: request_content_type});
                 form_data.append(body_name, blob, body_name); // name, content, filename
-                content_type = "application/x-www-form-urlencoded"; // Just for display purposes. multipart will contain real
+                request_content_type = "application/x-www-form-urlencoded"; // Just for display purposes. multipart will contain real
             } else {
                 data = body;
             }
-            display_content_type = "\nContent-Type: "+content_type;
+            display_content_type = "\nContent-Type: "+request_content_type;
+            alert( request_content_type );
         }
     }
 
@@ -381,7 +395,7 @@ apiExplorer.go = function( method, url ){
         data: data,
         type: method,
         dataType: "text", // Prevents .ajax from parsing response (JSON.parse in _process does this)
-        contentType: got_form_data ? false : content_type, // MUST be false if we've got formData, else real type.
+        contentType: got_form_data ? false : request_content_type, // MUST be false if we've got formData, else real type.
         traditional: true,
         processData: false, // Must be False for FormData
 
