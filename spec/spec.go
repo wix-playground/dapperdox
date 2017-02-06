@@ -283,7 +283,7 @@ func (c *APISpecification) Load(specFilename string, specHost string) error {
 	//spew.Dump(document)
 
 	// Use the top level TAGS to order the API resources/endpoints
-	// If Tags: [] is not defined, or empty, then no filtering or ordering takes place,#
+	// If Tags: [] is not defined, or empty, then no filtering or ordering takes place,
 	// and all API paths will be documented..
 	for _, tag := range getTags(apispec) {
 		logger.Tracef(nil, "  In tag loop...\n")
@@ -624,16 +624,16 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 		case "path":
 			method.PathParams = append(method.PathParams, p)
 		case "body":
-			var body map[string]interface{}
 			if param.Schema == nil {
 				logger.Errorf(nil, "Error: 'in body' parameter %s is missing a schema declaration.\n", param.Name)
 				os.Exit(1)
 			}
-			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil, true)
-			p.Resource.Schema = jsonResourceToString(body, "")
-			p.Resource.origin = RequestBody
-			method.BodyParam = &p
-			c.crossLinkMethodAndResource(p.Resource, method, version)
+			//var body map[string]interface{}
+			//p.Resource, body = c.resourceFromSchema(param.Schema, method, nil, true)
+			//p.Resource.Schema = jsonResourceToString(body, "")
+			//p.Resource.origin = RequestBody
+			//method.BodyParam = &p
+			//c.crossLinkMethodAndResource(p.Resource, method, version)
 		case "header":
 			method.HeaderParams = append(method.HeaderParams, p)
 		case "query":
@@ -1150,8 +1150,12 @@ func (c *APISpecification) processProperty(s *spec.Schema, name string, r *Resou
 
 	skip := onlyIsWritable && resource.ReadOnly
 	if !skip && resource.ExcludeFromOperations != nil {
+
+		logger.Tracef(nil, "Exclude [%s] in operation [%s] if in list: %s\n", name, method.OperationName, resource.ExcludeFromOperations)
+
 		for _, opname := range resource.ExcludeFromOperations {
 			if opname == method.OperationName {
+				logger.Tracef(nil, "[%s] is excluded\n", name)
 				skip = true
 				break
 			}
