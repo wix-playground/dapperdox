@@ -1,4 +1,4 @@
-# DapperDox&nbsp;&nbsp;&nbsp;[![Build Status](https://travis-ci.org/DapperDox/dapperdox.svg?branch=master)](https://travis-ci.org/DapperDox/dapperdox) [![Download](https://img.shields.io/badge/release-v1.0.2-green.svg) ](https://github.com/DapperDox/dapperdox/releases/tag/v1.0.2)
+# DapperDox&nbsp;&nbsp;&nbsp;[![Build Status](https://travis-ci.org/DapperDox/dapperdox.svg?branch=master)](https://travis-ci.org/DapperDox/dapperdox) [![Download](https://img.shields.io/badge/release-v1.1.0-green.svg) ](https://github.com/DapperDox/dapperdox/releases/tag/v1.1.0)
 
 ### Beautiful, integrated, OpenAPI documentation.
 
