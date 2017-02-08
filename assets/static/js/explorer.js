@@ -88,7 +88,7 @@ var _procMime = function( types, loc ) {
     for (var i = 0; i < len; i++) {
         var option = document.createElement("option");
         option.text = types[i];
-        option.setAttribute("value", option.tet );
+        option.setAttribute("value", option.text );
         select.appendChild(option);
     }
     if( len > 1 ) {
@@ -118,15 +118,21 @@ var _process = function(text, status, xhr, fullhost) {
         }
         else
         {
-            if( content.match(/json/) )
+            if( content.match(/json/) ) 
             {
                 $('#body_block').show();
                 $('#response_body').html( hljs.highlight( 'json', JSON.stringify(JSON.parse(text), null, 2) ).value );
 
-            } else if( content.match(/xml/) )
+            }
+            else if( content.match(/xml/) )
             {
                 $('#body_block').show();
                 $('#response_body').html( hljs.highlight( 'xml', text ).value );
+            }
+            else if( content.match(/yaml/) ) // TODO Needs testing
+            {
+                $('#body_block').show();
+                $('#response_body').html( hljs.highlight( 'yaml', text ).value );
             }
             else if( content.match(/html/) )
             {
@@ -141,10 +147,24 @@ var _process = function(text, status, xhr, fullhost) {
 
                 $('#html_block').show();
             }
-            else
+            else if( content.match(/text\/plain/) )
             {
                 $('#body_block').show();
                 $('#response_body').html( hljs.highlightAuto( text ).value );
+            }
+            else 
+            {
+                // Try and force a "Download" here. API might be
+                // returning a file (PDF for example).
+                //
+                var bytes=new Array(text.length);
+                for (var i=0;i<text.length; i++) bytes[i]=text.charCodeAt(i);
+                var blob=new Blob([new Uint8Array(bytes)]);
+              
+                saveAs( blob, "explorer_response.txt" );
+
+                $('#body_block').show();
+                $('#response_body').html( hljs.highlightAuto( "Downloaded data" ).value );
             }
         }
     }
@@ -180,10 +200,14 @@ var _get_header_text = function( headers ) {
 
     for( var i = 0; i < headers.length; i++ )
     {
-        text = text + '\n' + headers[i].name + ': ' + headers[i].value;
+        text = text + '\n' + _form_header( headers[i] );
     }
     return text;
 }
+
+// --------------------------------------------------------------------------------------
+
+var _form_header = function( header ) { return header.name + ': ' + header.value; }
 
 // --------------------------------------------------------------------------------------
 
@@ -216,7 +240,8 @@ apiExplorer.go = function( method, url ){
     var gotbody = false;
     var errors  = [];
     var display_content_type = "";
-    var request_content_type = "";
+    var request_content_type = "application/json";
+    var response_content_type = "application/json";
     var form_data = new FormData();
 
     $('#apiexplorer :input').each( function() {
@@ -261,13 +286,15 @@ apiExplorer.go = function( method, url ){
                 $('#jsonerror').html( e );
                 $('#jsonerror').show();
             }
-            gotbody = true; // FIXME This might not be JSON! Use "produces" from swagger spec to decide JSON, XML etc
+            gotbody = true;
             body_name = name;
         }
         if( type=='mime' && val ) {
-            alert(val);
             if( name == 'request-mime' ) {
                 request_content_type = val;
+            }
+            if( name == 'response-mime' ) {
+                response_content_type = val;
             }
         }
     });
@@ -292,8 +319,6 @@ apiExplorer.go = function( method, url ){
     if( form.length )
     {
         body_text = $.param(form);
-        //request_content_type = "application/x-www-form-urlencoded";// Just for display purposes. formData will set it's own.
-        //display_content_type = "\nContent-Type: "+request_content_type;
         var ct = "application/x-www-form-urlencoded";// Just for display purposes. formData will set it's own.
         display_content_type = "\nContent-Type: "+ct;
         $('#request_body').html( hljs.highlightAuto( body_text ).value );
@@ -306,8 +331,6 @@ apiExplorer.go = function( method, url ){
 
     if( file.length )
     {
-        //request_content_type = "application/x-www-form-urlencoded"; // Just for display purposes. formData will set it's own.
-        //display_content_type = "\nContent-Type: "+request_content_type;
         var ct = "application/x-www-form-urlencoded"; // Just for display purposes. formData will set it's own.
         display_content_type = "\nContent-Type: "+ct;
         for( var p in file ) {
@@ -359,7 +382,6 @@ apiExplorer.go = function( method, url ){
         if( body_text != '{}' ) {
             $('#request_body').html( hljs.highlightAuto( body ).value );
             $('#request_body').show();
-            //request_content_type = "application/json"; // Display and actual content type
 
             // Only send body as multipart formData (above) IFF there is also form data or file upload.
             // Otherwise, send as playin body_text body.
@@ -371,7 +393,6 @@ apiExplorer.go = function( method, url ){
                 data = body;
             }
             display_content_type = "\nContent-Type: "+request_content_type;
-            alert( request_content_type );
         }
     }
 
@@ -379,10 +400,19 @@ apiExplorer.go = function( method, url ){
         data = form_data;
     }
 
+    // Set up Accept header
+    var accept_header = { "name":"Accept", "value":response_content_type + "; q=0.01"}
+    headers.push( accept_header );
+    if( response_content_type != request_content_type ) {
+        // Display the Accept header only if it differs from the request Content-Type,
+        // which will be infrequent.
+        display_content_type = display_content_type + '\n' + _form_header( accept_header );
+    }
+
     // Construct request URL bits from the url and extended query
     var constructed_request = _get_url( url, query );
 
-    // FIXME Get protocol from passed in url
+    // TODO Get protocol from passed in url
     $('#request_url').html( hljs.highlight( 'http', method.toUpperCase() + ' ' + display_url + ' HTTP/1.1\nHost: ' + constructed_request.fullhost + display_content_type + display_headers ).value );
 
     $('#exploreButton').attr('disabled', 'disabled');
