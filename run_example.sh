@@ -5,9 +5,9 @@
     -spec-rewrite-url=petstore.swagger.io=PETSTORE.swagger.io \
     -theme=default  \
     -log-level=info \
+    -force-specification-list=true \
     #-tls-certificate=server.rsa.crt \
     #-tls-key=server.rsa.key \
     #-author-show-assets=true \
-    #-force-specification-list=true \
     #-assets-dir=./examples/overlay/assets \
     #-proxy-path=/developer=https://developer.some-dev-site.com 

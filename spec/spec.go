@@ -283,7 +283,7 @@ func (c *APISpecification) Load(specFilename string, specHost string) error {
 	//spew.Dump(document)
 
 	// Use the top level TAGS to order the API resources/endpoints
-	// If Tags: [] is not defined, or empty, then no filtering or ordering takes place,#
+	// If Tags: [] is not defined, or empty, then no filtering or ordering takes place,
 	// and all API paths will be documented..
 	for _, tag := range getTags(apispec) {
 		logger.Tracef(nil, "  In tag loop...\n")
@@ -628,11 +628,11 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 		case "path":
 			method.PathParams = append(method.PathParams, p)
 		case "body":
-			var body map[string]interface{}
 			if param.Schema == nil {
 				logger.Errorf(nil, "Error: 'in body' parameter %s is missing a schema declaration.\n", param.Name)
 				os.Exit(1)
 			}
+			var body map[string]interface{}
 			p.Resource, body = c.resourceFromSchema(param.Schema, method, nil, true)
 			p.Resource.Schema = jsonResourceToString(body, "")
 			p.Resource.origin = RequestBody
@@ -957,7 +957,7 @@ func checkPropertyType(s *spec.Schema) string {
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fqNS []string, onlyIsWritable bool) (*Resource, map[string]interface{}) {
+func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fqNS []string, isRequestResource bool) (*Resource, map[string]interface{}) {
 	if s == nil {
 		return nil, nil
 	}
@@ -1099,9 +1099,9 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	}
 
 	r.ReadOnly = original_s.ReadOnly
-	if ops, ok := original_s.Extensions["x-excludeFromOperations"].([]interface{}); ok {
+	if ops, ok := original_s.Extensions["x-excludeFromOperations"].([]interface{}); ok && isRequestResource {
 		// Mark resource property as being excluded from operations with this name.
-		// This filtering only takes effect in a request body, just like readOnly.
+		// This filtering only takes effect in a request body, just like readOnly, so when isRequestResource is true
 		for _, op := range ops {
 			if c, ok := op.(string); ok {
 				r.ExcludeFromOperations = append(r.ExcludeFromOperations, c)
@@ -1113,10 +1113,10 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	json_representation := make(map[string]interface{})
 
 	logger.Tracef(nil, "Call compileproperties...\n")
-	c.compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped, onlyIsWritable)
+	c.compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped, isRequestResource)
 
 	for allof := range s.AllOf {
-		c.compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped, onlyIsWritable)
+		c.compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped, isRequestResource)
 	}
 
 	logger.Tracef(nil, "resourceFromSchema done\n")
@@ -1129,7 +1129,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 // It uses the 'required' map to set when properties are required and builds a JSON
 // representation of the resource.
 //
-func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool, onlyIsWritable bool) {
+func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool, isRequestResource bool) {
 
 	// First, grab the required members
 	for _, n := range s.Required {
@@ -1137,7 +1137,7 @@ func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method
 	}
 
 	for name, property := range s.Properties {
-		c.processProperty(&property, name, r, method, id, required, json_rep, myFQNS, chopped, onlyIsWritable)
+		c.processProperty(&property, name, r, method, id, required, json_rep, myFQNS, chopped, isRequestResource)
 	}
 
 	// Special case to deal with AdditionalProperties (which really just boils down to declaring a
@@ -1147,13 +1147,13 @@ func (c *APISpecification) compileproperties(s *spec.Schema, r *Resource, method
 		ap := s.AdditionalProperties.Schema
 		ap.Type = spec.StringOrArray([]string{"map", ap.Type[0]}) // massage type so that it is a map of 'type'
 
-		c.processProperty(ap, name, r, method, id, required, json_rep, myFQNS, chopped, onlyIsWritable)
+		c.processProperty(ap, name, r, method, id, required, json_rep, myFQNS, chopped, isRequestResource)
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-func (c *APISpecification) processProperty(s *spec.Schema, name string, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool, onlyIsWritable bool) {
+func (c *APISpecification) processProperty(s *spec.Schema, name string, r *Resource, method *Method, id string, required map[string]bool, json_rep map[string]interface{}, myFQNS []string, chopped bool, isRequestResource bool) {
 
 	newFQNS := prepareNamespace(myFQNS, id, name, chopped)
 
@@ -1161,12 +1161,16 @@ func (c *APISpecification) processProperty(s *spec.Schema, name string, r *Resou
 	var resource *Resource
 
 	logger.Tracef(nil, "A call resourceFromSchema for property %s\n", name)
-	resource, json_resource = c.resourceFromSchema(s, method, newFQNS, onlyIsWritable)
+	resource, json_resource = c.resourceFromSchema(s, method, newFQNS, isRequestResource)
 
-	skip := onlyIsWritable && resource.ReadOnly
+	skip := isRequestResource && resource.ReadOnly
 	if !skip && resource.ExcludeFromOperations != nil {
+
+		logger.Tracef(nil, "Exclude [%s] in operation [%s] if in list: %s\n", name, method.OperationName, resource.ExcludeFromOperations)
+
 		for _, opname := range resource.ExcludeFromOperations {
 			if opname == method.OperationName {
+				logger.Tracef(nil, "[%s] is excluded\n", name)
 				skip = true
 				break
 			}
@@ -1205,7 +1209,7 @@ func (c *APISpecification) processProperty(s *spec.Schema, name string, r *Resou
 						var array_obj []string
 						// We stored the real type of the primitive in Type array index 1 (see the note in
 						// resourceFromSchema). There is a special case of an array of object where EVERY
-						// member of the object is read-only and filtered out due to onlyIsWritable being true.
+						// member of the object is read-only and filtered out due to isRequestResource being true.
 						// In this case, we will fall into this section of code, so we must check the length
 						// of the .Type array, as array len will be 1 [0] in this case, and 2 [1] for an array of
 						// primitives case.
