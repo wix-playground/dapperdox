@@ -918,6 +918,8 @@ func checkPropertyType(s *spec.Schema) string {
 		ptype = "object"
 	}
 
+	s_orig := s.Type
+
 	if s.Items != nil {
 		ptype = "UNKNOWN"
 
@@ -936,6 +938,8 @@ func checkPropertyType(s *spec.Schema) string {
 				}
 			} else if s.Type.Contains("array") {
 				ptype = "array of primitives"
+			} else {
+				ptype = fmt.Sprintf("%s", s_orig)
 			}
 		} else {
 			ptype = "Some object"
@@ -1003,6 +1007,9 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 			// if we get here then we can assume the type is supposed to be an array of primitives
 			// Store the actual primitive type in the second element of the Type array.
 			s.Type = spec.StringOrArray([]string{"array", s.Type[0]})
+		} else {
+			s.Type = stringorarray // Put back original type
+			logger.Tracef(nil, "putting s.Type back\n")
 		}
 		logger.Tracef(nil, "REMAP SCHEMA (Type is now %s)\n", s.Type)
 	}
@@ -1018,7 +1025,10 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 		os.Exit(1)
 	}
 
-	if len(fqNS) > 0 && s.Type.Contains("array") {
+	// Ignore ID (from title element) for all but child-objects...
+	// This prevents the title-derived ID being added onto the end of the FQNS.property as
+	// FQNS.property.ID, if title is given for the property in the spec.
+	if len(fqNS) > 0 && !s.Type.Contains("object") {
 		id = ""
 	}
 
@@ -1029,7 +1039,6 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 		}
 	}
 
-	//myFQNS := append([]string{}, fqNS...)
 	myFQNS := fqNS
 	var chopped bool
 
