@@ -11,7 +11,7 @@
     <meta name="keywords" content="header, footer, customisation, presentation">
     <meta name="author" content="DapperDox - Chris Smith">
 
-    <title>Customisation</title>
+    <title>Theme customisation</title>
 
     
 
@@ -74,7 +74,8 @@
 					
 					<li class="menuItem"><a href="/download/downloads">Download</a></li>
 					<li class="menuItem"><a href="/docs/getting-started">Getting Started</a></li>
-					<li class="menuItem"><a href="/docs/overview">Documentation</a></li>
+					<li class="menuItem"><a href="http://forum.dapperdox.io">Forum</a></li>
+					<li class="menuItem"><a href="/docs/overview">Docs</a></li>
 				</ul>
 			</div>
           </nav>
@@ -140,7 +141,7 @@
        <ul class="nav collapse nav-inner" id="ulThemes">
            <li><a href="/docs/theme-overview" data-outer="Themes">Overview</a></li>
            <li><a href="/docs/theme-customisation" data-outer="Themes">Customisation</a></li>
-           
+           <li><a href="/docs/theme-creating" data-outer="Themes">Creating a theme</a></li>
        </ul>
    </li>
    <li class="panel">
@@ -182,10 +183,13 @@ web presence.</p>
 <h3><a name="frequently-overriden-assets" class="anchor" href="#frequently-overriden-assets" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
 Frequently overriden assets</h3>
 
-<p>Taking the default theme directory <code class="hljs-keyword">assets/themes/default/</code>:</p>
+<p>Starting with the files in the default theme directory <code class="hljs-keyword">assets/themes/default/</code>, you can copy
+individual files into your <code class="hljs-keyword">{local_assets}/templates</code> directory (see <a href="/docs/author-concepts" rel="nofollow">local assets</a>), as required to customise the presentation to your needs.</p>
 
-<p>Create a copies of these file in your <code class="hljs-keyword">{local_assets}/templates</code> directory (see <a href="/docs/author-concepts" rel="nofollow">local assets</a>)
-and customise to tailor the presentation to your needs.</p>
+<p>You only need to make copies of the few files you wish to modify, as DapperDox will fall back
+to the default theme to find the additional files it needs.</p>
+
+<p>The most usefully overridden or modified files in the default theme are as follows:</p>
 
 <table class="table table-striped">
 <thead>
@@ -209,6 +213,21 @@ and customise to tailor the presentation to your needs.</p>
 <tr>
 <td><code class="hljs-keyword">templates/fragments/header_bar_right.tmpl</code></td>
 <td>Supplies the content for the right-hand side of the header bar. By default provides the <code class="hljs-keyword">All specifications</code> navigation, enabled when multiple specifications are being served.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">templates/fragments/body_header.tmpl</code></td>
+<td>Content positioned below the header, spanning the width of the main content body, including side menu. By default it is empty.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">templates/fragments/body.tmpl</code></td>
+<td>This template pulls in the main body content and, when necessary, the side menu <code class="hljs-keyword">templates/fragments/sidenav.tmpl</code>.</td>
+</tr>
+
+<tr>
+<td><code class="hljs-keyword">templates/fragments/sidenav.tmpl</code></td>
+<td>This template encloses the side navigation, and pulls in <code class="hljs-keyword">templates/fragments/sidenav_guides.tmpl</code>, <code class="hljs-keyword">templates/fragments/sidenav_reference.tmpl</code> and <code class="hljs-keyword">templates/fragments/sidenav_specification.tmpl</code> templates.</td>
 </tr>
 
 <tr>
@@ -240,7 +259,8 @@ to achieve the presentation you are after. These should be added to appropriate
 sub-directories within your <code class="hljs-keyword">{local_assets}/static/</code> directory.  DapperDox will make
 these assets available using the file&#39;s path, excluding the <code class="hljs-keyword">/{local_assets}/static</code> stem.</p>
 
-<p>DapperDox will import and register files that match one of the following MIME types:</p>
+<p>DapperDox will import and register files that have MIME types matching one of the
+following patterns:</p>
 
 <ul>
 <li class="bullet-list"><code class="hljs-keyword">image*</code></li>
@@ -248,8 +268,9 @@ these assets available using the file&#39;s path, excluding the <code class="hlj
 <li class="bullet-list"><code class="hljs-keyword">javascript*</code></li>
 </ul>
 
-<p>Therefore, a local asset of <code class="hljs-keyword">{local_assets}/static/images/my_corporate_logo.png</code> will be
-served by DapperDox as <code class="hljs-keyword">/images/my_corporate_logo.png</code>.</p>
+<p>For example, a local asset of <code class="hljs-keyword">{local_assets}/static/images/my_corporate_logo.png</code> which
+would have a MIME type of <code class="hljs-keyword">image/png</code> will be imported and served by DapperDox as
+<code class="hljs-keyword">/images/my_corporate_logo.png</code>.</p>
 
 		</div>
       </div>
@@ -259,14 +280,20 @@ served by DapperDox as <code class="hljs-keyword">/images/my_corporate_logo.png<
       <div class="container">
         <div class="row">
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
-            &copy; DapperDox 2016
+            &copy; DapperDox 2017
           </div>
           <div class="col-lg-4 col-md-4">
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+                <a href="https://forum.dapperdox.io"><i class="fa fa-users" aria-hidden="true"></i>&nbsp;<p>Forum</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
+=======
                 <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;Open Source</a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;Twitter</a>
+>>>>>>> feature/gh-pages/new-content
                 
             </div>
           </div>

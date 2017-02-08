@@ -7,11 +7,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="">
-    <meta name="keywords" content="">
+    <meta name="description" content="Creating a theme">
+    <meta name="keywords" content="dapperdox, theme, customisation, presentation">
     <meta name="author" content="DapperDox - Chris Smith">
 
-    <title>DapperDox – Beautiful, integrated, OpenAPI documentation</title>
+    <title>Creating a theme</title>
 
     
 
@@ -74,7 +74,8 @@
 					
 					<li class="menuItem"><a href="/download/downloads">Download</a></li>
 					<li class="menuItem"><a href="/docs/getting-started">Getting Started</a></li>
-					<li class="menuItem"><a href="/docs/overview">Documentation</a></li>
+					<li class="menuItem"><a href="http://forum.dapperdox.io">Forum</a></li>
+					<li class="menuItem"><a href="/docs/overview">Docs</a></li>
 				</ul>
 			</div>
           </nav>
@@ -140,7 +141,7 @@
        <ul class="nav collapse nav-inner" id="ulThemes">
            <li><a href="/docs/theme-overview" data-outer="Themes">Overview</a></li>
            <li><a href="/docs/theme-customisation" data-outer="Themes">Customisation</a></li>
-           
+           <li><a href="/docs/theme-creating" data-outer="Themes">Creating a theme</a></li>
        </ul>
    </li>
    <li class="panel">
@@ -162,64 +163,77 @@
         </div>
 
         <div class="col-lg-9 col-md-9 col-sm-9 main">
-            <h1><a name="terms-used-by-dapperdox" class="anchor" href="#terms-used-by-dapperdox" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Terms used by DapperDox</h1>
-<h2><a name="specification-id" class="anchor" href="#specification-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">specification-ID</code></h2>
+            <h1><a name="creating-a-theme" class="anchor" href="#creating-a-theme" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a theme</h1>
 
-<p>The identifier assigned to each specification Swagger loads. It is derived from the specifications <code class="hljs-keyword">info.title</code> member,
-which DapperDox lower cases and hyphen delimits (<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab casing</a>).</p>
+<p>To create your own theme, follow the guidance give in <a href="/docs/theme-customisation" rel="nofollow">theme customisation</a>, but instead of storing your overridden assets within <code class="hljs-keyword">{local_assets}/templates</code>
+and  <code class="hljs-keyword">{local_assets}/static</code>, create them within a theme directory.</p>
 
-<p>For example, a specification title of &#34;My API suite&#34; produces a <code class="hljs-keyword">specification-ID</code> of <code class="hljs-keyword">my-api-suite</code>.</p>
-<h2><a name="api-group" class="anchor" href="#api-group" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">api-group</code></h2>
-
-<p>A logical grouping of API operations. Grouping will be made based on the tag if tagging is used by the specification,
-in which case <code class="hljs-keyword">api-group</code> is set to the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of
-the tag&#39;s <code class="hljs-keyword">description</code> member if present, or the tag <code class="hljs-keyword">name</code> if not.</p>
-
-<p>If tagging is not in use, then <code class="hljs-keyword">api-group</code> is set to the
-<a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a>
-of the operation&#39;s <code class="hljs-keyword">x-pathName</code> member if present, otherwise the operation&#39;s <code class="hljs-keyword">summary</code> member is used.</p>
-<h2><a name="operation-id" class="anchor" href="#operation-id" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">operation-ID</code></h2>
-
-<p>The identifier given to an operation. It is most importantly used to determine the correct content <a href="/docs/author-overlays" rel="nofollow">overlay</a> to apply.</p>
-
-<p>It is formed by taking the <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles" rel="nofollow">kebab case</a> of the
-first in the following list of operation members that yields a value:</p>
+<p>The following steps illustrate the process:</p>
 
 <ol>
-<li><code class="hljs-keyword">operationID</code></li>
-<li><code class="hljs-keyword">x-opererationName</code></li>
-<li><code class="hljs-keyword">summary</code></li>
-<li>method name</li>
+<li><p>Create a directory within which you store all the themes you want to use with DapperDox
+(see <a href="/docs/theme-overview#adding-new-themes" rel="nofollow">Adding new themes</a>). For example:</p>
+
+<div class="highlight highlight-bash"><pre><code>$ mkdir ${HOME}/themes
+</code></pre></div></li>
+
+<li><p>Create a directory for your theme. For this example, we assume the theme name <code class="hljs-keyword">my-theme</code> and follow the theme naming convention of having a <code class="hljs-keyword">dapperdox-theme-</code> prefix (see <a href="#dapperdox-themes-on-github" rel="nofollow">DapperDox themes on GitHub</a>):</p>
+
+<div class="highlight highlight-bash"><pre><code>$ mkdir ${HOME}/themes/dapperdox-theme-my-theme
+</code></pre></div></li>
+
+<li><p>Create directories to contain your static theme assets and templates:</p>
+
+<div class="highlight highlight-bash"><pre><code>$ mkdir ${HOME}/themes/dapperdox-theme-my-theme/static
+$ mkdir ${HOME}/themes/dapperdox-theme-my-theme/templates
+$ mkdir ${HOME}/themes/dapperdox-theme-my-theme/templates/fragments
+</code></pre></div></li>
+
+<li><p>Copy as many files as you need from DapperDox&#39;s default theme into your theme directory tree. For example, lets change the default page header title and provide an additional stylesheet to change the background colour:</p>
+
+<div class="highlight highlight-bash"><pre><code>$ cp &lt;directory_of_dapperdox_install&gt;/assets/themes/default/templates/fragments/header_bar_title.tmpl ${HOME}/themes/dapperdox-theme-my-theme/templates/fragments
+</code></pre></div>
+
+<p>and edit it to change the page title:</p>
+
+<div class="highlight highlight-HTML"><pre><code>[: if .Info.Title :]
+&lt;a class=&#34;navbar-brand&#34; href=&#34;/reference&#34;&gt;My fantastic.com API&lt;/a&gt;
+&lt;span&gt;[: .Info.Title :]&lt;/span&gt;
+[: else :]
+&lt;a class=&#34;navbar-brand&#34; href=&#34;/&#34;&gt;APIs available at fantastic.com&lt;/a&gt;
+[: end :]
+</code></pre></div></li>
+
+<li><p>Create your stylesheet:</p>
+
+<div class="highlight highlight-bash"><pre><code>$ echo &#34;html { background-color: lightgrey; }&#34; &gt; ${HOME}/themes/dapperdox-theme-my-theme/static/mystyle.css
+</code></pre></div>
+
+<p>and get DapperDox to load it:</p>
+
+<div class="highlight highlight-bash"><pre><code>$ echo &#39;&lt;link href=&#34;/css/mystyle.css&#34; rel=&#34;stylesheet&#34;&gt;&#39; &gt; ${HOME}/themes/dapperdox-theme-my-theme/templates/fragments/theme.tmpl
+</code></pre></div></li>
 </ol>
 
-<p>where method name is <code class="hljs-keyword">method-name</code> below. Therefore, it is possible for <code class="hljs-keyword">operation-ID</code> and <code class="hljs-keyword">method-name</code> to be the same value.</p>
-<h2><a name="method-name" class="anchor" href="#method-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">method-name</code></h2>
+<p>Finally, tell DapperDox where to find your themes, and which theme to use:</p>
 
-<p>The name of the HTTP method for an operation, such as <code class="hljs-keyword">get</code>, <code class="hljs-keyword">post</code> and <code class="hljs-keyword">put</code>.</p>
-<h2><a name="operation-name" class="anchor" href="#operation-name" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code class="hljs-keyword">operation-name</code></h2>
+<div class="highlight highlight-bash"><pre><code>dapperdox -theme-dir=${HOME}/themes -theme=dapperdox-theme-my-theme
+</code></pre></div>
 
-<p>The <code class="hljs-keyword">operation-name</code> of an operation is either its HTTP method (see <code class="hljs-keyword">method-name</code>), or the name given by the
-DapperDox extension <code class="hljs-keyword">x-operationName</code> which may be added to an operation. See <a href="/docs/spec-method-names" rel="nofollow">controlling method names</a>.</p>
-<h2><a name="specification-list-page" class="anchor" href="#specification-list-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Specification list page</h2>
+<p>If you intend to make your theme public, then ideally publish it on GitHub. Initialise your
+theme directory as a git repository, and push that to GitHub (this assumes you&#39;re already
+profficient with the use of <code class="hljs-keyword">git</code> and GitHub):</p>
 
-<p>This page lists the API specifications that are available for reference, and is the default homepage when multiple
-specifications are loaded by DapperDox. It is not normally displayed when a single specification is loaded.</p>
-<h2><a name="specification-summary-page" class="anchor" href="#specification-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-Specification summary page</h2>
+<div class="highlight highlight-bash"><pre><code>$ cd ${HOME}/themes/dapperdox-theme-my-theme
+$ git init
+</code></pre></div>
+<h3><a name="dapperdox-themes-on-github" class="anchor" href="#dapperdox-themes-on-github" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+DapperDox themes on GitHub</h3>
 
-<p>This page lists the all APIs defined by a specification, grouped by <a href="/docs/glossary-terms#api-group" rel="nofollow"><code class="hljs-keyword">api-group</code></a>.
-It is the first page displayed when a specification is selected from the <code class="hljs-keyword">specification-list</code>, and the default homepage
-when a single specification is loaded by DapperDox.</p>
-<h2><a name="api-group-summary-page" class="anchor" href="#api-group-summary-page" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-API group summary page</h2>
+<p>It is recommended that GitHub repositories for DapperDox themes are  given a <code class="hljs-keyword">dapperdox-theme-</code>
+prefix to make them easy to find by searching GitHub or via a search engine.</p>
 
-<p>This page lists the API operations within a single <code class="hljs-keyword">api-group</code>.</p>
+<p><script>hljs.initHighlightingOnLoad();</script></p>
 
 		</div>
       </div>
@@ -229,14 +243,20 @@ API group summary page</h2>
       <div class="container">
         <div class="row">
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
-            &copy; DapperDox 2016
+            &copy; DapperDox 2017
           </div>
           <div class="col-lg-4 col-md-4">
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
             <div class="valigned align-right">
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+                <a href="https://forum.dapperdox.io"><i class="fa fa-users" aria-hidden="true"></i>&nbsp;<p>Forum</p></a>
+                <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<p>Open Source</p></a>
+                <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<p>Twitter</p></a>
+=======
                 <a href="https://github.com/DapperDox/dapperdox"><i class="fa fa-github" aria-hidden="true"></i>&nbsp;Open Source</a>
                 <a href="https://twitter.com/DapperDox"><i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;Twitter</a>
+>>>>>>> feature/gh-pages/new-content
                 
             </div>
           </div>
