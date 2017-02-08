@@ -398,4 +398,7 @@ td > input {
     min-width: 300px;
 }
 
+.body-mime-select {
+    margin-top: 10px;
+}
 

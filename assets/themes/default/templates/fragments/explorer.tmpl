@@ -22,8 +22,21 @@
         [: if .Method.BodyParam :]
             <tr class="form-group">
                 <td>[: .Method.BodyParam.Name :]</td>
-                <td>[: template "explorer_input" (map "Param" .Method.BodyParam "Section" "body") :]<span id="jsonerror" class="jsonerror" style="display: none;"></span></td>
+                <td>[: template "explorer_input" (map "Param" .Method.BodyParam "Section" "body") :]<span id="jsonerror" class="jsonerror" style="display: none;"></span>
+                    <!--
+                    <span id="xrequest-mime-group">
+                        <select id="xrequest-mime-select" data-type="mime" name="request-mime" class="form-control request-mime-select"></select>
+                    </span>
+                    -->
+                </td>
                 <td>[: safehtml .Method.BodyParam.Description :]</td>
+            </tr>
+            <tr class="form-group" id="request-mime-group">
+                <td>Request Content-Type</td>
+                <td>
+                    <select id="request-mime-select" data-type="mime" name="request-mime" class="form-control"></select>
+                </td>
+                <td></td>
             </tr>
         [: end :]
         [: range .Method.FormParams :]
@@ -44,6 +57,13 @@
                 <td>[: safehtml .Description :]</td>
             </tr>
         [: end :]
+            <tr class="form-group" id="response-mime-group">
+                <td>Response Content-Type</td>
+                <td>
+                    <select id="response-mime-select" data-type="mime" name="response-mime" class="form-control"></select>
+                </td>
+                <td></td>
+            </tr>
         </table>
       </div>
 
@@ -112,9 +132,20 @@
     </div>
 </div>
 
+<script src='/js/FileSaver.js' type='text/javascript'></script>
 <script type="text/javascript">
     $(document).ready(function(){
+
+        [: range $mime := .Method.Consumes :]
+        apiExplorer.addRequestMime("[: $mime :]");
+        [: end :]
+        [: range $mime := .Method.Produces :]
+        apiExplorer.addResponseMime("[: $mime :]");
+        [: end :]
+
         apiExplorer.injectApiKeysIntoPage();
+        apiExplorer.injectMimeTypesIntoPage();
+
         $(document).on('click', '#exploreButton', function() {
             var url   = '[: .API.URL :][: .Method.Path :]';
             var method= '[: .Method.Method :]';
