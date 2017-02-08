@@ -5,7 +5,7 @@
     -spec-rewrite-url=petstore.swagger.io=PETSTORE.swagger.io \
     -theme=default  \
     -log-level=info \
-    -force-specification-list=true \
+    -force-specification-list=false \
     #-tls-certificate=server.rsa.crt \
     #-tls-key=server.rsa.key \
     #-author-show-assets=true \

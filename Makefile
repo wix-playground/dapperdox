@@ -4,7 +4,8 @@ examples/apikey_injection \
 examples/guides \
 examples/metadata \
 examples/overlay \
-assets
+assets \
+run_example.sh
 
 BZW=./buildzip $@ dapperdox.exe $+
 BZU=./buildzip $@ dapperdox     $+
