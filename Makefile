@@ -17,7 +17,7 @@ all:
 	@echo "Build DapperDox..."; \
 	go get && go build
 
-release: dist \
+release: distribution \
 	${STEM}.linux-x86.tgz \
 	${STEM}.linux-amd64.tgz \
 	${STEM}.darwin-amd64.tgz \
@@ -27,8 +27,9 @@ release: dist \
 	#${STEM}.windows-x86.zip \
 	#${STEM}.windows-amd64.zip \
 
-dist:
-	mkdir dist
+distribution:
+	mkdir -p dist; \
+	rm -f dist/*
 
 releaseTable: dist/release-table-${VERSION}.md
 
