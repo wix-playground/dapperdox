@@ -9,7 +9,7 @@ assets
 BZW=./buildzip $@ dapperdox.exe $+
 BZU=./buildzip $@ dapperdox     $+
 
-VERSION=1.0.2
+VERSION=1.1.0
 STEM=dist/dapperdox-${VERSION}
 
 all:
