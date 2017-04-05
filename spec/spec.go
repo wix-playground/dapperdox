@@ -11,7 +11,8 @@ import (
 
 	"github.com/dapperdox/dapperdox/config"
 	"github.com/dapperdox/dapperdox/logger"
-	//"github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/go-openapi/analysis"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/spec"
 	"github.com/serenize/snaker"
@@ -601,7 +602,10 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 	if api.Name == "" {
 		name := o.Summary
 		if name == "" {
-			logger.Errorf(nil, "Error: Operation '%s' does not have an operationId or summary member.", id)
+			name = o.Description
+		}
+		if name == "" {
+			logger.Errorf(nil, "Error: Operation '%s' does not have an operationId, summary or description member.", id)
 			os.Exit(1)
 		}
 		api.Name = name
@@ -649,29 +653,32 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 
 	if o.Responses == nil {
 		logger.Errorf(nil, "Error: Operation %s %s is missing a responses declaration.\n", methodname, path)
-		os.Exit(1)
+		//os.Exit(1)
 	}
-	// FIXME - Dies if there are no responses...
-	for status, response := range o.Responses.StatusCodeResponses {
-		logger.Tracef(nil, "Response for status %d", status)
-		//spew.Dump(response)
 
-		// Discover if the resource is already declared, and pick it up
-		// if it is (keyed on version number)
-		if response.Schema != nil {
-			if _, ok := c.ResourceList[version]; !ok {
-				c.ResourceList[version] = make(map[string]*Resource)
+	if o.Responses != nil {
+		// FIXME - Dies if there are no responses...
+		for status, response := range o.Responses.StatusCodeResponses {
+			logger.Tracef(nil, "Response for status %d", status)
+			//spew.Dump(response)
+
+			// Discover if the resource is already declared, and pick it up
+			// if it is (keyed on version number)
+			if response.Schema != nil {
+				if _, ok := c.ResourceList[version]; !ok {
+					c.ResourceList[version] = make(map[string]*Resource)
+				}
 			}
+			rsp := c.buildResponse(&response, method, version)
+			(*rsp).StatusDescription = HTTPStatusDescription(status)
+			method.Responses[status] = *rsp
+
 		}
-		rsp := c.buildResponse(&response, method, version)
-		(*rsp).StatusDescription = HTTPStatusDescription(status)
-		method.Responses[status] = *rsp
 
-	}
-
-	if o.Responses.Default != nil {
-		rsp := c.buildResponse(o.Responses.Default, method, version)
-		method.DefaultResponse = rsp
+		if o.Responses.Default != nil {
+			rsp := c.buildResponse(o.Responses.Default, method, version)
+			method.DefaultResponse = rsp
+		}
 	}
 
 	// If no Security given for operation, then the global defaults are appled.
@@ -966,7 +973,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	logger.Tracef(nil, "resourceFromSchema: Schema type: %s\n", stype)
 	logger.Tracef(nil, "FQNS: %s\n", fqNS)
 	logger.Tracef(nil, "CHECK schema type and items\n")
-	//spew.Dump(s)
+	spew.Dump(s)
 
 	// It is possible for a response to be an array of
 	//     objects, and it it possible to declare this in several ways:
@@ -1025,8 +1032,15 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	}
 
 	id := TitleToKebab(s.Title)
+	// XXX Just something to allow a spec without schema title members to render.... NASTY XXX
+	if id == "" {
+		id = TitleToKebab(method.Method)
+	}
+	// XXX -------------------
 
-	if len(fqNS) == 0 && id == "" {
+	fqNSlen := len(fqNS)
+
+	if fqNSlen == 0 && id == "" {
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title member.", strings.ToUpper(method.Method), method.Path)
 		os.Exit(1)
 	}
@@ -1034,12 +1048,11 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	// Ignore ID (from title element) for all but child-objects...
 	// This prevents the title-derived ID being added onto the end of the FQNS.property as
 	// FQNS.property.ID, if title is given for the property in the spec.
-	if len(fqNS) > 0 && !s.Type.Contains("object") {
+	if fqNSlen > 0 && !s.Type.Contains("object") {
 		id = ""
 	}
 
 	if strings.ToLower(s.Type[0]) == "array" {
-		fqNSlen := len(fqNS)
 		if fqNSlen > 0 {
 			fqNS = append(fqNS[0:fqNSlen-1], fqNS[fqNSlen-1]+"[]")
 		}
@@ -1069,9 +1082,9 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	// If there is no description... the case where we have an array of objects. See issue/11
 	var description string
 	if original_s.Description != "" {
-		description = string(github_flavored_markdown.Markdown([]byte(original_s.Description)))
+		description = string(github_flavored_markdown.Markdown([]byte(original_s.Description))) + "_gfm"
 	} else {
-		description = original_s.Title
+		description = original_s.Title + "_orig"
 	}
 
 	logger.Tracef(nil, "Create resource %s\n", id)
@@ -1113,7 +1126,10 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 	json_representation := make(map[string]interface{})
 
 	logger.Tracef(nil, "Call compileproperties...\n")
-	c.compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped, isRequestResource)
+
+	if len(s.AllOf) == 0 {
+		c.compileproperties(s, r, method, id, required, json_representation, myFQNS, chopped, isRequestResource)
+	}
 
 	for allof := range s.AllOf {
 		c.compileproperties(&s.AllOf[allof], r, method, id, required, json_representation, myFQNS, chopped, isRequestResource)
@@ -1299,7 +1315,18 @@ func loadSpec(url string) (*loads.Document, error) {
 	//}
 
 	// TODO Allow relative references https://github.com/go-openapi/spec/issues/14
-	err = spec.ExpandSpec(document.Spec(), nil)
+	//err = spec.ExpandSpec(document.Spec(), nil)
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	spec := analysis.New(document.Spec())
+
+	fopts := analysis.FlattenOpts{
+		Spec:     spec,
+		BasePath: "",
+	}
+	err = analysis.Flatten(fopts)
 	if err != nil {
 		return nil, err
 	}
