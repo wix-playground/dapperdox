@@ -1,2 +1,3 @@
 dapperdox-web
 *.DS_Store
+*wget.log

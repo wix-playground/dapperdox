@@ -8,9 +8,9 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    style="enable-background:new"
-   viewBox="0 0 516.04614 516.04614"
-   height="145.63969mm"
-   width="145.63969mm"
+   viewBox="0 0 160.15748 160.15748"
+   height="45.200001mm"
+   width="45.200001mm"
    version="1.1"
    id="svg4431"
    inkscape:version="0.91 r13725"
@@ -30,13 +30,17 @@
      showgrid="false"
      inkscape:document-units="mm"
      units="mm"
-     inkscape:zoom="6.1932446"
-     inkscape:cx="247.50237"
-     inkscape:cy="232.18847"
+     inkscape:zoom="3.0966223"
+     inkscape:cx="69.558043"
+     inkscape:cy="67.161426"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg4431" />
+     inkscape:current-layer="svg4431"
+     fit-margin-top="0.1"
+     fit-margin-left="0.1"
+     fit-margin-right="0.1"
+     fit-margin-bottom="0.1" />
   <metadata
      id="metadata4437">
     <rdf:RDF>
@@ -45,14 +49,14 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <defs
      id="defs4435" />
   <g
-     transform="matrix(0.20598779,0,0,0.20598779,203.28474,208.91446)"
+     transform="matrix(0.28084218,0,0,0.28084218,5.448922,13.124438)"
      style="display:inline;opacity:1"
      id="layer2">
     <text
@@ -67,7 +71,8 @@
          id="tspan4179" /></text>
   </g>
   <g
-     id="g5437">
+     id="g5437"
+     transform="matrix(1.3633924,0,0,1.3633924,-271.70794,-271.70793)">
     <circle
        r="52.492558"
        cy="258.02307"
@@ -132,9 +137,9 @@
     </g>
   </g>
   <circle
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#ff03ff;stroke-width:0.32499999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#ff03ff;stroke-width:0.325;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      id="path4179"
-     cx="258.02307"
-     cy="258.02307"
-     r="58.312531" />
+     cx="80.078743"
+     cy="80.078743"
+     r="79.502861" />
 </svg>

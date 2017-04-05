@@ -3,6 +3,8 @@ wget --recursive --no-host-directories http://localhost:3100/index.html -o src/w
 
 # Now deal with favicons that are searched for by browsers
 cp -r src/images/fav/* images/fav/.
+cp    src/images/discourse-logo.png images/.
+cp    src/images/dapperdox_logo_circle_outline_120x120.png images/.
 cp    src/browserconfig.xml .
 
 cd docs
