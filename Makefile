@@ -10,7 +10,7 @@ run_example.sh
 BZW=./buildzip $@ dapperdox.exe $+
 BZU=./buildzip $@ dapperdox     $+
 
-VERSION=1.1.0
+VERSION=1.1.1
 STEM=dist/dapperdox-${VERSION}
 
 all:
