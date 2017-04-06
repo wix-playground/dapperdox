@@ -69,7 +69,7 @@ func New() *render.Render {
 		// The default theme underpins all others
 		asset.Compile(cfg.DefaultAssetsDir+"/themes/default", "assets")
 	}
-	asset.Compile(cfg.DefaultAssetsDir+"/themes/"+cfg.Theme, "assets")
+
 	// Fallback to local templates directory
 	asset.Compile(cfg.DefaultAssetsDir+"/templates", "assets/templates")
 	// Fallback to local static directory

@@ -48,17 +48,25 @@ func Register(r *pat.Router) {
 
 	base, err := filepath.Abs(cfg.SpecDir)
 	if err != nil {
-		logger.Errorf(nil, "Error forming swagger path: %s", err)
+		logger.Errorf(nil, "Error forming specification path: %s", err)
 	}
-	root := base
 
-	logger.Debugf(nil, "- Scanning root directory %s", root)
+	logger.Debugf(nil, "- Scanning base directory %s", base)
+
+	base = filepath.ToSlash(base)
 
 	specMap = make(map[string][]byte)
 
-	err = filepath.Walk(root, func(path string, _ os.FileInfo, _ error) error {
+	err = filepath.Walk(base, func(path string, _ os.FileInfo, _ error) error {
+
+		if path == base {
+			// Nothing to do with this path
+			return nil
+		}
+
 		logger.Debugf(nil, "  - %s", path)
 
+		path = filepath.ToSlash(path)
 		ext := filepath.Ext(path)
 
 		switch ext {

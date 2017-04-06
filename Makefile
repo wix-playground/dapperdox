@@ -23,9 +23,9 @@ release: distribution \
 	${STEM}.darwin-amd64.tgz \
 	${STEM}.linux-arm.tgz \
 	${STEM}.linux-arm64.tgz \
+	${STEM}.windows-x86.zip \
+	${STEM}.windows-amd64.zip \
 	releaseTable
-	#${STEM}.windows-x86.zip \
-	#${STEM}.windows-amd64.zip \
 
 distribution:
 	mkdir -p dist; \
