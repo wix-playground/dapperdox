@@ -4,8 +4,10 @@ examples/apikey_injection \
 examples/guides \
 examples/metadata \
 examples/overlay \
-assets \
-run_example.sh
+assets 
+
+UNIX_LIST=${ZIPLIST} run_example.sh
+WIN_LIST=${ZIPLIST} run_example.bat
 
 BZW=./buildzip $@ dapperdox.exe $+
 BZU=./buildzip $@ dapperdox     $+
@@ -36,27 +38,26 @@ releaseTable: dist/release-table-${VERSION}.md
 dist/release-table-${VERSION}.md:
 	./createReleaseTable.sh ${VERSION} > $@
 
-${STEM}.linux-arm.tgz: dapperdox_linux_arm.exe ${ZIPLIST}
+${STEM}.linux-arm.tgz: dapperdox_linux_arm.exe ${UNIX_LIST}
 	@${BZU}
 
-${STEM}.linux-arm64.tgz: dapperdox_linux_arm64.exe ${ZIPLIST}
+${STEM}.linux-arm64.tgz: dapperdox_linux_arm64.exe ${UNIX_LIST}
 	@${BZU}
 
-${STEM}.linux-amd64.tgz: dapperdox_linux_amd64.exe ${ZIPLIST}
+${STEM}.linux-amd64.tgz: dapperdox_linux_amd64.exe ${UNIX_LIST}
 	@${BZU}
 
-${STEM}.linux-x86.tgz: dapperdox_linux_x86.exe ${ZIPLIST}
+${STEM}.linux-x86.tgz: dapperdox_linux_x86.exe ${UNIX_LIST}
 	@${BZU}
 
-${STEM}.darwin-amd64.tgz: dapperdox_darwin_amd64.exe ${ZIPLIST}
+${STEM}.darwin-amd64.tgz: dapperdox_darwin_amd64.exe ${UNIX_LIST}
 	@${BZU}
 
-${STEM}.windows-x86.zip: dapperdox_win_x86.exe ${ZIPLIST}
+${STEM}.windows-x86.zip: dapperdox_win_x86.exe ${WIN_LIST}
 	@${BZW}
 
-${STEM}.windows-amd64.zip: dapperdox_win_amd64.exe ${ZIPLIST}
+${STEM}.windows-amd64.zip: dapperdox_win_amd64.exe ${WIN_LIST}
 	@${BZW}
-	
 	
 dapperdox_linux_x86.exe:
 	GOOS=linux GOARCH=386 go build -o $@
