@@ -46,7 +46,7 @@ func Register(r *pat.Router) {
 		specReplacer = strings.NewReplacer(replacements...)
 	}
 
-	base, err := filepath.Abs(cfg.SpecDir)
+	base, err := filepath.Abs(filepath.Clean(cfg.SpecDir))
 	if err != nil {
 		logger.Errorf(nil, "Error forming specification path: %s", err)
 	}
