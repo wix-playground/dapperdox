@@ -29,10 +29,14 @@ For this example, we will specify the Swagger specification location on the comm
 ./dapperdox -spec-dir=examples/specifications/petstore
 ```
 
+Alternatively, you can run the example quickstart script `./run_example.sh` (`.\run_example.bat` on Windows)
+in the dapperdox release directory.
+
 This will start serving the example <em>petstore</em> specification included in the DapperDox distribution.
 
 By default, DapperDox will start serving reference documentation on port 3123, so point your web browser at
 [http://localhost:3123](http://localhost:3123)
+
 
 ## Serving your own specification
 
