@@ -202,7 +202,7 @@ func LoadSpecifications(specHost string, collapse bool) error {
 		logger.Tracef(nil, "Loading specifications from %s\n", specHost)
 	}
 
-	for _, specFilename := range cfg.SpecFilename {
+	for _, specLocation := range cfg.SpecFilename {
 
 		var ok bool
 		var specification *APISpecification
@@ -211,7 +211,7 @@ func LoadSpecifications(specHost string, collapse bool) error {
 			specification = &APISpecification{}
 		}
 
-		err = specification.Load(specFilename, specHost)
+		err = specification.Load(specLocation, specHost)
 		if err != nil {
 			return err
 		}
@@ -228,15 +228,15 @@ func LoadSpecifications(specHost string, collapse bool) error {
 
 // -----------------------------------------------------------------------------
 // Load loads API specs from the supplied host (usually local!)
-func (c *APISpecification) Load(specFilename string, specHost string) error {
+func (c *APISpecification) Load(specLocation string, specHost string) error {
 
-	if !strings.HasPrefix(specFilename, "/") {
-		specFilename = "/" + specFilename
+	if isLocalSpecUrl(specLocation) && !strings.HasPrefix(specLocation, "/") {
+		specLocation = "/" + specLocation
 	}
 
-	c.URL = specFilename
+	c.URL = specLocation
 
-	document, err := loadSpec("http://" + specHost + specFilename)
+	document, err := loadSpec(normalizeSpecLocation(specLocation, specHost))
 	if err != nil {
 		return err
 	}
@@ -1321,3 +1321,21 @@ func JSONMarshalIndent(v interface{}) ([]byte, error) {
 }
 
 // -----------------------------------------------------------------------------
+
+func isLocalSpecUrl(specUrl string) bool {
+	match, err := regexp.MatchString("(?i)^https?://.+", specUrl)
+	if err != nil {
+		panic(fmt.Sprintf("Attempted to match against an invalid regexp: %s", err))
+	}
+	return !match
+}
+
+// -----------------------------------------------------------------------------
+
+func normalizeSpecLocation(specLocation string, specHost string) string {
+	if isLocalSpecUrl(specLocation) {
+		return "http://" + specHost + specLocation
+	} else {
+		return specLocation
+	}
+}
