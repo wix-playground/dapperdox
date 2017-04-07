@@ -38,7 +38,7 @@ func Get() (*config, error) {
 
 	cfg = &config{
 		BindAddr:         "localhost:3123",
-		SpecDir:          "spec",
+		SpecDir:          "",
 		DefaultAssetsDir: "assets",
 		LogLevel:         "info",
 		SiteURL:          "http://localhost:3123/",

@@ -199,7 +199,7 @@ func LoadSpecifications(specHost string, collapse bool) error {
 		splithost := strings.Split(specHost, ":")
 		splithost[0] = "127.0.0.1"
 		specHost = strings.Join(splithost, ":")
-		logger.Tracef(nil, "Loading specifications from %s\n", specHost)
+		logger.Tracef(nil, "Serving specifications from %s\n", specHost)
 	}
 
 	for _, specLocation := range cfg.SpecFilename {
@@ -1288,6 +1288,8 @@ func CamelToKebab(s string) string {
 // -----------------------------------------------------------------------------
 
 func loadSpec(url string) (*loads.Document, error) {
+
+	logger.Infof(nil, "Importing OpenAPI specifications from %s", url)
 
 	document, err := loads.Spec(url)
 	if err != nil {
