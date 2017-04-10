@@ -3,6 +3,7 @@ package spec
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -213,7 +214,13 @@ func LoadSpecifications(specHost string, collapse bool) error {
 
 		err = specification.Load(specFilename, specHost)
 		if err != nil {
-			return err
+			if cfg.SkipOnLoadError {
+				logger.Errorf(nil, "Failed to load specification from %s from %s : %s\n", specFilename, specHost, err)
+				logger.Infof(nil, "Skipping to next specification")
+				continue
+			} else {
+				return err
+			}
 		}
 
 		if collapse {
@@ -221,6 +228,10 @@ func LoadSpecifications(specHost string, collapse bool) error {
 		}
 
 		APISuite[specification.ID] = specification
+	}
+
+	if len(APISuite) == 0 {
+		return errors.New("Failed to load any specifications")
 	}
 
 	return nil
@@ -263,8 +274,9 @@ func (c *APISpecification) Load(specFilename string, specHost string) error {
 	c.APIInfo.Title = apispec.Info.Title
 
 	if len(c.APIInfo.Title) == 0 {
-		logger.Errorf(nil, "Error: Specification %s does not have a info.title member.\n", c.URL)
-		os.Exit(1)
+		err := errors.New("Specification " + c.URL + " does not have a info.title member.")
+		logger.Errorf(nil, "Error: %s", err)
+		return err
 	}
 
 	logger.Tracef(nil, "Parse OpenAPI specification '%s'\n", c.APIInfo.Title)
