@@ -25,6 +25,11 @@ func Register(r *pat.Router) {
 
 	logger.Infof(nil, "Registering specifications")
 
+	if cfg.SpecDir == "" {
+		logger.Infof(nil, "- No local specifications to serve")
+		return
+	}
+
 	// Build a replacer to search/replace specification URLs
 	if specReplacer == nil {
 		var replacements []string

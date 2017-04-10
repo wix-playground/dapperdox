@@ -199,10 +199,10 @@ func LoadSpecifications(specHost string, collapse bool) error {
 		splithost := strings.Split(specHost, ":")
 		splithost[0] = "127.0.0.1"
 		specHost = strings.Join(splithost, ":")
-		logger.Tracef(nil, "Loading specifications from %s\n", specHost)
+		logger.Tracef(nil, "Serving specifications from %s\n", specHost)
 	}
 
-	for _, specFilename := range cfg.SpecFilename {
+	for _, specLocation := range cfg.SpecFilename {
 
 		var ok bool
 		var specification *APISpecification
@@ -211,7 +211,7 @@ func LoadSpecifications(specHost string, collapse bool) error {
 			specification = &APISpecification{}
 		}
 
-		err = specification.Load(specFilename, specHost)
+		err = specification.Load(specLocation, specHost)
 		if err != nil {
 			return err
 		}
@@ -228,15 +228,15 @@ func LoadSpecifications(specHost string, collapse bool) error {
 
 // -----------------------------------------------------------------------------
 // Load loads API specs from the supplied host (usually local!)
-func (c *APISpecification) Load(specFilename string, specHost string) error {
+func (c *APISpecification) Load(specLocation string, specHost string) error {
 
-	if !strings.HasPrefix(specFilename, "/") {
-		specFilename = "/" + specFilename
+	if isLocalSpecUrl(specLocation) && !strings.HasPrefix(specLocation, "/") {
+		specLocation = "/" + specLocation
 	}
 
-	c.URL = specFilename
+	c.URL = specLocation
 
-	document, err := loadSpec("http://" + specHost + specFilename)
+	document, err := loadSpec(normalizeSpecLocation(specLocation, specHost))
 	if err != nil {
 		return err
 	}
@@ -1289,6 +1289,8 @@ func CamelToKebab(s string) string {
 
 func loadSpec(url string) (*loads.Document, error) {
 
+	logger.Infof(nil, "Importing OpenAPI specifications from %s", url)
+
 	document, err := loads.Spec(url)
 	if err != nil {
 		//logger.Errorf(nil, "Error: go-openapi/loads filed to load spec url [%s]: %s", url, err)
@@ -1321,3 +1323,21 @@ func JSONMarshalIndent(v interface{}) ([]byte, error) {
 }
 
 // -----------------------------------------------------------------------------
+
+func isLocalSpecUrl(specUrl string) bool {
+	match, err := regexp.MatchString("(?i)^https?://.+", specUrl)
+	if err != nil {
+		panic(fmt.Sprintf("Attempted to match against an invalid regexp: %s", err))
+	}
+	return !match
+}
+
+// -----------------------------------------------------------------------------
+
+func normalizeSpecLocation(specLocation string, specHost string) string {
+	if isLocalSpecUrl(specLocation) {
+		return "http://" + specHost + specLocation
+	} else {
+		return specLocation
+	}
+}
