@@ -38,7 +38,6 @@ func Get() (*config, error) {
 	}
 
 	cfg = &config{
-		//SpecFilename:     "/spec/swagger.json",
 		BindAddr:         "localhost:3123",
 		SpecDir:          "spec",
 		DefaultAssetsDir: "assets",

@@ -1291,6 +1291,7 @@ func loadSpec(url string) (*loads.Document, error) {
 
 	document, err := loads.Spec(url)
 	if err != nil {
+		//logger.Errorf(nil, "Error: go-openapi/loads filed to load spec url [%s]: %s", url, err)
 		return nil, err
 	}
 
@@ -1301,6 +1302,7 @@ func loadSpec(url string) (*loads.Document, error) {
 	// TODO Allow relative references https://github.com/go-openapi/spec/issues/14
 	err = spec.ExpandSpec(document.Spec(), nil)
 	if err != nil {
+		//logger.Errorf(nil, "Error: go-openapi/spec filed to expand spec: %s", err)
 		return nil, err
 	}
 

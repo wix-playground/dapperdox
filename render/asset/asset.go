@@ -98,7 +98,11 @@ func Compile(dir string, prefix string) {
 
 	logger.Debugf(nil, "- Scanning directory %s", dir)
 
+	dir = filepath.ToSlash(dir)
+
 	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		path = filepath.Clean(filepath.ToSlash(path))
+
 		if info == nil {
 			return nil
 		}
@@ -150,7 +154,7 @@ func Compile(dir string, prefix string) {
 				for i, heading := range headings {
 					buf = ProcessMarkdown([]byte(sections[i]))
 
-					relative = mdname + "/" + heading + "/overlay.tmpl"
+					relative = filepath.Join(mdname, heading, "overlay.tmpl")
 					storeTemplate(prefix, relative, guideReplacer.Replace(string(buf)), meta)
 				}
 			} else {
@@ -179,7 +183,7 @@ func Compile(dir string, prefix string) {
 
 func storeTemplate(prefix string, name string, template string, meta map[string]string) {
 
-	newname := prefix + "/" + name
+	newname := filepath.ToSlash(filepath.Join(prefix, name))
 
 	if _, ok := _bindata[newname]; !ok {
 		logger.Debugf(nil, "  + Import %s", newname)
@@ -284,28 +288,28 @@ func CompileGFMMap() {
 	cfg, _ := config.Get()
 
 	if len(cfg.AssetsDir) != 0 {
-		mapfile = cfg.AssetsDir + "/gfm.map"
+		mapfile = filepath.Join(cfg.AssetsDir, "gfm.map")
 		logger.Tracef(nil, "Looking in assets dir for %s\n", mapfile)
 		if _, err := os.Stat(mapfile); os.IsNotExist(err) {
 			mapfile = ""
 		}
 	}
 	if len(mapfile) == 0 && len(cfg.ThemeDir) != 0 {
-		mapfile = cfg.ThemeDir + "/" + cfg.Theme + "/gfm.map"
+		mapfile = filepath.Join(cfg.ThemeDir, cfg.Theme, "gfm.map")
 		logger.Tracef(nil, "Looking in theme dir for %s\n", mapfile)
 		if _, err := os.Stat(mapfile); os.IsNotExist(err) {
 			mapfile = ""
 		}
 	}
 	if len(mapfile) == 0 {
-		mapfile = cfg.DefaultAssetsDir + "/themes/" + cfg.Theme + "/gfm.map"
+		mapfile = filepath.Join(cfg.DefaultAssetsDir, "themes", cfg.Theme, "gfm.map")
 		logger.Tracef(nil, "Looking in default theme dir for %s\n", mapfile)
 		if _, err := os.Stat(mapfile); os.IsNotExist(err) {
 			mapfile = ""
 		}
 	}
 	if len(mapfile) == 0 {
-		mapfile = cfg.DefaultAssetsDir + "/themes/default/gfm.map"
+		mapfile = filepath.Join(cfg.DefaultAssetsDir, "/themes/default/gfm.map")
 		logger.Tracef(nil, "Looking in default theme for %s\n", mapfile)
 		if _, err := os.Stat(mapfile); os.IsNotExist(err) {
 			mapfile = ""
