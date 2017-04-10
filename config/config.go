@@ -23,6 +23,7 @@ type config struct {
 	DocumentRewriteURL []string    `env:"DOCUMENT_REWRITE_URL" flag:"document-rewrite-url" flagDesc:"Specify a document URL that is to be rewritten. May be multiply defined. Format is from=to."`
 	ForceSpecList      bool        `env:"FORCE_SPECIFICATION_LIST" flag:"force-specification-list" flagDesc:"Force the homepage to be the summary list of available specifications. The default when serving a single OpenAPI specification is to make the homepage the API summary."`
 	ShowAssets         bool        `env:"AUTHOR_SHOW_ASSETS" flag:"author-show-assets" flagDesc:"Display at the foot of each page the overlay asset paths, in priority order, that DapperDox will check before rendering."`
+	ReleaseCheck       bool        `env:"RELEASE_CHECK" flag:"release-check" flagDesc:"Controls whether DapperDox checks for a new release at startup. Set to false to disable."`
 	ProxyPath          []string    `env:"PROXY_PATH" flag:"proxy-path" flagDesc:"Give a path to proxy though to another service. May be multiply defined. Format is local-path=scheme://host/dst-path."`
 	TLSCertificate     string      `env:"TLS_CERTIFICATE" flag:"tls-certificate" flagDesc:"The fully qualified path to the TLS certificate file. For HTTP over TLS (HTTPS) both a certificate and a key must be provided."`
 	TLSKey             string      `env:"TLS_KEY" flag:"tls-key" flagDesc:"The fully qualified path to the TLS private key file. For HTTP over TLS (HTTPS) both a certificate and a key must be provided."`
@@ -44,6 +45,7 @@ func Get() (*config, error) {
 		LogLevel:         "info",
 		SiteURL:          "http://localhost:3123/",
 		ShowAssets:       false,
+		ReleaseCheck:     true,
 	}
 
 	err := gofigure.Gofigure(cfg)

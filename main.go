@@ -29,7 +29,7 @@ import (
 	"github.com/justinas/nosurf"
 )
 
-const VERSION string = "1.1.1" // TODO build with doxc to control version number?
+const VERSION string = "1.1.1"
 
 var tlsEnabled bool
 
@@ -100,11 +100,9 @@ func main() {
 	listener.Close() // Stop serving specs
 	wg.Wait()        // wait for go routine serving specs to terminate
 
-	go func() {
-		// run release check in the background so that DapperDox does not need to wait
-		// for this to complete before it starts serving pages.
+	if cfg.ReleaseCheck {
 		releaseCheck()
-	}()
+	}
 
 	listener, err = network.GetListener(&tlsEnabled)
 	if err != nil {
@@ -152,6 +150,16 @@ func injectHeaders(h http.Handler) http.Handler {
 // ---------------------------------------------------------------------------
 
 func releaseCheck() {
+	go func() {
+		// run release check in the background so that DapperDox does not need to wait
+		// for this to complete before it starts serving pages.
+		doReleaseCheck()
+	}()
+}
+
+// ---------------------------------------------------------------------------
+
+func doReleaseCheck() {
 
 	apiurl := "https://api.github.com/repos/dapperdox/dapperdox/releases"
 
