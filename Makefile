@@ -30,12 +30,13 @@ release: distribution \
 	releaseTable
 
 distribution:
-	mkdir -p dist; \
+	@mkdir -p dist; \
 	rm -f dist/*
 
 releaseTable: dist/release-table-${VERSION}.md
 
 dist/release-table-${VERSION}.md:
+	rm $@; \
 	./createReleaseTable.sh ${VERSION} > $@
 
 ${STEM}.linux-arm.tgz: dapperdox_linux_arm.exe ${UNIX_LIST}
@@ -59,23 +60,23 @@ ${STEM}.windows-x86.zip: dapperdox_win_x86.exe ${WIN_LIST}
 ${STEM}.windows-amd64.zip: dapperdox_win_amd64.exe ${WIN_LIST}
 	@${BZW}
 	
-dapperdox_linux_x86.exe:
+dapperdox_linux_x86.exe: main.go
 	GOOS=linux GOARCH=386 go build -o $@
 
-dapperdox_linux_amd64.exe:
+dapperdox_linux_amd64.exe: main.go
 	GOOS=linux GOARCH=amd64 go build -o $@
 
-dapperdox_linux_arm64.exe:
+dapperdox_linux_arm64.exe: main.go
 	GOOS=linux GOARCH=arm64 go build -o $@
 
-dapperdox_linux_arm.exe:
+dapperdox_linux_arm.exe: main.go
 	GOOS=linux GOARCH=arm go build -o $@
 
-dapperdox_darwin_amd64.exe:
+dapperdox_darwin_amd64.exe: main.go
 	GOOS=darwin GOARCH=amd64 go build -o $@
 
-dapperdox_win_x86.exe:
+dapperdox_win_x86.exe: main.go
 	GOOS=windows GOARCH=386 go build -o $@
 
-dapperdox_win_amd64.exe:
+dapperdox_win_amd64.exe: main.go
 	GOOS=windows GOARCH=amd64 go build -o $@

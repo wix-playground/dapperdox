@@ -3,18 +3,27 @@ TARGET=$2
 BIN=$3
 shift 3
 
+KEEPTARGET=${TARGET}.$$
+
 ZIPFILE=`basename ${ZIP}`
 BASE=${ZIPFILE%.*}
 
-STUFF=${BASE}/${TARGET}
+ARCHIVE_CONTENT=${BASE}/${TARGET}
 for i in $*
 do
-    STUFF="${STUFF} ${BASE}/${i}"
+    ARCHIVE_CONTENT="${ARCHIVE_CONTENT} ${BASE}/${i}"
 done
 
-cp ${BIN} ${TARGET}
-cd ..
-ln -fhs dapperdox ${BASE}
+if [ -r ${TARGET} ]
+then
+    mv ${TARGET} ${KEEPTARGET}
+fi
+
+mv ${BIN} ${TARGET}
+
+mkdir -p build
+ln -s ${PWD} build/${BASE}
+cd build
 
 echo "Building ${ZIP}..."
 
@@ -22,9 +31,16 @@ EXT="${ZIP##*.}"
 
 if [ "$EXT" == "zip" ] 
 then
-    zip -r ${BASE}/${ZIP} ${STUFF} > /dev/null 2>&1
+    zip -r ${BASE}/${ZIP} ${ARCHIVE_CONTENT} > /dev/null 2>&1
 else
-    tar -czf ${BASE}/${ZIP} ${STUFF} > /dev/null 2>&1
+tar -czf ${BASE}/${ZIP} ${ARCHIVE_CONTENT} > /dev/null 2>&1
+fi
+
+cd ..
+rm ${TARGET}
+if [ -r ${KEEPTARGET} ]
+then
+    mv ${KEEPTARGET} ${TARGET}
 fi
 
 echo
