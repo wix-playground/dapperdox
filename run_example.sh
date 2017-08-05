@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 ./dapperdox \
     -spec-dir=examples/specifications/petstore/ \
     -bind-addr=0.0.0.0:3123 \
