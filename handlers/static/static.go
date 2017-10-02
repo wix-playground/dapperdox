@@ -45,6 +45,12 @@ func Register(r *pat.Router) {
 	for _, file := range asset.AssetNames() {
 		mimeType := mime.TypeByExtension(filepath.Ext(file))
 
+		if mimeType == "" {
+			continue
+		}
+
+		logger.Debugf(nil, "Got MIME type: %s", mimeType)
+
 		switch {
 		case strings.HasPrefix(mimeType, "image"),
 			strings.HasPrefix(mimeType, "text/css"),
