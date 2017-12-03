@@ -36,7 +36,7 @@ import (
 	"github.com/wix/dapperdox/network"
 	"github.com/wix/dapperdox/proxy"
 	"github.com/wix/dapperdox/render"
-	"github.com/wix/dapperdox/spec"
+	//"github.com/wix/dapperdox/spec"
 	"github.com/gorilla/pat"
 	"github.com/justinas/alice"
 	"github.com/justinas/nosurf"
