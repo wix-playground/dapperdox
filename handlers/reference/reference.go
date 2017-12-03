@@ -20,10 +20,10 @@ package reference
 import (
 	"net/http"
 
-	//"github.com/davecgh/go-spew/spew"
-	"github.com/dapperdox/dapperdox/logger"
-	"github.com/dapperdox/dapperdox/render"
-	"github.com/dapperdox/dapperdox/spec"
+	//"github.com/wix/dapperdox/go-spew/spew"
+	"github.com/wix/dapperdox/logger"
+	"github.com/wix/dapperdox/render"
+	"github.com/wix/dapperdox/spec"
 	"github.com/gorilla/pat"
 )
 

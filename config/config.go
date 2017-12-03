@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/dapperdox/dapperdox/logger"
+	"github.com/wix/dapperdox/logger"
 	"github.com/ian-kent/gofigure"
 )
 

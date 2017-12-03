@@ -24,8 +24,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/dapperdox/dapperdox/config"
-	"github.com/dapperdox/dapperdox/logger"
+	"github.com/wix/dapperdox/config"
+	"github.com/wix/dapperdox/logger"
 	"github.com/gorilla/pat"
 )
 

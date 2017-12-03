@@ -23,10 +23,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	//"github.com/dapperdox/dapperdox/assets"
-	"github.com/dapperdox/dapperdox/logger"
-	"github.com/dapperdox/dapperdox/render"
-	"github.com/dapperdox/dapperdox/render/asset"
+	//"github.com/wix/dapperdox/assets"
+	"github.com/wix/dapperdox/logger"
+	"github.com/wix/dapperdox/render"
+	"github.com/wix/dapperdox/render/asset"
 	"github.com/gorilla/pat"
 )
 

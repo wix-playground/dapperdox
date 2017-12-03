@@ -26,8 +26,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/dapperdox/dapperdox/config"
-	"github.com/dapperdox/dapperdox/logger"
+	"github.com/wix/dapperdox/config"
+	"github.com/wix/dapperdox/logger"
 	//"github.com/davecgh/go-spew/spew"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/spec"

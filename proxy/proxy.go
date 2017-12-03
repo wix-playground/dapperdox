@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package proxy
 
 import (
-	"github.com/dapperdox/dapperdox/config"
-	"github.com/dapperdox/dapperdox/logger"
+	"github.com/wix/dapperdox/config"
+	"github.com/wix/dapperdox/logger"
 	"github.com/gorilla/pat"
 	"net/http"
 	"net/http/httputil"

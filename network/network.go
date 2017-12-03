@@ -20,8 +20,8 @@ package network
 import (
 	"crypto/tls"
 	"errors"
-	"github.com/dapperdox/dapperdox/config"
-	"github.com/dapperdox/dapperdox/logger"
+	"github.com/wix/dapperdox/config"
+	"github.com/wix/dapperdox/logger"
 	"net"
 )
 

@@ -27,7 +27,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dapperdox/dapperdox/logger"
+	"github.com/wix/dapperdox/logger"
 )
 
 // Handler returns a Handler that runs h with the given time limit.
