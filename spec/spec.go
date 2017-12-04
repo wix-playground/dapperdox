@@ -40,6 +40,7 @@ type APISpecification struct {
 	APIs    APISet // APIs represents the parsed APIs
 	APIInfo Info
 	URL     string
+	Category string
 
 	SecurityDefinitions map[string]SecurityScheme
 	DefaultSecurity     map[string]Security
@@ -295,6 +296,8 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 	if byname, ok := apispec.Extensions["x-navigateMethodsByName"].(bool); ok {
 		methodNavByName = byname
 	}
+
+	c.Category = apispec.Extensions["x-category"].(string)
 
 	//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
 	//spew.Dump(document)
