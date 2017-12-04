@@ -36,10 +36,10 @@ import (
 )
 
 type APISpecification struct {
-	ID      string
-	APIs    APISet // APIs represents the parsed APIs
-	APIInfo Info
-	URL     string
+	ID       string
+	APIs     APISet // APIs represents the parsed APIs
+	APIInfo  Info
+	URL      string
 	Category string
 
 	SecurityDefinitions map[string]SecurityScheme
@@ -49,6 +49,8 @@ type APISpecification struct {
 }
 
 var APISuite map[string]*APISpecification
+var BusinessSuite map[string]*APISpecification
+var CoreSuite map[string]*APISpecification
 
 // GetByName returns an API by name
 func (c *APISpecification) GetByName(name string) *APIGroup {
@@ -166,7 +168,7 @@ type Response struct {
 type ResourceOrigin int
 
 const (
-	RequestBody ResourceOrigin = iota
+	RequestBody    ResourceOrigin = iota
 	MethodResponse
 )
 
@@ -206,6 +208,12 @@ func LoadSpecifications(specHost string, collapse bool) error {
 	if APISuite == nil {
 		APISuite = make(map[string]*APISpecification)
 	}
+	if BusinessSuite == nil {
+		BusinessSuite = make(map[string]*APISpecification)
+	}
+	if CoreSuite == nil {
+		CoreSuite = make(map[string]*APISpecification)
+	}
 
 	cfg, err := config.Get()
 	if err != nil {
@@ -239,6 +247,12 @@ func LoadSpecifications(specHost string, collapse bool) error {
 		}
 
 		APISuite[specification.ID] = specification
+		if (specification.Category == "Core") {
+			CoreSuite[specification.ID] = specification
+		} else {
+			BusinessSuite[specification.ID] = specification
+		}
+
 	}
 
 	return nil
@@ -327,10 +341,10 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 		// If we're grouping by TAGs, then build the API at the tag level
 		if groupingByTag {
 			api = &APIGroup{
-				ID:   TitleToKebab(name),
-				Name: name,
-				URL:  u,
-				Info: &c.APIInfo,
+				ID:                     TitleToKebab(name),
+				Name:                   name,
+				URL:                    u,
+				Info:                   &c.APIInfo,
 				MethodNavigationByName: methodNavByName,
 				Consumes:               apispec.Consumes,
 				Produces:               apispec.Produces,
@@ -347,10 +361,10 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			// If not grouping by tag, then build the API at the path level
 			if !groupingByTag {
 				api = &APIGroup{
-					ID:   TitleToKebab(name),
-					Name: name,
-					URL:  u,
-					Info: &c.APIInfo,
+					ID:                     TitleToKebab(name),
+					Name:                   name,
+					URL:                    u,
+					Info:                   &c.APIInfo,
 					MethodNavigationByName: methodNavByName,
 					Consumes:               apispec.Consumes,
 					Produces:               apispec.Produces,
