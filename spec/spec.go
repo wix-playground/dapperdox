@@ -50,6 +50,7 @@ type APISpecification struct {
 
 var APISuite map[string]*APISpecification
 var BusinessSuite map[string]*APISpecification
+var NoCategorySuite map[string]*APISpecification
 var CoreSuite map[string]*APISpecification
 
 // GetByName returns an API by name
@@ -214,6 +215,9 @@ func LoadSpecifications(specHost string, collapse bool) error {
 	if CoreSuite == nil {
 		CoreSuite = make(map[string]*APISpecification)
 	}
+	if NoCategorySuite == nil {
+		NoCategorySuite = make(map[string]*APISpecification)
+	}
 
 	cfg, err := config.Get()
 	if err != nil {
@@ -247,10 +251,12 @@ func LoadSpecifications(specHost string, collapse bool) error {
 		}
 
 		APISuite[specification.ID] = specification
-		if (specification.Category == "Core") {
+		if specification.Category == "Core" {
 			CoreSuite[specification.ID] = specification
-		} else {
+		} else if specification.Category == "Business" {
 			BusinessSuite[specification.ID] = specification
+		} else {
+			NoCategorySuite[specification.ID] = specification
 		}
 
 	}
