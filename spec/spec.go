@@ -249,6 +249,7 @@ func LoadSpecifications(specHost string, collapse bool) error {
 		if collapse {
 			//specification.ID = "api"
 		}
+		logger.Infof(nil, "Processing %s : with Category: %s", specification.ID, specification.Category)
 
 		APISuite[specification.ID] = specification
 		if specification.Category == "Core" {
