@@ -1077,7 +1077,7 @@ func (c *APISpecification) resourceFromSchema(s *spec.Schema, method *Method, fq
 
 	if len(fqNS) == 0 && id == "" {
 		logger.Errorf(nil, "Error: %s %s references a model definition that does not have a title member.", strings.ToUpper(method.Method), method.Path)
-		//os.Exit(1)
+		os.Exit(1)
 	}
 
 	// Ignore ID (from title element) for all but child-objects...
