@@ -316,8 +316,12 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 	if byname, ok := apispec.Extensions["x-navigateMethodsByName"].(bool); ok {
 		methodNavByName = byname
 	}
+	var category string
+	var gotCategory bool
 
-	c.Category = apispec.Extensions["x-category"].(string)
+	if category, gotCategory = apispec.Extensions["x-category"].(string); gotCategory {
+		c.Category = category
+	}
 
 	//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
 	//spew.Dump(document)
