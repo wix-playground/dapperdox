@@ -321,6 +321,11 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 	if category, gotCategory = apispec.Extensions["x-category"].(string); gotCategory {
 		c.Category = category
+		logger.Infof(nil, "Setting category to %s", category)
+	} else {
+		c.Category = ""
+		logger.Infof(nil, "Setting category to EMPTY")
+
 	}
 
 	//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
