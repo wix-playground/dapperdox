@@ -395,7 +395,20 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver) // Current version
 			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
-			api.Schema = api.Methods[0].Resources[0].Schema
+
+			logger.Infof(nil, "api.Methods size: %s", len(api.Methods))
+
+			if (len(api.Methods) > 0){
+				logger.Infof(nil, "Method Name:", api.Methods[0].Name)
+				logger.Infof(nil, "api.Methods[0].Resources size: %s", len(api.Methods[0].Resources))
+
+				if (len(api.Methods[0].Resources) > 0) {
+					logger.Infof(nil, "Resource Name:", api.Methods[0].Resources[0].ID)
+					api.Schema = api.Methods[0].Resources[0].Schema
+
+				}
+
+			}
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
 				logger.Tracef(nil, "    + Adding %s\n", name)
