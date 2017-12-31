@@ -92,7 +92,7 @@ type APIGroup struct {
 	Info                   *Info
 	Consumes               []string
 	Produces               []string
-	Schema				   string
+	Schema                 string
 }
 
 type Version struct {
@@ -396,19 +396,8 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver) // Current version
 			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
 
-			logger.Infof(nil, "api.Methods size: %s", len(api.Methods))
+			api.Schema = getMainSchema(api, tag.Name)
 
-			if (len(api.Methods) > 0){
-				logger.Infof(nil, "Method Name:", api.Methods[0].Name)
-				logger.Infof(nil, "api.Methods[0].Resources size: %s", len(api.Methods[0].Resources))
-
-				if (len(api.Methods[0].Resources) > 0) {
-					logger.Infof(nil, "Resource Name:", api.Methods[0].Resources[0].ID)
-					api.Schema = api.Methods[0].Resources[0].Schema
-
-				}
-
-			}
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
 				logger.Tracef(nil, "    + Adding %s\n", name)
@@ -440,6 +429,19 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 }
 
 // -----------------------------------------------------------------------------
+func getMainSchema(api *APIGroup, tagName string) string {
+	for _, m := range api.Methods {
+		for _, r := range m.Resources {
+
+			logger.Infof(nil, "Tag name is: "+tagName+" | title is: "+r.Title)
+
+			if r.Title == tagName {
+				return r.Schema
+			}
+		}
+	}
+	return "Could not Found tag " + tagName
+}
 
 func getTags(specification *spec.Swagger) []spec.Tag {
 	var tags []spec.Tag
