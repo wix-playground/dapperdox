@@ -431,13 +431,16 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 // -----------------------------------------------------------------------------
 
 func printStuff(r *Resource){
+
+	logger.Infof(nil, "%s methods size: %d", r.Title, len(r.Methods))
+	logger.Infof(nil, "Type is: " + r.Type[0])
 	for _, method := range r.Methods {
 		logger.Infof(nil, r.Title + ": with method name" + method.Name)
 		for _, sub_resource := range method.Resources {
 			printStuff(sub_resource)
 		}
 	}
-
+	logger.Infof(nil, "%s property size: %d", r.Title, len(r.Properties))
 	for _, property := range r.Properties {
 		logger.Infof(nil, r.Title + ": with property title" + property.Title)
 		printStuff(property)
