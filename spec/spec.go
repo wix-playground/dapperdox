@@ -442,7 +442,6 @@ func printStuff(r *Resource){
 	logger.Infof(nil, "%s property size: %d", r.Title, len(r.Properties))
 	for _, property := range r.Properties {
 		logger.Infof(nil, r.Title + ": with property title" + property.Title)
-		printStuff(property)
 
 	}
 
