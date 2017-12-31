@@ -453,7 +453,7 @@ func getMainSchema(api *APIGroup, tagName string) string {
 		for _, r := range m.Resources {
 
 			logger.Infof(nil, "id is: "+r.ID+" | Tag name is: "+tagName)
-
+			printStuff(r)
 			if r.ID == tagName {
 				logger.Infof(nil, "YESSSSSSSSSSSSSS: " + tagName + " SUCCEDDED")
 				return r.Schema
