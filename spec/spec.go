@@ -92,6 +92,7 @@ type APIGroup struct {
 	Info                   *Info
 	Consumes               []string
 	Produces               []string
+	Schema				   string
 }
 
 type Version struct {
@@ -394,7 +395,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver) // Current version
 			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
-
+			api.Schema = api.Methods[0].Resources[0].Schema
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
 				logger.Tracef(nil, "    + Adding %s\n", name)
