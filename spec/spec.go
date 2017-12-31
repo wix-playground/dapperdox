@@ -429,6 +429,22 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 }
 
 // -----------------------------------------------------------------------------
+
+func printStuff(r *Resource){
+	for _, method := range r.Methods {
+		logger.Infof(nil, r.Title + ": with method name" + method.Name)
+		for _, sub_resource := range method.Resources {
+			printStuff(sub_resource)
+		}
+	}
+
+	for _, property := range r.Properties {
+		logger.Infof(nil, r.Title + ": with property title" + property.Title)
+		printStuff(property)
+
+	}
+
+}
 func getMainSchema(api *APIGroup, tagName string) string {
 	for _, m := range api.Methods {
 		for _, r := range m.Resources {
