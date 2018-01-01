@@ -437,7 +437,7 @@ func getMainSchema(api *APIGroup, tagName string) string {
 				logger.Infof(nil, tagName + ": with property title: " + property.Title)
 				if property.Title == tagName {
 					logger.Infof(nil, "YESSSSSSSSSSSSSS: " + tagName + " SUCCEDDED")
-					return r.Schema
+					return property.Schema
 				}
 			}
 		}
