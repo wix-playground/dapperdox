@@ -252,9 +252,9 @@ func LoadSpecifications(specHost string, collapse bool) error {
 		}
 
 		APISuite[specification.ID] = specification
-		if specification.Category == "Core" {
+		if specification.Category == "core" {
 			CoreSuite[specification.ID] = specification
-		} else if specification.Category == "Business" {
+		} else if specification.Category == "business-service" {
 			BusinessSuite[specification.ID] = specification
 		} else {
 			NoCategorySuite[specification.ID] = specification
