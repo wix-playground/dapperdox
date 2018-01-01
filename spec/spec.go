@@ -430,31 +430,15 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 // -----------------------------------------------------------------------------
 
-func printStuff(r *Resource){
-
-	logger.Infof(nil, "%s methods size: %d", r.Title, len(r.Methods))
-	for _, method := range r.Methods {
-		logger.Infof(nil, r.Title + ": with method name" + method.Name)
-		for _, sub_resource := range method.Resources {
-			logger.Infof(nil, r.Title + ": with sub_resource title" + sub_resource.Title)
-		}
-	}
-	logger.Infof(nil, "%s property size: %d", r.Title, len(r.Properties))
-	for _, property := range r.Properties {
-		logger.Infof(nil, r.Title + ": with property title" + property.Title)
-
-	}
-
-}
 func getMainSchema(api *APIGroup, tagName string) string {
 	for _, m := range api.Methods {
 		for _, r := range m.Resources {
-
-			logger.Infof(nil, "id is: "+r.ID+" | Tag name is: "+tagName)
-			printStuff(r)
-			if r.ID == tagName {
-				logger.Infof(nil, "YESSSSSSSSSSSSSS: " + tagName + " SUCCEDDED")
-				return r.Schema
+			for _, property := range r.Properties {
+				logger.Infof(nil, tagName + ": with property title: " + property.Title)
+				if property.Title == tagName {
+					logger.Infof(nil, "YESSSSSSSSSSSSSS: " + tagName + " SUCCEDDED")
+					return r.Schema
+				}
 			}
 		}
 	}
