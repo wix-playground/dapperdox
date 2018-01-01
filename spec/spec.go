@@ -397,6 +397,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
 
 			api.Schema = getMainSchema(api, tag.Name)
+			logger.Infof(nil, "We Found: " + api.Schema + " to " + tag.Name)
 
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
