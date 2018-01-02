@@ -438,6 +438,7 @@ func getMainSchema(api *APIGroup, tagName string) string {
 				logger.Infof(nil, tagName + ": with property title: " + property.Title)
 				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1)  {
 					logger.Infof(nil, "YESSSSSSSSSSSSSS: " + tagName + " SUCCEDDED with property schema of: " + property.Schema)
+					logger.Infof(nil,"%#v", property)
 					return property.Schema
 				}
 			}
