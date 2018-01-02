@@ -397,7 +397,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
 
 			api.Schema = getMainSchema(api, tag.Name)
-			logger.Infof(nil, "We Found: " + api.Schema + " to " + tag.Name)
+			logger.Infof(nil, "We Found: "+api.Schema+" to "+tag.Name)
 
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
@@ -433,16 +433,14 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 func getMainSchema(api *APIGroup, tagName string) string {
 	for _, m := range api.Methods {
-			for _, r := range m.Resources {
-				logger.Infof(nil, "DEBUG: " + r.Title)
-				rout, err := json.Marshal( r)
-				if err != nil {
-					panic (err)
+		for _, r := range m.Resources {
+			for _, property := range r.Properties {
+				logger.Infof(nil, tagName+": with property title: "+property.Title)
+				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+					return r.Schema
 				}
-				logger.Infof(nil, "ROUT IS: " + string(rout))
 			}
-
-
+		}
 	}
 	return "Could not Found tag " + tagName
 
