@@ -443,13 +443,6 @@ func getMainSchema(api *APIGroup, tagName string) string {
 						panic (err)
 					}
 					logger.Infof(nil, "ROUT IS: " + string(rout))
-
-					out, err := json.Marshal(property)
-					if err != nil {
-						panic (err)
-					}
-					logger.Infof(nil, "OUT IS: " + string(out))
-
 					return property.Schema
 				}
 			}
