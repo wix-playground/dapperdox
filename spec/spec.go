@@ -433,22 +433,30 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 func getMainSchema(api *APIGroup, tagName string) string {
 	for _, m := range api.Methods {
-		for _, r := range m.Resources {
-			for _, property := range r.Properties {
-				logger.Infof(nil, tagName + ": with property title: " + property.Title)
-				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1)  {
-					logger.Infof(nil, "YESSSSSSSSSSSSSS: " + tagName + " SUCCEDDED with property schema of: " + property.Schema)
-					rout, err := json.Marshal(r)
-					if err != nil {
-						panic (err)
-					}
-					logger.Infof(nil, "ROUT IS: " + string(rout))
-					return property.Schema
+			for _, r := range m.Resources {
+				logger.Infof(nil, "DEBUG: " + r.Title)
+				rout, err := json.Marshal( r)
+				if err != nil {
+					panic (err)
 				}
+				logger.Infof(nil, "ROUT IS: " + string(rout))
 			}
-		}
+
+
 	}
 	return "Could not Found tag " + tagName
+
+	//for _, m := range api.Methods {
+	//	for _, r := range m.Resources {
+	//		for _, property := range r.Properties {
+	//			logger.Infof(nil, tagName + ": with property title: " + property.Title)
+	//			if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1)  {
+	//
+	//				return property.Schema
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 func getTags(specification *spec.Swagger) []spec.Tag {
