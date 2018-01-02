@@ -434,9 +434,16 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 func getMainSchema(api *APIGroup, tagName string) string {
 	for _, m := range api.Methods {
 		for _, r := range m.Resources {
+			logger.Infof(nil, "Resource Title: " +r.Title)
+			logger.Infof(nil, "Resource ID: " +r.ID)
+			if strings.Replace(r.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+				logger.Infof(nil, "[Resource] Found " +r.Title + " Tag")
+				return r.Schema
+			}
 			for _, property := range r.Properties {
 				logger.Infof(nil, tagName+": with property title: "+property.Title)
 				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+					logger.Infof(nil, "[Property] Found " +property.Title + " Tag")
 					return r.Schema
 				}
 			}
