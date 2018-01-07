@@ -92,7 +92,7 @@ type APIGroup struct {
 	Info                   *Info
 	Consumes               []string
 	Produces               []string
-	Schema                 string
+	MainResource           *Resource
 }
 
 type Version struct {
@@ -396,8 +396,14 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver) // Current version
 			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
 
-			api.Schema = getMainSchema(api, tag.Name)
-			logger.Infof(nil, "We Found: "+api.Schema+" to "+tag.Name)
+			api.MainResource = getMainResource(api, tag.Name)
+				// getMainSchema(api, tag.Name)
+			if api.MainResource == nil {
+				logger.Infof(nil, "api.MainResource.Title is NULL")
+			} else {
+				logger.Infof(nil, "We Found: "+api.MainResource.Title)
+
+			}
 
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
@@ -428,41 +434,49 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 	return nil
 }
+func getMainResource(api *APIGroup, tagName string) *Resource {
+	for _, m := range api.Methods {
+				for _, r := range m.Resources {
+					logger.Infof(nil, "Resource Title: " +r.Title)
+					logger.Infof(nil, "Resource ID: " +r.ID)
+					if strings.Replace(r.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+						logger.Infof(nil, "[Resource] Found " +r.Title + " Tag")
+						return r
+					}
+					for _, property := range r.Properties {
+						logger.Infof(nil, tagName+": with property title: "+property.Title)
+						if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+							logger.Infof(nil, "[Property] Found " +property.Title + " Tag")
+							return r
+						}
+					}
+				}
+			}
+			return nil
+}
 
 // -----------------------------------------------------------------------------
 
-func getMainSchema(api *APIGroup, tagName string) string {
-	for _, m := range api.Methods {
-		for _, r := range m.Resources {
-			logger.Infof(nil, "Resource Title: " +r.Title)
-			logger.Infof(nil, "Resource ID: " +r.ID)
-			if strings.Replace(r.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
-				logger.Infof(nil, "[Resource] Found " +r.Title + " Tag")
-				return r.Schema
-			}
-			for _, property := range r.Properties {
-				logger.Infof(nil, tagName+": with property title: "+property.Title)
-				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
-					logger.Infof(nil, "[Property] Found " +property.Title + " Tag")
-					return r.Schema
-				}
-			}
-		}
-	}
-	return "Could not Found tag " + tagName
-
-	//for _, m := range api.Methods {
-	//	for _, r := range m.Resources {
-	//		for _, property := range r.Properties {
-	//			logger.Infof(nil, tagName + ": with property title: " + property.Title)
-	//			if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1)  {
-	//
-	//				return property.Schema
-	//			}
-	//		}
-	//	}
-	//}
-}
+//func getMainSchema(api *APIGroup, tagName string) string {
+//	for _, m := range api.Methods {
+//		for _, r := range m.Resources {
+//			logger.Infof(nil, "Resource Title: " +r.Title)
+//			logger.Infof(nil, "Resource ID: " +r.ID)
+//			if strings.Replace(r.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+//				logger.Infof(nil, "[Resource] Found " +r.Title + " Tag")
+//				return r.Schema
+//			}
+//			for _, property := range r.Properties {
+//				logger.Infof(nil, tagName+": with property title: "+property.Title)
+//				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+//					logger.Infof(nil, "[Property] Found " +property.Title + " Tag")
+//					return r.Schema
+//				}
+//			}
+//		}
+//	}
+//	return "Could not Found tag " + tagName
+//}
 
 func getTags(specification *spec.Swagger) []spec.Tag {
 	var tags []spec.Tag
