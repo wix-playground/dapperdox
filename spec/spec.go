@@ -447,7 +447,7 @@ func getMainResource(api *APIGroup, tagName string) *Resource {
 						logger.Infof(nil, tagName+": with property title: "+property.Title)
 						if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
 							logger.Infof(nil, "[Property] Found " +property.Title + " Tag")
-							return r
+							return property
 						}
 					}
 				}
