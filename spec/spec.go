@@ -397,7 +397,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
 
 			api.MainResource = getMainResource(api, tag.Name)
-				// getMainSchema(api, tag.Name)
+			// getMainSchema(api, tag.Name)
 			if api.MainResource.Title == "" {
 				logger.Infof(nil, "api.MainResource.Title is empty")
 			} else {
@@ -435,24 +435,28 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 	return nil
 }
 func getMainResource(api *APIGroup, tagName string) Resource {
+	logger.Infof(nil,"api Consumes: %v", api.Consumes)
+	logger.Infof(nil,"api Produced: %v", api.Produces)
 	for _, m := range api.Methods {
-				for _, r := range m.Resources {
-					logger.Infof(nil, "Resource Title: " +r.Title)
-					logger.Infof(nil, "Resource ID: " +r.ID)
-					if strings.Replace(r.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
-						logger.Infof(nil, "[Resource] Found " +r.Title + " Tag")
-						return *r
-					}
-					for _, property := range r.Properties {
-						logger.Infof(nil, tagName+": with property title: "+property.Title)
-						if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
-							logger.Infof(nil, "[Property] Found " +property.Title + " Tag")
-							return *property
-						}
-					}
+		logger.Infof(nil,"Method Produced: %v", m.Produces)
+		logger.Infof(nil,"Method Consumes: %v", m.Consumes)
+		for _, r := range m.Resources {
+			logger.Infof(nil, "Resource Title: "+r.Title)
+			logger.Infof(nil, "Resource ID: "+r.ID)
+			if strings.Replace(r.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+				logger.Infof(nil, "[Resource] Found "+r.Title+" Tag")
+				return *r
+			}
+			for _, property := range r.Properties {
+				logger.Infof(nil, tagName+": with property title: "+property.Title)
+				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+					logger.Infof(nil, "[Property] Found "+property.Title+" Tag")
+					return *property
 				}
 			}
-			return Resource{}
+		}
+	}
+	return Resource{}
 }
 
 // -----------------------------------------------------------------------------
