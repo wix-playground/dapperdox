@@ -440,6 +440,9 @@ func getMainResource(api *APIGroup, tagName string) Resource {
 	for _, m := range api.Methods {
 		logger.Infof(nil,"Method Produced: %v", m.Produces)
 		logger.Infof(nil,"Method Consumes: %v", m.Consumes)
+		logger.Infof(nil,"Method Body param name: " +  m.BodyParam.Name)
+		logger.Infof(nil,"Method Body param Resource Title: " +  m.BodyParam.Resource.Title)
+
 		for _, r := range m.Resources {
 			logger.Infof(nil, "Resource Title: "+r.Title)
 			logger.Infof(nil, "Resource ID: "+r.ID)
