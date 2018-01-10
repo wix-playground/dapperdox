@@ -441,7 +441,7 @@ func getMainResource(api *APIGroup, tagName string) Resource {
 		logger.Infof(nil,"Method Produced: %v", m.Produces)
 		logger.Infof(nil,"Method Consumes: %v", m.Consumes)
 		logger.Infof(nil, "m.BodyParam: %v", m.BodyParam)
-		if m.BodyParam == nil {
+		if m.BodyParam != nil {
 			logger.Infof(nil, "Method Body param name: "+m.BodyParam.Name)
 			logger.Infof(nil, "Method Body param Resource Title: "+m.BodyParam.Resource.Title)
 		}
