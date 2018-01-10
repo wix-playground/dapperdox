@@ -435,15 +435,16 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 	return nil
 }
 func getMainResource(api *APIGroup, tagName string) Resource {
-	logger.Infof(nil,"api Consumes: %v", api.Consumes)
-	logger.Infof(nil,"api Produced: %v", api.Produces)
 	for _, m := range api.Methods {
-		logger.Infof(nil,"Method Produced: %v", m.Produces)
-		logger.Infof(nil,"Method Consumes: %v", m.Consumes)
-		logger.Infof(nil, "m.BodyParam: %v", m.BodyParam)
 		if m.BodyParam != nil {
 			logger.Infof(nil, "Method Body param name: "+m.BodyParam.Name)
-			logger.Infof(nil, "Method Body param Resource Title: "+m.BodyParam.Resource.Title)
+			for _, property := range m.BodyParam.Resource.Properties {
+				logger.Infof(nil, tagName+": BODY PARAM with property title: "+property.Title)
+				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+					logger.Infof(nil, "[Property] Found "+property.Title+" Tag")
+					return *property
+				}
+			}
 		}
 
 		for _, r := range m.Resources {
