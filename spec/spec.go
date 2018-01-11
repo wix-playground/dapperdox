@@ -355,7 +355,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			api.Readmes = readmes
 			logger.Infof(nil, "Setting %d readmes",len(readmes))
 		} else {
-			api.Readmes = []string{}
+			api.Readmes = make([]string, 0)
 			logger.Infof(nil, "No Readmes")
 
 		}
