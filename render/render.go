@@ -223,6 +223,7 @@ func overlayPaths(name string, datamap map[string]interface{}) []string {
 // ----------------------------------------------------------------------------------------
 // HTML is an alias to github.com/unrolled/render.Render.HTML
 func HTML(w http.ResponseWriter, status int, name string, binding interface{}, htmlOpt ...render.HTMLOptions) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	Render.HTML(w, status, name, binding, htmlOpt...)
 }
 
