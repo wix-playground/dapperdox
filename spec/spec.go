@@ -348,6 +348,18 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			groupingByTag = true
 		}
 
+		var readmes []string
+		var gotReadmes bool
+
+		if readmes, gotReadmes = apispec.Extensions["x-readmes"].([]string); gotReadmes {
+			api.Readmes = readmes
+			logger.Infof(nil, "Setting %d readmes",len(readmes))
+		} else {
+			api.Readmes = []string{}
+			logger.Infof(nil, "No Readmes")
+
+		}
+
 		var name string // Will only populate if Tagging used in spec. processMethod overrides if needed.
 		name = tag.Description
 		if name == "" {
@@ -405,19 +417,6 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 				logger.Infof(nil, "We Found: "+api.MainResource.Title)
 
 			}
-
-			var readmes []string
-			var gotReadmes bool
-
-			if readmes, gotReadmes = apispec.Extensions["x-readmes"].([]string); gotReadmes {
-				api.Readmes = readmes
-				logger.Infof(nil, "Setting %d readmes",len(readmes))
-			} else {
-				api.Readmes = []string{}
-				logger.Infof(nil, "No Readmes")
-
-			}
-
 
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
