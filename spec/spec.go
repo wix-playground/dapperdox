@@ -348,18 +348,6 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			groupingByTag = true
 		}
 
-		var readmes []string
-		var gotReadmes bool
-
-		if readmes, gotReadmes = apispec.Extensions["x-readmes"].([]string); gotReadmes {
-			api.Readmes = readmes
-			logger.Infof(nil, "Setting %d readmes",len(readmes))
-		} else {
-			api.Readmes = make([]string, 0)
-			logger.Infof(nil, "No Readmes")
-
-		}
-
 		var name string // Will only populate if Tagging used in spec. processMethod overrides if needed.
 		name = tag.Description
 		if name == "" {
@@ -378,6 +366,18 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 				Consumes:               apispec.Consumes,
 				Produces:               apispec.Produces,
 			}
+		}
+
+		var readmes []string
+		var gotReadmes bool
+
+		if readmes, gotReadmes = apispec.Extensions["x-readmes"].([]string); gotReadmes {
+			api.Readmes = readmes
+			logger.Infof(nil, "Setting %d readmes",len(readmes))
+		} else {
+			api.Readmes = make([]string, 0)
+			logger.Infof(nil, "No Readmes")
+
 		}
 
 		for path, pathItem := range document.Analyzer.AllPaths() {
