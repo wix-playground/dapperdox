@@ -178,7 +178,7 @@ func APIHandler(specification *spec.APISpecification, api spec.APIGroup) func(w 
 
 		logger.Tracef(nil, "-- template: %s  Version %s", tmpl, version)
 
-		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, specification, render.Vars{"Title": api.Name, "API": api, "Methods": methods, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion, "MainResource": api.MainResource}))
+		render.HTML(w, http.StatusOK, tmpl, render.DefaultVars(req, specification, render.Vars{"Title": api.Name, "API": api, "Methods": methods, "Version": version, "Versions": versions, "LatestVersion": api.CurrentVersion, "MainResource": api.MainResource, "Readmes": api.Readmes}))
 	}
 }
 
