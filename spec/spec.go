@@ -375,12 +375,10 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 						readmes = append(readmes, c)
 					}
 				}
-				logger.Infof(nil, "Read me 0 title - "+readmes[0])
-				logger.Infof(nil, "Setting %d readmes", len(readmes))
+				api.Readmes = readmes
 			} else {
-				logger.Infof(nil, "No Readmes")
+				api.Readmes = make([]string, 0)
 			}
-			api.Readmes = make([]string, 0)
 		}
 
 		for path, pathItem := range document.Analyzer.AllPaths() {
