@@ -371,8 +371,6 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 		var readmes []string
 		var gotReadmes bool
 
-		logger.Infof(nil, "readmes Vendor size %d",len(tag.VendorExtensible.Extensions))
-		logger.Infof(nil, "readmes Extenstion size %d",len(tag.Extensions))
 		if readmes, gotReadmes = tag.Extensions["x-readmes"].([]string); gotReadmes {
 			api.Readmes = readmes
 			logger.Infof(nil, "Setting %d readmes",len(readmes))
