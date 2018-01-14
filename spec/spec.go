@@ -366,23 +366,22 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 				Consumes:               apispec.Consumes,
 				Produces:               apispec.Produces,
 			}
-		}
+			var readmes = make([]string, 0)
+			//var gotReadmes bool
 
-		var readmes = make([]string, 0)
-		//var gotReadmes bool
-
-		if ops, gotReadmes := tag.Extensions["x-readmes"].([]interface{}); gotReadmes {
-			for _, op := range ops {
-				if c, ok := op.(string); ok {
-					readmes = append(readmes, c)
+			if ops, gotReadmes := tag.Extensions["x-readmes"].([]interface{}); gotReadmes {
+				for _, op := range ops {
+					if c, ok := op.(string); ok {
+						readmes = append(readmes, c)
+					}
 				}
+				logger.Infof(nil, "Read me 0 title - "+readmes[0])
+				logger.Infof(nil, "Setting %d readmes", len(readmes))
+			} else {
+				logger.Infof(nil, "No Readmes")
 			}
-			logger.Infof(nil, "Read me 0 title - "+readmes[0])
-			logger.Infof(nil, "Setting %d readmes", len(readmes))
-		} else {
-			logger.Infof(nil, "No Readmes")
+			api.Readmes = make([]string, 0)
 		}
-		api.Readmes = make([]string, 0)
 
 		for path, pathItem := range document.Analyzer.AllPaths() {
 			logger.Tracef(nil, "    In path loop...\n")
@@ -401,6 +400,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 					MethodNavigationByName: methodNavByName,
 					Consumes:               apispec.Consumes,
 					Produces:               apispec.Produces,
+					Readmes: 				make([]string, 0),
 				}
 			}
 
