@@ -368,12 +368,13 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			}
 		}
 
-		var readmes []string
+		var readmes string
 		var gotReadmes bool
 
-		if readmes, gotReadmes = tag.Extensions["x-readmes"].([]string); gotReadmes {
-			api.Readmes = readmes
-			logger.Infof(nil, "Setting %d readmes",len(readmes))
+		if readmes, gotReadmes = tag.Extensions["x-readmes"].(string); gotReadmes {
+			//api.Readmes = readmes
+			api.Readmes = make([]string, 0)
+			logger.Infof(nil, "Setting readmes" + readmes)
 		} else {
 			api.Readmes = make([]string, 0)
 			logger.Infof(nil, "No Readmes")
