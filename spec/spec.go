@@ -382,7 +382,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 		} else {
 			logger.Infof(nil, "No Readmes")
 		}
-		api.Readmes = readmes
+		api.Readmes = make([]string, 0)
 
 		for path, pathItem := range document.Analyzer.AllPaths() {
 			logger.Tracef(nil, "    In path loop...\n")
