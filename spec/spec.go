@@ -80,11 +80,6 @@ type Info struct {
 	Description string
 }
 
-type Readme struct {
-	File 		string
-	Title       string
-}
-
 // APIGroup parents all grouped API methods (Grouping controlled by tagging, if used, or by method path otherwise)
 type APIGroup struct {
 	ID                     string
@@ -98,7 +93,7 @@ type APIGroup struct {
 	Consumes               []string
 	Produces               []string
 	MainResource           Resource
-	Readmes				   []Readme
+	Readmes                []string
 }
 
 type Version struct {
@@ -373,18 +368,21 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			}
 		}
 
-		var readmes []Readme
-		var gotReadmes bool
+		var readmes = make([]string, 0)
+		//var gotReadmes bool
 
-		if readmes, gotReadmes = tag.Extensions["x-readmes"].([]Readme); gotReadmes {
-			logger.Infof(nil, "Read me 0 title - " + readmes[0].Title)
-			api.Readmes = readmes
-			logger.Infof(nil, "Setting %d readmes",len(readmes))
+		if ops, gotReadmes := tag.Extensions["x-readmes"].([]interface{}); gotReadmes {
+			for _, op := range ops {
+				if c, ok := op.(string); ok {
+					readmes = append(readmes, c)
+				}
+			}
+			logger.Infof(nil, "Read me 0 title - "+readmes[0])
+			logger.Infof(nil, "Setting %d readmes", len(readmes))
 		} else {
-			api.Readmes = make([]Readme, 0)
 			logger.Infof(nil, "No Readmes")
-
 		}
+		api.Readmes = readmes
 
 		for path, pathItem := range document.Analyzer.AllPaths() {
 			logger.Tracef(nil, "    In path loop...\n")
