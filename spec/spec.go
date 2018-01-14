@@ -80,6 +80,11 @@ type Info struct {
 	Description string
 }
 
+type Readme struct {
+	File 		string
+	Title       string
+}
+
 // APIGroup parents all grouped API methods (Grouping controlled by tagging, if used, or by method path otherwise)
 type APIGroup struct {
 	ID                     string
@@ -93,7 +98,7 @@ type APIGroup struct {
 	Consumes               []string
 	Produces               []string
 	MainResource           Resource
-	Readmes				   []string
+	Readmes				   []Readme
 }
 
 type Version struct {
@@ -368,15 +373,15 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			}
 		}
 
-		var readmes string
+		var readmes []Readme
 		var gotReadmes bool
 
-		if readmes, gotReadmes = tag.Extensions["x-readmes"].(string); gotReadmes {
-			//api.Readmes = readmes
-			api.Readmes = make([]string, 0)
-			logger.Infof(nil, "Setting readmes" + readmes)
+		if readmes, gotReadmes = tag.Extensions["x-readmes"].([]Readme); gotReadmes {
+			logger.Infof(nil, "Read me 0 title - " + readmes[0].Title)
+			api.Readmes = readmes
+			logger.Infof(nil, "Setting %d readmes",len(readmes))
 		} else {
-			api.Readmes = make([]string, 0)
+			api.Readmes = make([]Readme, 0)
 			logger.Infof(nil, "No Readmes")
 
 		}
