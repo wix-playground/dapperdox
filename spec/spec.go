@@ -450,19 +450,23 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 	return nil
 }
 func getMainResource(api *APIGroup, tagName string) Resource {
+	logger.Infof(nil, "Looking for tag name: "+tagName)
 	for _, m := range api.Methods {
 		if m.BodyParam != nil {
 			for _, property := range m.BodyParam.Resource.Properties {
+				logger.Infof(nil, "Candidate 1 is: "+property.Title)
 				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
 					return *property
 				}
 			}
 		}
 		for _, r := range m.Resources {
+			logger.Infof(nil, "Candidate 2 is: "+r.Title)
 			if strings.Replace(r.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
 				return *r
 			}
 			for _, property := range r.Properties {
+				logger.Infof(nil, "Candidate 3 is: "+property.Title)
 				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
 					return *property
 				}
