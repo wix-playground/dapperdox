@@ -398,7 +398,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 					MethodNavigationByName: methodNavByName,
 					Consumes:               apispec.Consumes,
 					Produces:               apispec.Produces,
-					Readmes: 				make([]string, 0),
+					Readmes:                make([]string, 0),
 				}
 			}
 
@@ -455,19 +455,19 @@ func getMainResource(api *APIGroup, tagName string) Resource {
 		if m.BodyParam != nil {
 			for _, property := range m.BodyParam.Resource.Properties {
 				logger.Infof(nil, "Candidate 1 is: "+property.Title)
-				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+				if strings.Replace(strings.Title(property.Title), " ", "", -1) == strings.Replace(strings.Title(tagName), " ", "", -1) {
 					return *property
 				}
 			}
 		}
 		for _, r := range m.Resources {
 			logger.Infof(nil, "Candidate 2 is: "+r.Title)
-			if strings.Replace(r.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+			if strings.Replace(strings.Title(r.Title), " ", "", -1) == strings.Replace(strings.Title(tagName), " ", "", -1) {
 				return *r
 			}
 			for _, property := range r.Properties {
 				logger.Infof(nil, "Candidate 3 is: "+property.Title)
-				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
+				if strings.Replace(strings.Title(property.Title), " ", "", -1) == strings.Replace(strings.Title(tagName), " ", "", -1) {
 					return *property
 				}
 			}
