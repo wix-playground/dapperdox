@@ -41,6 +41,7 @@ type APISpecification struct {
 	APIInfo  Info
 	URL      string
 	Category string
+	Status   string
 
 	SecurityDefinitions map[string]SecurityScheme
 	DefaultSecurity     map[string]Security
@@ -318,6 +319,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 	if byname, ok := apispec.Extensions["x-navigateMethodsByName"].(bool); ok {
 		methodNavByName = byname
 	}
+
 	var category string
 	var gotCategory bool
 
@@ -328,6 +330,14 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 		c.Category = ""
 		logger.Infof(nil, "Setting category to EMPTY")
 
+	}
+
+	var status string
+	var gotStatus bool
+
+	if status, gotStatus = apispec.Extensions["x-status"].(string); gotStatus {
+		c.Status = status
+		logger.Infof(nil, "Setting status to %s", status)
 	}
 
 	//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
