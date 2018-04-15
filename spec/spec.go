@@ -33,6 +33,7 @@ import (
 	"github.com/go-openapi/spec"
 	"github.com/serenize/snaker"
 	"github.com/shurcooL/github_flavored_markdown"
+	"sort"
 )
 
 type APISpecification struct {
@@ -87,6 +88,7 @@ type APIGroup struct {
 	Name                   string
 	URL                    *url.URL
 	MethodNavigationByName bool
+	MethodSortBy           []string
 	Versions               map[string][]Method // All versions, keyed by version string.
 	Methods                []Method            // The current version
 	CurrentVersion         string              // The latest version in operation for the API
@@ -146,6 +148,7 @@ type Method struct {
 	Resources       []*Resource
 	Security        map[string]Security
 	APIGroup        *APIGroup
+	SortKey         string
 }
 
 // Parameter represents an API method parameter
@@ -206,6 +209,47 @@ type Header struct {
 }
 
 // -----------------------------------------------------------------------------
+
+var sortTypes = map[string]bool{
+	"path":       true,
+	"method":     true,
+	"operation":  true,
+	"navigation": true,
+	"summary":    true,
+}
+
+type SortMethods []Method
+
+func (a SortMethods) Len() int           { return len(a) }
+func (a SortMethods) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a SortMethods) Less(i, j int) bool { return a[i].SortKey < a[j].SortKey }
+
+func (api *APIGroup) getMethodSortKey(path, method, operation, navigation, summary string) string {
+
+	// Handle a list of sort-by values, so that ordering can be fixed.
+	// Sorting by path alone does not work because ordering changes around GET/POST/PUT Etc
+	var key string
+	for _, sortby := range api.MethodSortBy {
+		switch sortby {
+		case "path":
+			key += path
+		case "method":
+			key += method
+		case "operation":
+			key += operation
+		case "navigation":
+			key += navigation
+		case "summary":
+			key += summary
+		}
+		key += "~"
+	}
+	if key == "" {
+		key = summary
+	}
+
+	return key
+}
 
 func LoadSpecifications(specHost string, collapse bool) error {
 
@@ -340,6 +384,18 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 		logger.Infof(nil, "Setting status to %s", status)
 	}
 
+	var methodSortBy []string
+	if sortByList, ok := apispec.Extensions["x-sortMethodsBy"].([]interface{}); ok {
+		for _, sortBy := range sortByList {
+			keyname := sortBy.(string)
+			if _, ok := sortTypes[keyname]; !ok {
+				logger.Errorf(nil, "Error: Invalid x-sortBy value %s\n", keyname)
+			} else {
+				methodSortBy = append(methodSortBy, keyname)
+			}
+		}
+	}
+
 	//logger.Printf(nil, "DUMP OF ENTIRE SWAGGER SPEC\n")
 	//spew.Dump(document)
 
@@ -373,6 +429,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 				URL:                    u,
 				Info:                   &c.APIInfo,
 				MethodNavigationByName: methodNavByName,
+				MethodSortBy:           methodSortBy,
 				Consumes:               apispec.Consumes,
 				Produces:               apispec.Produces,
 			}
@@ -406,6 +463,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 					URL:                    u,
 					Info:                   &c.APIInfo,
 					MethodNavigationByName: methodNavByName,
+					MethodSortBy:           methodSortBy,
 					Consumes:               apispec.Consumes,
 					Produces:               apispec.Produces,
 					Readmes:                make([]string, 0),
@@ -433,12 +491,14 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			// If API was populated (will not be if tags do not match), add to set
 			if !groupingByTag && len(api.Methods) > 0 {
 				logger.Tracef(nil, "    + Adding %s\n", name)
+				sort.Sort(SortMethods(api.Methods))
 				c.APIs = append(c.APIs, *api) // All APIs (versioned within)
 			}
 		}
 
 		if groupingByTag && len(api.Methods) > 0 {
 			logger.Tracef(nil, "    + Adding %s\n", name)
+			sort.Sort(SortMethods(api.Methods))
 			c.APIs = append(c.APIs, *api) // All APIs (versioned within)
 		}
 	}
@@ -695,6 +755,8 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 		navigationName = o.Summary
 	}
 
+	sortkey := api.getMethodSortKey(path, methodname, operationName, navigationName, o.Summary)
+
 	method := &Method{
 		ID:             CamelToKebab(id),
 		Name:           o.Summary,
@@ -705,6 +767,7 @@ func (c *APISpecification) processMethod(api *APIGroup, pathItem *spec.PathItem,
 		NavigationName: navigationName,
 		OperationName:  operationName,
 		APIGroup:       api,
+		SortKey:        sortkey,
 	}
 	if len(o.Consumes) > 0 {
 		method.Consumes = o.Consumes
