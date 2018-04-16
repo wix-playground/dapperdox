@@ -354,7 +354,10 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 	logger.Tracef(nil, "Parse OpenAPI specification '%s'\n", c.APIInfo.Title)
 
+	logger.Tracef(nil, "Before Kebab: %s\n", c.APIInfo.Title)
 	c.ID = TitleToKebab(c.APIInfo.Title)
+	logger.Tracef(nil, "After Kebab: %s\n", c.ID)
+
 
 	c.getSecurityDefinitions(apispec)
 	c.getDefaultSecurity(apispec)
@@ -544,27 +547,6 @@ func getMainResource(api *APIGroup, tagName string) Resource {
 }
 
 // -----------------------------------------------------------------------------
-
-//func getMainSchema(api *APIGroup, tagName string) string {
-//	for _, m := range api.Methods {
-//		for _, r := range m.Resources {
-//			logger.Infof(nil, "Resource Title: " +r.Title)
-//			logger.Infof(nil, "Resource ID: " +r.ID)
-//			if strings.Replace(r.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
-//				logger.Infof(nil, "[Resource] Found " +r.Title + " Tag")
-//				return r.Schema
-//			}
-//			for _, property := range r.Properties {
-//				logger.Infof(nil, tagName+": with property title: "+property.Title)
-//				if strings.Replace(property.Title, " ", "", -1) == strings.Replace(tagName, " ", "", -1) {
-//					logger.Infof(nil, "[Property] Found " +property.Title + " Tag")
-//					return r.Schema
-//				}
-//			}
-//		}
-//	}
-//	return "Could not Found tag " + tagName
-//}
 
 func getTags(specification *spec.Swagger) []spec.Tag {
 	var tags []spec.Tag
