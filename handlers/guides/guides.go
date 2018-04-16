@@ -86,7 +86,7 @@ func register(r *pat.Router, base string, specification *spec.APISpecification) 
 			absresource := StripBasepathAndExtension(path, base)
 			resource := strings.TrimPrefix(absresource, "/")
 
-			logger.Tracef(nil, "DEBUG GUIDE      = URL  "+route)
+			logger.Infof(nil, "DEBUG GUIDE      = URL  "+route)
 
 			buildNavigation(guidesNavigation, path, path_base, route, ext)
 
@@ -241,7 +241,7 @@ func buildNavigation(nav *navigation.NavigationNode, path string, path_base stri
 					Children:  make([]*navigation.NavigationNode, 0),
 				}
 				*currentList = append(*currentList, current[id])
-				logger.Tracef(nil, "DEBUG ROUTE      + Adding %s = %s to leaf node [a] Sort %s\n", current[id].Uri, current[id].Name, sortOrder)
+				logger.Infof(nil, "DEBUG ROUTE      + Adding %s = %s to leaf node [a] Sort %s\n", current[id].Uri, current[id].Name, sortOrder)
 			} else {
 				// The page is a leaf node, but sits at a branch node. This means that the branch
 				// node has content! Set the uri, and adjust the sort order, if necessary.

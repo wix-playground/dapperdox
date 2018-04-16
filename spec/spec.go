@@ -354,9 +354,7 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 	logger.Tracef(nil, "Parse OpenAPI specification '%s'\n", c.APIInfo.Title)
 
-	logger.Tracef(nil, "Before Kebab: %s\n", c.APIInfo.Title)
 	c.ID = TitleToKebab(c.APIInfo.Title)
-	logger.Tracef(nil, "After Kebab: %s\n", c.ID)
 
 
 	c.getSecurityDefinitions(apispec)
@@ -1444,9 +1442,12 @@ func prepareNamespace(myFQNS []string, id string, name string, chopped bool) []s
 var kababExclude = regexp.MustCompile("[^\\w\\s]") // Any non word or space character
 
 func TitleToKebab(s string) string {
+	logger.Infof(nil, "Before Kebab: %s\n", s)
 	s = strings.ToLower(s)
 	s = string(kababExclude.ReplaceAll([]byte(s), []byte("")))
 	s = strings.Replace(s, " ", "-", -1)
+	logger.Infof(nil, "After Kebab: %s\n", s)
+
 	return s
 }
 
