@@ -1442,11 +1442,9 @@ func prepareNamespace(myFQNS []string, id string, name string, chopped bool) []s
 var kababExclude = regexp.MustCompile("[^\\w\\s\\(\\)]") // Any non word or space character
 
 func TitleToKebab(s string) string {
-	logger.Infof(nil, "Before Kebab: %s\n", s)
 	s = strings.ToLower(s)
 	s = string(kababExclude.ReplaceAll([]byte(s), []byte("")))
 	s = strings.Replace(s, " ", "-", -1)
-	logger.Infof(nil, "After Kebab: %s\n", s)
 
 	return s
 }
