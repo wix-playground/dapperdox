@@ -1,41 +1,147 @@
-[: overlay "banner" . :]
+<script>
+function showHide() {
+    if (document.getElementById("inProgress").style.display === "none") {
+        document.getElementById("inProgress").style.display = "block";
+    } else {
+        document.getElementById("inProgress").style.display = "none";
+    }
+}
 
-[: template "fragments/specification_list_title" . :]
+function navigateToApi(apiUrl) {
+       window.location.href = apiUrl;
+}
+
+function showExplore(id) {
+    document.getElementById(id).style.display = "block";
+}
+
+function hideExplore(id) {
+    document.getElementById(id).style.display = "none";
+}
+</script>
+
+[: overlay "banner" . :]
 
 [: overlay "description" . :]
 
-[: $c := counter_set -1 :]
-<div style="padding-top: 20px;">
-[: range $id, $spec := .APISuite :]
-    [: $c := counter_add 1 :]
-    [: if eq (mod $c 2) 0 :]
-    <div class="row">
-    [: end :]
-      <div class="col-sm-6 col-md-6 col-lg-6">
-        <a href="/[: $spec.ID :]/">
-        <div class="fa-stack fa-lg my-fa-icon-group pull-left" style="font-size: 28px;">
-          <i class="fa fa-circle fa-stack-1x my-fa-icon-circle" style="color: #e0e0e0; font-size: 55px;"></i>
-          <i class="fa fa-circle fa-stack-1x" 
-                style="color: 
-                [: if eq (mod $c 4) 0 :]darkred[:end:]
-                [: if eq (mod $c 4) 1 :]blue[:end:]
-                [: if eq (mod $c 4) 2 :]green[:end:]
-                [: if eq (mod $c 4) 3 :]orange[:end:]
-                ; font-size: 48px;"></i>
+[: $businessCounter := counter_set -1 :]
 
-          <i class="fa fa-sitemap fa-stack-1x fa-inverse my-fa-icon-inner"></i>
-        </div></a>
-        <div style="margin-left: 70px;">
-           <h3 class="bottommargin" style="margin-top: 5px;">
-             <a href="/[: $spec.ID :]/reference">[:$spec.APIInfo.Title:]</a>
-           </h3>
-           [: safehtml $spec.APIInfo.Description :]
-        </div>
-      </div>
-    [: if eq (mod $c 2) 1 :]
-    </div>
+<div class="apiCategory" id="businessApi">
+    [: range $businessId, $businessSpec := .APISuite :]
+        [: if (eq $businessSpec.Status "production") :]
+            [: if (eq $businessSpec.Category "business-service") :]
+                <div class="row">
+                  <div class="col-sm-6 col-md-6 col-lg-6 rectangle" onclick="navigateToApi('/[: $businessSpec.ID :]/guides');"
+                  onmouseover="showExplore('explore.[: $businessSpec.ID :]')" onmouseout="hideExplore('explore.[: $businessSpec.ID :]')">
+                    <div class="fa-stack fa-lg my-fa-icon-group pull-left" style="font-size: 28px; margin-top: 27px; margin-left: 10px;">
+                      <div class="circle business"></div>
+                    </div>
+                    <div style="margin-left: 70px; margin-top: 15px;">
+                       <div id="explore.[: $businessSpec.ID :]" class="explore business">Explore
+                        <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow-business.svg" class="Icon rectangle" />
+                       </div>
+                       <h3 class="bottommargin">
+                         <a class="apiTitle">[:$businessSpec.APIInfo.Title:]</a>
+                       </h3>
+                       [: safehtml $businessSpec.APIInfo.Description :]
+                    </div>
+                  </div>
+                </div>
+            [: end :]
+        [: end :]
     [: end :]
-[: end :]
 </div>
 
+[: $coreCounter := counter_set -1 :]
+
+<div class="apiCategory" id="coreApi">
+    [: range $coreId, $coreSpec := .APISuite :]
+        [: if (eq $coreSpec.Status "production") :]
+            [: if (eq $coreSpec.Category "core") :]
+                <div class="row">
+                  <div class="col-sm-6 col-md-6 col-lg-6 rectangle" onclick="navigateToApi('/[: $coreSpec.ID :]/guides');"
+                  onmouseover="showExplore('explore.[: $coreSpec.ID :]')" onmouseout="hideExplore('explore.[: $coreSpec.ID :]')">
+                    <div class="fa-stack fa-lg my-fa-icon-group pull-left" style="font-size: 28px; margin-top: 27px; margin-left: 10px;">
+                      <div class="circle core"></div>
+                    </div></a>
+                    <div style="margin-left: 70px; margin-top: 15px;">
+                       <div id="explore.[: $coreSpec.ID :]" class="explore core">Explore
+                        <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow-core.svg" class="Icon rectangle" />
+                       </div>
+                       <h3 class="bottommargin">
+                         <a class="apiTitle">[:$coreSpec.APIInfo.Title:]</a>
+                       </h3>
+                       [: safehtml $coreSpec.APIInfo.Description :]
+                    </div>
+                  </div>
+                </div>
+            [: end :]
+        [: end :]
+    [: end :]
+</div>
+
+<div class="soonDivider">
+    <div class="dividerContainer">
+        <hr class="divider">
+        <div id="showComingSoon" onclick="showHide();">Coming Soon Business API</div>
+        <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow-black.svg" class="Icon black" onclick="showHide();" />
+        <hr class="divider right">
+    </div>
+</div>
+
+[: $comingSoonCounter := counter_set -1 :]
+
+<div class="apiCategory soon" id="inProgress">
+    <div id="inProgressBusiness">
+        [: range $soonBusinessId, $soonBusinessSpec := .APISuite :]
+            [: if (eq $soonBusinessSpec.Status "dev") :]
+                [: if (eq $soonBusinessSpec.Category "business-service") :]
+                    <div class="row">
+                      <div class="col-sm-6 col-md-6 col-lg-6 rectangle" onclick="navigateToApi('/[: $soonBusinessSpec.ID :]/guides');"
+                      onmouseover="showExplore('explore.[: $soonBusinessSpec.ID :]')" onmouseout="hideExplore('explore.[: $soonBusinessSpec.ID :]')">
+                        <div class="fa-stack fa-lg my-fa-icon-group pull-left" style="font-size: 28px; margin-top: 27px; margin-left: 10px;">
+                          <div class="circle business soon"></div>
+                        </div></a>
+                        <div style="margin-left: 70px; margin-top: 15px;">
+                           <div id="explore.[: $soonBusinessSpec.ID :]" class="explore soon">Explore
+                            <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow-black.svg" class="Icon rectangle" />
+                           </div>
+                           <h3 class="bottommargin">
+                             <a class="apiTitle">[:$soonBusinessSpec.APIInfo.Title:]</a>
+                           </h3>
+                           [: safehtml $soonBusinessSpec.APIInfo.Description :]
+                        </div>
+                      </div>
+                    </div>
+                [: end :]
+            [: end :]
+        [: end :]
+    </div>
+    <div id="inProgressCore">
+        [: range $soonCoreId, $soonCoreSpec := .APISuite :]
+            [: if (eq $soonCoreSpec.Status "dev") :]
+                [: if (eq $soonCoreSpec.Category "core") :]
+                    <div class="row">
+                      <div class="col-sm-6 col-md-6 col-lg-6 rectangle" onclick="navigateToApi('/[: $soonCoreSpec.ID :]/guides');"
+                      onmouseover="showExplore('explore.[: $soonCoreSpec.ID :]')" onmouseout="hideExplore('explore.[: $soonCoreSpec.ID :]')">
+                        <div class="fa-stack fa-lg my-fa-icon-group pull-left" style="font-size: 28px; margin-top: 27px; margin-left: 10px;">
+                          <div class="circle core soon"></div>
+                        </div></a>
+                        <div style="margin-left: 70px; margin-top: 15px;">
+                           <div id="explore.[: $soonCoreSpec.ID :]" class="explore soon">Explore
+                            <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow-black.svg" class="Icon rectangle" />
+                           </div>
+                           <h3 class="bottommargin">
+                             <a class="apiTitle">[:$soonCoreSpec.APIInfo.Title:]</a>
+                           </h3>
+                           [: safehtml $soonCoreSpec.APIInfo.Description :]
+                        </div>
+                      </div>
+                    </div>
+                [: end :]
+            [: end :]
+        [: end :]
+    </div>
+</div>
 [: overlay "additional" . :]
+

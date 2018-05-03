@@ -8,11 +8,11 @@ $(document).ready(function(){
 
     // Use last page visitied to expand sidenav, if we can't match.
     // This happens when we're viewing a resource, for example.
-    if( $element.length == 0 ) {
-        $pagename = sessionStorage.lastpage;
-        $element=$parent.find('a[href$="'+$pagename+'"]');
-    }
-    sessionStorage.lastpage = $pagename;
+    // if( $element.length == 0 ) {
+    //     $pagename = sessionStorage.lastpage;
+    //     $element=$parent.find('a[href$="'+$pagename+'"]');
+    // }
+    // sessionStorage.lastpage = $pagename;
 
     var api_id = $element.data('outer');
     var toggler = $("#toggle"+api_id);
@@ -29,17 +29,29 @@ $(document).ready(function(){
 </script>
 
 <div class="side-nav affix"> <!-- sidebar -->
-    <ul class="nav nav-sidebar hide" id="navigation">
-        [: if .NavigationGuides :]
-          [: if .APIs :] 
-            <!-- <li class="heading heading-top">Guides</li> -->
-          [: end :] 
-          [: template "fragments/sidenav_guides" . :]
-          [: if .APIs :] 
-            <!-- <li class="heading">Reference</li> -->
-          [: end :] 
-        [: end :]
-        [: template "fragments/sidenav_reference" . :]
-        [: template "fragments/sidenav_specification" . :]
-    </ul>
+      <div id="navigation">
+            <div id="guide-nav">
+                <h5 class="nav-title"> API GUIDE </h5>
+                <ul class="nav nav-sidebar">
+                    [: if .NavigationGuides :]
+                      [: if .APIs :]
+                        <!-- <li class="heading heading-top">Guides</li> -->
+                      [: end :]
+                      [: template "fragments/sidenav_guides" . :]
+                </ul>
+            </div>
+            <div id="reference-nav">
+             [: if .APIs :]
+                <h5 class="nav-title"> API REFERENCE </h5>
+                [: end :]
+                <ul class="nav nav-sidebar hide" id="navigation">
+                      [: if .APIs :]
+                        <!-- <li class="heading">Reference</li> -->
+                      [: end :]
+                    [: end :]
+                    [: template "fragments/sidenav_reference" . :]
+                    [: template "fragments/sidenav_specification" . :]
+                </ul>
+            </div>
+        </div>
 </div>

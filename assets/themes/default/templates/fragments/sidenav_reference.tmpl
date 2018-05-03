@@ -4,8 +4,16 @@
     <li>
         <a id="toggle[: $api.ID :]" class="nav-toggle collapsed" data-toggle="collapse" data-target="#ul[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
         <ul class="nav collapse nav-inner" id="ul[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
-          <li><a data-outer="[: $api.ID :]" href="[: $.SpecPath :]/reference/[: $api.ID :]">Summary</a></li>
 
+          [: if $api.MainResource.Properties :]
+            <li><a data-outer="[: $api.ID :]" href="[: $.SpecPath :]/reference/[: $api.ID :]"> <p class="summary"> The
+            [: $api.ID :]
+            Entity </p></a></li>
+          [: end :]
+
+             <script>
+                      $('.summary').css('textTransform', 'capitalize')
+             </script>
           [: range $method := .Methods :]
             <li><a data-outer="[: $api.ID :]" href="[: $.SpecPath :]/reference/[: $api.ID :]/[: $method.ID :]">[: $method.NavigationName :]</a></li>
           [: end :]

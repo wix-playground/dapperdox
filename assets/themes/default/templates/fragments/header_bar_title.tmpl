@@ -1,11 +1,42 @@
-[: if .Info.Title :]
-<a class="navbar-brand" href="[:$.SpecPath:]/reference">
-    <div class="fa-stack header-icon pull-left">
-        <i class="fa fa-circle-thin fa-stack-1x my-fa-icon-circle" style="font-size: 30px;"></i>
-       <i class="fa fa-sitemap fa-stack-1x my-fa-icon-inner" style="font-size: 15px;"></i>
-    </div>
-    [: .Info.Title :]
+<a class="navbar-brand plorer" href="/">Plorer
+    <img src="https://s3.amazonaws.com/wixplorer-readme-images/wix-logo.png" class="wix-logo" />
 </a>
-[: else :]
-<a class="navbar-brand" href="/">Developer's API suite</a>
+[: if .Info.Title :]
+    [: $title := .Info.Title :]
+    [: range $businessId, $businessSpec := .APISuite :]
+        [: if (eq $title $businessSpec.APIInfo.Title) :]
+             [: if (eq $businessSpec.Category "business-service") :]
+                <a class="navbar-brand">
+                    <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow.svg" class="Icon" />
+                </a>
+                <a class="navbar-brand" href="/">
+                    <div>Business API</div>
+                </a>
+             [: end :]
+        [: end :]
+    [: end :]
+    [: range $coreId, $coreSpec := .APISuite :]
+        [: if (eq $title $coreSpec.APIInfo.Title) :]
+             [: if (eq $coreSpec.Category "core") :]
+                <a class="navbar-brand">
+                    <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow.svg" class="Icon" />
+                </a>
+                <a class="navbar-brand" href="/" onclick="showCore();">
+                    <div>Core API</div>
+                </a>
+         N    [: end :]
+        [: end :]
+    [: end :]
+    <a class="navbar-brand">
+        <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow.svg" class="Icon" />
+    </a>
+    <a class="navbar-brand" href="[:$.SpecPath:]/reference">
+        <div class="api">[: .Info.Title :]</div>
+    </a>
 [: end :]
+
+<script>
+function showCore() {
+    localStorage.setItem('coreApiNav', 'clicked');
+}
+</script>
