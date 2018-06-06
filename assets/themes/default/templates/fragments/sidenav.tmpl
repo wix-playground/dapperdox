@@ -4,7 +4,7 @@ $(document).ready(function(){
     var $pagename=decodeURI( window.location.pathname );
 
     var $parent=$('ul[id="navigation"]');
-    var $element=$parent.find('a[href$="'+$pagename+'"]');
+    var $element=$parent.find('a[href$="'+$pagename+'"][id$="apiRef"]');
 
     // Use last page visitied to expand sidenav, if we can't match.
     // This happens when we're viewing a resource, for example.
