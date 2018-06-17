@@ -95,7 +95,7 @@ type APIGroup struct {
 	Info                   *Info
 	Consumes               []string
 	Produces               []string
-	MainResource           Resource
+	MainResource           MainResource
 	Readmes                []string
 }
 
@@ -195,6 +195,10 @@ type Resource struct {
 	Methods               map[string]*Method
 	Enum                  []string
 	origin                ResourceOrigin
+}
+type MainResource struct {
+	Resource              Resource
+	Name                   string
 }
 
 type Header struct {
@@ -480,12 +484,13 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver) // Current version
 			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
 
-			api.MainResource = getMainResource(api, tag.Name)
+			api.MainResource.Resource = getMainResource(api, tag.Name)
+			api.MainResource.Name = "InvoiceFields"
 			// getMainSchema(api, tag.Name)
-			if api.MainResource.Title == "" {
+			if api.MainResource.Resource.Title == "" {
 				logger.Infof(nil, "api.MainResource.Title is empty")
 			} else {
-				logger.Infof(nil, "We Found: "+api.MainResource.Title)
+				logger.Infof(nil, "We Found: "+api.MainResource.Resource.Title)
 
 			}
 
