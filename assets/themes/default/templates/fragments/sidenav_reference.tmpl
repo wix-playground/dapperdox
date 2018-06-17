@@ -1,15 +1,27 @@
+<script>
+function loadMenu() {
+    var openMenu = document.getElementsByClassName("nav-toggle open")[0];
+    if (openMenu != null) {
+        openMenu.setAttribute('data-toggle', 'collapse');
+        openMenu.removeAttribute("href");
+    }
+}
+
+window.onload = loadMenu;
+</script>
+
 <!-- Reference -->
 [: if .APIs :]
   [: range $api := .APIs :]
     <li>
         [: $methods := .Methods :]
         [: $firstMethod := index $methods 0  :]
-        <a id="toggle[: $api.ID :]" class="nav-toggle collapsed" [: if $api.MainResource.Properties :] href="[: $.SpecPath :]/reference/[: $api.ID :]" [: else :] href="[: $.SpecPath :]/reference/[: $api.ID :]/[: $firstMethod.ID :]" [: end :] data-toggle="collapse" data-target="#ul[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
+        <a id="toggle[: $api.ID :]" class="nav-toggle collapsed" [: if $api.MainResource.Resource.Properties :] href="[: $.SpecPath :]/reference/[: $api.ID :]" [: else :] href="[: $.SpecPath :]/reference/[: $api.ID :]/[: $firstMethod.ID :]" [: end :] data-target="#ul[: $api.ID :]">[: $api.Name :]</a> <!-- Add collapsed to make the open.close icon correct direction -->
         <ul class="nav collapse nav-inner" id="ul[: $api.ID :]"> <!-- add collapse to, erm, collapse! WIP! -->
 
-          [: if $api.MainResource.Properties :]
+          [: if $api.MainResource.Resource.Properties :]
             <li><a id="apiRef" data-outer="[: $api.ID :]" href="[: $.SpecPath :]/reference/[: $api.ID :]"> <p class="summary"> The
-            [: $api.ID :]
+            [: $api.MainResource.DisplayName :]
             Entity </p></a></li>
           [: end :]
 
