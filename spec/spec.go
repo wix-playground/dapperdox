@@ -197,8 +197,8 @@ type Resource struct {
 	origin                ResourceOrigin
 }
 type MainResource struct {
-	Resource              Resource
-	Name                   string
+	Resource Resource
+	DisplayName     string
 }
 
 type Header struct {
@@ -360,7 +360,6 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 
 	c.ID = TitleToKebab(c.APIInfo.Title)
 
-
 	c.getSecurityDefinitions(apispec)
 	c.getDefaultSecurity(apispec)
 
@@ -484,8 +483,17 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 			c.getMethods(tag, api, &api.Methods, &pathItem, path, ver) // Current version
 			//c.getVersions(tag, api, pathItem.Versions, path)           // All versions
 
-			api.MainResource.Resource = getMainResource(api, tag.Name)
-			api.MainResource.Name = "InvoiceFields"
+			api.MainResource.DisplayName = tag.Name
+
+			var messageName string
+			var ok bool
+
+			if messageName, ok = tag.Extensions["x-main-resource"].(string); ok {
+				api.MainResource.Resource = getMainResource(api, messageName)
+			} else {
+				api.MainResource.Resource = getMainResource(api, tag.Name)
+			}
+
 			// getMainSchema(api, tag.Name)
 			if api.MainResource.Resource.Title == "" {
 				logger.Infof(nil, "api.MainResource.Title is empty")
