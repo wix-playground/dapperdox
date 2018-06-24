@@ -389,12 +389,11 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 		logger.Infof(nil, "Setting status to %s", status)
 	}
 
-	logger.Infof(nil, "Setting visible", status)
 
 	if visible, ok := apispec.Extensions["x-visible"].(bool); ok {
 		c.Visible = visible
 	}else {
-		c.Visible = false
+		c.Visible = true
 	}
 	logger.Infof(nil, "Setting visible to ", c.Visible)
 
