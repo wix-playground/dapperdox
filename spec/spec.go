@@ -43,6 +43,7 @@ type APISpecification struct {
 	URL      string
 	Category string
 	Status   string
+	Visible  bool
 
 	SecurityDefinitions map[string]SecurityScheme
 	DefaultSecurity     map[string]Security
@@ -387,6 +388,15 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 		c.Status = status
 		logger.Infof(nil, "Setting status to %s", status)
 	}
+
+	logger.Infof(nil, "Setting visible", status)
+
+	if visible, ok := apispec.Extensions["x-visible"].(bool); ok {
+		c.Visible = visible
+	}else {
+		c.Visible = false
+	}
+	logger.Infof(nil, "Setting visible to ", c.Visible)
 
 	var methodSortBy []string
 	if sortByList, ok := apispec.Extensions["x-sortMethodsBy"].([]interface{}); ok {
