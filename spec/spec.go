@@ -402,7 +402,6 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 	}else {
 		c.Approved = false
 	}
-	logger.Infof(nil, "Setting visible to ", c.Visible)
 
 	var methodSortBy []string
 	if sortByList, ok := apispec.Extensions["x-sortMethodsBy"].([]interface{}); ok {
