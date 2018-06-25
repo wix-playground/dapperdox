@@ -44,6 +44,7 @@ type APISpecification struct {
 	Category string
 	Status   string
 	Visible  bool
+	Approved  bool
 
 	SecurityDefinitions map[string]SecurityScheme
 	DefaultSecurity     map[string]Security
@@ -394,6 +395,12 @@ func (c *APISpecification) Load(specLocation string, specHost string) error {
 		c.Visible = visible
 	}else {
 		c.Visible = true
+	}
+
+	if approved, ok := apispec.Extensions["x-approved"].(bool); ok {
+		c.Approved = approved
+	}else {
+		c.Approved = false
 	}
 	logger.Infof(nil, "Setting visible to ", c.Visible)
 
