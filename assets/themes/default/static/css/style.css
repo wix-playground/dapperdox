@@ -89,7 +89,7 @@ h1,
 }
 
 .navbar {
-    background-image: url("/assets/themes/default/static/images/header-background.png");
+    background-image: url("/images/header-background.png");
     background-size: cover;
     display: inline;
 }
