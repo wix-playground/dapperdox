@@ -1,0 +1,58 @@
+<a class="navbar-brand plorer" href="/">Plorer
+    <img src="https://s3.amazonaws.com/wixplorer-readme-images/wix-logo.svg" class="wix-logo" />
+</a>
+[: if .Info.Title :]
+    [: $title := .Info.Title :]
+    [: range $businessId, $businessSpec := .APISuite :]
+        [: if (eq $title $businessSpec.APIInfo.Title) :]
+             [: if (eq $businessSpec.Category "business-service") :]
+                <a class="navbar-brand">
+                    <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow.svg" class="Icon" />
+                </a>
+                <a class="navbar-brand" href="/">
+                    <div>Business API</div>
+                </a>
+             [: end :]
+        [: end :]
+    [: end :]
+    [: range $coreId, $coreSpec := .APISuite :]
+        [: if (eq $title $coreSpec.APIInfo.Title) :]
+             [: if (eq $coreSpec.Category "core") :]
+                <a class="navbar-brand">
+                    <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow.svg" class="Icon" />
+                </a>
+                <a class="navbar-brand" href="/" onclick="showCore();">
+                    <div>Core API</div>
+                </a>
+             [: end :]
+        [: end :]
+    [: end :]
+    [: range $clientId, $clientSpec := .APISuite :]
+        [: if (eq $title $clientSpec.APIInfo.Title) :]
+             [: if (eq $clientSpec.Category "client-frameworks") :]
+                <a class="navbar-brand">
+                    <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow.svg" class="Icon" />
+                </a>
+                <a class="navbar-brand" href="/" onclick="showClientFrameworks();">
+                    <div>Client Frameworks</div>
+                </a>
+             [: end :]
+        [: end :]
+    [: end :]
+    <a class="navbar-brand">
+        <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow.svg" class="Icon" />
+    </a>
+    <a class="navbar-brand" href="[:$.SpecPath:]/reference">
+        <div class="api">[: .Info.Title :]</div>
+    </a>
+[: end :]
+
+<script>
+function showCore() {
+    localStorage.setItem('coreApiNav', 'clicked');
+}
+
+function showClientFrameworks() {
+    localStorage.setItem('clientApiNav', 'clicked');
+}
+</script>

@@ -1,0 +1,13 @@
+[: range $name, $property := .Properties :]
+  <tr>
+    <td class="resource">
+      [: if $property.FQNS :]<span class="object">[: join $property.FQNS "." :]</span>.[: end :][: $property.ID :]
+    </td>
+    <td class="type">[: index $property.Type 0 :]</td>
+    <td>
+      [: safehtml $property.Description :]
+    </td>
+    <!-- <td>[: if not $property.Required :]Optional[: end :]</td> -->
+  </tr>
+  [: template "fragments/reference/properties" $property :]
+[: end :]

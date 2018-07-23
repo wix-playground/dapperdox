@@ -1,0 +1,28 @@
+<script>
+function loadMainPageHeader() {
+    document.getElementById("myHeader").style.height = "200px";
+    document.getElementById("headerCenter").style.display = "block";
+
+}
+
+function loadApiPageHeader() {
+    document.getElementById("myHeader").style.height = "48px";
+    document.getElementById("headerCenter").style.display = "none";
+}
+</script>
+
+  <div class="row" id="myHeader">
+    <div class="1 col-lg-1 hidden-xs hidden-sm hidden-md" style="width: 32px;"></div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-10" id="header">
+      <div class="navbar-header">
+        [: template "fragments/header_bar_title" . :]
+      </div>
+        [: template "fragments/header_bar_right" . :]
+        [: if .Info.Title :]
+        <script>loadApiPageHeader()</script>
+        [: else :]
+        <script>loadMainPageHeader()</script>
+        [: end :]
+    </div>
+    <div class="col-lg-1 hidden-xs hidden-sm hidden-md" style="width: 32px;"></div>
+  </div> <!-- /row -->
