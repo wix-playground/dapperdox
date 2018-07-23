@@ -1,5 +1,5 @@
 <a class="navbar-brand plorer" href="/">Plorer
-    <img src="https://s3.amazonaws.com/wixplorer-readme-images/wix-logo.png" class="wix-logo" />
+    <img src="https://s3.amazonaws.com/wixplorer-readme-images/wix-logo.svg" class="wix-logo" />
 </a>
 [: if .Info.Title :]
     [: $title := .Info.Title :]
@@ -24,7 +24,19 @@
                 <a class="navbar-brand" href="/" onclick="showCore();">
                     <div>Core API</div>
                 </a>
-         N    [: end :]
+             [: end :]
+        [: end :]
+    [: end :]
+    [: range $clientId, $clientSpec := .APISuite :]
+        [: if (eq $title $clientSpec.APIInfo.Title) :]
+             [: if (eq $clientSpec.Category "client-frameworks") :]
+                <a class="navbar-brand">
+                    <img src="https://s3.amazonaws.com/wixplorer-readme-images/arrow.svg" class="Icon" />
+                </a>
+                <a class="navbar-brand" href="/" onclick="showClientFrameworks();">
+                    <div>Client Frameworks</div>
+                </a>
+             [: end :]
         [: end :]
     [: end :]
     <a class="navbar-brand">
@@ -38,5 +50,9 @@
 <script>
 function showCore() {
     localStorage.setItem('coreApiNav', 'clicked');
+}
+
+function showClientFrameworks() {
+    localStorage.setItem('clientApiNav', 'clicked');
 }
 </script>

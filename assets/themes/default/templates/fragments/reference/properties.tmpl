@@ -6,14 +6,6 @@
     <td class="type">[: index $property.Type 0 :]</td>
     <td>
       [: safehtml $property.Description :]
-      [: if $property.Enum :]
-      <p>Possible values are:</p>
-      <ul class="list-bullet">
-        [: range $property.Enum :]
-        <li><code>[: . :]</code></li>
-        [: end :]
-      </ul>
-      [: end :]
     </td>
     <!-- <td>[: if not $property.Required :]Optional[: end :]</td> -->
   </tr>

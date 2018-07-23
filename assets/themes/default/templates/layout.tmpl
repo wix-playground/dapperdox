@@ -8,6 +8,10 @@
 
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
     <link rel="icon" href="https://www.wix.com/favicon.ico">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -48,10 +52,10 @@
     </div>
   </nav>
 
-  <div class="container-fluid">
+  <div class="containerFluidMain" [: if .Info.Title :] id="containerFluidApi" [: end :]>
     <div class="row">
         <div class="hidden-md col-lg-1 hidden-xs hidden-sm" id="hiddenMargin"></div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-10">
+        <div id="stage" class="col-xs-12 col-sm-12 col-md-12 col-lg-10" [: if .Info.Title :] style="width: 83.33333333%;" [: end :]>
             [: template "fragments/body" . :]
         </div>
         <div class="col-lg-1 hidden-xs hidden-sm hidden-md"></div>
