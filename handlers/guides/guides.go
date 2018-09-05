@@ -119,15 +119,19 @@ func findFirstGuideUri(tree *navigation.NavigationNode) string {
 	for i := range tree.Children {
 		node := tree.Children[i]
 		uri = node.Uri
+		logger.Infof(nil, "Redirect 1 uri %s with index %s\n", uri, i)
 		if uri == "" {
 			if len(node.Children) > 0 {
 				uri = findFirstGuideUri(node)
+				logger.Infof(nil, "Redirect 2 uri %s with index %s\n", uri, i)
 			}
 		}
+		logger.Infof(nil, "Redirect 3 uri %s with index %s\n", uri, i)
 		if uri != "" {
 			break
 		}
 	}
+	logger.Infof(nil, "Redirect 4 uri %s \n", uri)
 	return uri
 }
 
