@@ -567,7 +567,7 @@ func getMainResource(api *APIGroup, tagName string) Resource {
 					return *property
 				}
 				for _, res := range property.Properties {
-					if strings.Replace(strings.Title(property.Title), " ", "", -1) == strings.Replace(tagTitle, " ", "", -1) {
+					if strings.Replace(strings.Title(res.Title), " ", "", -1) == strings.Replace(tagTitle, " ", "", -1) {
 						return *res
 					}
 				}
